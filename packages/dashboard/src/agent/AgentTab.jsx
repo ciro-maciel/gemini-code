@@ -14,7 +14,6 @@ import { AgentFiles } from './AgentFiles';
 import { useAgentConversation } from './use-agent-conversation';
 import { releaseContext } from '../services/api';
 import { notify } from '../components/zen';
-import { ShareModal } from './ShareModal';
 import {
   MarkedButton,
   ResultsBar,
@@ -79,7 +78,6 @@ export function AgentTab({
   const [isTeaching, setIsTeaching] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isDropping, setIsDropping] = useState(false);
-  const [isSharing, setIsSharing] = useState(false);
   const threadRef = useRef(null);
   const isAtBottomRef = useRef(true);
   const lastTopRef = useRef(0);
@@ -260,12 +258,6 @@ export function AgentTab({
             <i className="ti ti-folder" />
             Files
           </button>
-          {isOwner && (
-            <button className="share" onClick={() => setIsSharing(true)}>
-              <i className="ti ti-user-share" />
-              Share
-            </button>
-          )}
         </div>
         {members.length > 0 && (
           <div className="banner">
@@ -282,14 +274,6 @@ export function AgentTab({
                   ? 'You watch live without sending messages.'
                   : "Your message goes to the agent under your name. It runs on the creator's plan."}
               </span>
-            )}
-            {isOwner && (
-              <button
-                className="btn outline sm"
-                onClick={() => setIsSharing(true)}
-              >
-                Manage
-              </button>
             )}
           </div>
         )}
@@ -454,9 +438,6 @@ export function AgentTab({
             {money(cost)} neste agente
           </span>
         </div>
-        {isSharing && (
-          <ShareModal bot={bot} onClose={() => setIsSharing(false)} />
-        )}
         {isReady && (
           <TeachScreen
             bot={bot}

@@ -456,7 +456,6 @@ export function Shell() {
         width={nav.width}
         isDark={isDark}
         account={account}
-        onFilter={(filter) => setNav((current) => ({ ...current, filter }))}
         onToggle={() =>
           setNav((current) => ({ ...current, collapsed: !current.collapsed }))
         }

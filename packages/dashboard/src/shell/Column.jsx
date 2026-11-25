@@ -242,7 +242,6 @@ export function Column({
   width,
   isDark,
   account,
-  onFilter,
   onToggle,
   onResize,
   onSearch,
@@ -369,7 +368,6 @@ export function Column({
                   filter={filter}
                   activeBotId={activeBotId}
                   isHome={isHome}
-                  onFilter={onFilter}
                   onOpenAgent={onOpenAgent}
                   onNewAgent={onNewAgent}
                 />

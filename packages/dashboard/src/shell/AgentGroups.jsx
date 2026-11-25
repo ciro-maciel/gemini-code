@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { FILTERS, shortWhen, stateOf, waitsOn } from '../state/agents';
+import { shortWhen, stateOf, waitsOn } from '../state/agents';
 import {
   companiesToGroup,
   groupAgents,
@@ -131,7 +131,6 @@ export function AgentGroups({
   filter,
   activeBotId,
   isHome,
-  onFilter,
   onOpenAgent,
   onNewAgent,
 }) {
@@ -271,18 +270,6 @@ export function AgentGroups({
 
   return (
     <>
-      <div className="filters">
-        {FILTERS.map(([key, label]) => (
-          <button
-            key={key}
-            className={filter === key ? 'on' : ''}
-            onClick={() => onFilter(key)}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-
       {companies.length > 0 && (
         <div className="group-suggest">
           <span className="grow">

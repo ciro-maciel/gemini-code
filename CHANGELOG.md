@@ -16,6 +16,11 @@ version with its date.
 - The README, in English and Portuguese, shows the design system with an image
   of its page and links to the reference and the HTML page (2026-11-25).
 
+### Removed
+
+- Sharing an agent and the All / Mine / Shared filters in the side column: one
+  person runs Gemini Code on their own machine (2026-11-25).
+
 ## [0.2.1] - 2026-11-25
 
 ### Added
