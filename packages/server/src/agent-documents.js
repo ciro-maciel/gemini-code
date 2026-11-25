@@ -267,7 +267,7 @@ function targetFolderFor(bot, subFolder = '') {
     : defaultFolderOf(agentDir);
   const sub = cleanRepoPath(subFolder);
   if (sub && sub.split('/').some((part) => part === '.' || part === '..'))
-    throw new Error('caminho inválido');
+    throw new Error('invalid path');
   if (!sub) return base;
   if (!base) return sub;
   // If caller already prefixed with base, keep it; otherwise join under base.
@@ -317,20 +317,20 @@ export async function createAgentDocument(
     !cleanName ||
     cleanName.split('/').some((part) => !part || part === '.' || part === '..')
   ) {
-    throw new Error('dê um nome válido ao documento');
+    throw new Error('give the document a valid name');
   }
   const targetDir = targetFolderFor(bot, folder);
   const fullPath = targetDir ? `${targetDir}/${cleanName}` : cleanName;
-  if (isOwned(fullPath)) throw new Error('esse nome é reservado pela central');
+  if (isOwned(fullPath)) throw new Error('that name is reserved by the server');
   return saveFile(accountId, fullPath, String(content ?? ''));
 }
 
 /** Saves an existing document belonging to the agent (work file, instructions, memory, routine, or linked skill). */
 export async function saveAgentDocument(bot, accountId, relPath, content) {
   const clean = cleanRepoPath(relPath);
-  if (!clean || clean.includes('..')) throw new Error('caminho inválido');
+  if (!clean || clean.includes('..')) throw new Error('invalid path');
   if (!isAgentEditablePath(bot, clean))
-    throw new Error('este documento não pertence à pasta deste agente');
+    throw new Error("this document is not in this agent's folder");
   return saveFile(accountId, clean, String(content ?? ''));
 }
 
@@ -343,12 +343,12 @@ export async function uploadAgentDocuments(bot, accountId, subFolder, files) {
 /** Deletes a work document inside the agent's folder (central metadata files cannot be deleted here). */
 export async function deleteAgentDocument(bot, accountId, relPath) {
   const clean = cleanRepoPath(relPath);
-  if (!clean || clean.includes('..')) throw new Error('caminho inválido');
+  if (!clean || clean.includes('..')) throw new Error('invalid path');
   if (isOwned(clean))
     throw new Error(
-      'documentos de configuração do agente são gerenciados pelos ajustes',
+      "the agent's configuration documents are managed in its settings",
     );
   if (!isWorkPathOf(bot, clean))
-    throw new Error('este documento não pertence à pasta deste agente');
+    throw new Error("this document is not in this agent's folder");
   return removePath(accountId, clean);
 }

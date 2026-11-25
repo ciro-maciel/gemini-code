@@ -110,7 +110,7 @@ export async function summarize({
     ],
   });
   const summary = String(message?.content ?? '').trim();
-  if (!summary) throw new Error('o resumo da conversa veio vazio');
+  if (!summary) throw new Error('the conversation summary came back empty');
   return { summary, cost: cost ?? 0 };
 }
 

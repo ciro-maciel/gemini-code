@@ -166,8 +166,7 @@ const createdOf = (model) =>
  */
 export async function listProviderModels(providerId, key, fetcher = fetch) {
   const provider = providerOf(providerId);
-  if (!provider?.base)
-    throw new Error('esse provedor não tem modelos de conversa');
+  if (!provider?.base) throw new Error('this provider has no chat models');
   const response = await fetcher(
     `${provider.base}/models${providerId === 'anthropic' ? '?limit=1000' : ''}`,
     {
@@ -177,11 +176,11 @@ export async function listProviderModels(providerId, key, fetcher = fetch) {
   );
   if (response.status === 401 || response.status === 403)
     throw new Error(
-      `a chave não abriu a ${provider.name}: confira se ela está certa e ativa`,
+      `the key did not open ${provider.name}: check that it is right and active`,
     );
   if (!response.ok)
     throw new Error(
-      `a ${provider.name} respondeu ${response.status} ao pedir os modelos`,
+      `${provider.name} answered ${response.status} when asked for the models`,
     );
   const data = await response.json();
   const known =

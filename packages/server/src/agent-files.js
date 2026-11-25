@@ -171,16 +171,16 @@ export function resolveInside(root, relative = '') {
   const raw = String(relative ?? '')
     .replace(/\\/g, '/')
     .trim();
-  if (raw.includes('\0')) refuse('INVALID_PATH', 'caminho inválido');
+  if (raw.includes('\0')) refuse('INVALID_PATH', 'invalid path');
   const target = path.resolve(root, raw.replace(/^\/+/, ''));
   if (target !== root && !target.startsWith(root + path.sep))
-    refuse('OUTSIDE_ROOT', 'esse caminho sai da pasta do agente');
+    refuse('OUTSIDE_ROOT', "that path leaves the agent's folder");
   // The nearest part that exists must also be inside once links are followed.
   let probe = target;
   while (!existsSync(probe) && probe !== root) probe = path.dirname(probe);
   const real = realpathSync(probe);
   if (real !== root && !real.startsWith(root + path.sep))
-    refuse('OUTSIDE_ROOT', 'esse caminho aponta para fora da pasta do agente');
+    refuse('OUTSIDE_ROOT', "that path points outside the agent's folder");
   return target;
 }
 
@@ -328,7 +328,7 @@ export function runFileOperation(bot, op, args = {}) {
     case 'list': {
       const dir = at('path');
       if (!existsSync(dir) || !statSync(dir).isDirectory())
-        refuse('NOT_FOUND', 'pasta não encontrada');
+        refuse('NOT_FOUND', 'folder not found');
       return {
         path: relativeOf(root, dir),
         items: readdirSync(dir)
@@ -340,7 +340,7 @@ export function runFileOperation(bot, op, args = {}) {
     case 'tree': {
       const dir = at('path');
       if (!existsSync(dir) || !statSync(dir).isDirectory())
-        refuse('NOT_FOUND', 'pasta não encontrada');
+        refuse('NOT_FOUND', 'folder not found');
       // `root` names the agent folder as the person knows it, relative to the workspace.
       return {
         ...tree(
@@ -355,9 +355,9 @@ export function runFileOperation(bot, op, args = {}) {
     case 'read': {
       const file = at('path');
       if (!existsSync(file) || statSync(file).isDirectory())
-        refuse('NOT_FOUND', 'arquivo não encontrado');
+        refuse('NOT_FOUND', 'file not found');
       if (statSync(file).size > MAX_READ_BYTES)
-        refuse('TOO_LARGE', 'arquivo grande demais para ler de uma vez');
+        refuse('TOO_LARGE', 'the file is too large to read at once');
       const buffer = readFileSync(file);
       if (!isText(buffer))
         return {
@@ -378,7 +378,7 @@ export function runFileOperation(bot, op, args = {}) {
     case 'read_many': {
       const paths = Array.isArray(args.paths)
         ? args.paths.slice(0, 20)
-        : refuse('INVALID_ARGS', 'paths precisa ser uma lista');
+        : refuse('INVALID_ARGS', 'paths must be a list');
       return {
         items: paths.map((one) => {
           try {
@@ -391,7 +391,7 @@ export function runFileOperation(bot, op, args = {}) {
     }
     case 'info': {
       const target = at('path');
-      if (!existsSync(target)) refuse('NOT_FOUND', 'não encontrado');
+      if (!existsSync(target)) refuse('NOT_FOUND', 'not found');
       const stat = statSync(target);
       return {
         ...entryOf(root, target),
@@ -400,7 +400,7 @@ export function runFileOperation(bot, op, args = {}) {
     }
     case 'search': {
       const query = String(args.query || '').toLowerCase();
-      if (!query) refuse('INVALID_ARGS', 'falta o texto da busca');
+      if (!query) refuse('INVALID_ARGS', 'the search text is missing');
       const found = [];
       walkFiles(root, at('path'), (full) => {
         if (path.basename(full).toLowerCase().includes(query))
@@ -411,7 +411,7 @@ export function runFileOperation(bot, op, args = {}) {
     }
     case 'grep': {
       const query = String(args.query || '');
-      if (!query) refuse('INVALID_ARGS', 'falta o texto da busca');
+      if (!query) refuse('INVALID_ARGS', 'the search text is missing');
       const found = [];
       walkFiles(root, at('path'), (full, stat) => {
         if (stat.isDirectory() || stat.size > MAX_READ_BYTES) return true;
@@ -440,13 +440,13 @@ export function runFileOperation(bot, op, args = {}) {
     case 'write':
     case 'upload': {
       const file = at('path');
-      if (file === root) refuse('INVALID_PATH', 'falta o nome do arquivo');
+      if (file === root) refuse('INVALID_PATH', 'the file name is missing');
       if (existsSync(file) && statSync(file).isDirectory())
-        refuse('IS_FOLDER', 'já existe uma pasta com esse nome');
+        refuse('IS_FOLDER', 'a folder with that name already exists');
       if (existsSync(file) && args.overwrite !== true)
         refuse(
           'EXISTS',
-          'o arquivo já existe: mande overwrite true para substituir',
+          'the file already exists: send overwrite true to replace it',
         );
       mkdirSync(path.dirname(file), { recursive: true });
       writeFileSync(
@@ -460,16 +460,16 @@ export function runFileOperation(bot, op, args = {}) {
     case 'edit': {
       const file = at('path');
       if (!existsSync(file) || statSync(file).isDirectory())
-        refuse('NOT_FOUND', 'arquivo não encontrado');
+        refuse('NOT_FOUND', 'file not found');
       const text = readFileSync(file, 'utf8');
       const find = String(args.find ?? '');
-      if (!find) refuse('INVALID_ARGS', 'falta o trecho a trocar');
+      if (!find) refuse('INVALID_ARGS', 'the text to replace is missing');
       const count = text.split(find).length - 1;
-      if (count === 0) refuse('NOT_FOUND', 'o trecho não está no arquivo');
+      if (count === 0) refuse('NOT_FOUND', 'the text is not in the file');
       if (count > 1)
         refuse(
           'AMBIGUOUS',
-          `o trecho aparece ${count} vezes: mande um trecho maior`,
+          `the text appears ${count} times: send a longer piece`,
         );
       writeFileSync(
         file,
@@ -497,9 +497,9 @@ export function runFileOperation(bot, op, args = {}) {
       const from = at('from');
       const to = at('to');
       if (from === root)
-        refuse('INVALID_PATH', 'a pasta do agente não sai do lugar');
-      if (!existsSync(from)) refuse('NOT_FOUND', 'a origem não existe');
-      if (existsSync(to)) refuse('EXISTS', 'o destino já existe');
+        refuse('INVALID_PATH', "the agent's folder does not move");
+      if (!existsSync(from)) refuse('NOT_FOUND', 'the source does not exist');
+      if (existsSync(to)) refuse('EXISTS', 'the destination already exists');
       mkdirSync(path.dirname(to), { recursive: true });
       if (op === 'move') renameSync(from, to);
       else if (statSync(from).isDirectory())
@@ -510,8 +510,8 @@ export function runFileOperation(bot, op, args = {}) {
     case 'delete': {
       const target = at('path');
       if (target === root)
-        refuse('INVALID_PATH', 'a pasta do agente não pode ser apagada');
-      if (!existsSync(target)) refuse('NOT_FOUND', 'não encontrado');
+        refuse('INVALID_PATH', "the agent's folder cannot be deleted");
+      if (!existsSync(target)) refuse('NOT_FOUND', 'not found');
       const relative = relativeOf(root, target);
       if (args.confirm !== true || !isValidCode(bot.id, relative, args.code)) {
         const isFolder = statSync(target).isDirectory();
@@ -524,7 +524,7 @@ export function runFileOperation(bot, op, args = {}) {
           inside,
           code: confirmationCode(bot.id, relative),
           expiresInSeconds: CODE_TTL_MS / 1000,
-          say: `Vou apagar ${isFolder ? `a pasta ${relative} com ${inside} itens dentro` : `o arquivo ${relative}`}. Confirma?`,
+          say: `I will delete ${isFolder ? `the folder ${relative} with ${inside} items inside` : `the file ${relative}`}. Confirm?`,
         };
       }
       rmSync(target, { recursive: true, force: true });
@@ -533,7 +533,7 @@ export function runFileOperation(bot, op, args = {}) {
     default:
       refuse(
         'UNKNOWN_OPERATION',
-        `operação desconhecida: ${op}. Leia files_guide.`,
+        `unknown operation: ${op}. Read files_guide.`,
       );
   }
 }

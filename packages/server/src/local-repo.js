@@ -56,11 +56,11 @@ export function isSafeLocalPath(value) {
 
 export function resolveLocalPath(relPath) {
   const clean = cleanLocalPath(relPath);
-  if (!isSafeLocalPath(clean)) throw new Error('caminho inválido');
+  if (!isSafeLocalPath(clean)) throw new Error('invalid path');
   const root = localRootDir();
   const full = path.resolve(root, clean);
   if (full !== root && !full.startsWith(root + path.sep))
-    throw new Error('caminho inválido');
+    throw new Error('invalid path');
   return { clean, full, root };
 }
 

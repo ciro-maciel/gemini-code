@@ -130,7 +130,7 @@ describe('what an artifact may hold', () => {
           },
         ],
       }),
-    ).toThrow('passa de 12');
+    ).toThrow('more than 12');
   });
 
   test('videos play by their https address, with an https poster or none, up to 4', () => {
@@ -193,7 +193,7 @@ describe('what an artifact may hold', () => {
           },
         ],
       }),
-    ).toThrow('passa de 4');
+    ).toThrow('more than 4');
   });
 
   test('a wrong artifact says exactly what is wrong', () => {
@@ -227,7 +227,7 @@ describe('what an artifact may hold', () => {
     );
     wrong(
       { blocks: [{ type: 'table', columns: ['a'], rows: [['1', '2']] }] },
-      'passa de 1',
+      'more than 1',
     );
     wrong({ blocks: [{ type: 'text', text: 'x'.repeat(70_000) }] }, 'KB');
   });
@@ -253,7 +253,7 @@ describe('versions and choices', () => {
         itemId: 'item-1',
         value: 'mine',
       }),
-    ).toThrow('versão mais nova');
+    ).toThrow('newer version');
     const told = artifacts.recordChoice('art1', first.id, second.versionId, {
       itemId: 'item-1',
       value: 'mine',
@@ -273,7 +273,7 @@ describe('versions and choices', () => {
         itemId: 'item-1',
         value: 'mine',
       }),
-    ).toThrow('já foi respondido');
+    ).toThrow('already answered');
     expect(
       artifacts.fetchArtifactVersion('art1', first.id, second.versionId)
         .choices['item-1'].label,
@@ -316,7 +316,7 @@ describe('versions and choices', () => {
         itemId: 'item-1',
         value: 'mine',
       }),
-    ).toThrow('desconhecido');
+    ).toThrow('unknown');
     // Another artifact's version does not open through this one.
     const other = artifacts.publishArtifact('art3', null, {
       ...REPORT,
@@ -338,7 +338,7 @@ describe('versions and choices', () => {
         itemId: 'item-1',
         value: 'changes',
       }),
-    ).toThrow('pede um recado');
+    ).toThrow('asks for a note');
     expect(
       artifacts.recordChoice('art2', id, versionId, {
         itemId: 'item-1',
@@ -351,13 +351,13 @@ describe('versions and choices', () => {
         itemId: 'item-2',
         value: 'mine',
       }),
-    ).toThrow('não existe');
+    ).toThrow('does not exist');
     expect(() =>
       artifacts.recordChoice('art1', id, versionId, {
         itemId: 'item-1',
         value: 'mine',
       }),
-    ).toThrow('desconhecido');
+    ).toThrow('unknown');
     expect(
       artifacts.recordChoice('art2', id, versionId, {
         itemId: artifacts.ARTIFACT_ITEM,

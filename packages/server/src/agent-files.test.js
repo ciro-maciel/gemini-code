@@ -41,20 +41,20 @@ describe('the agent folder: one root per agent, nothing outside it', () => {
     writeFileSync(path.join(workspace, 'secret.txt'), 'no');
     expect(() =>
       runFileOperation(bot, 'read', { path: '../secret.txt' }),
-    ).toThrow('sai da pasta');
+    ).toThrow('leaves the agent');
     expect(() =>
       runFileOperation(bot, 'read', { path: '/etc/hosts' }),
-    ).not.toThrow('sai da pasta');
+    ).not.toThrow('leaves the agent');
     expect(() =>
       runFileOperation(bot, 'read', { path: '../../../../etc/hosts' }),
-    ).toThrow('sai da pasta');
+    ).toThrow('leaves the agent');
     symlinkSync(workspace, path.join(rootOf(bot), 'escape'));
     expect(() =>
       runFileOperation(bot, 'read', { path: 'escape/secret.txt' }),
-    ).toThrow('aponta para fora');
+    ).toThrow('points outside');
     expect(() =>
       runFileOperation(bot, 'write', { path: 'escape/new.txt', content: 'x' }),
-    ).toThrow('aponta para fora');
+    ).toThrow('points outside');
     expect(existsSync(path.join(workspace, 'new.txt'))).toBe(false);
   });
 
@@ -76,7 +76,7 @@ describe('the operations', () => {
     });
     expect(() =>
       runFileOperation(bot, 'write', { path: 'src/soma.js', content: 'x' }),
-    ).toThrow('já existe');
+    ).toThrow('already exists');
     runFileOperation(bot, 'edit', {
       path: 'src/soma.js',
       find: 'a + b',
@@ -91,7 +91,7 @@ describe('the operations', () => {
         find: 'nao existe',
         replace: '',
       }),
-    ).toThrow('não está');
+    ).toThrow('is not in the file');
     runFileOperation(bot, 'write', { path: 'twice.txt', content: 'a a' });
     expect(() =>
       runFileOperation(bot, 'edit', {
@@ -99,7 +99,7 @@ describe('the operations', () => {
         find: 'a',
         replace: 'b',
       }),
-    ).toThrow('2 vezes');
+    ).toThrow('2 times');
   });
 
   test('tree puts folders first, read takes a line range, grep and search find', () => {
@@ -138,7 +138,7 @@ describe('the operations', () => {
     runFileOperation(bot, 'copy', { from: 'notes.md', to: 'a/notes.md' });
     expect(() =>
       runFileOperation(bot, 'move', { from: 'notes.md', to: 'a/notes.md' }),
-    ).toThrow('já existe');
+    ).toThrow('already exists');
     runFileOperation(bot, 'move', { from: 'notes.md', to: 'a/b/notes.md' });
     expect(existsSync(path.join(rootOf(bot), 'notes.md'))).toBe(false);
   });
@@ -188,7 +188,7 @@ describe('deleting asks the person', () => {
 
   test('the agent root itself cannot be deleted', () => {
     expect(() => runFileOperation(bot, 'delete', { path: '' })).toThrow(
-      'não pode ser apagada',
+      'cannot be deleted',
     );
   });
 
@@ -245,7 +245,7 @@ describe('the files MCP', () => {
     ).toBe(true);
     expect(
       callFilesTool(bot, 'files_read', { op: 'delete', path: 'x' }).error,
-    ).toContain('não faz');
+    ).toContain('does not do');
     expect(filesGuide()).toContain('op="grep"');
   });
 

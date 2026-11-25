@@ -29,7 +29,7 @@ function endpoint(account) {
   }
   if (!config.openrouterApiKey)
     throw new Error(
-      'sem acesso ao OpenRouter: defina OPENROUTER_CONNECTOR_ID (no Sprite) ou OPENROUTER_API_KEY',
+      'no access to OpenRouter: set OPENROUTER_CONNECTOR_ID (on the Sprite) or OPENROUTER_API_KEY',
     );
   return {
     url: 'https://openrouter.ai/api/v1/chat/completions',
@@ -425,7 +425,7 @@ export async function complete(
     console.log(
       `[timing] model ${model} ${Math.round(performance.now() - startedAt)}ms in=${usage?.prompt_tokens} out=${usage?.completion_tokens} cached=${usage?.prompt_tokens_details?.cached_tokens ?? 0}`,
     );
-  if (!message) throw new Error(`${name} devolveu uma resposta sem mensagem`);
+  if (!message) throw new Error(`${name} returned an answer without a message`);
   // OpenRouter says what a call cost; the other providers only count tokens.
   const cost =
     usage?.cost ??

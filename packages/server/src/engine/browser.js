@@ -49,8 +49,7 @@ export async function callBrowserTool(bot, name, args) {
     body: JSON.stringify({ name, arguments: args }),
     signal: AbortSignal.timeout(CALL_TIMEOUT_MS),
   });
-  if (!response.ok)
-    throw new Error(`o computador respondeu ${response.status}`);
+  if (!response.ok) throw new Error(`the computer answered ${response.status}`);
   return response.json();
 }
 
@@ -76,7 +75,7 @@ export async function listBrowserToolDefinitions() {
   const server = await createConnection(
     { capabilities: ['vision'] },
     async () => {
-      throw new Error('só para listar ferramentas');
+      throw new Error('only to list tools');
     },
   );
   const [serverSide, clientSide] = InMemoryTransport.createLinkedPair();

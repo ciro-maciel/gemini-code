@@ -60,14 +60,14 @@ export function noticeOf(event, bot) {
   if (event.type === 'approval_requested')
     return {
       isOwnerOnly: true,
-      title: `${bot.name} precisa de você`,
-      body: event.data.summary || 'Uma ação espera a sua aprovação.',
+      title: `${bot.name} needs you`,
+      body: event.data.summary || 'An action is waiting for your approval.',
       url,
     };
   if (event.type === 'tool_call' && event.data.name === 'ask_user')
     return {
       isOwnerOnly: false,
-      title: `${bot.name} tem uma pergunta`,
+      title: `${bot.name} has a question`,
       body: String(event.data.arguments?.question || '').slice(0, 180),
       url,
     };

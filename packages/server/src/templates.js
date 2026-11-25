@@ -122,7 +122,7 @@ export function saveTemplate(accountId, fields) {
       Object.entries(fields).filter(([, value]) => value !== undefined),
     ),
   };
-  if (!clean(merged.name, 60)) throw new Error('dê um nome ao modelo');
+  if (!clean(merged.name, 60)) throw new Error('give the template a name');
   if (
     fields.model !== undefined &&
     fields.model !== base?.model &&
@@ -130,7 +130,7 @@ export function saveTemplate(accountId, fields) {
       brain.models.some((model) => model.id === fields.model),
     )
   )
-    throw new Error(`modelo fora da lista: ${fields.model}`);
+    throw new Error(`model not in the list: ${fields.model}`);
   const row = [
     clean(merged.name, 60),
     clean(merged.icon || 'ti-sparkles', 40),

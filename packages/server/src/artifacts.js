@@ -45,27 +45,27 @@ const fail = (message) => {
 /** A string the block may carry: trimmed and cut, or an error when required and missing. */
 function text(value, max, where, { isRequired = false } = {}) {
   if (value === undefined || value === null || value === '') {
-    if (isRequired) fail(`${where} é obrigatório`);
+    if (isRequired) fail(`${where} is required`);
     return undefined;
   }
   if (typeof value === 'number') value = String(value);
-  if (typeof value !== 'string') fail(`${where} tem de ser texto`);
+  if (typeof value !== 'string') fail(`${where} must be text`);
   const clean = value.trim();
-  if (isRequired && !clean) fail(`${where} é obrigatório`);
-  if (clean.length > max) fail(`${where} passa de ${max} caracteres`);
+  if (isRequired && !clean) fail(`${where} is required`);
+  if (clean.length > max) fail(`${where} is longer than ${max} characters`);
   return clean || undefined;
 }
 
 const tone = (value, where) => {
   if (value === undefined || value === null) return undefined;
-  if (!TONES.includes(value)) fail(`${where}: tone é ${TONES.join(', ')}`);
+  if (!TONES.includes(value)) fail(`${where}: tone is ${TONES.join(', ')}`);
   return value;
 };
 
 function list(value, max, where, { min = 1 } = {}) {
-  if (!Array.isArray(value)) fail(`${where} tem de ser uma lista`);
-  if (value.length < min) fail(`${where} está vazio`);
-  if (value.length > max) fail(`${where} passa de ${max}`);
+  if (!Array.isArray(value)) fail(`${where} must be a list`);
+  if (value.length < min) fail(`${where} is empty`);
+  if (value.length > max) fail(`${where} has more than ${max}`);
   return value;
 }
 
@@ -89,9 +89,9 @@ function choices(value, where) {
 
 function block(input, index, itemIds) {
   const at = `blocks[${index}]`;
-  if (!input || typeof input !== 'object') fail(`${at} tem de ser um objeto`);
+  if (!input || typeof input !== 'object') fail(`${at} must be an object`);
   if (!BLOCK_TYPES.includes(input.type))
-    fail(`${at}.type é ${BLOCK_TYPES.join(', ')}`);
+    fail(`${at}.type is ${BLOCK_TYPES.join(', ')}`);
   if (input.type === 'heading')
     return {
       type: 'heading',
@@ -111,7 +111,7 @@ function block(input, index, itemIds) {
           const where = `${at}.items[${position}]`;
           const delta = stat?.delta;
           if (delta !== undefined && delta !== null && !Number.isFinite(delta))
-            fail(`${where}.delta tem de ser um número`);
+            fail(`${where}.delta must be a number`);
           return {
             label: text(stat?.label, 40, `${where}.label`, {
               isRequired: true,
@@ -137,7 +137,7 @@ function block(input, index, itemIds) {
             isRequired: true,
           });
           if (!/^https:\/\/[^\s"'<>]+$/.test(src))
-            fail(`${where}.src é um endereço https`);
+            fail(`${where}.src is an https address`);
           return { src, caption: text(image.caption, 120, `${where}.caption`) };
         },
       ),
@@ -147,7 +147,7 @@ function block(input, index, itemIds) {
   if (input.type === 'videos') {
     const https = (value, where) => {
       if (!/^https:\/\/[^\s"'<>]+$/.test(value))
-        fail(`${where} é um endereço https`);
+        fail(`${where} is an https address`);
       return value;
     };
     return {
@@ -200,7 +200,7 @@ function block(input, index, itemIds) {
         const where = `${at}.items[${position}]`;
         const id = text(item?.id, 64, `${where}.id`, { isRequired: true });
         if (!ITEM_ID.test(id))
-          fail(`${where}.id tem letras, números e _.:- (até 64)`);
+          fail(`${where}.id has letters, numbers and _.:- (up to 64)`);
         if (itemIds.has(id)) fail(`${where}.id repete "${id}"`);
         itemIds.add(id);
         return {
@@ -219,12 +219,12 @@ function block(input, index, itemIds) {
 /** The artifact as the panel draws it, or an error that says exactly what is wrong. */
 export function validateArtifact(input) {
   if (!input || typeof input !== 'object' || Array.isArray(input))
-    fail('o artifact é um objeto {key, title, blocks}');
+    fail('the artifact is an object {key, title, blocks}');
   if (JSON.stringify(input).length > MAX_BYTES)
-    fail(`o artifact passa de ${MAX_BYTES / 1024} KB`);
+    fail(`the artifact is larger than ${MAX_BYTES / 1024} KB`);
   const key = text(input.key, 64, 'key', { isRequired: true });
   if (!KEY.test(key))
-    fail('key tem letras minúsculas, números e hífen (até 64)');
+    fail('key has lowercase letters, numbers and hyphens (up to 64)');
   const itemIds = new Set();
   const blocks = list(input.blocks, LIMITS.blocks, 'blocks').map(
     (each, index) => block(each, index, itemIds),
@@ -453,17 +453,17 @@ export function recordChoice(
   { itemId, value, note },
 ) {
   const artifact = fetchArtifactVersion(botId, artifactId, versionId);
-  if (!artifact) fail('artifact desconhecido');
+  if (!artifact) fail('unknown artifact');
   if (!artifact.isLatest)
     fail(
-      `há uma versão mais nova deste artifact (${artifact.latestVersion}); escolha nela`,
+      `there is a newer version of this artifact (${artifact.latestVersion}); choose in it`,
     );
   const target = choiceTarget(artifact.content, itemId);
   const choice = target?.choices?.find((each) => each.value === value);
-  if (!choice) fail('esta escolha não existe neste artifact');
-  if (artifact.choices[itemId]) fail('este item já foi respondido');
+  if (!choice) fail('this choice does not exist in this artifact');
+  if (artifact.choices[itemId]) fail('this item was already answered');
   const cleanNote = text(note, 2000, 'o recado');
-  if (choice.needsNote && !cleanNote) fail(`"${choice.label}" pede um recado`);
+  if (choice.needsNote && !cleanNote) fail(`"${choice.label}" asks for a note`);
   db.query(
     'INSERT INTO artifact_choices (artifact_id, version, item_id, value, label, note, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)',
   ).run(

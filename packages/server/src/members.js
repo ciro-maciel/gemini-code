@@ -47,12 +47,12 @@ export function listMembers(botId) {
 
 export function shareBot(bot, email, access) {
   const address = cleanEmail(email);
-  if (!EMAIL.test(address)) return 'e-mail inválido';
-  if (!ACCESS.includes(access)) return 'acesso inválido';
+  if (!EMAIL.test(address)) return 'invalid e-mail';
+  if (!ACCESS.includes(access)) return 'invalid access';
   const owner = db
     .query('SELECT email FROM accounts WHERE id = ?')
     .get(bot.accountId);
-  if (owner?.email === address) return 'esse e-mail é o seu';
+  if (owner?.email === address) return 'that e-mail is yours';
   db.query(
     'INSERT INTO bot_members (bot_id, email, access, created_at) VALUES (?, ?, ?, ?) ON CONFLICT (bot_id, email) DO UPDATE SET access = excluded.access',
   ).run(bot.id, address, access, now());

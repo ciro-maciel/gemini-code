@@ -158,10 +158,10 @@ export function listAccounts() {
 }
 
 export function setAccountStatus(accountId, status) {
-  if (!STATUSES.includes(status)) throw new Error('situação inválida');
+  if (!STATUSES.includes(status)) throw new Error('invalid status');
   const account = fetchAccount(accountId);
   if (!account) return null;
-  if (account.isOwner) throw new Error('o dono não pode ser bloqueado');
+  if (account.isOwner) throw new Error('the owner cannot be blocked');
   db.query('UPDATE accounts SET status = ? WHERE id = ?').run(
     status,
     accountId,

@@ -10,13 +10,13 @@ export const DEFAULT_TIMEZONE = 'America/Sao_Paulo';
 const TICK_MS = 20_000;
 
 const WEEKDAYS = [
-  'domingo',
-  'segunda',
-  'terça',
-  'quarta',
-  'quinta',
-  'sexta',
-  'sábado',
+  'Sunday',
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
 ];
 
 /** The UTC instant of a wall-clock time in a time zone ("2026-10-21T06:00" in São Paulo). */
@@ -24,7 +24,7 @@ export function zonedToInstant(local, timezone = DEFAULT_TIMEZONE) {
   const match = String(local).match(
     /^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})/,
   );
-  if (!match) throw new Error('horário inválido; use AAAA-MM-DDTHH:MM');
+  if (!match) throw new Error('invalid time; use YYYY-MM-DDTHH:MM');
   const [, year, month, day, hour, minute] = match.map(Number);
   const guess = Date.UTC(year, month - 1, day, hour, minute);
   // The zone's offset at that moment, read back through Intl.
@@ -66,15 +66,15 @@ function formatInZone(seconds, timezone) {
       .formatToParts(date)
       .map((part) => [part.type, part.value]),
   );
-  return `${parts.weekday}, ${parts.day}/${parts.month} às ${parts.hour}:${parts.minute}`;
+  return `${parts.weekday}, ${parts.day}/${parts.month} at ${parts.hour}:${parts.minute}`;
 }
 
 /** How a person would say the schedule: "Todo dia útil às 06:00". */
 export function describeSchedule(routine) {
   if (!routine.cron)
     return routine.runAt
-      ? `Uma vez, ${formatInZone(routine.runAt, routine.timezone)}`
-      : 'Sem horário';
+      ? `Once, ${formatInZone(routine.runAt, routine.timezone)}`
+      : 'No time set';
   const fields = routine.cron.trim().split(/\s+/);
   if (fields.length === 5) {
     const [minute, hour, dayOfMonth, month, weekday] = fields;
@@ -83,15 +83,15 @@ export function describeSchedule(routine) {
         ? `${hour.padStart(2, '0')}:${minute.padStart(2, '0')}`
         : null;
     if (time && dayOfMonth === '*' && month === '*') {
-      if (weekday === '*') return `Todo dia às ${time}`;
-      if (weekday === '1-5') return `Todo dia útil às ${time}`;
+      if (weekday === '*') return `Every day at ${time}`;
+      if (weekday === '1-5') return `Every weekday at ${time}`;
       if (weekday === '0,6' || weekday === '6,0')
-        return `Todo fim de semana às ${time}`;
+        return `Every weekend at ${time}`;
       if (/^[0-6]$/.test(weekday))
-        return `Toda ${WEEKDAYS[Number(weekday)]} às ${time}`;
+        return `Every ${WEEKDAYS[Number(weekday)]} at ${time}`;
     }
     if (time && /^\d+$/.test(dayOfMonth) && month === '*' && weekday === '*')
-      return `Todo dia ${dayOfMonth} do mês às ${time}`;
+      return `On day ${dayOfMonth} of every month at ${time}`;
   }
   return `Cron ${routine.cron}`;
 }
@@ -109,11 +109,11 @@ function nextRunFor({ cron, runAt, timezone }, fromSeconds = now()) {
 /** "daqui a 2 min", computed here: a model doing time arithmetic got it wrong. */
 export function describeWait(seconds, fromSeconds = now()) {
   const minutes = Math.round((seconds - fromSeconds) / 60);
-  if (minutes <= 0) return 'agora';
-  if (minutes < 60) return `daqui a ${minutes} min`;
+  if (minutes <= 0) return 'now';
+  if (minutes < 60) return `in ${minutes} min`;
   const hours = Math.floor(minutes / 60);
   const rest = minutes % 60;
-  if (hours < 48) return `daqui a ${hours} h${rest ? ` ${rest} min` : ''}`;
+  if (hours < 48) return `in ${hours} h${rest ? ` ${rest} min` : ''}`;
   return `daqui a ${Math.round(hours / 24)} dias`;
 }
 
@@ -164,22 +164,22 @@ export function createRoutine({
   createdBy = 'agent',
 }) {
   if (!ROUTINE_AUTHORS.includes(createdBy))
-    throw new Error("createdBy é 'person' ou 'agent'");
-  if (!String(name || '').trim()) throw new Error('dê um nome à rotina');
+    throw new Error("createdBy is 'person' or 'agent'");
+  if (!String(name || '').trim()) throw new Error('give the routine a name');
   if (!String(instruction || '').trim())
-    throw new Error('diga o que o bot deve fazer na rotina');
+    throw new Error('say what the bot should do in the routine');
   const cron = when.cron ? String(when.cron).trim() : null;
   const runAt = when.at ? zonedToInstant(when.at, timezone) : null;
   if (!cron && !runAt)
-    throw new Error('diga quando: um horário (at) ou uma repetição (cron)');
+    throw new Error('say when: a time (at) or a repetition (cron)');
   if (cron) {
     try {
       new Cron(cron, { timezone, paused: true });
     } catch (error) {
-      throw new Error(`repetição inválida: ${error.message}`);
+      throw new Error(`invalid repetition: ${error.message}`);
     }
   }
-  if (runAt && runAt <= now()) throw new Error('esse horário já passou');
+  if (runAt && runAt <= now()) throw new Error('that time has already passed');
   const id = newId();
   const nextRunAt = nextRunFor({ cron, runAt, timezone });
   db.query(
@@ -207,7 +207,7 @@ export function updateRoutine(
   const routine = fetchRoutine(routineId);
   if (!routine) return null;
   if (createdBy !== undefined && !ROUTINE_AUTHORS.includes(createdBy))
-    throw new Error("createdBy é 'person' ou 'agent'");
+    throw new Error("createdBy is 'person' or 'agent'");
   // 'person' comes only from the owner's route (the owner saying it is their order); a rewrite from the repository passes 'agent'.
   if (createdBy !== undefined)
     db.query('UPDATE routines SET created_by = ? WHERE id = ?').run(

@@ -128,7 +128,7 @@ function remember(accountId, write, remove) {
 /** Writes what changed since the last sync as one commit (GitHub) or local revision (workspace). */
 export async function syncAccount(
   accountId,
-  { message = 'Atualizado pelo Gemini Code', author = null } = {},
+  { message = 'Updated by Gemini Code', author = null } = {},
 ) {
   if (!isDocumentsReady()) return null;
   const state = accountState(accountId);
@@ -309,10 +309,9 @@ export function applyEdit(accountId, path, content) {
 
 /** A person saved a file in the panel: one commit/revision in their name, then the central reads it back. */
 export async function saveFile(accountId, filePath, content) {
-  if (!isDocumentsReady())
-    throw new Error('o armazenamento de documentos não está configurado');
+  if (!isDocumentsReady()) throw new Error('document storage is not set up');
   const clean = cleanRepoPath(filePath);
-  if (!isSafePath(clean)) throw new Error('caminho inválido');
+  if (!isSafePath(clean)) throw new Error('invalid path');
   const account = fetchAccount(accountId);
   await syncAccount(accountId);
   if (!isGithubReady()) {
@@ -337,7 +336,7 @@ export async function saveFile(accountId, filePath, content) {
     `Editado no Assistant: ${clean}`,
     {
       name: account?.name || account?.email || 'Pessoa',
-      email: account?.email || 'sem-email@assistant',
+      email: account?.email || 'no-email@gemini-code.invalid',
     },
   );
   repoChanged(accountId);
@@ -348,7 +347,7 @@ export async function saveFile(accountId, filePath, content) {
 
 const authorOf = (account) => ({
   name: account?.name || account?.email || 'Pessoa',
-  email: account?.email || 'sem-email@assistant',
+  email: account?.email || 'no-email@gemini-code.invalid',
 });
 // Each agent's default work folder (`agents/<slug>/docs`) is writable as normal documents;
 // the central metadata roots (`agents/`, `agents/<slug>`, `skills/`, `templates/`) are managed via panel.
@@ -363,26 +362,25 @@ const isSafePath = (value) =>
   Boolean(value) &&
   !value.split('/').some((part) => !part || part === '.' || part === '..');
 
-/** Files the person sent from the panel ("Enviar arquivos pra cá"): one commit/revision in their name. */
+/** Files the person sent from the panel ("Upload files here"): one commit/revision in their name. */
 export async function uploadFiles(accountId, folder, files) {
-  if (!isDocumentsReady())
-    throw new Error('o armazenamento de documentos não está configurado');
+  if (!isDocumentsReady()) throw new Error('document storage is not set up');
   const where = cleanRepoPath(folder);
   if (where && (!isSafePath(where) || isCentralFolder(where)))
     throw new Error(
-      'envie pra uma pasta de trabalho, fora de agents/, skills/ e templates/',
+      'upload to a work folder, outside agents/, skills/ and templates/',
     );
   const write = files.map((file) => ({
     path: where ? `${where}/${file.name}` : file.name,
     bytes: file.bytes,
   }));
   if (write.some((file) => !isSafePath(file.path) || isOwned(file.path)))
-    throw new Error('nome de arquivo inválido');
+    throw new Error('invalid file name');
   await syncAccount(accountId);
   const msg =
     write.length === 1
-      ? `Enviado pelo Gemini Code: ${write[0].path}`
-      : `${write.length} arquivos enviados pelo Gemini Code`;
+      ? `Uploaded from Gemini Code: ${write[0].path}`
+      : `${write.length} files uploaded from Gemini Code`;
   if (!isGithubReady()) {
     writeLocalFiles(
       accountId,
@@ -402,8 +400,8 @@ export async function uploadFiles(accountId, folder, files) {
     repoNameOf(accountId),
     { write },
     write.length === 1
-      ? `Enviado pelo Assistant: ${write[0].path}`
-      : `${write.length} arquivos enviados pelo Assistant`,
+      ? `Uploaded from Gemini Code: ${write[0].path}`
+      : `${write.length} files uploaded from Gemini Code`,
     authorOf(fetchAccount(accountId)),
   );
   repoChanged(accountId);
@@ -417,20 +415,19 @@ export async function uploadFiles(accountId, folder, files) {
 
 /** A work folder renamed: everything in it moves in one commit/revision. */
 export async function renameFolder(accountId, from, to) {
-  if (!isDocumentsReady())
-    throw new Error('o armazenamento de documentos não está configurado');
+  if (!isDocumentsReady()) throw new Error('document storage is not set up');
   const [source, target] = [cleanRepoPath(from), cleanRepoPath(to)];
   if (!isSafePath(source) || !isSafePath(target))
-    throw new Error('caminho inválido');
+    throw new Error('invalid path');
   if (isCentralFolder(source) || isCentralFolder(target))
     throw new Error(
-      'as pastas de agentes, modelos e habilidades mudam de nome pelo painel',
+      'agent, template and skill folders are renamed from the dashboard',
     );
   if (!isGithubReady()) {
     const inside = listLocalTree().filter((entry) =>
       entry.path.startsWith(`${source}/`),
     );
-    if (!inside.length) throw new Error('pasta vazia ou desconhecida');
+    if (!inside.length) throw new Error('empty or unknown folder');
     const write = [];
     for (const entry of inside) {
       const file = readLocalFile(entry.path);
@@ -443,7 +440,7 @@ export async function renameFolder(accountId, from, to) {
     writeLocalFiles(
       accountId,
       { write, remove: inside.map((entry) => entry.path) },
-      `Renomeado no Gemini Code: ${source} para ${target}`,
+      `Renamed in Gemini Code: ${source} to ${target}`,
       authorOf(fetchAccount(accountId)),
     );
     repoChanged(accountId);
@@ -458,7 +455,7 @@ export async function renameFolder(accountId, from, to) {
   const inside = (await listTree(name)).filter((entry) =>
     entry.path.startsWith(`${source}/`),
   );
-  if (!inside.length) throw new Error('pasta vazia ou desconhecida');
+  if (!inside.length) throw new Error('empty or unknown folder');
   const write = [];
   for (const entry of inside)
     write.push({
@@ -468,7 +465,7 @@ export async function renameFolder(accountId, from, to) {
   await commitFiles(
     name,
     { write, remove: inside.map((entry) => entry.path) },
-    `Renomeado no Assistant: ${source} para ${target}`,
+    `Renamed in Gemini Code: ${source} to ${target}`,
     authorOf(fetchAccount(accountId)),
   );
   repoChanged(accountId);
@@ -483,19 +480,18 @@ export async function renameFolder(accountId, from, to) {
 
 /** A work file or a whole work folder deleted from the panel: one commit/revision in the person's name. */
 export async function removePath(accountId, filePath) {
-  if (!isDocumentsReady())
-    throw new Error('o armazenamento de documentos não está configurado');
+  if (!isDocumentsReady()) throw new Error('document storage is not set up');
   const where = cleanRepoPath(filePath);
-  if (!isSafePath(where)) throw new Error('caminho inválido');
+  if (!isSafePath(where)) throw new Error('invalid path');
   if (isCentralFolder(where) || isOwned(where))
     throw new Error(
-      'agentes, modelos e habilidades se apagam pelo painel, não como arquivos',
+      'agents, templates and skills are deleted from the dashboard, not as files',
     );
   if (!isGithubReady()) {
     const remove = listLocalTree()
       .map((entry) => entry.path)
       .filter((entry) => entry === where || entry.startsWith(`${where}/`));
-    if (!remove.length) throw new Error('arquivo ou pasta desconhecida');
+    if (!remove.length) throw new Error('unknown file or folder');
     writeLocalFiles(
       accountId,
       { remove },
@@ -510,7 +506,7 @@ export async function removePath(accountId, filePath) {
   const remove = (await listTree(name))
     .map((entry) => entry.path)
     .filter((entry) => entry === where || entry.startsWith(`${where}/`));
-  if (!remove.length) throw new Error('arquivo ou pasta desconhecida');
+  if (!remove.length) throw new Error('unknown file or folder');
   await commitFiles(
     name,
     { remove },
@@ -539,7 +535,7 @@ const OWNED_HINT =
 /** The account's repository, made the first time an agent needs it. */
 async function repoFor(accountId) {
   if (!isGithubReady())
-    throw new Error('os arquivos no GitHub não estão ligados nesta central');
+    throw new Error('GitHub files are not set up on this server');
   if (!fetchAccount(accountId)?.repo) await syncAccount(accountId);
   return repoNameOf(accountId);
 }
@@ -547,7 +543,7 @@ async function repoFor(accountId) {
 /** The repository's files, or those inside one folder, with their sizes. */
 export async function listWorkFiles(accountId, folder = '') {
   const where = cleanRepoPath(folder);
-  if (where && !isSafePath(where)) throw new Error('pasta inválida');
+  if (where && !isSafePath(where)) throw new Error('invalid folder');
   if (!isGithubReady()) {
     if (!syncedAtOf(accountId)) await syncAccount(accountId);
     const tree = listLocalTree();
@@ -567,7 +563,7 @@ export async function listWorkFiles(accountId, folder = '') {
 
 export async function readWorkFile(accountId, filePath) {
   const where = cleanRepoPath(filePath);
-  if (!isSafePath(where)) throw new Error('caminho inválido');
+  if (!isSafePath(where)) throw new Error('invalid path');
   if (!isGithubReady()) {
     if (!syncedAtOf(accountId)) await syncAccount(accountId);
     const file = readLocalFile(where);
@@ -599,12 +595,12 @@ export async function readWorkFile(accountId, filePath) {
 /** A file written by an agent: one commit/revision in its name; the central's own files are refused. */
 export async function writeWorkFile(bot, filePath, content) {
   const where = cleanRepoPath(filePath);
-  if (!isSafePath(where)) throw new Error('caminho inválido');
+  if (!isSafePath(where)) throw new Error('invalid path');
   if (isOwned(where)) throw new Error(OWNED_HINT);
   const text = String(content ?? '');
   if (Buffer.byteLength(text) > MAX_WRITE_BYTES)
     throw new Error(
-      'arquivo acima de 1 MB: gere no computador, ele volta como commit no fim do turno',
+      'file over 1 MB: make it on the computer, it comes back as a commit at the end of the turn',
     );
   if (!isGithubReady()) {
     if (!syncedAtOf(bot.accountId)) await syncAccount(bot.accountId);
@@ -614,7 +610,7 @@ export async function writeWorkFile(bot, filePath, content) {
       bot.accountId,
       { write: [{ path: where, content: text }] },
       `${where} via Gemini Code`,
-      { name: `${bot.name} (agente)`, email: 'agent@gemini-code.local' },
+      { name: `${bot.name} (agent)`, email: 'agent@gemini-code.local' },
     );
     repoChanged(bot.accountId);
     return { path: where, isChanged: true, isNew: !current };
@@ -634,7 +630,7 @@ export async function writeWorkFile(bot, filePath, content) {
 
 export async function deleteWorkFile(bot, filePath) {
   const where = cleanRepoPath(filePath);
-  if (!isSafePath(where)) throw new Error('caminho inválido');
+  if (!isSafePath(where)) throw new Error('invalid path');
   if (isOwned(where)) throw new Error(OWNED_HINT);
   if (!isGithubReady()) {
     if (!syncedAtOf(bot.accountId)) await syncAccount(bot.accountId);
@@ -643,7 +639,7 @@ export async function deleteWorkFile(bot, filePath) {
       bot.accountId,
       { remove: [where] },
       `Apagado via Gemini Code: ${where}`,
-      { name: `${bot.name} (agente)`, email: 'agent@gemini-code.local' },
+      { name: `${bot.name} (agent)`, email: 'agent@gemini-code.local' },
     );
     repoChanged(bot.accountId);
     return { path: where, isDeleted: true };

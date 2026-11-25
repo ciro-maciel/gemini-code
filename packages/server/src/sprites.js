@@ -59,7 +59,8 @@ async function readNdjsonOutcome(response) {
     .filter(Boolean)
     .map((line) => JSON.parse(line));
   const failure = lines.find((line) => line.type === 'error');
-  if (failure) throw new Error(failure.error || 'falha sem descrição');
+  if (failure)
+    throw new Error(failure.error || 'failure without a description');
   return lines;
 }
 
@@ -168,7 +169,7 @@ export async function runCommand(
   const clean = raw.replace(/[\x00-\x08]/g, '');
   const endIndex = clean.lastIndexOf(END_MARK);
   if (endIndex === -1)
-    throw new Error('o computador não devolveu o resultado do comando');
+    throw new Error("the computer did not return the command's result");
 
   const lines = clean.slice(0, endIndex).split('\n');
   // bash -l on the Sprite prints readline warnings to stderr before the

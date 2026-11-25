@@ -31,8 +31,7 @@ async function tellAlarm() {
       body: JSON.stringify({ at }),
       signal: AbortSignal.timeout(10_000),
     });
-    if (!response.ok)
-      throw new Error(`o despertador respondeu ${response.status}`);
+    if (!response.ok) throw new Error(`the alarm answered ${response.status}`);
   } catch (error) {
     // Logged, not thrown: the alarm also learns the time from /api/wake's answer.
     console.error('alarm', error.message);

@@ -23,9 +23,9 @@ export function emptyReplyNudge(finishReason) {
 
 /** What the person reads when the agent stopped without an answer. */
 export function emptyReplyStop({ finishReason, model }) {
-  const who = model ? `o modelo (${model})` : 'o modelo';
+  const who = model ? `the model (${model})` : 'the model';
   const why = isCut(finishReason)
-    ? `${who} gastou todo o limite de resposta antes de escrever qualquer coisa`
-    : `${who} respondeu vazio, sem texto e sem nenhuma ação`;
-  return `Parei sem conseguir responder: duas vezes seguidas ${why}. O que fiz até aqui está na conversa acima. Peça para eu continuar em partes menores, ou escolha outro modelo no chip de modelo.`;
+    ? `${who} spent the whole answer limit before writing anything`
+    : `${who} answered empty, with no text and no action`;
+  return `I stopped without an answer: twice in a row ${why}. What I did so far is in the conversation above. Ask me to continue in smaller parts, or pick another model in the model chip.`;
 }

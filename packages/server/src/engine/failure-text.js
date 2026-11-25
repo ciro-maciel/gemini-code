@@ -18,7 +18,7 @@ export const isContextOverflow = (error) =>
 
 /** What a failed model call means to the person, in one or two sentences. */
 export function modelFailureText(error, { model, provider }) {
-  const name = providerOf(provider)?.name ?? 'O provedor de IA';
+  const name = providerOf(provider)?.name ?? 'The AI provider';
   const raw = String(error?.message ?? '');
   const status = statusOf(error);
   if (
@@ -26,26 +26,26 @@ export function modelFailureText(error, { model, provider }) {
     error?.name === 'AbortError' ||
     /timed? ?out|fetch failed|ECONNRESET/i.test(raw)
   )
-    return `${name} demorou demais para responder. Mande a mensagem de novo.`;
+    return `${name} took too long to answer. Send the message again.`;
   if (status === 401 || status === 403)
-    return `${name} recusou a chave desta conta de IA. Confira a chave em Configurações, Contas de IA.`;
+    return `${name} refused this AI account's key. Check the key in Settings, AI Accounts.`;
   if (
     status === 402 ||
     /credit balance|insufficient.{0,20}(?:credit|funds|balance)|billing|quota/i.test(
       raw,
     )
   )
-    return `Acabou o crédito na conta ${name}. Recarregue a conta e mande a mensagem de novo.`;
+    return `The ${name} account is out of credit. Top it up and send the message again.`;
   if (
     status === 404 ||
     /not_found|model.{0,20}(?:not found|does not exist)/i.test(raw)
   )
-    return `O modelo ${model} não existe na conta ${name}. Escolha outro no chip de modelo e mande a mensagem de novo.`;
+    return `The model ${model} does not exist on the ${name} account. Pick another in the model chip and send the message again.`;
   if (status === 429)
-    return `${name} chegou ao limite de chamadas por agora. Espere um minuto e mande a mensagem de novo.`;
+    return `${name} reached its call limit for now. Wait a minute and send the message again.`;
   if (isContextOverflow(error))
-    return `A conversa ficou longa demais para o modelo ${model}. Comece uma conversa nova ou escolha um modelo com mais contexto.`;
+    return `The conversation got too long for the model ${model}. Start a new conversation or pick a model with more context.`;
   if (status >= 500 || /overloaded/i.test(raw))
-    return `${name} está sobrecarregado ou fora do ar agora. Mande a mensagem de novo em alguns minutos.`;
-  return `${name} não conseguiu responder agora. Mande a mensagem de novo; se repetir, escolha outro modelo no chip de modelo.`;
+    return `${name} is overloaded or down right now. Send the message again in a few minutes.`;
+  return `${name} could not answer right now. Send the message again; if it happens again, pick another model in the model chip.`;
 }

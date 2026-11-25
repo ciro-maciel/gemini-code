@@ -135,6 +135,6 @@ describe('compacting a full conversation', () => {
         account: null,
         messages: conversation,
       }),
-    ).rejects.toThrow('vazio');
+    ).rejects.toThrow('empty');
   });
 });

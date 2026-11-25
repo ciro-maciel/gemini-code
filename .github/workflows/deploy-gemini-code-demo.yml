@@ -9,6 +9,12 @@ name: Gemini Code — demo
 #   /gemini-code/preview/<branch>/ and comments the link on the pull request
 # - closing the pull request (merged or not) removes its preview
 #
+# Each target has its own queue: GitHub keeps only one waiting run per
+# concurrency group and cancels the older one, which once dropped a preview's
+# removal behind a push to main. Runs of different targets may write gh-pages
+# at the same time; each writes only its own folder and retries its push with
+# a rebase, so they never conflict.
+#
 # Pull requests from forks get no preview: their workflow has no write token.
 
 on:
@@ -25,9 +31,8 @@ permissions:
   contents: write
   pull-requests: write
 
-# One writer at a time on the gh-pages branch.
 concurrency:
-  group: demo-pages
+  group: demo-${{ github.event.pull_request.number && format('pr-{0}', github.event.pull_request.number) || 'main' }}
   cancel-in-progress: false
 
 jobs:
@@ -43,8 +48,9 @@ jobs:
         name: Where this build lives
         env:
           BRANCH: ${{ github.head_ref }}
+          EVENT: ${{ github.event_name }}
         run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
+          if [ "$EVENT" = "pull_request" ]; then
             slug=$(printf '%s' "$BRANCH" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+//; s/-+$//' | cut -c1-40)
             echo "base=/gemini-code/preview/$slug/" >> "$GITHUB_OUTPUT"
             echo "dir=preview/$slug" >> "$GITHUB_OUTPUT"
@@ -63,15 +69,35 @@ jobs:
         env:
           DEMO_BASE: ${{ steps.where.outputs.base }}
           DEMO_SITE_BASE: /gemini-code/
-      - uses: peaceiris/actions-gh-pages@v4
+      - uses: actions/checkout@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: gh-pages
-          publish_dir: packages/dashboard/dist/demo
-          destination_dir: ${{ steps.where.outputs.dir }}
-          # The root build keeps the previews; a preview keeps the root.
-          keep_files: true
-          commit_message: 'demo: ${{ steps.where.outputs.dir }} from ${{ github.sha }}'
+          ref: gh-pages
+          path: site
+          fetch-depth: 0
+      - name: Write this build into gh-pages
+        env:
+          DIR: ${{ steps.where.outputs.dir }}
+          SHA: ${{ github.sha }}
+        run: |
+          cd site
+          if [ "$DIR" = "." ]; then
+            # The root build replaces the root and keeps every preview.
+            find . -mindepth 1 -maxdepth 1 ! -name .git ! -name preview -exec rm -rf {} +
+          else
+            rm -rf "$DIR"
+            mkdir -p "$DIR"
+          fi
+          cp -R ../packages/dashboard/dist/demo/. "$DIR/"
+          touch .nojekyll
+          git add -A
+          if git diff --cached --quiet; then echo "nothing changed"; exit 0; fi
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -qm "demo: $DIR from $SHA"
+          for attempt in 1 2 3 4 5; do
+            git push origin HEAD:gh-pages && exit 0
+            sleep $((attempt * 3))
+            git pull --rebase -q origin gh-pages
+          done
+          exit 1
       - name: Link the preview on the pull request
         if: github.event_name == 'pull_request'
         uses: actions/github-script@v7
@@ -80,7 +106,7 @@ jobs:
         with:
           script: |
             const marker = '<!-- gemini-code-demo-preview -->';
-            const body = `${marker}\n**Demonstração deste ramo:** ${process.env.URL}\n\nAtualiza a cada push no ramo e some quando o pull request fecha. Leva um ou dois minutos para o GitHub Pages servir a versão nova.`;
+            const body = `${marker}\n**Demo of this branch:** ${process.env.URL}\n\nIt updates on every push to the branch and goes away when the pull request closes. GitHub Pages takes a minute or two to serve a new version.`;
             const { owner, repo } = context.repo;
             const issue_number = context.issue.number;
             const comments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number });
@@ -98,6 +124,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: gh-pages
+          fetch-depth: 0
       - name: Remove this branch's preview
         env:
           BRANCH: ${{ github.head_ref }}
@@ -106,4 +133,9 @@ jobs:
           [ -d "preview/$slug" ] || { echo "no preview for $slug"; exit 0; }
           git rm -rq "preview/$slug"
           git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -qm "demo: remove preview/$slug"
-          git push origin gh-pages
+          for attempt in 1 2 3 4 5; do
+            git push origin HEAD:gh-pages && exit 0
+            sleep $((attempt * 3))
+            git pull --rebase -q origin gh-pages
+          done
+          exit 1

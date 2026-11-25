@@ -867,7 +867,7 @@ export async function runBaseTool({ bot, task, name, args, setEnabledTools }) {
       return connectService({ bot, task, args });
 
     default:
-      throw new Error(`ferramenta desconhecida: ${name}`);
+      throw new Error(`unknown tool: ${name}`);
   }
 }
 

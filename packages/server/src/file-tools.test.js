@@ -106,7 +106,7 @@ describe('the agents file tools, on the repository and never on the computer', (
     ).rejects.toThrow('arquivo é da central');
     await expect(
       tool('file_write', { path: '../fora.md', content: 'x' }),
-    ).rejects.toThrow('caminho inválido');
+    ).rejects.toThrow('invalid path');
     await expect(tool('file_delete', { path: 'README.md' })).rejects.toThrow(
       'arquivo é da central',
     );
@@ -121,7 +121,7 @@ describe('the agents file tools, on the repository and never on the computer', (
     });
     expect(verdict).toMatchObject({
       decision: 'ask',
-      summary: 'Apagar relatorios/ep39.md do repositório',
+      summary: 'Delete relatorios/ep39.md from the repository',
     });
     expect(
       (
@@ -181,7 +181,7 @@ describe('the agents file tools, on the repository and never on the computer', (
     );
     await expect(
       run('file_write', { path: '../fora.md', content: 'x' }),
-    ).rejects.toThrow('caminho inválido');
+    ).rejects.toThrow('invalid path');
   });
 
   test('a big file comes in parts with the way to the rest, past what the central used to keep, and a JSON by its path', async () => {

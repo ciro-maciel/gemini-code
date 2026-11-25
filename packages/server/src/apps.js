@@ -5,12 +5,12 @@
 // search in the same screen, and the bot connects it on its own.
 
 export const APP_CATEGORIES = [
-  { id: 'productivity', label: 'Produtividade' },
-  { id: 'code', label: 'Código' },
+  { id: 'productivity', label: 'Productivity' },
+  { id: 'code', label: 'Code' },
   { id: 'design', label: 'Design' },
-  { id: 'communication', label: 'Comunicação' },
-  { id: 'data', label: 'Pesquisa' },
-  { id: 'payments', label: 'Pagamentos' },
+  { id: 'communication', label: 'Communication' },
+  { id: 'data', label: 'Research' },
+  { id: 'payments', label: 'Payments' },
 ];
 
 export const APPS = [
@@ -21,7 +21,7 @@ export const APPS = [
     domain: 'notion.so',
     serverName: 'com.notion/mcp',
     url: 'https://mcp.notion.com/mcp',
-    description: 'Ler e escrever páginas e bancos de dados',
+    description: 'Read and write pages and databases',
     isRecommended: true,
   },
   {
@@ -31,7 +31,7 @@ export const APPS = [
     domain: 'linear.app',
     serverName: 'app.linear/linear',
     url: 'https://mcp.linear.app/mcp',
-    description: 'Issues, projetos e ciclos',
+    description: 'Issues, projects and cycles',
     isRecommended: true,
   },
   {
@@ -51,7 +51,7 @@ export const APPS = [
     domain: 'monday.com',
     serverName: 'com.monday/monday.com',
     url: 'https://mcp.monday.com/mcp',
-    description: 'Quadros, itens e atualizações',
+    description: 'Boards, items and updates',
   },
   {
     id: 'airtable',
@@ -60,7 +60,7 @@ export const APPS = [
     domain: 'airtable.com',
     serverName: 'com.airtable/mcp',
     url: 'https://mcp.airtable.com/mcp',
-    description: 'Bases, tabelas e registros',
+    description: 'Bases, tables and records',
   },
   {
     id: 'todoist',
@@ -69,7 +69,7 @@ export const APPS = [
     domain: 'todoist.com',
     serverName: 'net.todoist/mcp',
     url: 'https://ai.todoist.net/mcp',
-    description: 'Tarefas e projetos pessoais',
+    description: 'Personal tasks and projects',
   },
   {
     id: 'zapier',
@@ -78,7 +78,7 @@ export const APPS = [
     domain: 'zapier.com',
     serverName: 'com.zapier/mcp',
     url: 'https://mcp.zapier.com/api/v1/connect',
-    description: 'Milhares de apps pelas suas automações',
+    description: 'Thousands of apps through your automations',
   },
 
   {
@@ -88,7 +88,7 @@ export const APPS = [
     domain: 'github.com',
     serverName: 'io.github.github/github-mcp-server',
     url: 'https://api.githubcopilot.com/mcp/',
-    description: 'Repositórios, issues e pull requests',
+    description: 'Repositories, issues and pull requests',
     isRecommended: true,
   },
   {
@@ -98,7 +98,7 @@ export const APPS = [
     domain: 'cloudflare.com',
     serverName: 'com.cloudflare.mcp/mcp',
     url: 'https://bindings.mcp.cloudflare.com/mcp',
-    description: 'Workers, KV, R2 e D1',
+    description: 'Workers, KV, R2 and D1',
   },
   {
     id: 'sentry',
@@ -107,7 +107,7 @@ export const APPS = [
     domain: 'sentry.io',
     serverName: 'io.github.getsentry/sentry-mcp',
     url: 'https://mcp.sentry.dev/mcp',
-    description: 'Erros e desempenho em produção',
+    description: 'Errors and performance in production',
   },
   {
     id: 'neon',
@@ -116,7 +116,7 @@ export const APPS = [
     domain: 'neon.tech',
     serverName: 'com.neon/mcp',
     url: 'https://mcp.neon.tech/mcp',
-    description: 'Bancos Postgres e branches',
+    description: 'Postgres databases and branches',
   },
   {
     id: 'postman',
@@ -125,7 +125,7 @@ export const APPS = [
     domain: 'postman.com',
     serverName: 'com.postman/postman-mcp-server',
     url: 'https://mcp.postman.com/mcp',
-    description: 'Coleções e testes de API',
+    description: 'API collections and tests',
   },
   {
     id: 'context7',
@@ -134,7 +134,7 @@ export const APPS = [
     domain: 'context7.com',
     serverName: 'io.github.upstash/context7',
     url: 'https://mcp.context7.com/mcp',
-    description: 'Documentação atual de bibliotecas',
+    description: 'Current library documentation',
   },
   {
     id: 'jam',
@@ -143,7 +143,7 @@ export const APPS = [
     domain: 'jam.dev',
     serverName: 'dev.jam/jam',
     url: 'https://mcp.jam.dev/mcp',
-    description: 'Relatos de bug com tela e console',
+    description: 'Bug reports with screen and console',
   },
 
   {
@@ -153,7 +153,7 @@ export const APPS = [
     domain: 'figma.com',
     serverName: 'com.figma.mcp/mcp',
     url: 'https://mcp.figma.com/mcp',
-    description: 'Arquivos, frames e componentes',
+    description: 'Files, frames and components',
     isRecommended: true,
   },
   {
@@ -163,7 +163,7 @@ export const APPS = [
     domain: 'canva.com',
     serverName: 'com.canva.mcp/mcp',
     url: 'https://mcp.canva.com/mcp',
-    description: 'Criar e editar designs',
+    description: 'Create and edit designs',
   },
   {
     id: 'miro',
@@ -172,7 +172,7 @@ export const APPS = [
     domain: 'miro.com',
     serverName: 'io.github.miroapp/mcp-server',
     url: 'https://mcp.miro.com/',
-    description: 'Quadros e diagramas',
+    description: 'Boards and diagrams',
   },
   {
     id: 'webflow',
@@ -181,7 +181,7 @@ export const APPS = [
     domain: 'webflow.com',
     serverName: 'com.webflow/mcp',
     url: 'https://mcp.webflow.com/mcp',
-    description: 'Sites, páginas e CMS',
+    description: 'Sites, pages and CMS',
   },
   {
     id: 'wix',
@@ -191,7 +191,7 @@ export const APPS = [
     serverName: 'com.wix/mcp',
     url: 'https://mcp.wix.com/sse',
     transport: 'sse',
-    description: 'Sites e lojas',
+    description: 'Sites and stores',
   },
 
   {
@@ -201,7 +201,7 @@ export const APPS = [
     domain: 'gmail.com',
     serverName: 'com.mintmcp/gmail',
     url: 'https://gmail.mintmcp.com/mcp',
-    description: 'Ler, organizar e rascunhar e-mails',
+    description: 'Read, organize and draft e-mails',
     isRecommended: true,
   },
 
@@ -212,7 +212,7 @@ export const APPS = [
     domain: 'huggingface.co',
     serverName: 'co.huggingface/hf-mcp-server',
     url: 'https://huggingface.co/mcp?login',
-    description: 'Modelos, datasets e Spaces',
+    description: 'Models, datasets and Spaces',
   },
   {
     id: 'exa',
@@ -221,7 +221,7 @@ export const APPS = [
     domain: 'exa.ai',
     serverName: 'ai.exa/exa',
     url: 'https://mcp.exa.ai/mcp',
-    description: 'Busca na web feita para agentes',
+    description: 'Web search made for agents',
   },
 
   {
@@ -231,7 +231,7 @@ export const APPS = [
     domain: 'stripe.com',
     serverName: 'com.stripe/mcp',
     url: 'https://mcp.stripe.com',
-    description: 'Clientes, cobranças e assinaturas',
+    description: 'Customers, charges and subscriptions',
   },
   {
     id: 'paypal',
@@ -240,7 +240,7 @@ export const APPS = [
     domain: 'paypal.com',
     serverName: 'com.paypal.mcp/mcp',
     url: 'https://mcp.paypal.com/mcp',
-    description: 'Pedidos, faturas e transações',
+    description: 'Orders, invoices and transactions',
   },
 ];
 

@@ -59,7 +59,7 @@ async function installationToken() {
   if (!installation?.id)
     throw new GithubError(
       500,
-      'o app do GitHub não está instalado na organização',
+      'the GitHub app is not installed in the organization',
     );
   const created = await (
     await request(
@@ -105,10 +105,10 @@ export async function ensureRepo(name, readme) {
     private: true,
     auto_init: false,
     description:
-      'Os agentes, os modelos e as habilidades desta conta do Assistant.',
+      'The agents, templates and skills of this Gemini Code account.',
   });
   await call('PUT', `${repoPath(name)}/contents/README.md`, {
-    message: 'O repositório do Assistant',
+    message: 'The Gemini Code repository',
     content: Buffer.from(readme).toString('base64'),
   });
   return call('GET', repoPath(name));

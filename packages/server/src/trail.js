@@ -158,7 +158,7 @@ export function recordOutcome({
   kind,
 }) {
   if (!OUTCOME_KINDS.includes(kind))
-    throw new Error(`desfecho desconhecido: ${kind}`);
+    throw new Error(`unknown outcome: ${kind}`);
   const { account_id: accountId } = ownerOf(botId);
   try {
     db.query(
@@ -180,7 +180,7 @@ export function recordFailure({
   args,
 }) {
   if (!FAILURE_KINDS.includes(kind))
-    throw new Error(`falha desconhecida: ${kind}`);
+    throw new Error(`unknown failure: ${kind}`);
   const bot = ownerOf(botId);
   try {
     db.query(
@@ -227,25 +227,25 @@ export function sweepTimedOutApprovals() {
 // --- Reading: the person's trail -----------------------------------------
 
 export const RULE_LABEL = {
-  free: 'Livre (regra sua)',
-  confirm: 'Confirma (regra sua)',
-  human: 'Só humano (regra sua)',
-  judged: 'Risco julgado',
-  service: 'Ação de aplicativo',
-  granted: 'Aprovação estendida',
-  unknown: 'Sem regra conhecida',
-  judge_unavailable: 'Sem avaliação',
+  free: 'Free (your rule)',
+  confirm: 'Confirm (your rule)',
+  human: 'People only (your rule)',
+  judged: 'Risk judged',
+  service: 'App action',
+  granted: 'Extended approval',
+  unknown: 'No known rule',
+  judge_unavailable: 'Not assessed',
 };
 
 export const OUTCOME_LABEL = {
-  ran: 'Rodou',
-  refused: 'Não permitido',
-  pending: 'Esperando você',
-  approved: 'Aprovada',
-  approved_task: 'Aprovada até o fim da tarefa',
-  approved_always: 'Aprovada para sempre',
-  rejected: 'Recusada',
-  cancelled: 'Cancelada com a tarefa',
+  ran: 'Ran',
+  refused: 'Not allowed',
+  pending: 'Waiting for you',
+  approved: 'Approved',
+  approved_task: 'Approved until the task ends',
+  approved_always: 'Approved for good',
+  rejected: 'Declined',
+  cancelled: 'Cancelled with the task',
 };
 
 function outcomeOf(row) {
@@ -308,23 +308,23 @@ const isoOrEmpty = (seconds) =>
   seconds ? new Date(seconds * 1000).toISOString() : '';
 
 const CSV_COLUMNS = [
-  ['data_hora', (entry) => isoOrEmpty(entry.createdAt)],
-  ['tarefa', (entry) => entry.taskTitle ?? ''],
-  ['acao', (entry) => entry.action],
-  ['ferramenta', (entry) => entry.toolName],
-  ['decisao', (entry) => entry.ruleLabel],
+  ['date_time', (entry) => isoOrEmpty(entry.createdAt)],
+  ['task', (entry) => entry.taskTitle ?? ''],
+  ['action', (entry) => entry.action],
+  ['tool', (entry) => entry.toolName],
+  ['decision', (entry) => entry.ruleLabel],
   [
-    'risco',
+    'risk',
     (entry) =>
-      entry.risk === 'high' ? 'alto' : entry.risk === 'low' ? 'baixo' : '',
+      entry.risk === 'high' ? 'high' : entry.risk === 'low' ? 'low' : '',
   ],
-  ['motivo', (entry) => entry.reason ?? ''],
-  ['resultado', (entry) => entry.outcomeLabel],
-  ['decidido_por', (entry) => entry.resolvedBy ?? ''],
-  ['decidido_em', (entry) => isoOrEmpty(entry.resolvedAt)],
-  ['sem_resposta_desde', (entry) => isoOrEmpty(entry.timedOutAt)],
-  ['observacao', (entry) => entry.note ?? ''],
-  ['ponto_de_restauracao', (entry) => entry.checkpointId ?? ''],
+  ['reason', (entry) => entry.reason ?? ''],
+  ['outcome', (entry) => entry.outcomeLabel],
+  ['decided_by', (entry) => entry.resolvedBy ?? ''],
+  ['decided_at', (entry) => isoOrEmpty(entry.resolvedAt)],
+  ['unanswered_since', (entry) => isoOrEmpty(entry.timedOutAt)],
+  ['note', (entry) => entry.note ?? ''],
+  ['restore_point', (entry) => entry.checkpointId ?? ''],
 ];
 
 // A cell that starts like a formula is opened by a spreadsheet as one.
