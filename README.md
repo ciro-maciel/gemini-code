@@ -1,24 +1,75 @@
+<div align="center">
+
+<img src="packages/dashboard/public/images/favicon.svg" width="76" height="76" alt="">
+
 # Gemini Code
 
 **An open-source desk where several coding agents, built around Google Gemini,
 work on your software at the same time and ask a person before anything risky.**
 
+<a href="https://github.com/ciro-maciel/gemini-code/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/ciro-maciel/gemini-code?style=flat-square&label=release&color=0B57D0"></a>
+<a href="LICENSE"><img alt="License: Apache 2.0" src="https://img.shields.io/badge/license-Apache%202.0-1B1C1F?style=flat-square"></a>
+<img alt="macOS, Linux, Windows" src="https://img.shields.io/badge/runs%20on-macOS%20%C2%B7%20Linux%20%C2%B7%20Windows-1B1C1F?style=flat-square">
+<a href="https://ciro-maciel.github.io/gemini-code/"><img alt="Live demo" src="https://img.shields.io/badge/live%20demo-open-9B72CB?style=flat-square"></a>
+
+<a href="#download">Download</a> ·
+<a href="https://ciro-maciel.github.io/gemini-code/">Live demo</a> ·
+<a href="docs/install.md">Install guide</a> ·
+<a href="CHANGELOG.md">Changelog</a> · <a href="README.pt-BR.md">Português</a>
+
+<br>
+
+<a href="https://ciro-maciel.github.io/gemini-code/">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/desk-dark.png">
+  <img src="docs/images/desk-light.png" width="920" alt="Gemini Code: agents in a desk, one conversation with its steps, and the agent folder with the files it added">
+</picture>
+</a>
+
+<sub><a href="https://ciro-maciel.github.io/gemini-code/">Try the live demo</a>:
+the real dashboard with example data, nothing to install.</sub>
+
+</div>
+
 ## Download
 
-| System                    | Download                                                                                                                               | Or in a terminal                                                                                        |
-| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| **macOS** (Apple silicon) | [gemini-code-darwin-arm64.tar.gz](https://github.com/ciro-maciel/gemini-code/releases/latest/download/gemini-code-darwin-arm64.tar.gz) | `curl -fsSL https://raw.githubusercontent.com/ciro-maciel/gemini-code/main/install.sh \| sh`            |
-| **macOS** (Intel)         | [gemini-code-darwin-x64.tar.gz](https://github.com/ciro-maciel/gemini-code/releases/latest/download/gemini-code-darwin-x64.tar.gz)     | same command                                                                                            |
-| **Linux** (x64)           | [gemini-code-linux-x64.tar.gz](https://github.com/ciro-maciel/gemini-code/releases/latest/download/gemini-code-linux-x64.tar.gz)       | same command                                                                                            |
-| **Linux** (ARM64)         | [gemini-code-linux-arm64.tar.gz](https://github.com/ciro-maciel/gemini-code/releases/latest/download/gemini-code-linux-arm64.tar.gz)   | same command                                                                                            |
-| **Windows** (x64)         | [gemini-code-windows-x64.zip](https://github.com/ciro-maciel/gemini-code/releases/latest/download/gemini-code-windows-x64.zip)         | `powershell -c "irm https://raw.githubusercontent.com/ciro-maciel/gemini-code/main/install.ps1 \| iex"` |
+<table>
+  <tr>
+    <th width="33%">macOS</th>
+    <th width="33%">Linux</th>
+    <th width="33%">Windows</th>
+  </tr>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/ciro-maciel/gemini-code/releases/latest/download/gemini-code-darwin-arm64.tar.gz"><img alt="macOS Apple silicon" src="https://img.shields.io/badge/macOS-Apple%20silicon-1B1C1F?style=for-the-badge"></a><br>
+      <a href="https://github.com/ciro-maciel/gemini-code/releases/latest/download/gemini-code-darwin-x64.tar.gz"><img alt="macOS Intel" src="https://img.shields.io/badge/macOS-Intel-45474D?style=for-the-badge"></a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/ciro-maciel/gemini-code/releases/latest/download/gemini-code-linux-x64.tar.gz"><img alt="Linux x64" src="https://img.shields.io/badge/Linux-x64-0B57D0?style=for-the-badge"></a><br>
+      <a href="https://github.com/ciro-maciel/gemini-code/releases/latest/download/gemini-code-linux-arm64.tar.gz"><img alt="Linux ARM64" src="https://img.shields.io/badge/Linux-ARM64-0842A0?style=for-the-badge"></a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/ciro-maciel/gemini-code/releases/latest/download/gemini-code-windows-x64.zip"><img alt="Windows x64" src="https://img.shields.io/badge/Windows-x64-9B72CB?style=for-the-badge"></a>
+    </td>
+  </tr>
+</table>
 
-The command is the easy way: it picks the right file, checks its SHA-256 and
-puts `gemini-code` on your PATH, with no administrator rights. Then run
-`gemini-code`, or `gemini-code ~/code/my-app` to point the agents at a project.
-The macOS builds are signed and notarized by Apple. All versions and checksums:
-[Releases](https://github.com/ciro-maciel/gemini-code/releases). Details:
-[docs/install.md](docs/install.md).
+Or install in one line, with no administrator rights. It picks the right file,
+checks its SHA-256 and puts `gemini-code` on your PATH:
+
+```bash
+# macOS and Linux
+curl -fsSL https://raw.githubusercontent.com/ciro-maciel/gemini-code/main/install.sh | sh
+```
+
+```powershell
+# Windows (PowerShell)
+powershell -c "irm https://raw.githubusercontent.com/ciro-maciel/gemini-code/main/install.ps1 | iex"
+```
+
+Then run `gemini-code`, or `gemini-code ~/code/my-app` to point the agents at a
+project. The macOS builds are signed and notarized by Apple. Every version and
+its checksums: [Releases](https://github.com/ciro-maciel/gemini-code/releases).
 
 Coding agents that read a repository, run commands and ship changes are already
 part of how developers work. One agent at a time is the easy part. The hard part
@@ -30,9 +81,6 @@ agents as the work needs (an engineer, a reviewer, a debugger) and watch them
 work in parallel. Each agent works in its own folder: its terminal starts there,
 its file tree sits next to its conversation, and it cannot read or write outside
 it.
-
-**[See the live demo](https://ciro-maciel.github.io/gemini-code/)**: the real
-dashboard with example data, nothing to install.
 
 > Independent open-source project. Not affiliated with, sponsored or endorsed by
 > Google. "Gemini" is a trademark of Google LLC.

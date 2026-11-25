@@ -13,6 +13,8 @@ version with its date.
 
 ### Changed
 
+- The README opens with the mark, badges, a screenshot of the desk at work in
+  light and dark, and download buttons per system (2026-11-25).
 - New agent takes you to the command center's box, focused, with a hint on what
   to write and an example; an empty group no longer has its own New agent button
   (2026-11-25).
