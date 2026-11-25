@@ -1999,3 +1999,198 @@ textarea {
 a.btn {
   text-decoration: none;
 }
+
+/* -------------------------------------------- Agent groups in the side -- */
+
+/* "Agents" and its two buttons on one line. */
+.nav .side-tabs {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.nav .side-tabs .icon-btn {
+  width: 36px;
+  height: 36px;
+  border: 0;
+  background: transparent;
+  color: var(--gm-on-surface-variant);
+}
+.nav .side-tabs .icon-btn:hover {
+  background: color-mix(in srgb, var(--gm-on-surface) 7%, transparent);
+  color: var(--gm-on-surface);
+}
+.agroup {
+  margin: 6px 0 2px;
+  border-radius: var(--radius-lg);
+  transition: background var(--dur) var(--effects);
+}
+.agroup.over {
+  background: color-mix(in srgb, var(--gm-primary) 8%, transparent);
+  box-shadow: inset 0 0 0 2px
+    color-mix(in srgb, var(--gm-primary) 35%, transparent);
+}
+.agroup-head {
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 6px 0 8px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: background var(--dur) var(--effects);
+}
+.agroup-head:hover {
+  background: color-mix(in srgb, var(--gm-on-surface) 5%, transparent);
+}
+.agroup-chev {
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gm-on-surface-variant);
+}
+.agroup-chev .ti {
+  font-size: 15px;
+  transition: transform var(--dur-spatial) var(--spring);
+}
+.agroup.closed .agroup-chev .ti {
+  transform: rotate(-90deg);
+}
+.agroup-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gm-on-surface);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.agroup-count {
+  min-width: 22px;
+  height: 20px;
+  padding: 0 7px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  background: var(--gm-surface-2);
+  color: var(--gm-on-surface-variant);
+  font-size: 11.5px;
+  font-weight: 600;
+}
+.agroup-wait {
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: var(--radius-pill);
+  background: var(--ne-yellow);
+  color: #3d2a00;
+  font-size: 11.5px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.agroup-more {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-pill);
+}
+/* Naming a group: a pill field, never a boxed input. */
+.agroup-field {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 6px 0 12px;
+  border-radius: var(--radius-pill);
+  background: var(--gm-surface);
+  box-shadow:
+    inset 0 0 0 2px var(--gm-primary),
+    var(--ne-shadow);
+  cursor: text;
+}
+.agroup-field .ti {
+  font-size: 16px;
+  color: var(--gm-primary);
+}
+.agroup-field input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--gm-on-surface);
+}
+.agroup-field input::placeholder {
+  color: var(--gm-on-surface-variant);
+  font-weight: 500;
+}
+.agroup-field kbd {
+  font-family: var(--mono);
+  font-size: 11px;
+  min-width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-xs);
+  background: var(--gm-surface-2);
+  color: var(--gm-on-surface-variant);
+}
+.agroup.is-new {
+  animation: ne-pop var(--dur-spatial) var(--spring-fast);
+}
+/* An empty group says what to do with it. */
+.agroup-empty {
+  margin: 4px 6px 6px 34px;
+  padding: 10px 12px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: var(--gm-surface-1);
+  color: var(--gm-on-surface-variant);
+  font-size: 12.5px;
+  text-align: left;
+}
+.agroup-empty button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: var(--radius-pill);
+  background: var(--gm-primary-container);
+  color: var(--gm-on-primary-container);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.agroup-empty button:hover {
+  background: color-mix(
+    in srgb,
+    var(--gm-primary-container) 80%,
+    var(--gm-primary)
+  );
+}
+.group-suggest {
+  margin: 4px 0 8px;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: var(--gm-surface-1);
+  font-size: 12.5px;
+}
+.group-suggest button {
+  border-radius: var(--radius-pill);
+  background: var(--gm-primary-container);
+  color: var(--gm-on-primary-container);
+  font-weight: 600;
+}

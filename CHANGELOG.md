@@ -11,6 +11,13 @@ version with its date.
 
 ## [Unreleased]
 
+### Changed
+
+- Groups of agents: a new group exists only once it is named (a pill field,
+  Enter keeps it, Escape gives up), an empty group says what to do with it,
+  deleting asks in the standard dialog, and the side header lines up with its
+  buttons (2026-11-25).
+
 ### Added
 
 - The README, in English and Portuguese, shows the design system with an image

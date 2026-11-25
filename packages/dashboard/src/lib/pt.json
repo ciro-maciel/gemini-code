@@ -1401,7 +1401,16 @@
     "to close": "para fechar",
     "running": "rodando",
     "finished": "terminou",
-    "deleting waits for the person: say what should be deleted and why, and the person deletes it": "apagar espera a pessoa: diga o que deve ser apagado e por quê, e a pessoa apaga"
+    "deleting waits for the person: say what should be deleted and why, and the person deletes it": "apagar espera a pessoa: diga o que deve ser apagado e por quê, e a pessoa apaga",
+    "Name the group": "Dê um nome ao grupo",
+    "No agents yet. Drag one here, or": "Nenhum agente ainda. Arraste um para cá, ou",
+    "New agent here": "Novo agente aqui",
+    "Group of agents": "Grupo de agentes",
+    "The group is empty.": "O grupo está vazio.",
+    "Its agent goes back to the top, outside groups.": "O agente dele volta para o topo, fora dos grupos.",
+    "No agent and no conversation is deleted.": "Nenhum agente e nenhuma conversa são apagados.",
+    "in your agents’ names.": "nos nomes dos seus agentes.",
+    "Delete": "Apagar"
   },
   "patterns": {
     "The last {#0} days.": "Os últimos {#0} dias.",
@@ -1717,6 +1726,9 @@
     "I did not do it: {0}.": "Não fiz: {0}.",
     "the server refused the automatic sign-in": "o servidor recusou o login automático",
     "{0} accepts only the MCP clients it approved, and Gemini Code is not one of them yet": "{0} aceita só os clientes MCP que aprovou, e o Gemini Code ainda não é um deles",
-    "{0} is not one of this agent's connections in Gemini Code": "{0} não é uma das conexões deste agente no Gemini Code"
+    "{0} is not one of this agent's connections in Gemini Code": "{0} não é uma das conexões deste agente no Gemini Code",
+    "Its {#0} agents go back to the top, outside groups.": "Os {#0} agentes dele voltam para o topo, fora dos grupos.",
+    "{#0} companies": "{#0} empresas",
+    "Waiting for you: {#0}": "Esperando você: {#0}"
   }
 }

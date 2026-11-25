@@ -10,10 +10,46 @@ import {
 import { useGroups } from '../state/use-groups';
 import { fetchConversation, markBotUnread } from '../services/api';
 import { botsChanged } from '../state/use-bots';
-import { notify } from '../components/zen';
+import { DeleteModal, notify } from '../components/zen';
 import { refresh, remembered } from '../state/remembered';
 import { Menu, useMenu } from '../ui/Menu';
 import { AgentAvatar } from './AgentAvatar';
+
+/**
+ * The name of a group, typed in place: a pill field with the panel's focus
+ * ring. Enter keeps it, Escape or an empty name gives up; blurring keeps a
+ * name that was typed.
+ */
+function GroupNameField({ initial = '', placeholder, onDone }) {
+  const [value, setValue] = useState(initial);
+  const finish = (isKept) => onDone(isKept ? value.trim() : '');
+  return (
+    <label className="agroup-field">
+      <i className="ti ti-folder" aria-hidden="true" />
+      <input
+        autoFocus
+        maxLength={40}
+        aria-label="Group name"
+        placeholder={placeholder}
+        value={value}
+        onFocus={(event) => event.target.select()}
+        onChange={(event) => setValue(event.target.value)}
+        onBlur={() => finish(Boolean(value.trim()))}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter') {
+            event.preventDefault();
+            finish(true);
+          }
+          if (event.key === 'Escape') {
+            event.preventDefault();
+            finish(false);
+          }
+        }}
+      />
+      <kbd aria-hidden="true">↵</kbd>
+    </label>
+  );
+}
 
 const CLOSED_STORE = 'assistant.closedGroups';
 const readClosed = () => {
@@ -142,7 +178,8 @@ export function AgentGroups({
   const companies = companiesToGroup(bots, store.groups);
   const [closed, setClosed] = useState(readClosed);
   const [renaming, setRenaming] = useState(null);
-  const [draftName, setDraftName] = useState('');
+  // A group being named before it exists: nothing is saved until it has a name.
+  const [isCreating, setIsCreating] = useState(false);
   const [confirming, setConfirming] = useState(null);
   const [dragged, setDragged] = useState(null);
   const [over, setOver] = useState(null);
@@ -162,20 +199,17 @@ export function AgentGroups({
       return next;
     });
 
-  const startRename = (group) => {
-    setRenaming(group.id);
-    setDraftName(group.name);
-  };
-  const finishRename = async (isSaved) => {
+  const startRename = (group) => setRenaming(group.id);
+  const finishRename = async (name) => {
     const id = renaming;
     setRenaming(null);
     const group = store.groups.find((item) => item.id === id);
-    if (isSaved && group && draftName.trim() && draftName.trim() !== group.name)
-      await store.rename(id, draftName.trim());
+    if (group && name && name !== group.name) await store.rename(id, name);
   };
-  const newGroup = async () => {
-    const group = await store.create(`Group ${store.groups.length + 1}`);
-    if (group) startRename(group);
+  const newGroup = () => setIsCreating(true);
+  const finishCreate = async (name) => {
+    setIsCreating(false);
+    if (name) await store.create(name);
   };
 
   // "Novo grupo" sits beside "Agente novo" in the column's top row (Column.jsx).
@@ -273,7 +307,7 @@ export function AgentGroups({
       {companies.length > 0 && (
         <div className="group-suggest">
           <span className="grow">
-            <b>{companies.length} empresas</b> in your agents’ names.
+            <b>{companies.length} companies</b> in your agents’ names.
           </span>
           <button onClick={() => store.groupByCompany(companies, bots)}>
             Group by company
@@ -292,6 +326,20 @@ export function AgentGroups({
           {dragged?.kind === 'agent' && dragged.sectionId ? (
             <div className="agroup-empty">Drop here to remove from group</div>
           ) : null}
+        </div>
+      )}
+
+      {isCreating && (
+        <div className="agroup is-new">
+          <div className="agroup-head">
+            <span className="agroup-chev" aria-hidden="true">
+              <i className="ti ti-chevron-down" />
+            </span>
+            <GroupNameField
+              placeholder="Name the group"
+              onDone={finishCreate}
+            />
+          </div>
         </div>
       )}
 
@@ -336,22 +384,10 @@ export function AgentGroups({
                 <i className="ti ti-chevron-down" />
               </span>
               {renaming === group.id ? (
-                <input
-                  className="agroup-input"
-                  autoFocus
-                  maxLength={40}
-                  aria-label="Group name"
-                  value={draftName}
-                  onFocus={(event) => event.target.select()}
-                  onChange={(event) => setDraftName(event.target.value)}
-                  onBlur={() => finishRename(true)}
-                  onKeyDown={(event) => {
-                    if (event.key === 'Enter') event.target.blur();
-                    if (event.key === 'Escape') {
-                      setDraftName(group.name);
-                      setRenaming(null);
-                    }
-                  }}
+                <GroupNameField
+                  initial={group.name}
+                  placeholder="Group name"
+                  onDone={finishRename}
                 />
               ) : (
                 <span
@@ -370,7 +406,7 @@ export function AgentGroups({
               {group.waiting > 0 && (
                 <span
                   className="agroup-wait"
-                  title={`${group.waiting} ${group.waiting === 1 ? 'espera' : 'esperam'} you`}
+                  title={`Waiting for you: ${group.waiting}`}
                 >
                   {group.waiting}
                 </span>
@@ -387,39 +423,20 @@ export function AgentGroups({
                 <i className="ti ti-dots" />
               </button>
             </div>
-            {confirming === group.id && (
-              <div className="agroup-confirm">
-                <span>
-                  Delete the group <b>{group.name}</b>?{' '}
-                  {group.bots.length
-                    ? `${group.bots.length === 1 ? 'The agent goes back' : `The ${group.bots.length} agents go back`} to the top, outside groups.`
-                    : "It's empty."}
-                </span>
-                <div className="agroup-confirm-row">
-                  <button
-                    className="btn sm danger-fill"
-                    onClick={async () => {
-                      setConfirming(null);
-                      await store.remove(group.id, group.name);
-                    }}
-                  >
-                    Delete group
-                  </button>
-                  <button
-                    className="btn outline sm"
-                    onClick={() => setConfirming(null)}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            )}
             {!isClosed &&
               (group.bots.length ? (
                 group.bots.map((bot) => row(bot, group))
               ) : dragged?.kind === 'agent' ? (
                 <div className="agroup-empty">Drop here</div>
-              ) : null)}
+              ) : (
+                <div className="agroup-empty">
+                  <span>No agents yet. Drag one here, or</span>
+                  <button onClick={() => onNewAgent(group.id)}>
+                    <i className="ti ti-message-plus" />
+                    New agent here
+                  </button>
+                </div>
+              ))}
           </div>
         );
       })}
@@ -441,6 +458,34 @@ export function AgentGroups({
           {isIdleOpen && idle.map((bot) => row(bot, null))}
         </div>
       )}
+
+      {(() => {
+        const group = store.groups.find((item) => item.id === confirming);
+        if (!group) return null;
+        const count = (groups.find((item) => item.id === group.id)?.bots ?? [])
+          .length;
+        return (
+          <DeleteModal
+            opened
+            target={group.name}
+            context="Group of agents"
+            consequences={[
+              count === 0
+                ? 'The group is empty.'
+                : count === 1
+                  ? 'Its agent goes back to the top, outside groups.'
+                  : `Its ${count} agents go back to the top, outside groups.`,
+              'No agent and no conversation is deleted.',
+            ]}
+            confirmLabel="Delete group"
+            onClose={() => setConfirming(null)}
+            onConfirm={async () => {
+              setConfirming(null);
+              await store.remove(group.id, group.name);
+            }}
+          />
+        );
+      })()}
 
       {groupMenu.is('group') && menuGroup && (
         <Menu anchor={groupMenu.anchor} width={230} onClose={groupMenu.close}>
