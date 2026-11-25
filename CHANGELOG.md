@@ -23,6 +23,9 @@ version with its date.
 
 ### Changed
 
+- The design system records the decision that Gemini Code looks exactly like
+  Gemini, as a showcase for Google, drawing its own star and never using
+  Google's brand assets (2026-11-25).
 - The README opens with a download table for every system (2026-11-25).
 - Settings is rebuilt from one kit (pages/settings/kit.jsx) and documented as
   the pattern to follow (docs/settings.md): every section says what it is for,

@@ -99,16 +99,17 @@ Today the mark is a four-point star with a blue, violet and rose gradient
 (`#4285F4`, `#9B72CB`, `#D96570`) on a dark rounded square
 (`public/images/favicon.svg`, `GeminiSparkle` in `components/zen`).
 
-**Open risk.** That star and that gradient are very close to the Gemini app's
-own mark. Next to the word "Gemini", a reader can take Gemini Code for a Google
-product, which the notice alone does not undo on a card or an icon.
+**Decided (Ciro, 25/11/2026): Gemini Code looks exactly like Gemini.** The
+project is a showcase for Google: it proves we build in Gemini's own design
+language, so every screen and piece mirrors the Gemini app as closely as the
+system allows. The star stays in Gemini's style and gradient, never enlarged
+alone as a hero image.
 
-**Proposal, waiting for Ciro's decision:** a mark of our own that draws what the
-product is: **two or three panes side by side, rounded at the M3 corner scale,
-with the working edge on one of them** (the conic glow of section 6). It reads
-"a desk of agents, one at work" and belongs to no one else. Until the decision,
-use the current mark as it is, never enlarge the star alone as a hero image, and
-keep the notice next to it.
+**The one limit:** the look is ours to copy; Google's brand assets are not. We
+draw our own star and never use Google's official logo files, the Google "G",
+the Gemini app icon or Google's product screenshots, and the notice stays on
+every public piece. That keeps the showcase in front of Google's designers, not
+its legal team.
 
 ### Lockups
 
@@ -649,7 +650,6 @@ LinkedIn, X, Bluesky, Mastodon, the GitHub social preview.
 - **A deviation is a bug.** A screen or a piece that does not follow this page
   is fixed, or this page is changed on purpose, with the reason written down.
 - **Open decisions:**
-  - The mark (section 2): keep the star or move to the panes mark.
   - A published VS Code theme (section 12).
   - The landing page and site (sections 10 and 11) are specified here and not
     built yet.
