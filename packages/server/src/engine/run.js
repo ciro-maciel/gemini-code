@@ -7,15 +7,12 @@ import {
   agentDirOf as agentFolderOf,
   COMPUTER_VERSION,
   ensureComputer,
-  restoreBotCheckpoint,
   usesConnection,
 } from '../bots.js';
-import { callBrowserTool, listBrowserToolDefinitions } from './browser.js';
 import {
   attachmentsOf,
   copyPendingAttachments,
   modelContentFor,
-  savePageCapture,
 } from '../attachments.js';
 import { takeNext } from '../queue.js';
 import { formatSkillsForPrompt } from '../skills.js';
@@ -27,7 +24,6 @@ import {
 } from './catalog.js';
 import { listBotFiles } from '../files.js';
 import { nowInZone } from '../routines.js';
-import { holdFor, releaseFor } from './hold.js';
 import {
   formatMemoriesForPrompt,
   memoriesInPrompt,
@@ -116,7 +112,6 @@ export function interruptBot(botId) {
   for (const [taskId] of inFlight)
     if (fetchTask(taskId)?.botId === botId) interruptStep(taskId);
 }
-const pageContexts = new Map();
 const inbox = new Map();
 // A resolution (an approval decided, a note) that arrived while the task had
 // no slot: it is applied when the task starts, not lost.
@@ -521,37 +516,6 @@ function parseArguments(call) {
   }
 }
 
-/** The capture of a page the bot reached, kept with the bot's files and shown in the conversation. */
-async function capturePage(bot, taskId, page) {
-  const shot = await callBrowserTool(bot, 'browser_take_screenshot', {
-    type: 'jpeg',
-  });
-  const image = shot?.images?.at(-1);
-  if (!image?.data) return;
-  const capture = savePageCapture(bot.id, {
-    mimeType: image.mimeType || 'image/jpeg',
-    data: Buffer.from(image.data, 'base64'),
-  });
-  emitTaskEvent(taskId, 'page', {
-    captureId: capture.id,
-    url: page.url,
-    title: page.title || null,
-  });
-}
-
-function rememberPage(taskId, text) {
-  const url = text.match(/- Page URL: (.+)/)?.[1];
-  const title = text.match(/- Page Title: (.+)/)?.[1];
-  const snapshot = text.match(/```yaml\n([\s\S]*?)```/)?.[1];
-  if (!url && !snapshot) return;
-  const previous = pageContexts.get(taskId) ?? {};
-  pageContexts.set(taskId, {
-    url: url ?? previous.url,
-    title: title ?? previous.title,
-    snapshot: snapshot ?? previous.snapshot,
-  });
-}
-
 // --- Tools ----------------------------------------------------------------
 
 // Brings back the computer's and the browser's tools to a conversation that released them.
@@ -623,20 +587,11 @@ async function listToolsForTask(bot, task) {
       ...userBrowser,
       ...connectedToolsFor(bot, task),
     ];
-  const browserTools = (await listBrowserToolDefinitions()).map((tool) => ({
-    type: 'function',
-    function: {
-      name: tool.name,
-      description: tool.description,
-      parameters: tool.inputSchema,
-    },
-  }));
   // Offer file tools whenever local workspace or GitHub repository is ready.
   return [
     ...BASE_TOOLS.filter(
       (tool) => hasDocs || !REPO_TOOLS.has(tool.function.name),
     ),
-    ...browserTools,
     ...userBrowser,
     ...connectedToolsFor(bot, task),
   ];
@@ -666,57 +621,11 @@ function isComputerTool(name) {
   return name.startsWith('browser_') || name.startsWith('computer_');
 }
 
-// The bot's computer, ready and current. The first screen or shell tool of a
-// bot without one waits here while it is handed a spare or prepared; the
-// conversation says why.
-function computerFor(bot, taskId) {
+// The bot's computer, which is this machine: ready the first time it is used.
+function computerFor(bot) {
   if (bot.status === 'ready' && bot.computerVersion === COMPUTER_VERSION)
     return bot;
-  return withComputerSlot(taskId, () =>
-    ensureComputer(bot.id, (text) => noticeComputer(taskId, text)),
-  );
-}
-
-// Each notice once per task: a task waiting for a slot tries again every ten
-// seconds, and the conversation is not the place for each try.
-const computerNotices = new Map();
-
-function noticeComputer(taskId, text) {
-  const shown = computerNotices.get(taskId) ?? new Set();
-  if (shown.has(text)) return;
-  shown.add(text);
-  computerNotices.set(taskId, shown);
-  emitTaskEvent(taskId, 'computer', { text });
-}
-
-const SLOT_WAIT_MS = 10_000;
-const SLOT_TRIES = 36;
-
-// When every computer the plan allows is running, a bot's computer waits for
-// one to sleep (about 30 s after its last use) instead of failing the task.
-async function withComputerSlot(taskId, work) {
-  for (let attempt = 0; ; attempt++) {
-    try {
-      return await work();
-    } catch (error) {
-      if (
-        error.code !== 'SPRITE_LIMIT' ||
-        attempt >= SLOT_TRIES ||
-        flags.get(taskId)?.cancel
-      )
-        throw error;
-      const notice =
-        'Todos os computadores estão em uso agora; o seu liga assim que um vagar.';
-      if (!computerNotices.get(taskId)?.has(notice))
-        recordFailureOfTask(
-          taskId,
-          'concurrency',
-          'todos os computadores em uso; esperando um vagar',
-        );
-      noticeComputer(taskId, notice);
-      await Bun.sleep(SLOT_WAIT_MS);
-    }
-  }
+  return ensureComputer(bot.id);
 }
 
 /*
@@ -808,28 +717,6 @@ async function execute(bot, task, name, args) {
         console.error(`[workspace] ${bot.id}: ${error.message}`),
       );
     }
-  }
-
-  if (name.startsWith('browser_')) {
-    const before = pageContexts.get(task.id)?.url ?? null;
-    const result = await callBrowserTool(bot, name, args);
-    rememberPage(task.id, result.text);
-    // A page the bot reached is shown as the person would see it: a
-    // capture with the title and the address, like the other agents do,
-    // never the downloaded file (24/10/2026). Taken after the
-    // navigation settles, outside the tool's own time.
-    const after = pageContexts.get(task.id);
-    if (
-      !result.isError &&
-      after?.url &&
-      after.url !== before &&
-      !/^(about:|chrome:)/.test(after.url)
-    )
-      capturePage(bot, task.id, after).catch(() => {});
-    return {
-      text: result.isError ? `erro: ${result.text}` : result.text,
-      images: result.images,
-    };
   }
 
   if (name.startsWith('mcp__')) {
@@ -1003,7 +890,6 @@ async function handleToolCall(bot, task, call, resolution) {
       toolName: name,
       args,
       connectedTool,
-      pageContext: pageContexts.get(task.id),
       grants: toolGrants.get(task.id),
       account: await chatAccountFor(bot.id),
     });
@@ -1087,10 +973,7 @@ async function handleToolCall(bot, task, call, resolution) {
     arguments: args,
   });
   try {
-    if (!outcome)
-      outcome = isComputerTool(name)
-        ? await withComputerSlot(task.id, () => execute(bot, task, name, args))
-        : await execute(bot, task, name, args);
+    if (!outcome) outcome = await execute(bot, task, name, args);
     if (process.env.TIMING)
       console.log(
         `[timing] tool ${name} ${Math.round(performance.now() - startedAt)}ms`,
@@ -1889,7 +1772,6 @@ async function runTask(taskId, resolution) {
   const task = fetchTask(taskId);
   const startedAtSeconds = Date.now() / 1000;
   touchedComputer.delete(taskId);
-  holdFor(taskId);
   try {
     await loop(taskId, resolution);
   } catch (error) {
@@ -1917,9 +1799,6 @@ async function runTask(taskId, resolution) {
       grants.delete(taskId);
       toolGrants.delete(taskId);
     }
-    releaseFor(taskId);
-    pageContexts.delete(taskId);
-    computerNotices.delete(taskId);
     runningBots.delete(taskId);
     // The freed slot goes to the oldest task waiting for one — of this bot,
     // of this account or of anyone held back by the total.
@@ -1961,13 +1840,6 @@ function slotLimit(bot) {
   )
     return `limite de ${config.limits.runningTasksPerAccount} tarefas ao mesmo tempo na conta`;
   return null;
-}
-
-function recordFailureOfTask(taskId, kind, context) {
-  const botId = db
-    .query('SELECT bot_id FROM tasks WHERE id = ?')
-    .get(taskId)?.bot_id;
-  if (botId) recordFailure({ botId, taskId, kind, context });
 }
 
 // The queue is also swept on a clock: a task waits for a "computer ready"
@@ -2625,19 +2497,10 @@ const laterTasksOf = (botId, taskId) =>
     .all(botId, taskId)
     .map((row) => row.id);
 
-// The first photo of the disk taken after the message (before an approved
-// action): the state closest to that point that keeps everything done before it.
-const photoAfter = (ids, createdAt) =>
-  db
-    .query(
-      `SELECT checkpoint_id, created_at FROM approvals WHERE task_id IN (${ids.map(() => '?').join(', ')}) AND checkpoint_id IS NOT NULL AND created_at >= ? ORDER BY created_at LIMIT 1`,
-    )
-    .get(...ids, createdAt);
-
 /**
  * What "Voltar para aqui" would undo, before anything is undone (04/11/2026):
  * the messages, replies and steps after the message, the later tasks, and the
- * time the computer would go back to, when there is a photo of it.
+ * nothing on disk: files the agent changed stay as they are.
  */
 export function previewRewind(taskId, eventId) {
   const event = findUserMessage(taskId, eventId);
@@ -2650,13 +2513,11 @@ export function previewRewind(taskId, eventId) {
     )
     .all(taskId, event.id, ...later);
   const countOf = (type) => counts.find((row) => row.type === type)?.n ?? 0;
-  const photo = photoAfter([taskId, ...later], event.created_at);
   return {
     messages: countOf('user_message'),
     replies: countOf('assistant'),
     steps: countOf('tool_call'),
     laterTasks: later.length,
-    diskAt: photo?.created_at ?? null,
   };
 }
 
@@ -2682,10 +2543,6 @@ export async function rewindTask(taskId, eventId) {
       "I could not find this point in the bot's memory; go back to a more recent message",
     );
 
-  // The computer goes back too: the first photo of its disk taken after this
-  // message (before an approved action) is the state closest to this point
-  // that keeps everything done before it. Read before the cut deletes the row.
-  const photo = photoAfter([taskId, ...later], event.created_at);
   // What is cut stays to read, as a version; it never runs again.
   keepBranch({
     botId: task.botId,
@@ -2722,21 +2579,8 @@ export async function rewindTask(taskId, eventId) {
     deferred.delete(id);
     grants.delete(id);
     toolGrants.delete(id);
-    pageContexts.delete(id);
   }
-  let isDiskRestored = false;
-  if (photo?.checkpoint_id && fetchBot(task.botId)?.status === 'ready') {
-    try {
-      await restoreBotCheckpoint(task.botId, photo.checkpoint_id);
-      recordOutcome({ botId: task.botId, taskId, kind: 'checkpoint_restored' });
-      isDiskRestored = true;
-    } catch (error) {
-      emitTaskEvent(taskId, 'warning', {
-        message: `the conversation went back, but the computer did not: ${error.message}`,
-      });
-    }
-  }
-  return { text: data.text || '', isDiskRestored };
+  return { text: data.text || '' };
 }
 
 // Older messages did not record their place among the model's messages: it is

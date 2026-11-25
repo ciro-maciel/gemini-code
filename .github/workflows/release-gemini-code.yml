@@ -1,7 +1,7 @@
 name: Gemini Code — release
 
 # One executable per system (bun build --compile, the Bun runtime inside),
-# next to the dashboard's build and the cloud computer's code, packed as
+# next to the dashboard's build, packed as
 # gemini-code-<os>-<arch>.tar.gz (zip on Windows) and published with
 # SHA256SUMS on a GitHub Release. install.sh and install.ps1 download these.
 #
@@ -96,7 +96,6 @@ jobs:
         run: |
           mkdir -p out/gemini-code
           bun build --compile --minify --target=${{ matrix.target }} \
-            --external @playwright/mcp --external playwright-core --external playwright \
             --define "process.env.GEMINI_CODE_VERSION=\"$VERSION\"" \
             packages/server/src/cli.js --outfile out/gemini-code/${{ matrix.exe }}
       # macOS: Developer ID, hardened runtime with the entitlements the Bun
@@ -146,13 +145,8 @@ jobs:
         with:
           name: dashboard
           path: out/gemini-code/dashboard
-      - name: Add the cloud computer's code and the license
-        run: |
-          mkdir -p out/gemini-code/computer
-          for file in server.js browser.js package.json bun.lock provision.sh; do
-            if [ -f "packages/computer/$file" ]; then cp "packages/computer/$file" out/gemini-code/computer/; fi
-          done
-          cp LICENSE out/gemini-code/
+      - name: Add the license
+        run: cp LICENSE out/gemini-code/
       - name: Pack
         run: |
           cd out

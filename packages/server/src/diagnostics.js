@@ -86,11 +86,6 @@ export function checksFor(account, deps = {}) {
     };
   });
   add('System', 'workspace', 'Workspace folder', () => {
-    if (config.computerMode !== 'local')
-      return {
-        status: 'ok',
-        detail: `Cloud computers (${config.computerMode})`,
-      };
     const folder = config.localWorkspaceDir;
     if (!existsSync(folder))
       return { status: 'fail', detail: `${folder} does not exist` };
@@ -174,7 +169,7 @@ export function checksFor(account, deps = {}) {
       const problems = [];
       const dir = agentDirOf(bot);
       const folder = dir ? path.join(config.localWorkspaceDir, dir) : null;
-      if (config.computerMode === 'local' && folder) {
+      if (folder) {
         if (!existsSync(folder)) problems.push('its folder is not created yet');
         else if (!isWritable(folder))
           problems.push('its folder is not writable');

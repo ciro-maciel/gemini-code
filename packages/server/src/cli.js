@@ -72,8 +72,6 @@ export function placesFor({ home, executable, folder, cwd }) {
     envFile: path.join(root, '.env'),
     // The archive puts the dashboard's build next to the executable.
     dashboard: path.join(path.dirname(executable), 'dashboard'),
-    // The cloud computer's code, small, shipped so cloud mode works from an install too.
-    computer: path.join(path.dirname(executable), 'computer'),
     workspace: folder
       ? path.resolve(cwd, folder)
       : path.join(home, 'GeminiCode'),
@@ -115,7 +113,6 @@ async function main() {
   process.env.WORKSPACE_DIR ??= places.workspace;
   if (existsSync(places.dashboard))
     process.env.DASHBOARD_DIR ??= places.dashboard;
-  if (existsSync(places.computer)) process.env.COMPUTER_DIR ??= places.computer;
   if (options.port) process.env.PORT = String(options.port);
 
   // The configuration is read when the server module loads: only now.

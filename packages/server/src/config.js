@@ -8,9 +8,6 @@ import {
 import { randomBytes } from 'node:crypto';
 import path from 'node:path';
 
-// Inside a Fly Sprite the management socket exists; on a local machine it does not.
-export const IS_IN_SPRITE = existsSync('/.sprite/api.sock');
-
 const dataDir =
   process.env.DATA_DIR || path.resolve(import.meta.dir, '../data');
 
@@ -32,7 +29,6 @@ function resolveEncryptionKey() {
   return generated;
 }
 
-const spritesToken = (process.env.SPRITES_TOKEN || '').trim();
 const authUrl = (process.env.AUTH_API_URL || '').replace(/\/$/, '');
 
 export const config = {
@@ -44,9 +40,7 @@ export const config = {
   dashboardDir:
     process.env.DASHBOARD_DIR ||
     path.resolve(import.meta.dir, '../../dashboard/dist'),
-  computerDir:
-    process.env.COMPUTER_DIR || path.resolve(import.meta.dir, '../../computer'),
-  // Local workspace directory used when running in local/hybrid mode without Sprites.
+  // The folder the agents work in, on this machine.
   localWorkspaceDir: path.resolve(
     process.env.WORKSPACE_DIR ||
       path.resolve(import.meta.dir, '../../../workspace'),
@@ -55,13 +49,6 @@ export const config = {
   assetsDir:
     process.env.ASSETS_DIR ||
     path.resolve(import.meta.dir, '../../../assets/illustrations'),
-  // Hybrid mode: 'local' (default when SPRITES_TOKEN is unset) or 'sprites' (cloud computers).
-  computerMode:
-    process.env.COMPUTER_MODE || (spritesToken ? 'sprites' : 'local'),
-  spritesToken,
-  spritesOrg: process.env.SPRITES_ORG || '',
-  spritesApi: process.env.SPRITES_API_URL || 'https://api.sprites.dev',
-  openrouterConnectorId: process.env.OPENROUTER_CONNECTOR_ID || '',
   openrouterApiKey: process.env.OPENROUTER_API_KEY || '',
   // Primary Gemini API key for house calls (titles, risk judge, designer) and default local agent brain.
   geminiApiKey: process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || '',
@@ -71,9 +58,6 @@ export const config = {
   defaultModel: process.env.DEFAULT_MODEL || 'gemini-3.5-flash-lite',
   riskModel: process.env.RISK_MODEL || 'gemini-3.5-flash-lite',
   botPrefix: 'gemini-code-bot-',
-  // Pre-warmed cloud computers when running in Sprites mode (0 in local mode).
-  spareComputers: Number(process.env.SPARE_COMPUTERS ?? (spritesToken ? 1 : 0)),
-  spareComputersMax: Number(process.env.SPARE_COMPUTERS_MAX ?? 6),
   // Auth: 'local' (single-user open-source default, no login required) or 'jwt' (external JWKS server).
   // Google AI Pro and Ultra through Google's own client (engine/subscription/):
   // off until Google publishes the official path for third-party tools; on
@@ -96,9 +80,6 @@ export const config = {
     runningTasks: Number(process.env.LIMIT_RUNNING_TASKS_TOTAL ?? 150),
     routinesPerBot: Number(process.env.LIMIT_ROUTINES ?? 20),
   },
-  // Optional Cloudflare Worker alarm URL for scheduled routines when running in sleeping cloud Sprites.
-  wakeUrl: (process.env.WAKE_URL || '').replace(/\/$/, ''),
-  wakeSecret: process.env.WAKE_SECRET || '',
   // Optional custom MCP catalog URL (leave empty to use the built-in open catalog + official MCP registry).
   mcpCatalogUrl: (process.env.MCP_CATALOG_URL || '').trim(),
   // Optional Fish Audio key for voice mode / speech synthesis.

@@ -546,7 +546,7 @@ export function me(botCount) {
     usageToday: { cost: 0 },
     firstWish: null,
     isGuest: false,
-    runtime: { computerMode: 'local', authMode: 'local', workspaceDir: null },
+    runtime: { authMode: 'local', workspaceDir: null },
     plan: {
       tier: 'free',
       name: 'Free',

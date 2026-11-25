@@ -36,7 +36,6 @@ import {
 import { Mesa } from '../mesa/Mesa';
 import { AgentTab } from '../agent/AgentTab';
 import { AgentSettings } from '../agent/AgentSettings';
-import { ScreenTab } from '../agent/ScreenTab';
 import { ComputerFileTab } from '../files/ComputerFileTab';
 import { RepoFileTab } from '../files/RepoFileTab';
 import { useRepoFiles } from '../files/FileTree';
@@ -146,8 +145,7 @@ export function Shell() {
       dropTabs(
         next,
         (tab) =>
-          ['agent', 'settings', 'screen'].includes(kindOf(tab)) &&
-          !ids.has(refOf(tab)),
+          ['agent', 'settings'].includes(kindOf(tab)) && !ids.has(refOf(tab)),
       ),
     );
   }, [bots, change]);
@@ -200,7 +198,7 @@ export function Shell() {
   const botOf = (id) => bots?.find((bot) => bot.id === id);
   const activeTab = tabOf(location.pathname + location.search);
   const activeBotId =
-    activeTab && ['agent', 'settings', 'screen'].includes(kindOf(activeTab))
+    activeTab && ['agent', 'settings'].includes(kindOf(activeTab))
       ? refOf(activeTab)
       : null;
 
@@ -303,12 +301,6 @@ export function Shell() {
         icon: 'ti-adjustments-horizontal',
         name: `Settings · ${bot?.name || 'agente'}`,
       };
-    if (kind === 'screen')
-      return {
-        icon: 'ti-device-desktop',
-        name: `Screen · ${bot?.name || 'agente'}`,
-        live: true,
-      };
     if (kind === 'template')
       return ref === 'new'
         ? { icon: 'ti-plus', name: 'New model' }
@@ -326,7 +318,7 @@ export function Shell() {
     const ref = refOf(tab);
     const bot = botOf(ref);
     const template = templateById(bot?.templateId);
-    if (['agent', 'settings', 'screen'].includes(kind) && !bot)
+    if (['agent', 'settings'].includes(kind) && !bot)
       return bots === null ? null : (
         <div className="pane-empty">
           <i className="ti ti-message-off" />
@@ -343,7 +335,6 @@ export function Shell() {
           isVisible={pane.active === tab}
           modelLabel={bot.model.split('/').pop()}
           onOpenSettings={() => go(`settings:${ref}`)}
-          onOpenScreen={() => go(`screen:${ref}`)}
           onOpenFile={(path) => go(`cfile:${path}`)}
           onOpenRepoFile={(path) => go(`file:${path}`)}
           suggestions={suggestionsFor(ref)}
@@ -360,7 +351,6 @@ export function Shell() {
           }
         />
       );
-    if (kind === 'screen') return <ScreenTab bot={bot} />;
     if (kind === 'template' && ref === 'new')
       return (
         <Suspense fallback={null}>

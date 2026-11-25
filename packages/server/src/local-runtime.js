@@ -9,12 +9,8 @@ import {
 import path from 'node:path';
 import { config } from './config.js';
 
-// Hybrid local runtime: lets Gemini Code run directly on the user's machine
-// (like Claude Code) with zero Sprites or cloud setup. When SPRITES_TOKEN is
-// configured and COMPUTER_MODE=sprites, cloud Sprites take over instead.
-
-export const isLocalMode = () =>
-  !config.spritesToken || config.computerMode === 'local';
+// The agents' computer is this machine: commands, files and the workspace
+// folder, like Claude Code.
 
 export function ensureLocalWorkspace() {
   mkdirSync(config.localWorkspaceDir, { recursive: true });

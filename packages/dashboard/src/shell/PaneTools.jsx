@@ -1,4 +1,4 @@
-import { closeAll, closePane, kindOf, refOf } from '../mesa/layout';
+import { closeAll, closePane, kindOf } from '../mesa/layout';
 import { notify } from '../components/zen';
 import { Menu, useMenu } from '../ui/Menu';
 import { AgentAvatar } from './AgentAvatar';
@@ -11,10 +11,6 @@ export function PaneTools({ pane, bots, change, onOpen, onReopen = null }) {
     .sort((a, b) => (b.lastActivityAt || 0) - (a.lastActivityAt || 0))
     .slice(0, 8);
   const isAgent = pane.active && kindOf(pane.active) === 'agent';
-  // The live screen exists only for an agent that has its computer ('ready'); most never need one.
-  const hasComputer =
-    isAgent &&
-    bots.find((bot) => bot.id === refOf(pane.active))?.status === 'ready';
   const link = pane.active ? `${location.origin}${pathOf(pane.active)}` : null;
   return (
     <>
@@ -73,17 +69,6 @@ export function PaneTools({ pane, bots, change, onOpen, onReopen = null }) {
             >
               <i className="ti ti-app-window" />
               Open in new window
-            </button>
-          )}
-          {hasComputer && (
-            <button
-              onClick={() => {
-                menu.close();
-                onOpen(`screen:${refOf(pane.active)}`);
-              }}
-            >
-              <i className="ti ti-device-desktop" />
-              View live screen
             </button>
           )}
           <hr />

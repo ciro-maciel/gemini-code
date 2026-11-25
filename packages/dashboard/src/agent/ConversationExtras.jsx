@@ -188,8 +188,6 @@ export function VersionsButton({ bot, account, modelLabel, refreshKey }) {
               isWorking={false}
               streamingText=""
               rewindFromSeq={null}
-              onOpenScreen={() => {}}
-              onOpenTakeover={() => {}}
               onOpenFile={() => {}}
             />
           </div>

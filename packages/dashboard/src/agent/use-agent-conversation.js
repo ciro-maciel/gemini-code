@@ -212,15 +212,7 @@ export function useAgentConversation(botId, { isVisible = true } = {}) {
     if (message && !rewindPoint) setPending((current) => [...current, stand]);
     try {
       if (rewindPoint) {
-        const { isDiskRestored } = await rewindTask(
-          rewindPoint.taskId,
-          rewindPoint.eventId,
-        );
-        if (isDiskRestored)
-          notify.success(
-            "The agent's computer was restored too",
-            'The disk is as it was before that point; anything already sent outside stays out.',
-          );
+        await rewindTask(rewindPoint.taskId, rewindPoint.eventId);
         setRewindPoint(null);
         setLoadKey((key) => key + 1);
       }

@@ -1,11 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { canWork } from '../labels';
 import { ApprovalDock, Thread } from './Thread';
 import { useAccount } from '../components/Session';
 import { VoiceMode } from '../components/VoiceMode';
-import { TeachScreen } from '../components/TeachScreen';
-import { TakeoverScreen } from '../components/TakeoverScreen';
 import { AuditTrail } from '../components/AuditTrail';
 import { AgentAvatar } from '../shell/AgentAvatar';
 import { Composer } from './Composer';
@@ -54,7 +51,6 @@ export function AgentTab({
   modelLabel,
   suggestions = [],
   onOpenSettings,
-  onOpenScreen,
   onOpenFile,
   onOpenRepoFile = null,
 }) {
@@ -75,8 +71,6 @@ export function AgentTab({
   // The agent's folder sits next to its conversation (the files MCP's tree); it remembers being closed.
   const [isFilesOpen, setIsFilesOpen] = useState(() => readFilesOpen());
   const [isVoice, setIsVoice] = useState(false);
-  const [isTeaching, setIsTeaching] = useState(false);
-  const [isFullscreen, setIsFullscreen] = useState(false);
   const [isDropping, setIsDropping] = useState(false);
   const threadRef = useRef(null);
   const isAtBottomRef = useRef(true);
@@ -125,7 +119,6 @@ export function AgentTab({
     return () => observer.disconnect();
   }, []);
 
-  const isReady = canWork(bot.status);
   // Only the owner changes the agent; a member who entered writes, one who reads follows.
   const isOwner = (bot.access ?? 'owner') === 'owner';
   // A computer that did not get ready never closes the box (30/10): the agent works without it and tries again when it needs it.
@@ -366,8 +359,6 @@ export function AgentTab({
                 thread={thread}
                 streamingText={streaming?.text || ''}
                 thinkingText={conversation.thinking}
-                onOpenScreen={onOpenScreen}
-                onOpenTakeover={() => setIsFullscreen(true)}
                 onOpenFile={onOpenFile}
                 onOpenRepoFile={onOpenRepoFile}
                 onResolved={conversation.reloadThread}
@@ -418,7 +409,6 @@ export function AgentTab({
             onAsk={canWrite ? conversation.ask : null}
             onUnqueue={conversation.unqueue}
             onStop={conversation.stop}
-            onTeach={isReady && isOwner ? () => setIsTeaching(true) : null}
             onVoice={() => setIsVoice(true)}
             onNote={members.length > 0 ? conversation.note : null}
             suggestions={suggestions}
@@ -438,24 +428,6 @@ export function AgentTab({
             {money(cost)} neste agente
           </span>
         </div>
-        {isReady && (
-          <TeachScreen
-            bot={bot}
-            opened={isTeaching}
-            onClose={() => setIsTeaching(false)}
-          />
-        )}
-        {isReady && (
-          <TakeoverScreen
-            bot={bot}
-            opened={isFullscreen}
-            onClose={() => setIsFullscreen(false)}
-            onReturn={(note) => {
-              setIsFullscreen(false);
-              conversation.giveBack(note);
-            }}
-          />
-        )}
       </div>
       {isFilesOpen && (
         <AgentFiles

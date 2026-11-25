@@ -69,9 +69,9 @@ dashboard with example data, nothing to install.
   same routes, and any MCP client (Antigravity CLI, Gemini CLI, Claude Code) can
   mount it at `/api/bots/<agent>/mcp/files`. See
   [docs/files-mcp.md](docs/files-mcp.md).
-- **Local first.** Runs on your machine against a folder, with no account and no
-  login. A cloud mode, one isolated Linux computer per agent on Fly Sprites, is
-  optional.
+- **On your machine.** One executable runs the server and the dashboard on your
+  computer, against your folders, with no account and no login. Nothing runs in
+  a cloud of ours.
 
 ## Quickstart (from source)
 
@@ -134,13 +134,11 @@ the official path, it comes back as "Sign in with Google".
 
 ## How it is built
 
-| Folder                | Stack                          | What it is                                                                                                             |
-| --------------------- | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
-| `packages/server/`    | Bun, SQLite (WAL)              | REST API and live streams, the agent loop, the Gemini adapter, risk judge, MCP client, vault, local and cloud runtimes |
-| `packages/dashboard/` | React 19, Vite, Mantine 8      | The desk: panes, command center, agent conversations, approvals, audit trail                                           |
-| `packages/computer/`  | Ubuntu, Chrome, Playwright MCP | Optional image for one isolated cloud computer per agent                                                               |
-| `packages/worker/`    | Cloudflare Worker              | Optional public gateway and wake-up alarm for cloud deployments                                                        |
-| `workspace/`          | Files                          | Where agents and shared skills live by default                                                                         |
+| Folder                | Stack                     | What it is                                                                                                  |
+| --------------------- | ------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `packages/server/`    | Bun, SQLite (WAL)         | REST API and live streams, the agent loop, the Gemini adapter, risk judge, MCP client, vault, local runtime |
+| `packages/dashboard/` | React 19, Vite, Mantine 8 | The desk: panes, command center, agent conversations, approvals, audit trail                                |
+| `workspace/`          | Files                     | Where agents and shared skills live by default                                                              |
 
 Where to start reading: `packages/server/src/engine/run.js` (the loop),
 `packages/server/src/engine/gemini.js` (the API),

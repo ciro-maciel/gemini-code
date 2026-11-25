@@ -165,13 +165,6 @@ function ContextDetail({ context, share, releasable, onRelease }) {
 
 // What "Voltar para aqui" undoes, counted before the cut (04/11/2026).
 const plural = (count, one, many) => `${count} ${count === 1 ? one : many}`;
-const clock = (seconds) =>
-  new Date(seconds * 1000).toLocaleString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
 export function rewindSentence(preview) {
   if (preview === undefined)
     return 'Editing from this message. Counting what will be removed…';
@@ -186,11 +179,9 @@ export function rewindSentence(preview) {
   const cut = parts.length
     ? `When you send, ${parts.join(', ')} go out${preview.laterTasks ? ` (in ${plural(preview.laterTasks + 1, 'task', 'tasks')})` : ''}; they're kept in Versions.`
     : 'When you send, nothing but this message is shared.';
-  const disk = preview.diskAt
-    ? `The agent's computer goes back to ${clock(preview.diskAt)}; anything already sent out stays out.`
-    : preview.steps
-      ? "The agent's computer won't be restored: there's no snapshot after this message."
-      : '';
+  const disk = preview.steps
+    ? ' Files the agent already changed stay as they are.'
+    : '';
   return `${cut}${disk}`;
 }
 
@@ -210,7 +201,6 @@ export function Composer({
   onAsk = null,
   onUnqueue,
   onStop,
-  onTeach,
   onVoice,
   onNote = null,
   workSeconds = 0,
@@ -782,17 +772,6 @@ export function Composer({
             <i className="ti ti-sparkles" />
             Use a skill
           </button>
-          {onTeach && (
-            <button
-              onClick={() => {
-                menu.close();
-                onTeach();
-              }}
-            >
-              <i className="ti ti-hand-finger" />
-              Teach a task
-            </button>
-          )}
         </Menu>
       )}
       {menu.is('skills') && (

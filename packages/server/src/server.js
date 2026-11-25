@@ -8,13 +8,10 @@ import {
   createBot,
   createSection,
   deleteBot,
-  ensureComputer,
   deleteSection,
   listSections,
   reorderSections,
   fetchBot,
-  fetchComputerHealth,
-  listBotCheckpoints,
   listBots,
   markBotRead,
   markBotUnread,
@@ -23,7 +20,6 @@ import {
   renameSection,
   reorderSection,
   recoverBots,
-  restoreBotCheckpoint,
   updateBotSettings,
 } from './bots.js';
 import {
@@ -37,7 +33,6 @@ import {
 import { designBot } from './designer.js';
 import { authenticate } from './auth.js';
 import {
-  emitTaskEvent,
   listBotEvents,
   listTaskEvents,
   publishBot,
@@ -64,16 +59,12 @@ import {
 } from './attachments.js';
 import { synthesize, transcribe } from './speech.js';
 import {
-  cancelTeaching,
   deleteSkill,
   ensureAccountSkill,
   fetchSkill,
-  finishTeaching,
   listAccountSkills,
   listSkills,
   setSkillUse,
-  startTeaching,
-  teachingSession,
   updateSkill,
 } from './skills.js';
 import {
@@ -97,7 +88,6 @@ import {
   searchRegistry,
   startToolRefresh,
 } from './engine/catalog.js';
-import { listBrowserToolDefinitions } from './engine/browser.js';
 import {
   deleteMemory,
   listMemories,
@@ -116,11 +106,8 @@ import {
   releasableOf,
   releaseContext,
   rewindTask,
-  chargeAccount,
   continueTask,
-  currentThreadId,
   fetchTask,
-  isBotBusy,
   recoverTasks,
   resolveApproval,
   resumeTasksWaitingOn,
@@ -130,7 +117,7 @@ import {
   takeOver,
 } from './engine/run.js';
 import { BASE_TOOLS } from './engine/tools.js';
-import { openSpriteSocket, readFile as readSpriteFile } from './sprites.js';
+import { readFile as readSpriteFile } from './sprites.js';
 import { isBotFilePath, listBotFiles } from './files.js';
 import { listMascots, readMascotSvg } from './mascots.js';
 import {
@@ -146,21 +133,17 @@ import {
   deleteRoutine,
   fetchRoutine,
   listRoutines,
-  runDueRoutines,
   startRoutines,
   updateRoutine,
 } from './routines.js';
 import { buildHealthReport, startHealthReports } from './health.js';
 import { createApiKey, listApiKeys, revokeApiKey } from './api-keys.js';
-import { nextWakeAt, onRoutinesChanged } from './wake.js';
 import {
   approvalRate,
   auditCsv,
   auditJson,
   listAudit,
   outcomeMetrics,
-  recordFailure,
-  recordOutcome,
   sweepTimedOutApprovals,
 } from './trail.js';
 import {
@@ -396,10 +379,8 @@ router.get('/api/me', async ({ account }) => {
   return json({
     ...describeAccount(account),
     runtime: {
-      computerMode: config.computerMode,
       authMode: config.authMode,
-      workspaceDir:
-        config.computerMode === 'local' ? config.localWorkspaceDir : null,
+      workspaceDir: config.localWorkspaceDir,
     },
     plan: {
       tier: current.tier,
@@ -672,7 +653,6 @@ async function buildDesignedBot(accountId, description) {
       );
     }
   }
-  if (routines.length) onRoutinesChanged();
   const routineLine = routines.length
     ? `\n\nJá deixei agendado: ${routines.map((routine) => `${routine.name} (${routine.scheduleLabel})`).join('; ')}.`
     : '';
@@ -916,7 +896,6 @@ router.post('/api/bots/:id/routines', async ({ req, params, account }) => {
       timezone: timezone || DEFAULT_TIMEZONE,
       createdBy: 'person',
     });
-    onRoutinesChanged();
     return json(routine, 201);
   } catch (error) {
     throw invalid(error.message);
@@ -931,32 +910,13 @@ router.patch('/api/routines/:id', async ({ req, params, account }) => {
   } catch (error) {
     throw invalid(error.message);
   }
-  onRoutinesChanged();
   return json(routine);
 });
 
 router.delete('/api/routines/:id', ({ params, account }) => {
   requireRoutine(params.id, account);
   deleteRoutine(params.id);
-  onRoutinesChanged();
   return json({ id: params.id, deleted: true });
-});
-
-// The alarm's call (wake/worker.js). The request itself wakes the Sprite; this
-// runs what is due and answers with the next time, so the alarm stays right
-// even if an update from here was lost.
-router.post('/api/wake', ({ req }) => {
-  if (
-    !config.wakeSecret ||
-    req.headers.get('x-wake-secret') !== config.wakeSecret
-  )
-    throw new HttpError(401, 'UNAUTHORIZED', 'only the alarm wakes the server');
-  const ran = runDueRoutines();
-  const nextRunAt = nextWakeAt();
-  console.log(
-    `[wake] ran ${ran}, next ${nextRunAt ? new Date(nextRunAt * 1000).toISOString() : 'none'}`,
-  );
-  return json({ ran, nextRunAt });
 });
 
 router.get('/api/models', () =>
@@ -1000,11 +960,6 @@ router.post('/api/bots/:id/provision', ({ params, account }) => {
   if (bot.status === 'ready') return json(bot);
   provision(params.id);
   return json(fetchBot(params.id), 202);
-});
-
-router.get('/api/bots/:id/health', async ({ params, account }) => {
-  requireBot(params.id, account);
-  return json(await fetchComputerHealth(params.id));
 });
 
 router.get('/api/bots/:id/tasks', ({ params, url, account }) => {
@@ -1315,57 +1270,6 @@ router.post('/api/speech', async ({ req, account }) => {
   });
 });
 
-// --- Teaching a task, and the skills it makes --------------------------------
-
-router.post('/api/bots/:id/teach/start', async ({ req, params, account }) => {
-  requireBot(params.id, account);
-  if (isBotBusy(params.id))
-    throw conflict(
-      'the bot is working right now; wait for it to finish or stop the task before teaching',
-    );
-  const { name } = await readBody(req);
-  const bot = await ensureComputer(params.id);
-  return json(await startTeaching(bot, name), 201);
-});
-
-router.post('/api/bots/:id/teach/cancel', async ({ params, account }) => {
-  const bot = requireBot(params.id, account);
-  await cancelTeaching(bot);
-  return json({ isCancelled: true });
-});
-
-router.post('/api/bots/:id/teach/stop', async ({ req, params, account }) => {
-  const bot = requireBot(params.id, account);
-  if (!teachingSession(params.id))
-    throw conflict('there is no recording in progress on this bot');
-  let narration = '';
-  const form = await req.formData().catch(() => null);
-  const audio = form?.get('narration');
-  if (audio && audio.size > 0) {
-    const heard = await transcribe(
-      Buffer.from(await audio.arrayBuffer()),
-      audio.type || 'audio/wav',
-      [account.name, account.email, bot.name],
-    );
-    narration = heard.text;
-    if (heard.cost) addUsage(account.id, heard.cost);
-  }
-  try {
-    const { skill, cost, stepCount } = await finishTeaching(bot, { narration });
-    chargeAccount(bot.id, cost);
-    emitTaskEvent(currentThreadId(bot.id), 'skill_learned', {
-      skillId: skill.id,
-      name: skill.name,
-      whenToUse: skill.whenToUse,
-      steps: skill.steps,
-      stepCount,
-    });
-    return json(skill, 201);
-  } catch (error) {
-    throw invalid(error.message);
-  }
-});
-
 router.get('/api/bots/:id/skills', ({ params, account }) => {
   requireBot(params.id, account, 'enter');
   const items = listSkills(params.id);
@@ -1526,14 +1430,6 @@ router.get('/api/bots/:id/tools', async ({ params, account }) => {
       .all(params.id)
       .map((row) => [row.tool_name, row.policy]),
   );
-  let browser = [];
-  try {
-    browser = (await listBrowserToolDefinitions()).map((tool) => ({
-      name: tool.name,
-      description: tool.description,
-      group: 'Navegador',
-    }));
-  } catch {}
   const base = BASE_TOOLS.map((tool) => ({
     name: tool.function.name,
     description: tool.function.description,
@@ -1545,7 +1441,7 @@ router.get('/api/bots/:id/tools', async ({ params, account }) => {
     group: tool.serviceTitle,
     annotations: tool.annotations,
   }));
-  const items = [...base, ...browser, ...connected].map((tool) => ({
+  const items = [...base, ...connected].map((tool) => ({
     ...tool,
     policy: policies[tool.name] ?? null,
   }));
@@ -1743,44 +1639,6 @@ router.delete('/api/bots/:id/memories/:memoryId', ({ params, account }) => {
   return json({ id: params.memoryId, deleted: true });
 });
 
-router.get('/api/bots/:id/checkpoints', async ({ params, account }) => {
-  requireBot(params.id, account);
-  const items = await listBotCheckpoints(params.id);
-  return json(
-    collection(items, { limit: items.length || 50, offset: 0 }, items.length),
-  );
-});
-
-router.post(
-  '/api/bots/:id/checkpoints/:checkpointId/restore',
-  async ({ params, account }) => {
-    requireBot(params.id, account);
-    const busy = db
-      .query(
-        "SELECT COUNT(*) AS count FROM tasks WHERE bot_id = ? AND status IN ('running', 'queued')",
-      )
-      .get(params.id).count;
-    if (busy)
-      throw conflict('wait for the running task to stop before undoing');
-    await restoreBotCheckpoint(params.id, params.checkpointId);
-    // The task whose approval took this photo, when one did.
-    const taskId =
-      db
-        .query(
-          'SELECT approvals.task_id FROM approvals JOIN tasks ON tasks.id = approvals.task_id WHERE approvals.checkpoint_id = ? AND tasks.bot_id = ?',
-        )
-        .get(params.checkpointId, params.id)?.task_id ?? null;
-    recordOutcome({ botId: params.id, taskId, kind: 'checkpoint_restored' });
-    recordFailure({
-      botId: params.id,
-      taskId,
-      kind: 'checkpoint_restored',
-      context: `ponto ${params.checkpointId}`,
-    });
-    return json({ id: params.checkpointId, isRestoring: true }, 202);
-  },
-);
-
 // --- Trail: what the bot did that went through a judgment ------------------
 
 router.get('/api/bots/:id/audit', ({ params, url, account }) => {
@@ -1930,10 +1788,9 @@ router.post('/api/tasks/:id/rewind', async ({ req, params, account }) => {
   if (!findUserMessage(params.id, eventId))
     throw notFound('this message is not in this conversation');
   try {
-    const { text, isDiskRestored } = await rewindTask(params.id, eventId);
+    const { text } = await rewindTask(params.id, eventId);
     return json({
       text,
-      isDiskRestored,
       thread: withApprovals(fetchTask(params.id)),
     });
   } catch (error) {
@@ -2186,29 +2043,6 @@ async function handleOAuthCallback(url) {
     );
   }
 }
-
-// --- Live screen: dashboard ⇄ control ⇄ bot's VNC -------------------------
-
-const screenSocket = {
-  open(ws) {
-    const upstream = openSpriteSocket(ws.data.spriteUrl, '/vnc');
-    upstream.onopen = () => {
-      ws.data.upstream = upstream;
-      for (const message of ws.data.queue) upstream.send(message);
-      ws.data.queue = [];
-    };
-    upstream.onmessage = (event) => ws.sendBinary(new Uint8Array(event.data));
-    upstream.onclose = () => ws.close();
-    upstream.onerror = () => ws.close();
-  },
-  message(ws, message) {
-    if (ws.data.upstream) ws.data.upstream.send(message);
-    else ws.data.queue.push(message);
-  },
-  close(ws) {
-    ws.data.upstream?.close();
-  },
-};
 
 // --- Static dashboard -----------------------------------------------------
 
@@ -2559,7 +2393,6 @@ router.post('/api/bots/:id/inbox/rotate', ({ params, account }) => {
 const PUBLIC_ROUTES = new Set([
   '/api/models',
   '/api/mascots',
-  '/api/wake',
   '/api/health',
   '/api/github/webhook',
 ]);
@@ -2594,30 +2427,15 @@ export function startServer() {
       `[subscription] ${state.status}${state.models?.length ? ` (${state.models.length} models)` : ''}${state.error ? `: ${state.error}` : ''}`,
     ),
   );
+  // Only this machine reaches it: Gemini Code runs for the person at the
+  // keyboard, with no sign-in in front of it.
   const server = Bun.serve({
     port: config.port,
+    hostname: '127.0.0.1',
     idleTimeout: 0,
-    async fetch(req, server) {
+    async fetch(req) {
       const url = new URL(req.url);
       const { pathname } = url;
-
-      const screen = pathname.match(/^\/api\/bots\/([^/]+)\/screen$/);
-      if (screen) {
-        try {
-          const bot = requireBot(screen[1], await authenticate(req, url));
-          if (bot.status !== 'ready' || !bot.spriteUrl)
-            throw conflict("this bot's computer is not on yet");
-          if (
-            server.upgrade(req, {
-              data: { kind: 'screen', spriteUrl: bot.spriteUrl, queue: [] },
-            })
-          )
-            return;
-          throw invalid('esperava websocket');
-        } catch (error) {
-          return fail(error);
-        }
-      }
 
       if (pathname === '/oauth/callback') return handleOAuthCallback(url);
 
@@ -2696,7 +2514,6 @@ export function startServer() {
 
       return serveDashboard(pathname);
     },
-    websocket: { maxPayloadLength: 64 * 1024 * 1024, ...screenSocket },
   });
 
   onBotReady(startQueuedTasks);
@@ -2704,8 +2521,7 @@ export function startServer() {
   startRepoSweep();
   startToolRefresh();
   startPush();
-  startRoutines(sendRoutineRun, onRoutinesChanged);
-  onRoutinesChanged();
+  startRoutines(sendRoutineRun);
   recoverBots();
   recoverTasks();
   sweepTimedOutApprovals();

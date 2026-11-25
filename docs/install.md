@@ -28,13 +28,13 @@ Settings, or put `GEMINI_API_KEY=...` in `~/.gemini-code/.env`.
 
 ## What goes where
 
-| Path                                                              | What                                                                                    |
-| ----------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| `~/.gemini-code/app/` (Windows: `%LOCALAPPDATA%\GeminiCode\app\`) | The executable, the dashboard and the cloud computer's code. Replaced on every install. |
-| `~/.gemini-code/data/`                                            | The database and the encryption key. Kept across installs.                              |
-| `~/.gemini-code/.env`                                             | Optional keys, `KEY=value` per line.                                                    |
-| `~/.local/bin/gemini-code`                                        | A two-line launcher (macOS, Linux). Windows adds the app folder to the user's PATH.     |
-| `~/GeminiCode/`                                                   | Where agents work when no folder is given.                                              |
+| Path                                                              | What                                                                                |
+| ----------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `~/.gemini-code/app/` (Windows: `%LOCALAPPDATA%\GeminiCode\app\`) | The executable and the dashboard. Replaced on every install.                        |
+| `~/.gemini-code/data/`                                            | The database and the encryption key. Kept across installs.                          |
+| `~/.gemini-code/.env`                                             | Optional keys, `KEY=value` per line.                                                |
+| `~/.local/bin/gemini-code`                                        | A two-line launcher (macOS, Linux). Windows adds the app folder to the user's PATH. |
+| `~/GeminiCode/`                                                   | Where agents work when no folder is given.                                          |
 
 Both scripts check the download against the release's `SHA256SUMS` before
 unpacking it. `GEMINI_CODE_VERSION=0.1.0` installs a given version.
@@ -58,15 +58,11 @@ downloaded with a browser opens with no warning. A bare executable cannot carry
 its notarization ticket: macOS checks it online the first time. The entitlements
 the Bun runtime needs are in `packages/server/macos/entitlements.plist`.
 
-The installed command leaves out Playwright, which the server only uses to list
-the tools of the cloud computer's browser; those tools are absent from a local
-install.
-
 ## Making a release
 
 1. On a machine, build the executable for that machine and run it:
    ```bash
-   bun build --compile --minify --external @playwright/mcp --external playwright-core --external playwright packages/server/src/cli.js --outfile /tmp/gemini-code/gemini-code
+   bun build --compile --minify packages/server/src/cli.js --outfile /tmp/gemini-code/gemini-code
    HOME=$(mktemp -d) /tmp/gemini-code/gemini-code --no-open --port 8799
    ```
    Check `GET /api/health`, create an agent, and write a file through

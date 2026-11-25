@@ -85,8 +85,6 @@ export function Outcomes() {
             value: outcomes.timed_out ?? 0,
             note: `${metrics?.pendingApprovals ?? 0} waiting now`,
           },
-          { label: 'Took over the screen', value: outcomes.takeover ?? 0 },
-          { label: 'Restore points', value: outcomes.checkpoint_restored ?? 0 },
         ]}
       />
     </SettingsGroup>

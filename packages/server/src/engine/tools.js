@@ -31,7 +31,6 @@ import {
   listRoutines,
   nowInZone,
 } from '../routines.js';
-import { onRoutinesChanged } from '../wake.js';
 import { openVault, redact } from '../vault.js';
 import {
   describeWait,
@@ -54,7 +53,6 @@ import { viewFile, WINDOW_CHARS } from './file-view.js';
 import { updateBotSettings } from '../bots.js';
 import { callFilesTool, FILES_TOOLS, FILES_TOOL_NAMES } from '../mcp-files.js';
 import { rootOf } from '../agent-files.js';
-import { isLocalMode } from '../local-runtime.js';
 
 /**
  * Where a path the agent wrote lands in the repository. Without a leading
@@ -458,7 +456,7 @@ export async function runBaseTool({ bot, task, name, args, setEnabledTools }) {
         {
           timeoutSeconds,
           secrets: vault,
-          ...(isLocalMode() ? { cwd: rootOf(bot) } : {}),
+          cwd: rootOf(bot),
         },
       );
       const header = isTimedOut
@@ -480,7 +478,7 @@ export async function runBaseTool({ bot, task, name, args, setEnabledTools }) {
         {
           timeoutSeconds: 60,
           secrets: vault,
-          ...(isLocalMode() ? { cwd: rootOf(bot) } : {}),
+          cwd: rootOf(bot),
         },
       );
       if (exitCode !== 0 || !output.includes('started'))
@@ -674,7 +672,6 @@ export async function runBaseTool({ bot, task, name, args, setEnabledTools }) {
         timezone: args.timezone || DEFAULT_TIMEZONE,
         createdBy: 'agent',
       });
-      onRoutinesChanged();
       return {
         text: `agendado: "${routine.name}" — ${routine.scheduleLabel}; próxima execução ${routine.nextRunLabel}, ${routine.nextRunIn} (agora são ${nowInZone()}; id ${routine.id}). Diga ao usuário exatamente esse "${routine.nextRunIn}", sem refazer a conta.`,
       };
@@ -693,7 +690,6 @@ export async function runBaseTool({ bot, task, name, args, setEnabledTools }) {
       if (!routine || routine.botId !== bot.id)
         return { text: 'não achei essa tarefa agendada neste bot' };
       deleteRoutine(args.id);
-      onRoutinesChanged();
       return { text: `apagada: ${routine.name}` };
     }
 

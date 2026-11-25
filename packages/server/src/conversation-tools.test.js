@@ -69,7 +69,6 @@ describe('voltar para aqui', () => {
       replies: 2,
       steps: 1,
       laterTasks: 1,
-      diskAt: null,
     });
     // Nothing was cut by looking.
     expect(

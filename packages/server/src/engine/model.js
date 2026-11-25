@@ -1,4 +1,4 @@
-import { config, IS_IN_SPRITE } from '../config.js';
+import { config } from '../config.js';
 import { estimateCost, headersFor, providerOf } from '../providers.js';
 import { completeClaude } from './anthropic.js';
 import { completeGemini, geminiIdOf } from './gemini.js';
@@ -18,15 +18,6 @@ function endpoint(account) {
       name: providerOf(account.provider).name,
       isOpenRouter: account.provider === 'openrouter',
     };
-  if (IS_IN_SPRITE && config.openrouterConnectorId) {
-    return {
-      url: `https://api.sprites.dev/v1/gateway/openrouter/${config.openrouterConnectorId}/v1/chat/completions`,
-      headers: {},
-      name: 'OpenRouter',
-      isOpenRouter: true,
-      isHouse: true,
-    };
-  }
   if (!config.openrouterApiKey)
     throw new Error(
       'no access to OpenRouter: set OPENROUTER_CONNECTOR_ID (on the Sprite) or OPENROUTER_API_KEY',

@@ -452,8 +452,7 @@ const judgeWith =
         if (
           !config.geminiApiKey &&
           !config.anthropicApiKey &&
-          !config.openrouterApiKey &&
-          !config.openrouterConnectorId
+          !config.openrouterApiKey
         )
           throw error;
       }

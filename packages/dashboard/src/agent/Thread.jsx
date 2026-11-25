@@ -5,7 +5,6 @@ import {
   ApprovalCard,
   ConnectCard,
   FailedCard,
-  TakeoverCard,
 } from '../components/InlineCards';
 import { ArtifactCard } from '../components/Artifact';
 import { SkillCard } from '../components/Skills';
@@ -554,8 +553,6 @@ export function Thread({
   onRewind,
   onSendNote,
   onResolved,
-  onOpenScreen,
-  onOpenTakeover,
   onOpenFile,
   onOpenRepoFile = null,
   bookmarked = null,
@@ -565,24 +562,11 @@ export function Thread({
     (row) => row.kind === 'work' || row.kind === 'bot',
   );
   const lastRow = rows.at(-1);
-  const isTakenOver =
-    thread?.status === 'waiting_user' && thread?.waitingReason === 'takeover';
   const failedTaskId = thread?.status === 'failed' ? thread.id : null;
   const isMakingReply =
     Boolean(streamingText) ||
     (isWorking && (lastRow?.kind === 'user' || lastRow?.kind === 'work'));
   const liveWork = isMakingReply && lastRow?.kind === 'work' ? lastRow : null;
-  // "Ver a tela" only while the agent is on its computer now (its terminal or its own browser):
-  // the latest group of steps, not the whole turn, so one early command does not keep it on
-  // through a run of the person's Chrome. Conversation, files, connections and chrome_* never count.
-  const latestWork = rows
-    .slice(rows.findLastIndex((row) => row.kind === 'user') + 1)
-    .findLast((row) => row.kind === 'work');
-  const isUsingComputer = Boolean(
-    latestWork?.entries
-      ?.at(-1)
-      ?.steps?.some((step) => /^(computer_|browser_)/.test(step.name || '')),
-  );
   const shown = liveWork ? rows.slice(0, -1) : rows;
   // The step the agent is on, in words, with its count: the one line that changes while it works.
   const liveSteps = liveWork
@@ -769,9 +753,7 @@ export function Thread({
         index,
       );
     if (row.kind === 'takeover')
-      return isTakenOver ? (
-        say(row, <TakeoverCard onOpen={onOpenTakeover} />, index)
-      ) : (
+      return (
         <div key={row.id} className="divider">
           A tela foi sua; o agente seguiu depois.
         </div>
@@ -836,12 +818,6 @@ export function Thread({
               <span className="mono">
                 Agent · <Since from={turnStart} />
               </span>
-              {isUsingComputer && (
-                <button className="pill" onClick={onOpenScreen}>
-                  <i className="ti ti-device-desktop" />
-                  View screen
-                </button>
-              )}
             </div>
           )}
         </AgentMessage>

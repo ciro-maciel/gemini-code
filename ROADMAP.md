@@ -19,8 +19,7 @@ Gemini Code is a lean cousin of
 [google-gemini/gemini-cli](https://github.com/google-gemini/gemini-cli): the
 same layout and code style, on Bun and plain JavaScript.
 
-- [x] `packages/server`, `packages/dashboard`, `packages/computer`,
-      `packages/worker` as Bun workspaces.
+- [x] `packages/server` and `packages/dashboard` as Bun workspaces.
 - [x] Prettier and `.editorconfig` in the Gemini CLI style; ESLint with zero
       warnings.
 - [x] `bun run preflight`: format check, lint and every test, the one command

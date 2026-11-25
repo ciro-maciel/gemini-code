@@ -13,7 +13,6 @@ const { db, now } = await import('./db.js');
 const vault = await import('./vault.js');
 const inbox = await import('./inbox.js');
 const jobs = await import('./engine/jobs.js');
-const { secretsLine } = await import('./sprites.js');
 const { decide } = await import('./engine/policy.js');
 
 function seedBot(id, accountId, status = 'active') {
@@ -82,18 +81,6 @@ describe('the vault', () => {
     expect(
       vault.redact('a abcdef123456-and-more b abcdef123456 c abc', opened),
     ).toBe('a [cofre: LONGER] b [cofre: TOKEN] c abc');
-  });
-
-  test('the exports reach a real shell exactly, quotes and dollar signs included', () => {
-    const secrets = {
-      TRICKY: `it's "quoted" $HOME \`date\` \\ end`,
-      PLAIN: 'simples',
-    };
-    const script = `IFS= read -r line; eval "$(printf '%s' "$line" | base64 -d)"; printf '%s|%s' "$TRICKY" "$PLAIN"`;
-    const out = Bun.spawnSync(['bash', '-c', script], {
-      stdin: Buffer.from(`${secretsLine(secrets)}\n`),
-    });
-    expect(out.stdout.toString()).toBe(`${secrets.TRICKY}|simples`);
   });
 
   test('goes with its bot', async () => {

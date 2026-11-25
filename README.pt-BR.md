@@ -69,8 +69,7 @@ painel de verdade com dados de exemplo, sem instalar nada.
   ligar em `/api/bots/<agente>/mcp/files`. Veja
   [docs/files-mcp.md](docs/files-mcp.md).
 - **Local primeiro.** Roda na sua máquina, sobre uma pasta, sem conta e sem
-  login. O modo nuvem, um computador Linux isolado por agente na Fly Sprites, é
-  opcional.
+  login. Nada roda numa nuvem nossa.
 
 ## Começar (pelo código)
 
@@ -110,13 +109,11 @@ sozinho para o próximo que está bem.
 
 ## Como é construído
 
-| Pasta                 | Tecnologia                     | O que é                                                                                                                               |
-| --------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/server/`    | Bun, SQLite (WAL)              | API e transmissão ao vivo, o laço do agente, o adaptador do Gemini, avaliador de risco, cliente MCP, cofre, execução local e na nuvem |
-| `packages/dashboard/` | React 19, Vite, Mantine 8      | A mesa: painéis, centro de comando, conversas dos agentes, aprovações, trilha de auditoria                                            |
-| `packages/computer/`  | Ubuntu, Chrome, Playwright MCP | Imagem opcional de um computador isolado na nuvem por agente                                                                          |
-| `packages/worker/`    | Cloudflare Worker              | Porta pública e despertador opcionais para a nuvem                                                                                    |
-| `workspace/`          | Arquivos                       | Onde moram os agentes e as habilidades compartilhadas                                                                                 |
+| Pasta                 | Tecnologia                | O que é                                                                                                                    |
+| --------------------- | ------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `packages/server/`    | Bun, SQLite (WAL)         | API e transmissão ao vivo, o laço do agente, o adaptador do Gemini, avaliador de risco, cliente MCP, cofre, execução local |
+| `packages/dashboard/` | React 19, Vite, Mantine 8 | A mesa: painéis, centro de comando, conversas dos agentes, aprovações, trilha de auditoria                                 |
+| `workspace/`          | Arquivos                  | Onde moram os agentes e as habilidades compartilhadas                                                                      |
 
 ## Design system
 

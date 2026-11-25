@@ -46,9 +46,6 @@ describe('the gemini-code command line', () => {
     expect(places.dashboard).toBe(
       path.join('/home/ana/.gemini-code/app', 'dashboard'),
     );
-    expect(places.computer).toBe(
-      path.join('/home/ana/.gemini-code/app', 'computer'),
-    );
     expect(places.workspace).toBe(path.join('/home/ana', 'GeminiCode'));
     expect(
       placesFor({

@@ -366,20 +366,6 @@ export function ConnectCard({
   );
 }
 
-export function TakeoverCard({ onOpen }) {
-  return (
-    <Card eyebrow="The computer is yours" title="You took over the screen">
-      <Description>
-        Sign in, enter the code, or whatever is needed. When you’re done, send a
-        message saying what you did — that hands it back to the bot.
-      </Description>
-      <Button radius={0} color="gray.9" onClick={onOpen}>
-        Open computer
-      </Button>
-    </Card>
-  );
-}
-
 export function FailedCard({ taskId, onDone = () => {} }) {
   const [isBusy, setIsBusy] = useState(false);
   const retry = async () => {

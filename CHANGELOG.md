@@ -25,6 +25,12 @@ version with its date.
 
 ### Removed
 
+- Cloud mode: the cloud computers (Fly Sprites), their spares, the live screen,
+  taking over the screen, teaching a task by recording it, disk restore points,
+  the cloud browser and the Cloudflare Worker gateway, with packages/computer
+  and packages/worker. Gemini Code runs as one executable on the person's own
+  machine; the agents' computer is that machine, and the server answers only on
+  127.0.0.1 (2026-11-25).
 - Sharing an agent and the All / Mine / Shared filters in the side column: one
   person runs Gemini Code on their own machine (2026-11-25).
 

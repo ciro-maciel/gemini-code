@@ -45,7 +45,6 @@ export function TabMenu({
   const bot = isAgent ? bots.find((each) => each.id === refOf(tab)) : null;
   const isOwner =
     Boolean(bot) && !bot.sharedBy && (bot.access ?? 'owner') === 'owner';
-  const hasComputer = bot?.status === 'ready';
   const index = pane.tabs.indexOf(tab);
   const isAlone = pane.tabs.length === 1;
   const isLast = index === pane.tabs.length - 1;
@@ -130,16 +129,6 @@ export function TabMenu({
               Agent settings
             </button>
           )}
-          <button
-            disabled={!hasComputer}
-            onClick={run(() => onOpen(`screen:${bot.id}`))}
-          >
-            <i className="ti ti-device-desktop" />
-            View live screen
-            {!hasComputer && (
-              <span className="menu-why">no computer right now</span>
-            )}
-          </button>
           {isOwner && (
             <button
               onClick={run(async () => {

@@ -19,8 +19,6 @@ same layout and code style, on Bun and plain JavaScript.
   (`src/engine/subscription/`).
 - `packages/dashboard`: React 19, Vite, Mantine 8. The desk, the agent
   conversations and file trees; the public demo in `src/demo/`.
-- `packages/computer`: the optional cloud computer image (Fly Sprites).
-- `packages/worker`: the optional Cloudflare Worker gateway.
 - `workspace/`: where agents and shared skills live by default.
 
 ## Building and Running

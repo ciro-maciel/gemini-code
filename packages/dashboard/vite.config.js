@@ -5,7 +5,7 @@ import { demoSite } from './src/demo/vite-plugin.js';
 
 // The control server serves this build in production; in development Vite
 // forwards the API, the OAuth return and the live screen's websocket to it.
-const CONTROL = process.env.CONTROL_URL || 'http://localhost:8787';
+const CONTROL = process.env.CONTROL_URL || 'http://127.0.0.1:8787';
 
 export default defineConfig(({ mode }) => {
   // `--mode demo`: the public demo on GitHub Pages (src/demo/), with an

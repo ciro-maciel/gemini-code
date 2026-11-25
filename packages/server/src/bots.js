@@ -1,33 +1,17 @@
-import { createHash } from 'node:crypto';
-import { readFileSync } from 'node:fs';
-import path from 'node:path';
-import { $ } from 'bun';
 import { config } from './config.js';
 import { db, newId, now, toApi } from './db.js';
 import { listMembers } from './members.js';
 import { chooseMascot, isMascot } from './mascots.js';
-import { closeBrowserSession } from './engine/browser.js';
 import { removeBotAttachments } from './attachments.js';
 import { countPendingChoices } from './artifacts.js';
 import { today } from './accounts.js';
 import { agentFolders, slugOf } from './repo-files.js';
 import { hasAiAccount, isModelOf } from './ai-accounts.js';
-import {
-  createSprite,
-  deleteSprite,
-  fetchSprite,
-  fetchSpriteHttp,
-  listCheckpoints,
-  restoreCheckpoint,
-  runCommand,
-  writeFile,
-} from './sprites.js';
-import { ensureLocalWorkspace, isLocalMode } from './local-runtime.js';
+import { listCheckpoints } from './sprites.js';
+import { ensureLocalWorkspace } from './local-runtime.js';
 
-// A bot is a conversation first and a computer second. It is born without one
-// ('idle') and gets a computer the first time it needs a screen or a shell —
-// from the spares when there is one (instant), prepared from scratch when not
-// (minutes). A bot that only talks never costs a machine.
+// A bot is a conversation first. Its computer is this machine: the first
+// time it needs a shell it is marked ready, and its work stays in its folder.
 //
 //   idle          no computer yet
 //   provisioning  a computer is being prepared or upgraded
@@ -293,168 +277,9 @@ function newSpriteName() {
 
 // --- The computer's code ---------------------------------------------------
 
-const COMPUTER_FILES = ['server.js', 'browser.js', 'package.json', 'bun.lock'];
-
-// A hash of the computer's code. A Sprite installed with another one is
-// upgraded before its next use, so a deploy reaches every bot on its own.
-export const COMPUTER_VERSION = createHash('sha256')
-  .update(
-    COMPUTER_FILES.map((file) =>
-      readFileSync(path.join(config.computerDir, file)),
-    ).join('\0'),
-  )
-  .update(readFileSync(path.join(config.computerDir, 'provision.sh')))
-  .digest('hex')
-  .slice(0, 12);
-
-const UPLOAD_DIR = '/home/sprite/.assistant';
-
-let bundle = null;
-async function computerBundle() {
-  if (!bundle)
-    bundle =
-      await $`tar czf - -C ${config.computerDir} ${COMPUTER_FILES}`.arrayBuffer();
-  return Buffer.from(bundle);
-}
-
-/**
- * Makes a Sprite into a computer: creates it if missing and installs the
- * virtual screen, Chrome, VNC, the bridge and the browser tools. Idempotent,
- * so it also upgrades. Takes minutes the first time (Chrome and the fonts are
- * ~300 MB), which is why spares exist.
- */
-async function prepareComputer(spriteName, onProgress) {
-  let sprite;
-  try {
-    sprite = await fetchSprite(spriteName);
-  } catch (error) {
-    if (error.status !== 404) throw error;
-    sprite = await createSprite(spriteName);
-  }
-  onProgress?.({ spriteUrl: sprite.url });
-  // The sprite user's own folder: on the first computers /tmp/provision.sh
-  // belongs to another user and could not be written over.
-  await writeFile(
-    spriteName,
-    `${UPLOAD_DIR}/computer.tgz`,
-    await computerBundle(),
-  );
-  await writeFile(
-    spriteName,
-    `${UPLOAD_DIR}/provision.sh`,
-    readFileSync(path.join(config.computerDir, 'provision.sh')),
-  );
-  const { exitCode, output } = await runCommand(
-    spriteName,
-    `bash ${UPLOAD_DIR}/provision.sh`,
-    { timeoutSeconds: 900, cwd: '/home/sprite' },
-  );
-  if (exitCode !== 0)
-    throw new Error(`setup failed (${exitCode}): ${output.slice(-800)}`);
-  return sprite.url;
-}
-
-// --- Spares: computers prepared ahead, so a bot gets one at once ----------
-
-let isFillingSpares = false;
-const recentClaims = [];
-const CLAIM_WINDOW_SECONDS = 600;
-
-// At least the minimum; one more for each computer handed out in the last ten
-// minutes, so a burst of new people finds machines waiting.
-function spareTarget() {
-  // Zero is off (development on the Mac): demand never creates spares there.
-  if (config.spareComputers === 0) return 0;
-  while (recentClaims.length && recentClaims[0] < now() - CLAIM_WINDOW_SECONDS)
-    recentClaims.shift();
-  return Math.min(
-    config.spareComputersMax,
-    config.spareComputers + recentClaims.length,
-  );
-}
-
-export async function fillSpares() {
-  // Off means off: on the Mac a spare row left half-prepared once came back
-  // to life as a Sprite nobody asked for.
-  if (isFillingSpares || config.spareComputers === 0) return;
-  isFillingSpares = true;
-  try {
-    // A spare caught mid-preparation by a restart, or installed with older
-    // code, is prepared again (idempotent).
-    const stale = db
-      .query(
-        "SELECT sprite_name FROM spare_computers WHERE status = 'provisioning' OR computer_version IS NOT ? OR computer_version IS NULL",
-      )
-      .all(COMPUTER_VERSION);
-    await Promise.all(
-      stale.map(({ sprite_name }) => prepareSpare(sprite_name)),
-    );
-    // Several at once: preparing is waiting on apt and downloads, not CPU here.
-    for (;;) {
-      const ready = db
-        .query(
-          "SELECT COUNT(*) AS count FROM spare_computers WHERE status IN ('ready', 'provisioning')",
-        )
-        .get().count;
-      const missing = spareTarget() - ready;
-      if (missing <= 0) break;
-      const names = Array.from({ length: Math.min(missing, 3) }, newSpriteName);
-      for (const spriteName of names)
-        db.query(
-          'INSERT INTO spare_computers (sprite_name, status, created_at) VALUES (?, ?, ?)',
-        ).run(spriteName, 'provisioning', now());
-      const results = await Promise.all(names.map(prepareSpare));
-      if (results.some((isReady) => !isReady)) break;
-    }
-  } finally {
-    isFillingSpares = false;
-  }
-}
-
-async function prepareSpare(spriteName) {
-  db.query(
-    "UPDATE spare_computers SET status = 'provisioning' WHERE sprite_name = ?",
-  ).run(spriteName);
-  try {
-    const spriteUrl = await prepareComputer(spriteName, ({ spriteUrl }) => {
-      db.query(
-        'UPDATE spare_computers SET sprite_url = ? WHERE sprite_name = ?',
-      ).run(spriteUrl, spriteName);
-    });
-    db.query(
-      "UPDATE spare_computers SET status = 'ready', sprite_url = ?, computer_version = ? WHERE sprite_name = ?",
-    ).run(spriteUrl, COMPUTER_VERSION, spriteName);
-    return true;
-  } catch (error) {
-    if (error.code === 'SPRITE_LIMIT')
-      console.warn(`spare ${spriteName}: ${error.message}`);
-    else console.error(`spare ${spriteName}`, error);
-    // A spare that failed is destroyed, never left behind as an orphan Sprite.
-    db.query('DELETE FROM spare_computers WHERE sprite_name = ?').run(
-      spriteName,
-    );
-    await deleteSprite(spriteName).catch(() => {});
-    return false;
-  }
-}
-
-function claimSpare() {
-  const spare = db.transaction(() => {
-    const found = db
-      .query(
-        "SELECT * FROM spare_computers WHERE status = 'ready' AND computer_version = ? ORDER BY created_at LIMIT 1",
-      )
-      .get(COMPUTER_VERSION);
-    if (found)
-      db.query('DELETE FROM spare_computers WHERE sprite_name = ?').run(
-        found.sprite_name,
-      );
-    return found;
-  })();
-  recentClaims.push(now());
-  fillSpares();
-  return spare;
-}
+// The computer is this machine: there is nothing to install or upgrade, so
+// its version is a constant the engine compares against.
+export const COMPUTER_VERSION = 'local';
 
 // --- Sections: the column's own order, per account ------------------------
 
@@ -650,96 +475,23 @@ export async function assignMascot(botId) {
   if (mascot) updateBot(botId, { mascot });
 }
 
-const inFlight = new Map();
-
 /**
  * The bot with a computer that answers and runs the current code. Called on
  * the first screen or shell tool of a task; `onProgress(text)` tells the
  * conversation why it waits. Concurrent callers share one preparation.
  */
-export function ensureComputer(botId, onProgress = () => {}) {
-  if (inFlight.has(botId)) return inFlight.get(botId);
+export function ensureComputer(botId) {
   const bot = fetchBot(botId);
-  if (isLocalMode()) {
-    ensureLocalWorkspace();
-    if (bot.status !== 'ready' || bot.computerVersion !== COMPUTER_VERSION) {
-      updateBot(bot.id, {
-        status: 'ready',
-        status_detail: null,
-        computer_version: COMPUTER_VERSION,
-      });
-      for (const listener of readyListeners) listener(bot.id);
-    }
-    return Promise.resolve(fetchBot(bot.id));
-  }
-  if (bot.status === 'ready' && bot.computerVersion === COMPUTER_VERSION)
-    return Promise.resolve(bot);
-  const work = prepareBotComputer(bot, onProgress).finally(() =>
-    inFlight.delete(botId),
-  );
-  inFlight.set(botId, work);
-  return work;
-}
-
-async function prepareBotComputer(bot, onProgress) {
-  // A bot that ever had a computer keeps it: its Chrome logins and files
-  // live there. Only a bot that never had one takes a spare. (A failed
-  // upgrade once handed bot 002 a spare and left its own computer behind.)
-  const hasComputer = Boolean(bot.spriteUrl);
-  if (!hasComputer) {
-    const spare = claimSpare();
-    if (spare) {
-      updateBot(bot.id, {
-        sprite_name: spare.sprite_name,
-        sprite_url: spare.sprite_url,
-        status: 'ready',
-        status_detail: null,
-        computer_version: spare.computer_version,
-      });
-      for (const listener of readyListeners) listener(bot.id);
-      return fetchBot(bot.id);
-    }
-  }
-  const detail = hasComputer
-    ? 'Updating the computer'
-    : 'Starting the computer for the first time';
-  onProgress(
-    hasComputer
-      ? 'Updating the computer before use (takes a few seconds).'
-      : 'Starting the computer for the first time (takes a few minutes).',
-  );
-  try {
-    updateBot(bot.id, { status: 'provisioning', status_detail: detail });
-    const spriteUrl = await prepareComputer(bot.spriteName, ({ spriteUrl }) =>
-      updateBot(bot.id, { sprite_url: spriteUrl }),
-    );
+  ensureLocalWorkspace();
+  if (bot.status !== 'ready' || bot.computerVersion !== COMPUTER_VERSION) {
     updateBot(bot.id, {
       status: 'ready',
       status_detail: null,
-      sprite_url: spriteUrl,
       computer_version: COMPUTER_VERSION,
     });
     for (const listener of readyListeners) listener(bot.id);
-    return fetchBot(bot.id);
-  } catch (error) {
-    // At the plan's limit nothing failed: the bot goes back to how it was
-    // and the task waits for a slot (engine/run.js).
-    if (error.code === 'SPRITE_LIMIT') {
-      updateBot(bot.id, {
-        status: hasComputer ? 'ready' : 'idle',
-        status_detail: null,
-      });
-      throw error;
-    }
-    console.error(`computer ${bot.id}`, error);
-    updateBot(bot.id, {
-      status: 'failed',
-      status_detail: error.message.slice(0, 1000),
-    });
-    throw new Error(
-      "this bot's computer did not get ready; try again in a moment",
-    );
   }
+  return Promise.resolve(fetchBot(bot.id));
 }
 
 /** "Preparar de novo" and "Ligar agora" in the panel. */
@@ -757,8 +509,6 @@ export function onBotReady(listener) {
 export async function deleteBot(botId) {
   const bot = fetchBot(botId);
   if (!bot) return;
-  // An idle bot's Sprite never existed; deleteSprite takes the 404.
-  await deleteSprite(bot.spriteName);
   db.transaction(() => {
     // Connections are the account's pool: the row only remembers the bot
     // that made it, and that memory goes; the connection stays.
@@ -770,29 +520,10 @@ export async function deleteBot(botId) {
   removeBotAttachments(botId);
 }
 
-export async function fetchComputerHealth(botId) {
-  const bot = fetchBot(botId);
-  if (!bot?.spriteUrl || bot.status !== 'ready')
-    return { isChromeReady: false };
-  try {
-    const response = await fetchSpriteHttp(bot.spriteUrl, '/health');
-    return response.ok ? response.json() : { isChromeReady: false };
-  } catch {
-    return { isChromeReady: false };
-  }
-}
-
 export async function listBotCheckpoints(botId) {
   const bot = fetchBot(botId);
   if (bot.status !== 'ready') return [];
   return listCheckpoints(bot.spriteName);
-}
-
-/** Puts the bot's disk back as it was; Chrome and the screen restart. */
-export async function restoreBotCheckpoint(botId, checkpointId) {
-  const bot = fetchBot(botId);
-  await closeBrowserSession(bot);
-  await restoreCheckpoint(bot.spriteName, checkpointId);
 }
 
 export function recoverBots() {
@@ -800,7 +531,6 @@ export function recoverBots() {
     .query("SELECT id FROM bots WHERE status = 'provisioning'")
     .all())
     provision(id);
-  fillSpares();
   (async () => {
     for (const { id } of db
       .query('SELECT id FROM bots WHERE mascot IS NULL ORDER BY created_at')
