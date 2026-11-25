@@ -26,6 +26,8 @@ const IGNORED_DIRS = new Set([
   '.next',
   '.turbo',
   '.cache',
+  // The agents' worktrees of the person's repositories (projects.js).
+  'worktrees',
 ]);
 const IGNORED_FILES = new Set(['.DS_Store', '.encryption-key']);
 

@@ -611,6 +611,10 @@ const MIGRATIONS = [
         created_at INTEGER NOT NULL
     );
     CREATE INDEX document_revisions_by_file ON document_revisions (account_id, path, created_at DESC)`,
+  // Projects (25/11/2026): the folder of the person's repositories, and the
+  // repository each agent works on, in its own worktree.
+  `ALTER TABLE accounts ADD COLUMN projects_dir TEXT`,
+  `ALTER TABLE bots ADD COLUMN project TEXT`,
 ];
 
 db.exec(

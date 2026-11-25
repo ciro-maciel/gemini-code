@@ -20,6 +20,11 @@ version with its date.
 
 ### Added
 
+- Settings › Projects: the folder that holds your repositories, and each agent
+  works in its own `git worktree` of the one it picks, on the branch
+  `gemini-code/<agent>`; the tree, the files MCP, the terminal, the subscription
+  and the API tools all land there. GitHub is reached only through the GitHub
+  connector (2026-11-25).
 - The README, in English and Portuguese, shows the design system with an image
   of its page and links to the reference and the HTML page (2026-11-25).
 
@@ -31,6 +36,9 @@ version with its date.
   and packages/worker. Gemini Code runs as one executable on the person's own
   machine; the agents' computer is that machine, and the server answers only on
   127.0.0.1 (2026-11-25).
+- Settings › Files and GitHub, and the agent's "Change folder" button: the
+  workspace repository row was left from the hosted mode and showed nothing true
+  on this machine (2026-11-25).
 - Sharing an agent and the All / Mine / Shared filters in the side column: one
   person runs Gemini Code on their own machine (2026-11-25).
 

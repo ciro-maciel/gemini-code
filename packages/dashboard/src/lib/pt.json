@@ -1411,7 +1411,31 @@
     "Its agent goes back to the top, outside groups.": "O agente dele volta para o topo, fora dos grupos.",
     "No agent and no conversation is deleted.": "Nenhum agente e nenhuma conversa são apagados.",
     "in your agents’ names.": "nos nomes dos seus agentes.",
-    "Delete": "Apagar"
+    "Delete": "Apagar",
+    "Projects": "Projetos",
+    "The folder that holds your repositories. Each agent picks one and works in its own copy of it, a git worktree on its own branch, so agents never overwrite each other or what you are editing.": "A pasta que guarda os seus repositórios. Cada agente escolhe um e trabalha numa cópia própria dele, uma worktree do git num branch só dele, então um agente nunca sobrescreve outro nem o que você está editando.",
+    "Could not read the projects": "Não consegui ler os projetos",
+    "Projects folder": "Pasta de projetos",
+    "Where your repositories live on this machine, for example ~/code. Repositories up to two levels down are found.": "Onde ficam os seus repositórios nesta máquina, por exemplo ~/code. Encontro repositórios até dois níveis abaixo.",
+    "Projects folder saved": "Pasta de projetos salva",
+    "Repositories": "Repositórios",
+    "Pick one in an agent's settings. Its worktree is made under the workspace, in worktrees/.": "Escolha um nas configurações de um agente. A worktree dele fica no workspace, em worktrees/.",
+    "No repositories here yet": "Nenhum repositório aqui ainda",
+    "Clone one into this folder, or choose the folder that holds them.": "Clone um nesta pasta, ou escolha a pasta que guarda os seus repositórios.",
+    "the folder itself": "a própria pasta",
+    "Local only": "Só local",
+    "GitHub connector": "Conector do GitHub",
+    "Agents open pull requests, read issues and manage your repositories through it.": "Por ele os agentes abrem pull requests, leem issues e cuidam dos seus repositórios.",
+    "Connect it once so agents can open pull requests and read issues in your repositories.": "Conecte uma vez para os agentes abrirem pull requests e lerem issues nos seus repositórios.",
+    "Open Connectors": "Abrir Conectores",
+    "Choose a project": "Escolher um projeto",
+    "Works on": "Trabalha em",
+    "Its own folder": "A própria pasta",
+    "No repository: it works in its folder in the workspace": "Sem repositório: trabalha na pasta dele no workspace",
+    "Choose your projects folder": "Escolher a pasta de projetos",
+    "Works in its own folder now": "Agora trabalha na própria pasta",
+    "In its own worktree, on its own branch.": "Numa worktree própria, num branch só dele.",
+    "choose the folder that holds your repositories": "escolha a pasta que guarda os seus repositórios"
   },
   "patterns": {
     "The last {#0} days.": "Os últimos {#0} dias.",
@@ -1730,6 +1754,11 @@
     "{0} is not one of this agent's connections in Gemini Code": "{0} não é uma das conexões deste agente no Gemini Code",
     "Its {#0} agents go back to the top, outside groups.": "Os {#0} agentes dele voltam para o topo, fora dos grupos.",
     "{#0} companies": "{#0} empresas",
-    "Waiting for you: {#0}": "Esperando você: {#0}"
+    "Waiting for you: {#0}": "Esperando você: {#0}",
+    "{0} repositories found.": "{0} repositórios encontrados.",
+    "Project: {0}": "Projeto: {0}",
+    "Works on {0} now": "Agora trabalha em {0}",
+    "{0} is not a repository in the projects folder": "{0} não é um repositório da pasta de projetos",
+    "{0} is not a folder on this machine": "{0} não é uma pasta nesta máquina"
   }
 }

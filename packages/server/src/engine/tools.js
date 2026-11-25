@@ -53,6 +53,7 @@ import { viewFile, WINDOW_CHARS } from './file-view.js';
 import { updateBotSettings } from '../bots.js';
 import { callFilesTool, FILES_TOOLS, FILES_TOOL_NAMES } from '../mcp-files.js';
 import { rootOf } from '../agent-files.js';
+import { workFolderOf } from '../projects.js';
 
 /**
  * Where a path the agent wrote lands in the repository. Without a leading
@@ -66,14 +67,12 @@ export function pathFor(bot, value) {
   const clean = raw
     .replace(/^\/?home\/sprite\/workspace\/?/, '')
     .replace(/^\/+|\/+$/g, '');
-  if (
-    isRooted ||
-    !bot.folder ||
-    clean === bot.folder ||
-    clean.startsWith(`${bot.folder}/`)
-  )
+  // An agent on a project works in its worktree (projects.js); the others
+  // keep their working folder until the hosted mode leaves.
+  const folder = bot.project ? workFolderOf(bot) : bot.folder;
+  if (isRooted || !folder || clean === folder || clean.startsWith(`${folder}/`))
     return clean;
-  return clean ? `${bot.folder}/${clean}` : bot.folder;
+  return clean ? `${folder}/${clean}` : folder;
 }
 // Paths go back to the agent from the root, so a colleague given one finds the same file.
 const shown = (path) => `/${path}`;

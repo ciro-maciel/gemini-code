@@ -5,7 +5,7 @@ import { Diagnostics } from '../components/Diagnostics';
 import { LanguageSettings } from '../components/LanguageSettings';
 import { AiAccounts } from './settings/AiAccounts';
 import { MyChrome, Notifications, Security } from './settings/AccountSections';
-import { AgentSafety, Dictation, Files } from './settings/AgentSections';
+import { AgentSafety, Dictation, Projects } from './settings/AgentSections';
 
 // The sections, grouped by what they are about: the agents, this app, help. Each is built from the kit in
 // settings/kit.jsx and follows docs/settings.md.
@@ -14,7 +14,7 @@ const NAV = [
     'Agents',
     [
       ['accounts', 'AI accounts', 'ti-sparkles', AiAccounts],
-      ['files', 'Files and GitHub', 'ti-folder', Files],
+      ['projects', 'Projects', 'ti-folders', Projects],
       ['chrome', 'My Chrome', 'ti-brand-chrome', MyChrome],
       ['dictation', 'Dictation', 'ti-microphone', Dictation],
       ['safety', 'Agent safety', 'ti-scale', AgentSafety],

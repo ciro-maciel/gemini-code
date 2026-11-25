@@ -28,7 +28,7 @@ import {
 import path from 'node:path';
 
 import { config } from './config.js';
-import { agentDirOf } from './bots.js';
+import { ensureWorktree, workFolderOf } from './projects.js';
 
 export const OPERATIONS = [
   {
@@ -160,8 +160,8 @@ const refuse = (code, message) => {
 
 /** The agent's root folder on disk, made if missing. */
 export function rootOf(bot) {
-  const folder = agentDirOf(bot) || `agents/${bot.id}`;
-  const root = path.join(config.localWorkspaceDir, folder);
+  if (bot.project) return realpathSync(ensureWorktree(bot));
+  const root = path.join(config.localWorkspaceDir, workFolderOf(bot));
   mkdirSync(root, { recursive: true });
   return realpathSync(root);
 }

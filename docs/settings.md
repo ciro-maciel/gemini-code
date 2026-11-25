@@ -123,7 +123,7 @@ time). The layer translates one text node at a time, so:
 | Notifications     | Whether this device is told when an agent needs you                                                         |
 | My Chrome         | Whether agents can act in your own Chrome, and how to link it                                               |
 | Security          | How this Gemini Code is reached and who can act in it                                                       |
-| Files and GitHub  | Where the agents' files live                                                                                |
+| Projects          | The folder of your repositories; each agent works in its own worktree of one                                |
 | Dictation         | Talking instead of typing, and which voice service answers                                                  |
 | Agent safety      | The rules every agent follows, whatever anyone allows                                                       |
 | Diagnostics       | Whether every part works, is connected and is allowed, right now, and what happened to approvals in 30 days |

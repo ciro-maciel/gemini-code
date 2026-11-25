@@ -3,12 +3,7 @@ import { db, newId, now, toApi } from '../db.js';
 import { emitTaskEvent, publishBot, publishLive } from '../events.js';
 import { createCheckpoint } from '../sprites.js';
 import { addUsage, fetchAccount, today } from '../accounts.js';
-import {
-  agentDirOf as agentFolderOf,
-  COMPUTER_VERSION,
-  ensureComputer,
-  usesConnection,
-} from '../bots.js';
+import { COMPUTER_VERSION, ensureComputer, usesConnection } from '../bots.js';
 import {
   attachmentsOf,
   copyPendingAttachments,
@@ -50,8 +45,6 @@ import {
 } from '../ai-accounts.js';
 import { isSubscriptionProvider } from '../providers.js';
 import { runSubscriptionTurn } from './subscription/index.js';
-import { mkdirSync } from 'node:fs';
-import nodePath from 'node:path';
 import {
   buildFailoverCandidates,
   isAuthFailure,
@@ -83,6 +76,7 @@ import {
   emptyReplyStop,
   RETRY_MAX_TOKENS,
 } from './empty-reply.js';
+import { rootOf } from '../agent-files.js';
 
 // A task that is moving keeps going on its own; every REFLECT_EVERY steps the
 // model is told to stop and re-plan instead of asking the person (the stop at
@@ -1591,11 +1585,8 @@ async function runTurnOnSubscription(taskId, bot, messages) {
     isFirst && bot.instructions
       ? `${bot.instructions}\n\n---\n\n${said}`
       : said;
-  const folder = nodePath.join(
-    config.localWorkspaceDir,
-    agentFolderOf(bot) || `agents/${bot.id}`,
-  );
-  mkdirSync(folder, { recursive: true });
+  // The agent's one work folder: its worktree of the project it picked, or its own folder.
+  const folder = rootOf(bot);
   const turnId = newId();
   const controller = new AbortController();
   inFlight.set(taskId, controller);

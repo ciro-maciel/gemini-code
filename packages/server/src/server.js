@@ -243,6 +243,13 @@ import {
   toolOf,
 } from './agent-files.js';
 import { answerFilesMcp } from './mcp-files.js';
+import {
+  ensureWorktree,
+  isProjectOf,
+  listProjects,
+  projectsRootOf,
+  setProjectsRoot,
+} from './projects.js';
 
 // Exported for the tests, which call the routes without a port or a token.
 export const router = createRouter();
@@ -782,11 +789,55 @@ router.delete('/api/bots/:id/read', ({ params, account }) => {
 router.patch('/api/bots/:id', async ({ req, params, account }) => {
   const before = requireBot(params.id, account);
   try {
-    const bot = updateBotSettings(params.id, await readBody(req));
+    const body = await readBody(req);
+    // A repository from the projects folder: its worktree is made now, so a
+    // problem shows when it is picked, not on the agent's first step.
+    if (typeof body.project === 'string' && body.project.trim()) {
+      const root = projectsRootOf(account.id);
+      if (!isProjectOf(root, body.project.trim()))
+        throw new Error(
+          `${body.project} is not a repository in the projects folder`,
+        );
+      ensureWorktree({ ...before, project: body.project.trim() }, root);
+    }
+    const bot = updateBotSettings(params.id, body);
     // A model or key changed mid-step takes over now, not after the old model answers.
     if (bot.model !== before.model || bot.aiAccount !== before.aiAccount)
       interruptBot(params.id);
     return json(bot);
+  } catch (error) {
+    throw invalid(error.message);
+  }
+});
+
+// --- Projects: the folder of the person's repositories (projects.js) ---
+
+router.get('/api/projects', ({ account }) => {
+  const root = projectsRootOf(account.id);
+  const items = listProjects(root);
+  return json({
+    root,
+    ...collection(
+      items,
+      { limit: items.length || 50, offset: 0 },
+      items.length,
+    ),
+  });
+});
+
+router.put('/api/projects/root', async ({ req, account }) => {
+  const { path: chosen } = await readBody(req);
+  try {
+    const root = setProjectsRoot(account.id, chosen);
+    const items = listProjects(root);
+    return json({
+      root,
+      ...collection(
+        items,
+        { limit: items.length || 50, offset: 0 },
+        items.length,
+      ),
+    });
   } catch (error) {
     throw invalid(error.message);
   }

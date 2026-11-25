@@ -10,8 +10,11 @@ way a person reaches it, with tests that fail when it breaks.
 - [x] A files MCP server (guide, read, write, delete) locks every file operation
       inside the agent's folder ([docs/files-mcp.md](docs/files-mcp.md)).
 - [x] The agent's terminal starts in its own folder.
-- [ ] Each agent gets its own `git worktree` of the project, so two agents can
-      change the same repository without colliding.
+- [x] Each agent that picks a repository from Settings › Projects works in its
+      own `git worktree` of it, on its own branch, so two agents can change the
+      same repository without colliding.
+- [ ] Agents without a project keep two folders (the tree's and the API tools'
+      `folder`); they become one when the hosted mode leaves.
 
 ## 2. A layout a Gemini CLI contributor already knows
 

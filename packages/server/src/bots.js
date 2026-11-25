@@ -198,9 +198,17 @@ export function updateBotSettings(
     aiAccount,
     templateId,
     connectionIds,
+    project,
   },
 ) {
   const fields = {};
+  // The repository it works on, relative to the projects folder; the route
+  // checks it is one (projects.js).
+  if (project !== undefined)
+    fields.project =
+      typeof project === 'string' && project.trim()
+        ? project.trim().slice(0, 300)
+        : null;
   const accountId = fetchBot(botId)?.accountId;
   if (effort !== undefined) {
     if (effort !== null && !EFFORTS.includes(effort))

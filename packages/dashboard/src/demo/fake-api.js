@@ -527,6 +527,18 @@ export function createFakeApi({
     ['GET', '/api/ai-providers', () => ok(collection(fixtures.PROVIDERS))],
     [
       'GET',
+      '/api/projects',
+      () =>
+        ok({ root: fixtures.PROJECTS_ROOT, ...collection(fixtures.PROJECTS) }),
+    ],
+    [
+      'PUT',
+      '/api/projects/root',
+      () =>
+        ok({ root: fixtures.PROJECTS_ROOT, ...collection(fixtures.PROJECTS) }),
+    ],
+    [
+      'GET',
       '/api/diagnostics',
       () => {
         const items = fixtures.diagnostics();

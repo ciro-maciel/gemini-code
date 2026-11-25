@@ -1,8 +1,17 @@
 import { useEffect, useState } from 'react';
 
-import { fetchDiagnostics, fetchRepoFiles } from '../../services/api';
-import { useAccount } from '../../components/Session';
+import { useNavigate } from 'react-router-dom';
+
 import {
+  fetchApps,
+  fetchDiagnostics,
+  fetchProjects,
+  saveProjectsRoot,
+} from '../../services/api';
+import { notify } from '../../components/zen';
+import {
+  Notice,
+  Parts,
   SettingsGroup,
   SettingsHeader,
   SettingsRow,
@@ -11,63 +20,163 @@ import {
 } from './kit';
 
 /**
- * Settings › Files and GitHub: where the agents' files live. Local mode keeps
- * them in the workspace folder on this machine; with GitHub set up on the
- * server, they are Markdown files in the account's repository, one commit per
- * change.
+ * Settings › Projects: the folder on this machine that holds the person's
+ * repositories. Each agent picks one of them and works in its own git
+ * worktree of it, on its own branch, so agents never overwrite each other or
+ * what the person is editing. GitHub is reached through the GitHub connector.
  */
-export function Files() {
-  const account = useAccount();
+export function Projects() {
+  const navigate = useNavigate();
   const [state, setState] = useState(null);
+  const [draft, setDraft] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+  const [github, setGithub] = useState(null);
   useEffect(() => {
-    fetchRepoFiles()
-      .then((data) => setState({ repo: data.repo, count: data.items.length }))
-      .catch(() => setState({ repo: null, count: 0 }));
+    fetchProjects()
+      .then((data) => {
+        setState(data);
+        setDraft(data.root ?? '');
+      })
+      .catch((error) => setState({ error: error.message }));
+    fetchApps()
+      .then((data) =>
+        setGithub(data.items.find((app) => app.id === 'github') ?? null),
+      )
+      .catch(() => setGithub(null));
   }, []);
-  const workspace = account?.runtime?.workspaceDir;
+  const save = async () => {
+    setIsSaving(true);
+    try {
+      const data = await saveProjectsRoot(draft);
+      setState(data);
+      setDraft(data.root);
+      notify.success(
+        'Projects folder saved',
+        `${data.items.length} repositories found.`,
+      );
+    } catch (error) {
+      notify.error(error.message);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+  const isConnected = github?.connection?.status === 'connected';
   return (
     <>
       <SettingsHeader
-        title="Files and GitHub"
-        description="Each agent works in its own folder: its instructions, skills, decisions and work are files you can open, edit and review. Every change shows who made it."
+        title="Projects"
+        description="The folder that holds your repositories. Each agent picks one and works in its own copy of it, a git worktree on its own branch, so agents never overwrite each other or what you are editing."
       />
-      {state === null && <SettingsSkeleton rows={2} />}
-      {state && (
-        <SettingsGroup>
-          {workspace && (
-            <SettingsRow
-              icon="ti-folder"
-              title="Workspace on this machine"
-              description={workspace}
-            >
-              <StateTag status="ok">Local</StateTag>
-            </SettingsRow>
-          )}
-          <SettingsRow
-            icon="ti-brand-github"
-            title="GitHub repository"
-            description={
-              state.repo
-                ? state.count
-                  ? `${state.count} files. Private: only members of the organization see it.`
-                  : "It is created on an agent's first change."
-                : 'Off: the server has no GitHub App set up (GITHUB_APP_ID, GITHUB_ORG). Files stay in the workspace.'
-            }
+      {state === null && <SettingsSkeleton rows={3} />}
+      {state?.error && (
+        <Notice
+          tone="fail"
+          icon="ti-alert-triangle"
+          title="Could not read the projects"
+        >
+          {state.error}
+        </Notice>
+      )}
+      {state && !state.error && (
+        <>
+          <SettingsGroup
+            title="Projects folder"
+            note="Where your repositories live on this machine, for example ~/code. Repositories up to two levels down are found."
           >
-            {state.repo ? (
-              <a
-                className="st-link mono"
-                href={`https://github.com/${state.repo.org}/${state.repo.name}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {state.repo.org}/{state.repo.name}
-              </a>
-            ) : (
-              <StateTag status="off">Off</StateTag>
-            )}
-          </SettingsRow>
-        </SettingsGroup>
+            <div className="st-form">
+              <div className="st-form-row">
+                <input
+                  id="projects-root"
+                  className="st-field grow mono"
+                  placeholder="~/code"
+                  aria-label="Projects folder"
+                  value={draft}
+                  onChange={(event) => setDraft(event.target.value)}
+                  onKeyDown={(event) =>
+                    event.key === 'Enter' && draft.trim() && save()
+                  }
+                />
+                <button
+                  className="btn filled sm"
+                  onClick={save}
+                  disabled={isSaving || !draft.trim() || draft === state.root}
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          </SettingsGroup>
+          {state.root && (
+            <SettingsGroup
+              title="Repositories"
+              note={
+                state.items.length
+                  ? "Pick one in an agent's settings. Its worktree is made under the workspace, in worktrees/."
+                  : undefined
+              }
+            >
+              {state.items.length === 0 && (
+                <SettingsRow
+                  icon="ti-folder-question"
+                  title="No repositories here yet"
+                  description="Clone one into this folder, or choose the folder that holds them."
+                />
+              )}
+              {state.items.map((item) => (
+                <SettingsRow
+                  key={item.path}
+                  icon={item.github ? 'ti-brand-github' : 'ti-git-branch'}
+                  title={item.name}
+                  description={
+                    <Parts
+                      items={[
+                        item.path === '.'
+                          ? 'the folder itself'
+                          : item.path !== item.name && item.path,
+                        item.branch,
+                      ]}
+                    />
+                  }
+                >
+                  {item.github ? (
+                    <a
+                      className="st-link mono"
+                      href={`https://github.com/${item.github}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {item.github}
+                    </a>
+                  ) : (
+                    <StateTag status="off">Local only</StateTag>
+                  )}
+                </SettingsRow>
+              ))}
+            </SettingsGroup>
+          )}
+          <SettingsGroup title="GitHub">
+            <SettingsRow
+              icon="ti-brand-github"
+              title="GitHub connector"
+              description={
+                isConnected
+                  ? 'Agents open pull requests, read issues and manage your repositories through it.'
+                  : 'Connect it once so agents can open pull requests and read issues in your repositories.'
+              }
+            >
+              {isConnected ? (
+                <StateTag status="ok">Connected</StateTag>
+              ) : (
+                <button
+                  className="btn outline sm"
+                  onClick={() => navigate('/connectors')}
+                >
+                  Open Connectors
+                </button>
+              )}
+            </SettingsRow>
+          </SettingsGroup>
+        </>
       )}
     </>
   );

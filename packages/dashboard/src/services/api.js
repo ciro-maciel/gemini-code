@@ -440,6 +440,9 @@ export const updateTemplate = (id, fields) =>
 export const fetchSkillLibrary = () => request('GET', '/api/skills');
 export const setSkillUse = (botId, skillId, isUsed) =>
   request('PUT', `/api/bots/${botId}/skills/${skillId}`, { isUsed });
+export const fetchProjects = () => request('GET', '/api/projects');
+export const saveProjectsRoot = (path) =>
+  request('PUT', '/api/projects/root', { path });
 export const fetchRepoFiles = () => request('GET', '/api/files');
 export const fetchRepoFile = (path) =>
   request('GET', `/api/files/content?path=${encodeURIComponent(path)}`);

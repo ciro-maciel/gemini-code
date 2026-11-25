@@ -5,6 +5,7 @@ import {
   deleteBot,
   deleteMemory,
   fetchBotDocuments,
+  fetchProjects,
   fetchHandoffs,
   fetchInbox,
   fetchMemories,
@@ -15,7 +16,7 @@ import {
 import { Routines } from '../components/Routines';
 import { Vault } from '../components/DoorAndVault';
 import { DeleteModal, notify } from '../components/zen';
-import { NameModal } from '../ui/NameModal';
+import { Menu, Opt, useMenu } from '../ui/Menu';
 import { botGone, botsChanged } from '../state/use-bots';
 import { AgentAvatar } from '../shell/AgentAvatar';
 import { pathOf } from '../mesa/routes';
@@ -234,7 +235,8 @@ export function AgentSettings({ bot, template, tab = 'when', onTab }) {
   const spend = bot.spendToday ?? 0;
   const isOwner = (bot.access ?? 'owner') === 'owner';
   const [docStats, setDocStats] = useState(null);
-  const [isEditingFolder, setIsEditingFolder] = useState(false);
+  const menu = useMenu();
+  const [projects, setProjects] = useState(null);
 
   useEffect(() => {
     let alive = true;
@@ -246,17 +248,23 @@ export function AgentSettings({ bot, template, tab = 'when', onTab }) {
     };
   }, [bot.id, bot.folder]);
 
-  const saveFolder = async (nextFolder) => {
-    setIsEditingFolder(false);
-    const clean =
-      nextFolder === '/' ? null : nextFolder.replace(/^\/+|\/+$/g, '') || null;
+  // The repository it works on, from Settings › Projects; it works in its own worktree of it.
+  const openProjects = (event) => {
+    menu.open('project')(event);
+    fetchProjects()
+      .then(setProjects)
+      .catch((error) =>
+        setProjects({ root: null, items: [], error: error.message }),
+      );
+  };
+  const pickProject = async (project) => {
+    menu.close();
     try {
-      await updateBot(bot.id, { folder: clean });
+      await updateBot(bot.id, { project });
       botsChanged();
       notify.success(
-        clean
-          ? `Folder updated to /${clean}/`
-          : 'Folder set to the workspace root',
+        project ? `Works on ${project} now` : 'Works in its own folder now',
+        project ? 'In its own worktree, on its own branch.' : undefined,
       );
       window.dispatchEvent(new Event('assistant:repo'));
     } catch (error) {
@@ -314,12 +322,9 @@ export function AgentSettings({ bot, template, tab = 'when', onTab }) {
               <i className="ti ti-arrow-up-right" />
             </button>
             {isOwner && (
-              <button
-                className="btn outline sm"
-                onClick={() => setIsEditingFolder(true)}
-              >
-                <i className="ti ti-folder-cog" />
-                Change folder
+              <button className="btn outline sm" onClick={openProjects}>
+                <i className="ti ti-git-branch" />
+                {bot.project ? `Project: ${bot.project}` : 'Choose a project'}
               </button>
             )}
           </div>
@@ -331,15 +336,59 @@ export function AgentSettings({ bot, template, tab = 'when', onTab }) {
             </div>
           </div>
         </div>
-        {isEditingFolder && (
-          <NameModal
-            title="Agent work folder"
-            icon="ti-folder-cog"
-            initial={bot.folder || docStats?.defaultFolder || ''}
-            action="Save folder"
-            onSave={saveFolder}
-            onClose={() => setIsEditingFolder(false)}
-          />
+        {menu.is('project') && (
+          <Menu
+            anchor={menu.anchor}
+            title="Works on"
+            search={(projects?.items?.length ?? 0) > 8}
+            width={340}
+            alignLeft
+            onClose={menu.close}
+          >
+            <Opt
+              icon={<i className="ti ti-folder" />}
+              title="Its own folder"
+              note="No repository: it works in its folder in the workspace"
+              isOn={!bot.project}
+              onClick={() => pickProject(null)}
+            />
+            {projects === null && <div className="h label">Loading…</div>}
+            {projects?.items?.length > 0 && (
+              <div className="h label">Repositories</div>
+            )}
+            {projects?.items?.map((item) => (
+              <Opt
+                key={item.path}
+                icon={
+                  <i
+                    className={`ti ${item.github ? 'ti-brand-github' : 'ti-git-branch'}`}
+                  />
+                }
+                title={item.name}
+                note={
+                  item.path === '.'
+                    ? item.branch
+                    : `${item.path} · ${item.branch ?? ''}`
+                }
+                isOn={bot.project === item.path}
+                onClick={() => pickProject(item.path)}
+              />
+            ))}
+            {projects && !projects.root && (
+              <>
+                <hr />
+                <button
+                  onClick={() => {
+                    menu.close();
+                    navigate('/settings/projects');
+                  }}
+                >
+                  <i className="ti ti-folders" />
+                  Choose your projects folder
+                </button>
+              </>
+            )}
+          </Menu>
         )}
         <div className="atabs">
           {TABS.map(([key, label]) => (

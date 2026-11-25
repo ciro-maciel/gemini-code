@@ -85,11 +85,12 @@ cp .env.example .env        # preencha GEMINI_API_KEY=...
 bun run dev                 # servidor em :8787, painel em :5180
 ```
 
-Abra http://localhost:5180. Para os agentes trabalharem no seu projeto:
-
-```bash
-WORKSPACE_DIR=/caminho/do/seu/repo bun run dev
-```
+Abra http://localhost:5180. Para os agentes trabalharem no seu código, abra
+Configurações › Projetos, escolha a pasta que guarda os seus repositórios (por
+exemplo `~/code`) e escolha um repositório nas configurações de cada agente.
+Cada agente trabalha num `git worktree` próprio dele, no branch
+`gemini-code/<agente>`, então um nunca sobrescreve o outro nem o que você está
+editando.
 
 ## Modelos
 
@@ -138,7 +139,8 @@ Material 3 Expressive) em cada tela e em cada peça feita para ele.
 aba Arquivos compartilhada saiu; a árvore de cada agente fica ao lado da
 conversa e se atualiza ao vivo, com o que ele criou (A) ou alterou (M) marcado;
 o terminal dele começa na própria pasta; o MCP de arquivos prende toda operação
-dentro dela. Falta: dar a cada agente o seu `git worktree` do projeto.
+dentro dela; cada agente que escolhe um repositório trabalha num `git worktree`
+próprio dele.
 
 Os marcos seguintes são discutidos nas issues.
 

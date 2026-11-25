@@ -87,11 +87,11 @@ cp .env.example .env        # set GEMINI_API_KEY=...
 bun run dev                 # control server on :8787, dashboard on :5180
 ```
 
-Open http://localhost:5180. To point the agents at your own project:
-
-```bash
-WORKSPACE_DIR=/path/to/your/repo bun run dev
-```
+Open http://localhost:5180. To put the agents on your own code, open Settings ›
+Projects, choose the folder that holds your repositories (for example `~/code`),
+and pick a repository in each agent's settings. Each agent works in its own
+`git worktree` of it, on the branch `gemini-code/<agent>`, so agents never
+overwrite each other or what you are editing.
 
 ## Models
 
@@ -167,8 +167,8 @@ Material 3 Expressive) on every screen and every piece made for it.
 **Milestone 1, almost done: each agent with its own file tree.** Done: the
 shared Files tab is gone; each agent's tree shows next to its conversation and
 updates live, with what it added (A) or modified (M) marked; its terminal starts
-in its own folder; the files MCP locks every file operation inside it. Still to
-do: give each agent its own `git worktree` of the project.
+in its own folder; the files MCP locks every file operation inside it; each
+agent that picks a repository works in its own `git worktree` of it.
 
 Later milestones are discussed in the issues.
 

@@ -39,6 +39,25 @@ export const GEMINI_MODELS = [
     cost: 'Google Gemini',
   },
 ];
+/** Example repositories for Settings › Projects. */
+export const PROJECTS_ROOT = '~/code';
+export const PROJECTS = [
+  {
+    path: 'gemini-code',
+    name: 'gemini-code',
+    branch: 'main',
+    remote: 'https://github.com/ciro-maciel/gemini-code',
+    github: 'ciro-maciel/gemini-code',
+  },
+  {
+    path: 'clients/site',
+    name: 'site',
+    branch: 'main',
+    remote: null,
+    github: null,
+  },
+];
+
 export const PROVIDERS = [
   {
     id: 'google',

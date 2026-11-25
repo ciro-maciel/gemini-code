@@ -15,5 +15,7 @@ packages/dashboard/dist/
 # Local state: the database, the generated encryption key, and agents' own folders.
 packages/server/data/
 workspace/agents/
+# The agents' worktrees of your repositories (Settings › Projects).
+workspace/worktrees/
 # Local agent tooling (worktrees of helper agents).
 .claude/
