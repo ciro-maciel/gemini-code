@@ -41,6 +41,8 @@ jobs:
 
   build:
     needs: dashboard
+    # The signing secrets live here; the environment allows only main and v* tags.
+    environment: release
     strategy:
       fail-fast: false
       matrix:
@@ -97,10 +99,49 @@ jobs:
             --external @playwright/mcp --external playwright-core --external playwright \
             --define "process.env.GEMINI_CODE_VERSION=\"$VERSION\"" \
             packages/server/src/cli.js --outfile out/gemini-code/${{ matrix.exe }}
-      # An Apple silicon Mac kills an executable with no signature at all.
-      - name: Sign for macOS (ad hoc)
+      # macOS: Developer ID, hardened runtime with the entitlements the Bun
+      # runtime needs (packages/server/macos/entitlements.plist), then Apple
+      # notarizes it, so a browser download opens with no warning. A bare
+      # executable cannot be stapled: macOS checks the ticket online. Without
+      # the secrets (a fork) it falls back to an ad hoc signature, which an
+      # Apple silicon Mac needs to run it at all.
+      - name: Sign and notarize for macOS
         if: startsWith(matrix.name, 'darwin')
-        run: codesign --force --sign - out/gemini-code/gemini-code
+        env:
+          CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
+          CERTIFICATE_PASSWORD: ${{ secrets.MACOS_CERTIFICATE_PASSWORD }}
+          NOTARY_KEY: ${{ secrets.NOTARY_KEY }}
+          NOTARY_KEY_ID: ${{ secrets.NOTARY_KEY_ID }}
+          NOTARY_ISSUER_ID: ${{ secrets.NOTARY_ISSUER_ID }}
+        run: |
+          BIN=out/gemini-code/gemini-code
+          if [ -z "$CERTIFICATE" ]; then
+            echo "no signing secrets: ad hoc signature"
+            codesign --force --sign - "$BIN"
+            exit 0
+          fi
+          KC="$RUNNER_TEMP/signing.keychain-db"
+          KP="$(openssl rand -hex 16)"
+          printf '%s' "$CERTIFICATE" | base64 --decode > "$RUNNER_TEMP/signing.p12"
+          security create-keychain -p "$KP" "$KC"
+          security set-keychain-settings -lut 21600 "$KC"
+          security unlock-keychain -p "$KP" "$KC"
+          security import "$RUNNER_TEMP/signing.p12" -k "$KC" -P "$CERTIFICATE_PASSWORD" -T /usr/bin/codesign -T /usr/bin/security
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KP" "$KC" >/dev/null
+          security list-keychains -d user -s "$KC" $(security list-keychains -d user | xargs)
+          IDENTITY="$(security find-identity -v -p codesigning "$KC" | sed -n 's/.*"\(Developer ID Application: .*\)"/\1/p' | head -1)"
+          [ -n "$IDENTITY" ] || { echo "no Developer ID Application identity in MACOS_CERTIFICATE"; exit 1; }
+          codesign --force --timestamp --options runtime \
+            --entitlements packages/server/macos/entitlements.plist \
+            --sign "$IDENTITY" "$BIN"
+          codesign --verify --strict --verbose=2 "$BIN"
+          KEY="$RUNNER_TEMP/notary.p8"
+          printf '%s\n' "$NOTARY_KEY" > "$KEY"
+          ditto -c -k --keepParent "$BIN" "$RUNNER_TEMP/notarize.zip"
+          xcrun notarytool submit "$RUNNER_TEMP/notarize.zip" --key "$KEY" --key-id "$NOTARY_KEY_ID" --issuer "$NOTARY_ISSUER_ID" --wait --timeout 20m | tee "$RUNNER_TEMP/notary.txt"
+          grep -q "status: Accepted" "$RUNNER_TEMP/notary.txt"
+          rm -f "$KEY" "$RUNNER_TEMP/signing.p12"
+          security delete-keychain "$KC"
       - uses: actions/download-artifact@v4
         with:
           name: dashboard

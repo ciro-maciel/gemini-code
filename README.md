@@ -3,6 +3,23 @@
 **An open-source desk where several coding agents, built around Google Gemini,
 work on your software at the same time and ask a person before anything risky.**
 
+## Download
+
+| System                    | Download                                                                                                                               | Or in a terminal                                                                                        |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| **macOS** (Apple silicon) | [gemini-code-darwin-arm64.tar.gz](https://github.com/ciro-maciel/gemini-code/releases/latest/download/gemini-code-darwin-arm64.tar.gz) | `curl -fsSL https://raw.githubusercontent.com/ciro-maciel/gemini-code/main/install.sh \| sh`            |
+| **macOS** (Intel)         | [gemini-code-darwin-x64.tar.gz](https://github.com/ciro-maciel/gemini-code/releases/latest/download/gemini-code-darwin-x64.tar.gz)     | same command                                                                                            |
+| **Linux** (x64)           | [gemini-code-linux-x64.tar.gz](https://github.com/ciro-maciel/gemini-code/releases/latest/download/gemini-code-linux-x64.tar.gz)       | same command                                                                                            |
+| **Linux** (ARM64)         | [gemini-code-linux-arm64.tar.gz](https://github.com/ciro-maciel/gemini-code/releases/latest/download/gemini-code-linux-arm64.tar.gz)   | same command                                                                                            |
+| **Windows** (x64)         | [gemini-code-windows-x64.zip](https://github.com/ciro-maciel/gemini-code/releases/latest/download/gemini-code-windows-x64.zip)         | `powershell -c "irm https://raw.githubusercontent.com/ciro-maciel/gemini-code/main/install.ps1 \| iex"` |
+
+The command is the easy way: it picks the right file, checks its SHA-256 and
+puts `gemini-code` on your PATH, with no administrator rights. Then run
+`gemini-code`, or `gemini-code ~/code/my-app` to point the agents at a project.
+The macOS builds are signed and notarized by Apple. All versions and checksums:
+[Releases](https://github.com/ciro-maciel/gemini-code/releases). Details:
+[docs/install.md](docs/install.md).
+
 Coding agents that read a repository, run commands and ship changes are already
 part of how developers work. One agent at a time is the easy part. The hard part
 comes next: running several at once without them overwriting each other, and
@@ -55,24 +72,6 @@ dashboard with example data, nothing to install.
 - **Local first.** Runs on your machine against a folder, with no account and no
   login. A cloud mode, one isolated Linux computer per agent on Fly Sprites, is
   optional.
-
-## Install
-
-One command, no administrator rights; the download is a single executable with
-everything inside. Details in [docs/install.md](docs/install.md).
-
-```bash
-# macOS and Linux
-curl -fsSL https://raw.githubusercontent.com/ciro-maciel/gemini-code/main/install.sh | sh
-```
-
-```powershell
-# Windows
-powershell -c "irm https://raw.githubusercontent.com/ciro-maciel/gemini-code/main/install.ps1 | iex"
-```
-
-Then run `gemini-code`, or `gemini-code ~/code/my-app` to point the agents at a
-project.
 
 ## Quickstart (from source)
 

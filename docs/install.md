@@ -52,10 +52,11 @@ unpacking it. `GEMINI_CODE_VERSION=0.1.0` installs a given version.
 | Linux ARM64          | `gemini-code-linux-arm64.tar.gz`  |
 | Windows x64          | `gemini-code-windows-x64.zip`     |
 
-The macOS executables carry an ad hoc signature, without which Apple silicon
-refuses to run them. They are not notarized yet: a copy downloaded with a
-browser may need a right click and Open the first time; the install script is
-not affected.
+The macOS executables are signed with a Developer ID (Ciro Cesar Maciel, team
+4X58N3TK8V), run with the hardened runtime and are notarized by Apple, so a copy
+downloaded with a browser opens with no warning. A bare executable cannot carry
+its notarization ticket: macOS checks it online the first time. The entitlements
+the Bun runtime needs are in `packages/server/macos/entitlements.plist`.
 
 The installed command leaves out Playwright, which the server only uses to list
 the tools of the cloud computer's browser; those tools are absent from a local

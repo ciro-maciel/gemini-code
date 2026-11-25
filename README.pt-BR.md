@@ -4,6 +4,23 @@
 Gemini do Google, trabalham no seu software ao mesmo tempo e pedem a uma pessoa
 antes de qualquer coisa arriscada.**
 
+## Baixar
+
+| Sistema                   | Download                                                                                                                               | Ou no terminal                                                                                          |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| **macOS** (Apple silicon) | [gemini-code-darwin-arm64.tar.gz](https://github.com/ciro-maciel/gemini-code/releases/latest/download/gemini-code-darwin-arm64.tar.gz) | `curl -fsSL https://raw.githubusercontent.com/ciro-maciel/gemini-code/main/install.sh \| sh`            |
+| **macOS** (Intel)         | [gemini-code-darwin-x64.tar.gz](https://github.com/ciro-maciel/gemini-code/releases/latest/download/gemini-code-darwin-x64.tar.gz)     | o mesmo comando                                                                                         |
+| **Linux** (x64)           | [gemini-code-linux-x64.tar.gz](https://github.com/ciro-maciel/gemini-code/releases/latest/download/gemini-code-linux-x64.tar.gz)       | o mesmo comando                                                                                         |
+| **Linux** (ARM64)         | [gemini-code-linux-arm64.tar.gz](https://github.com/ciro-maciel/gemini-code/releases/latest/download/gemini-code-linux-arm64.tar.gz)   | o mesmo comando                                                                                         |
+| **Windows** (x64)         | [gemini-code-windows-x64.zip](https://github.com/ciro-maciel/gemini-code/releases/latest/download/gemini-code-windows-x64.zip)         | `powershell -c "irm https://raw.githubusercontent.com/ciro-maciel/gemini-code/main/install.ps1 \| iex"` |
+
+O comando é o caminho fácil: escolhe o arquivo certo, confere o SHA-256 e põe
+`gemini-code` no PATH, sem administrador. Depois rode `gemini-code`, ou
+`gemini-code ~/code/meu-app` para os agentes trabalharem no seu projeto. As
+versões de macOS são assinadas e notarizadas pela Apple. Todas as versões e
+somas: [Releases](https://github.com/ciro-maciel/gemini-code/releases).
+Detalhes: [docs/install.md](docs/install.md).
+
 Agentes de programação que leem um repositório, rodam comandos e entregam
 mudanças já fazem parte de como desenvolvedores trabalham. Um agente por vez é a
 parte fácil. A difícil vem depois: rodar vários juntos sem que um apague o
@@ -54,24 +71,6 @@ painel de verdade com dados de exemplo, sem instalar nada.
 - **Local primeiro.** Roda na sua máquina, sobre uma pasta, sem conta e sem
   login. O modo nuvem, um computador Linux isolado por agente na Fly Sprites, é
   opcional.
-
-## Instalar
-
-Um comando, sem administrador; o download é um executável único com tudo dentro.
-Detalhes em [docs/install.md](docs/install.md).
-
-```bash
-# macOS e Linux
-curl -fsSL https://raw.githubusercontent.com/ciro-maciel/gemini-code/main/install.sh | sh
-```
-
-```powershell
-# Windows
-powershell -c "irm https://raw.githubusercontent.com/ciro-maciel/gemini-code/main/install.ps1 | iex"
-```
-
-Depois rode `gemini-code`, ou `gemini-code ~/code/meu-app` para os agentes
-trabalharem no seu projeto.
 
 ## Começar (pelo código)
 

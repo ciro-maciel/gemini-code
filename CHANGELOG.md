@@ -11,8 +11,14 @@ version with its date.
 
 ## [Unreleased]
 
+### Added
+
+- The macOS builds are signed with a Developer ID, run with the hardened runtime
+  and are notarized by Apple (2026-11-25).
+
 ### Changed
 
+- The README opens with a download table for every system (2026-11-25).
 - Settings is rebuilt from one kit (pages/settings/kit.jsx) and documented as
   the pattern to follow (docs/settings.md): every section says what it is for,
   shows states in words, has loading, empty and error states, and sentence case.
