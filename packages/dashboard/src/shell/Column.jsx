@@ -1,9 +1,8 @@
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth, useSignOut } from '../auth/AuthContext';
 
-import { API_URL } from '../services/api';
-import { GeminiSparkle, SupportModal } from '../components/zen';
+import { GeminiSparkle } from '../components/zen';
 import { LANGUAGES, currentLanguage } from '../lib/language';
 import { version } from '../../package.json';
 import { Menu, useMenu } from '../ui/Menu';
@@ -82,7 +81,6 @@ function AccountFoot({ account, isDark, onAccount, onTheme }) {
   const { isLocalMode } = useAuth();
   const signOut = useSignOut();
   const navigate = useNavigate();
-  const [isSupport, setIsSupport] = useState(false);
   const name = account?.name || account?.email || 'Developer';
   const email = account?.email || '';
   const leave = async () => {
@@ -174,10 +172,10 @@ function AccountFoot({ account, isDark, onAccount, onTheme }) {
             <AccountItem
               icon="ti-stethoscope"
               title="Diagnostics"
-              note="Server, version and runtime, to send when something fails"
+              note="Whether everything works, is connected and is allowed"
               onClick={() => {
                 menu.close();
-                setIsSupport(true);
+                navigate('/settings/diagnostics');
               }}
             />
             {!isLocalMode && (
@@ -201,19 +199,6 @@ function AccountFoot({ account, isDark, onAccount, onTheme }) {
           </footer>
         </Menu>
       )}
-      <SupportModal
-        opened={isSupport}
-        onClose={() => setIsSupport(false)}
-        productName="Gemini Code"
-        apiUrl={API_URL}
-        contextRows={[
-          `Account: ${email || 'local'}`,
-          `Runtime: ${account?.runtime?.computerMode || 'local'}`,
-          ...(account?.runtime?.workspaceDir
-            ? [`Workspace: ${account.runtime.workspaceDir}`]
-            : []),
-        ]}
-      />
     </div>
   );
 }

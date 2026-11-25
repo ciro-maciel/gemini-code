@@ -19,6 +19,11 @@ version with its date.
   executable with the Bun runtime inside, checks its SHA-256 and adds
   `gemini-code` to the PATH, with no administrator rights; a tag `v*` builds the
   five archives and publishes the release (2026-11-25, #28).
+- Settings › Diagnostics checks every part for real, now: the server, the
+  database, the workspace, the Gemini key (asked to Google), each agent's AI
+  account, folder and files MCP, the connectors, your Chrome and the
+  permissions, each with its state, the reason and its time; the report copies
+  as text. It replaces the support modal (2026-11-25, #34).
 - Each connector shows its brand's own icon, in its colors, kept in the
   repository so the app and the demo show it without fetching images from
   another host (2026-11-25, #27).
@@ -36,6 +41,7 @@ version with its date.
 
 ### Changed
 
+- The language list in Settings is compact and narrower (2026-11-25, #34).
 - The account menu is an account card in Google's pattern: the e-mail, the
   avatar in Gemini's ring, a greeting, Manage settings, the account's lines with
   what each holds, and the version with the changelog (2026-11-25, #31).

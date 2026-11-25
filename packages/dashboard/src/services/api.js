@@ -423,6 +423,8 @@ export const fetchAiAccounts = () => request('GET', '/api/ai-accounts');
 export const createAiAccount = ({ provider, name, token }) =>
   request('POST', '/api/ai-accounts', { provider, name, token });
 export const fetchAiProviders = () => request('GET', '/api/ai-providers');
+/** Every part of the system checked now (Settings › Diagnostics). */
+export const fetchDiagnostics = () => request('GET', '/api/diagnostics');
 export const fetchAvailableModels = (id) =>
   request('GET', `/api/ai-accounts/${id}/available-models`);
 export const setAiAccountModels = (id, models) =>

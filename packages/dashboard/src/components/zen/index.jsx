@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useState } from 'react';
+import { useCallback, useId, useState } from 'react';
 import {
   Box,
   Button,
@@ -383,73 +383,6 @@ export function ListSkeleton({ count = 4 }) {
         <Skeleton key={i} height={44} radius="md" />
       ))}
     </Stack>
-  );
-}
-
-export function SupportModal({
-  opened,
-  onClose,
-  productName = 'Gemini Code',
-  apiUrl = '',
-  contextRows = [],
-}) {
-  const [status, setStatus] = useState(null);
-  useEffect(() => {
-    if (!opened) return;
-    const start = performance.now();
-    fetch(`${apiUrl}/api/health`)
-      .then((r) =>
-        setStatus(
-          r.ok
-            ? `Connected (${Math.round(performance.now() - start)} ms)`
-            : `HTTP ${r.status}`,
-        ),
-      )
-      .catch(() => setStatus('Offline'));
-  }, [opened, apiUrl]);
-
-  return (
-    <Modal
-      opened={opened}
-      onClose={onClose}
-      centered
-      radius="xl"
-      padding={24}
-      title={productName}
-    >
-      <Stack gap={12}>
-        <Text fz={13} style={{ color: 'var(--gm-on-surface-variant)' }}>
-          Open-source autonomous engineering workspace powered by Google Gemini.
-        </Text>
-        <Box
-          style={{
-            padding: 14,
-            borderRadius: 12,
-            background: 'var(--gm-surface-1)',
-            border: '1px solid var(--gm-outline-variant)',
-          }}
-        >
-          <Text fz={12} fw={600} style={{ color: 'var(--gm-on-surface)' }}>
-            Control Server: {status || 'Checking…'}
-          </Text>
-          {contextRows.map((row, idx) => (
-            <Text
-              key={idx}
-              fz={12}
-              mt={4}
-              style={{ color: 'var(--gm-on-surface-variant)' }}
-            >
-              {row}
-            </Text>
-          ))}
-        </Box>
-        <Group justify="flex-end" mt={4}>
-          <Button variant="filled" radius="xl" onClick={onClose}>
-            Close
-          </Button>
-        </Group>
-      </Stack>
-    </Modal>
   );
 }
 

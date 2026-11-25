@@ -48,8 +48,7 @@ export function LanguageSettings() {
       <div>
         <h2 className="set-h">Language · Idioma</h2>
         <p className="lead" style={{ marginTop: 6 }}>
-          The language of the dashboard in this browser. · O idioma do painel
-          neste navegador.
+          In this browser · Neste navegador
         </p>
       </div>
       <div

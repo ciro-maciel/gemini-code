@@ -576,3 +576,124 @@ function letterIcon(title) {
 }
 
 export { templates, tools };
+
+/** Settings › Diagnostics in the demo: an example of a healthy local install. */
+export function diagnostics() {
+  const row = (group, id, title, status, detail, ms = 1) => ({
+    group,
+    id,
+    title,
+    status,
+    detail,
+    ms,
+  });
+  return [
+    row(
+      'System',
+      'server',
+      'Control server',
+      'ok',
+      'Gemini Code 0.1.0 on Bun 1.4.0, up 3 h',
+    ),
+    row(
+      'System',
+      'database',
+      'Database',
+      'ok',
+      'SQLite, wal journal, integrity ok',
+    ),
+    row(
+      'System',
+      'workspace',
+      'Workspace folder',
+      'ok',
+      '~/code/my-app, writable',
+    ),
+    row(
+      'Gemini',
+      'gemini-key',
+      'Gemini API key',
+      'ok',
+      '1 of 1 key answered; 31 chat models open',
+      412,
+    ),
+    row(
+      'Gemini',
+      'subscription',
+      'Google subscription (AI Pro and Ultra)',
+      'off',
+      'Waiting for Google’s official path for third-party tools',
+    ),
+    row('Agents', 'agents', 'Agents', 'ok', '3 agents'),
+    row(
+      'Agents',
+      'agent:se',
+      'Software Engineer',
+      'ok',
+      'gemini-3.5-flash-lite · agents/software-engineer/ · files MCP 4 tools',
+    ),
+    row(
+      'Agents',
+      'agent:cr',
+      'Code Reviewer',
+      'ok',
+      'gemini-3.6-flash · agents/code-reviewer/ · files MCP 4 tools',
+    ),
+    row(
+      'Agents',
+      'agent:te',
+      'Test Engineer',
+      'ok',
+      'gemini-3.6-flash · agents/test-engineer/ · files MCP 4 tools',
+    ),
+    row(
+      'Connectors',
+      'connection:github',
+      'GitHub',
+      'ok',
+      'Connected, 26 tools',
+    ),
+    row(
+      'Connectors',
+      'connection:linear',
+      'Linear',
+      'warn',
+      'Waiting for you to sign in',
+    ),
+    row(
+      'Connectors',
+      'chrome',
+      'Your Chrome',
+      'off',
+      'Not linked (Settings › Meu Chrome)',
+    ),
+    row(
+      'Permissions',
+      'sign-in',
+      'Sign-in',
+      'warn',
+      'Local mode: no sign-in, whoever reaches this machine’s port acts as you',
+    ),
+    row(
+      'Permissions',
+      'always-ask',
+      'Payments and sign-ins',
+      'ok',
+      'Always ask you, every time',
+    ),
+    row(
+      'Permissions',
+      'grants',
+      'Standing permissions',
+      'ok',
+      'No action set to run without asking; the risk judge decides each one',
+    ),
+    row(
+      'Permissions',
+      'vault',
+      'Secrets vault',
+      'ok',
+      '1 secret, encrypted, out of what the model reads',
+    ),
+  ];
+}
