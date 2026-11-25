@@ -249,9 +249,9 @@ export function placeOf(name = '') {
     return place ? place.charAt(0).toUpperCase() + place.slice(1) : null;
   }
   if (name.startsWith('memory_') || name.startsWith('skill_')) return 'memory';
-  if (name.startsWith('computer_')) return 'computador';
-  if (name.startsWith('browser_')) return 'navegador';
+  if (name.startsWith('computer_')) return 'computer';
+  if (name.startsWith('browser_')) return 'browser';
   if (name.startsWith('chrome_')) return 'your Chrome';
-  if (name.startsWith('file_') || name.startsWith('repo_')) return 'arquivos';
+  if (name.startsWith('file_') || name.startsWith('repo_')) return 'files';
   return null;
 }

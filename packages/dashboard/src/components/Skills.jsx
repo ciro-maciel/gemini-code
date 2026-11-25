@@ -47,16 +47,10 @@ export function SkillModal({ skill, opened, onClose, onSaved }) {
     }
   };
   return (
-    <Modal
-      opened={opened}
-      onClose={onClose}
-      title="Habilidade"
-      size="lg"
-      centered
-    >
+    <Modal opened={opened} onClose={onClose} title="Skill" size="lg" centered>
       <Stack gap={16}>
         <TextInput
-          label="Nome"
+          label="Name"
           value={fields.name}
           onChange={(event) =>
             setFields({ ...fields, name: event.currentTarget.value })
@@ -70,8 +64,8 @@ export function SkillModal({ skill, opened, onClose, onSaved }) {
           }
         />
         <Textarea
-          label="Passos"
-          description="In Markdown. This is what the bot reads before doing the task."
+          label="Steps"
+          description="In Markdown. This is what the agent reads before doing the task."
           autosize
           minRows={8}
           maxRows={20}

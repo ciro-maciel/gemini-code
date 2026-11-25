@@ -217,7 +217,7 @@ export function bots(now) {
       status: 'ready',
       hasNews: true,
       lastActivityAt: now - 150,
-      lastMessage: 'Pronto: soma.js e soma.test.js criados, 3 pass.',
+      lastMessage: 'Done: soma.js and soma.test.js created, 3 pass.',
     }),
   ];
 }
@@ -553,7 +553,7 @@ export function me(botCount) {
   return {
     id: 'demo-account',
     email: '',
-    name: 'Visitante',
+    name: 'Visitor',
     status: 'active',
     isOwner: true,
     limits: {

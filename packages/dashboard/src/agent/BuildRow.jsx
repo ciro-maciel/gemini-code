@@ -243,13 +243,13 @@ export function BuildRow({
       <Chip
         icon="ti-plug"
         label="Connections"
-        value={`${used.length} ${used.length === 1 ? 'conexão' : 'conexões'}`}
+        value={`${used.length} ${used.length === 1 ? 'connection' : 'connections'}`}
         onClick={openConnections}
       />
       <Chip
         icon="ti-sparkles"
         label="Skills"
-        value={`${shownSkills?.length ?? 0} ${shownSkills?.length === 1 ? 'habilidade' : 'habilidades'}`}
+        value={`${shownSkills?.length ?? 0} ${shownSkills?.length === 1 ? 'skill' : 'skills'}`}
         onClick={openSkills}
       />
 

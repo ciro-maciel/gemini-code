@@ -161,7 +161,7 @@ export function VersionsButton({ bot, account, modelLabel, refreshKey }) {
             <Opt
               key={item.id}
               title={`Starting from: ${item.title.replace(/\s+/g, ' ').slice(0, 70)}`}
-              note={`${messageWhen(item.createdAt)} · ${item.size} ${item.size === 1 ? 'passo' : 'passos'}`}
+              note={`${messageWhen(item.createdAt)} · ${item.size} ${item.size === 1 ? 'step' : 'steps'}`}
               onClick={() => open(item)}
             />
           ))}

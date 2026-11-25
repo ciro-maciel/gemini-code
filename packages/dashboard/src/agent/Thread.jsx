@@ -195,7 +195,7 @@ function Work({ row, isLive, streamingText }) {
               {unresolved === 1 ? '1 not done' : `${unresolved} not done`}
             </span>
           )}
-          <span className="work-toggle">{isOpen ? 'fechar' : 'ver'}</span>
+          <span className="work-toggle">{isOpen ? 'Hide' : 'Show'}</span>
         </button>
         {isOpen && (
           <div className="work-body">

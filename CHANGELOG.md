@@ -35,6 +35,9 @@ version with its date.
 
 ### Fixed
 
+- Texts written in Portuguese inside the English dashboard, in the agent tab,
+  the composer's chips, the steps row, the skill editor, the cost lines and the
+  demo, are English now and translated (2026-11-25).
 - A flaky test of empty answers: each test now answers from its own script, so a
   late step of an earlier task can no longer take the next test's answers
   (2026-11-25).

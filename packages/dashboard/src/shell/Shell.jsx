@@ -293,13 +293,13 @@ export function Shell() {
     if (kind === 'agent')
       return {
         icon: 'ti-message',
-        name: bot?.name || 'Agente',
+        name: bot?.name || 'Agent',
         live: Boolean(bot?.runningCount),
       };
     if (kind === 'settings')
       return {
         icon: 'ti-adjustments-horizontal',
-        name: `Settings · ${bot?.name || 'agente'}`,
+        name: `Settings · ${bot?.name || 'agent'}`,
       };
     if (kind === 'template')
       return ref === 'new'

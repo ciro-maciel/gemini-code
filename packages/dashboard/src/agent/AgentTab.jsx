@@ -25,7 +25,7 @@ function originOf(events) {
   const last = [...(events ?? [])]
     .reverse()
     .find((event) => event.type === 'user_message')?.data;
-  if (!last) return { icon: 'ti-user', label: 'Pessoa' };
+  if (!last) return { icon: 'ti-user', label: 'A person' };
   if (last.routine)
     return {
       icon: 'ti-clock-play',
@@ -35,9 +35,9 @@ function originOf(events) {
   if (last.handoff)
     return {
       icon: 'ti-arrows-exchange',
-      label: `Handoff from ${last.handoff.fromName || last.handoff.from || 'outro agente'}`,
+      label: `Handoff from ${last.handoff.fromName || last.handoff.from || 'another agent'}`,
     };
-  return { icon: 'ti-user', label: 'Pessoa' };
+  return { icon: 'ti-user', label: 'A person' };
 }
 
 /**
@@ -131,8 +131,8 @@ export function AgentTab({
         'Context released',
         [
           freed.connected > 0 &&
-            `${freed.connected} ${freed.connected === 1 ? 'ferramenta saiu' : 'ferramentas saíram'}`,
-          freed.isComputer && 'the computer and browser were removed',
+            `${freed.connected} ${freed.connected === 1 ? 'connection tool left' : 'connection tools left'}`,
+          freed.isComputer && "the computer's tools left",
         ]
           .filter(Boolean)
           .join('; ') + '. The change takes effect on the next step.',
@@ -433,7 +433,7 @@ export function AgentTab({
           )}
           <span className="cfoot-cost">
             {template ? `Started from template ${template.name} ·` : ''}
-            {money(cost)} neste agente
+            {`${money(cost)} on this agent`}
           </span>
         </div>
       </div>

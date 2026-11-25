@@ -331,7 +331,7 @@ export function AgentSettings({ bot, template, tab = 'when', onTab }) {
           <div className="agent-row">
             <div className="grow">
               <span className="muted">
-                {money(spend)} hoje neste agente, na chave de IA dele
+                {`${money(spend)} today on this agent, on its AI key`}
               </span>
             </div>
           </div>
