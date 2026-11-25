@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 
-import { fileUrl, readAgentFile } from '../services/api'
+import { fileUrl, readAgentFile, writeAgentFile } from '../services/api'
+import { notify } from '../components/zen'
+import { CodeEditor, languageOf } from './CodeEditor'
 import { RichText } from '../components/RichText'
 import { drawablePage } from '../components/FileGallery'
 import { FileSkeleton } from './FileSkeleton'
@@ -20,20 +22,52 @@ export function ComputerFileTab({ path }) {
     const isPage = /\.html?$/i.test(relative)
     const [text, setText] = useState(null)
     const [view, setView] = useState('rendered')
+    // Where the text came from: the agent's own folder can be edited and saved; a cloud computer's file is read-only.
+    const [source, setSource] = useState(null)
+    const [isDirty, setIsDirty] = useState(false)
+    const [reloadKey, setReloadKey] = useState(0)
+    // Markdown and pages have a rendered view; every other text file opens straight in the editor.
+    const isCode = !isImage && !isPage && languageOf(relative) !== 'markdown'
 
     useEffect(() => {
         if (isImage) return
         setText(null)
         // The agent's own folder first (the files MCP's route); a cloud computer's workspace when it is not there.
         readAgentFile(botId, relative)
-            .then(data => (data.isBinary ? Promise.reject(new Error('binary')) : setText(data.content)))
+            .then(data => {
+                if (data.isBinary) throw new Error('binary')
+                setSource('agent')
+                setText(data.content)
+            })
             .catch(() =>
                 fetch(url)
                     .then(response => (response.ok ? response.text() : Promise.reject(new Error(`${response.status}`))))
-                    .then(setText)
+                    .then(body => {
+                        setSource('cloud')
+                        setText(body)
+                    })
                     .catch(() => setText(''))
             )
-    }, [url, isImage, botId, relative])
+    }, [url, isImage, botId, relative, reloadKey])
+
+    // The agent changed a file: read it again (the editor keeps unsaved edits).
+    useEffect(() => {
+        const onChange = event => event.detail?.botId === botId && setReloadKey(key => key + 1)
+        window.addEventListener('gemini:files', onChange)
+        return () => window.removeEventListener('gemini:files', onChange)
+    }, [botId])
+
+    const save =
+        source === 'agent'
+            ? async content => {
+                  try {
+                      await writeAgentFile(botId, relative, content)
+                  } catch (failure) {
+                      notify.error(failure.message)
+                      throw failure
+                  }
+              }
+            : null
 
     return (
         <>
@@ -44,7 +78,9 @@ export function ComputerFileTab({ path }) {
                 >
                     {relative}
                 </span>
-                {!isImage && (
+                {isDirty && <span className="unsaved">Não salvo · ⌘S</span>}
+                {source === 'cloud' && <span className="unsaved">Só leitura</span>}
+                {!isImage && !isCode && (
                     <span className="seg-sm tiny">
                         <button
                             className={view === 'rendered' ? 'on' : ''}
@@ -80,8 +116,13 @@ export function ComputerFileTab({ path }) {
                         />
                     ) : text === null ? (
                         <FileSkeleton />
-                    ) : view === 'original' ? (
-                        <pre className="src">{text}</pre>
+                    ) : isCode || view === 'original' ? (
+                        <CodeEditor
+                            path={`${botId}/${relative}`}
+                            value={text}
+                            onSave={save}
+                            onDirty={setIsDirty}
+                        />
                     ) : isPage ? (
                         <iframe
                             className="file-page"

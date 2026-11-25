@@ -103,7 +103,7 @@ export function AgentFiles({ bot, canWrite, onOpenFile, onClose }) {
                 className="af-root"
                 title="Só a pasta deste agente. O terminal dele começa aqui."
             >
-                agents/{bot.folder || bot.name}
+                {tree?.root || '…'}
             </span>
             <label className="af-filter">
                 <i className="ti ti-search" />

@@ -196,7 +196,8 @@ export function runFileOperation(bot, op, args = {}) {
         case 'tree': {
             const dir = at('path')
             if (!existsSync(dir) || !statSync(dir).isDirectory()) refuse('NOT_FOUND', 'pasta não encontrada')
-            return tree(root, dir, Math.min(Math.max(Number(args.depth) || 4, 1), 8), watched.marks)
+            // `root` names the agent folder as the person knows it, relative to the workspace.
+            return { ...tree(root, dir, Math.min(Math.max(Number(args.depth) || 4, 1), 8), watched.marks), root: relativeOf(realpathSync(config.localWorkspaceDir), root) }
         }
         case 'read': {
             const file = at('path')

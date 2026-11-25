@@ -262,7 +262,7 @@ export function createFakeApi({ now = () => Math.floor(Date.now() / 1000), reply
         ['GET', '/api/bots/:id/audit', () => ok(collection([]))],
         ['GET', '/api/bots/:id/members', () => ok({ items: [] })],
         // The agent folder (the files MCP's routes): each example agent has its own small tree.
-        ['GET', '/api/bots/:id/fs/tree', ({ bot }) => ok({ path: '', items: demoTree(bot.id), isTruncated: false })],
+        ['GET', '/api/bots/:id/fs/tree', ({ bot }) => ok({ path: '', root: `agents/${bot.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`, items: demoTree(bot.id), isTruncated: false })],
         ['GET', '/api/bots/:id/fs/read', ({ bot, query }) => ok({ path: query.get('path'), content: DEMO_FILES[bot.id]?.[query.get('path')] ?? '', totalLines: 1, offset: 1 })],
         ['GET', '/api/bots/:id/handoffs', () => ok({ from: [], to: [] })],
         ['GET', '/api/bots/:id/approval-rate', () => ok({ weeks: Array.from({ length: 8 }, () => ({ approved: 0, decided: 0 })) })],
