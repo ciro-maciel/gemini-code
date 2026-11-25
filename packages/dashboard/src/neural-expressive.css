@@ -2194,3 +2194,80 @@ a.btn {
   color: var(--gm-on-primary-container);
   font-weight: 600;
 }
+
+/* ------------------------------------------------ New agent hint -- */
+
+/* Under the command center's box when the person asked for a new agent: what
+   to write there, pointing at the box. */
+.new-agent-anchor {
+  position: relative;
+}
+.new-agent-hint {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 12px);
+  left: 24px;
+  width: min(420px, calc(100% - 48px));
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  border-radius: var(--radius-lg);
+  background: var(--gm-surface);
+  box-shadow:
+    0 0 0 1px var(--gm-outline-variant),
+    0 24px 64px -24px rgba(23, 43, 77, 0.35);
+  animation: ne-pop var(--dur-spatial) var(--spring-fast);
+}
+.new-agent-hint::before {
+  content: '';
+  position: absolute;
+  top: -7px;
+  left: 28px;
+  width: 14px;
+  height: 14px;
+  background: var(--gm-surface);
+  box-shadow: -1px -1px 0 0 var(--gm-outline-variant);
+  transform: rotate(45deg);
+}
+.new-agent-hint-glyph {
+  width: 36px;
+  height: 36px;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  background: var(--gm-primary-container);
+  color: var(--gm-on-primary-container);
+}
+.new-agent-hint-glyph .ti {
+  font-size: 18px;
+}
+.new-agent-hint-text {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.new-agent-hint-text b {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gm-on-surface);
+}
+.new-agent-hint-text p {
+  margin: 6px 0 0;
+  font-size: 13px;
+  line-height: 19px;
+  color: var(--gm-on-surface-variant);
+}
+.new-agent-hint-text .new-agent-hint-example {
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  background: var(--gm-surface-1);
+  color: var(--gm-on-surface);
+  font-style: italic;
+}
+.new-agent-hint > .btn {
+  flex: none;
+  align-self: flex-start;
+}

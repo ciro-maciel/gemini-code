@@ -1,5 +1,11 @@
 {
   "texts": {
+    "Describe the agent you need": "Descreva o agente de que você precisa",
+    "Write what it should do, in your own words, and send it. The agent is born from that sentence, with its own folder, and starts right away.": "Escreva o que ele deve fazer, com as suas palavras, e envie. O agente nasce dessa frase, com a própria pasta, e começa na hora.",
+    "“Review the open pull request on sign-in and list what could break.”": "“Revise o pull request aberto do login e liste o que pode quebrar.”",
+    "The chips below choose a template, the model, the connections and the skills before it starts.": "Os chips abaixo escolhem um modelo de partida, o modelo de IA, as conexões e as habilidades antes de ele começar.",
+    "Got it": "Entendi",
+    "No agents yet. Drag one here.": "Nenhum agente ainda. Arraste um para cá.",
     "Files the agent already changed stay as they are.": "Os arquivos que o agente já mudou ficam como estão.",
     "This app": "Este app",
     "A person": "Uma pessoa",

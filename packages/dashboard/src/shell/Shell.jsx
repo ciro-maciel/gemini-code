@@ -464,12 +464,13 @@ export function Shell() {
         onHome={() => navigate('/')}
         onOpenAgent={(id) => go(`agent:${id}`)}
         onNewAgent={(sectionId) =>
-          navigate(
-            '/',
-            typeof sectionId === 'string'
-              ? { state: { sectionId } }
-              : undefined,
-          )
+          // Always a new state, so a second click opens the hint again.
+          navigate('/', {
+            state: {
+              newAgent: Date.now(),
+              ...(typeof sectionId === 'string' ? { sectionId } : {}),
+            },
+          })
         }
         onSettings={(section) =>
           navigate(

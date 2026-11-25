@@ -430,11 +430,7 @@ export function AgentGroups({
                 <div className="agroup-empty">Drop here</div>
               ) : (
                 <div className="agroup-empty">
-                  <span>No agents yet. Drag one here, or</span>
-                  <button onClick={() => onNewAgent(group.id)}>
-                    <i className="ti ti-message-plus" />
-                    New agent here
-                  </button>
+                  <span>No agents yet. Drag one here.</span>
                 </div>
               ))}
           </div>

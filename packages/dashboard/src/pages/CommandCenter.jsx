@@ -28,6 +28,47 @@ const greeting = (hour = new Date().getHours()) =>
   hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
 
 /**
+ * The hint under the box when the person asked for a new agent: an agent is
+ * born from a sentence. It closes when they start typing, with Escape, with
+ * "Got it", or on a click elsewhere.
+ */
+function NewAgentHint({ onClose }) {
+  useEffect(() => {
+    const onDown = (event) =>
+      !event.target.closest?.('.new-agent-hint') && onClose();
+    const timer = setTimeout(() => addEventListener('pointerdown', onDown), 0);
+    return () => {
+      clearTimeout(timer);
+      removeEventListener('pointerdown', onDown);
+    };
+  }, [onClose]);
+  return (
+    <div className="new-agent-hint" role="dialog" aria-label="New agent">
+      <span className="new-agent-hint-glyph" aria-hidden="true">
+        <i className="ti ti-message-plus" />
+      </span>
+      <div className="new-agent-hint-text">
+        <b>Describe the agent you need</b>
+        <p>
+          Write what it should do, in your own words, and send it. The agent is
+          born from that sentence, with its own folder, and starts right away.
+        </p>
+        <p className="new-agent-hint-example">
+          “Review the open pull request on sign-in and list what could break.”
+        </p>
+        <p>
+          The chips below choose a template, the model, the connections and the
+          skills before it starts.
+        </p>
+      </div>
+      <button className="btn outline sm" onClick={onClose}>
+        Got it
+      </button>
+    </div>
+  );
+}
+
+/**
  * The command center: the Mesa with nothing open. The request that starts an
  * agent, where to continue, the latest deliveries and the templates.
  */
@@ -50,13 +91,19 @@ export function CommandCenter({
   const [query, setQuery] = useState('');
   const [area, setArea] = useState('All');
   const composerRef = useRef(null);
+  const [isHinting, setIsHinting] = useState(false);
 
   // A request typed in the search arrives here, ready to send.
   const location = useLocation();
   useEffect(() => {
     if (location.state?.draft)
       composerRef.current?.setText(location.state.draft);
-    // "Novo agente neste grupo": the agent is born inside it.
+    // "New agent": the box takes the focus and says what to write in it.
+    if (location.state?.newAgent) {
+      composerRef.current?.focus();
+      setIsHinting(true);
+    }
+    // "New agent in this group": the agent is born inside it.
     if (location.state?.sectionId)
       setDraft((current) => ({
         ...current,
@@ -141,38 +188,48 @@ export function CommandCenter({
               : ''}
           </p>
         </div>
-        <Composer
-          ref={composerRef}
-          variant="start"
-          placeholder="What should we build, debug, or review today?"
-          isSending={isSending}
-          onSend={start}
-          build={
-            <BuildRow
-              bot={{
-                model: draft.model ?? template?.model,
-                effort: draft.effort ?? template?.effort,
-                instructions:
-                  draft.instructions ?? template?.instructions ?? '',
-                aiAccount: draft.aiAccount,
-                connectionIds: draft.connectionIds,
-              }}
-              templates={templates}
-              template={template}
-              onPickTemplate={(item) =>
-                setDraft((current) => ({
-                  ...current,
-                  templateId: item.id,
-                  instructions: null,
-                }))
-              }
-              onNewTemplate={onNewTemplate}
-              onChange={(fields) =>
-                setDraft((current) => ({ ...current, ...fields }))
-              }
-            />
-          }
-        />
+        <div
+          className="new-agent-anchor"
+          onKeyDownCapture={(event) => {
+            if (!isHinting) return;
+            if (event.key === 'Escape' || event.key.length === 1)
+              setIsHinting(false);
+          }}
+        >
+          <Composer
+            ref={composerRef}
+            variant="start"
+            placeholder="What should we build, debug, or review today?"
+            isSending={isSending}
+            onSend={start}
+            build={
+              <BuildRow
+                bot={{
+                  model: draft.model ?? template?.model,
+                  effort: draft.effort ?? template?.effort,
+                  instructions:
+                    draft.instructions ?? template?.instructions ?? '',
+                  aiAccount: draft.aiAccount,
+                  connectionIds: draft.connectionIds,
+                }}
+                templates={templates}
+                template={template}
+                onPickTemplate={(item) =>
+                  setDraft((current) => ({
+                    ...current,
+                    templateId: item.id,
+                    instructions: null,
+                  }))
+                }
+                onNewTemplate={onNewTemplate}
+                onChange={(fields) =>
+                  setDraft((current) => ({ ...current, ...fields }))
+                }
+              />
+            }
+          />
+          {isHinting && <NewAgentHint onClose={() => setIsHinting(false)} />}
+        </div>
         {last && (
           <button className="chip-btn" onClick={() => onOpenAgent(last.id)}>
             Continue “{last.name}”

@@ -13,6 +13,9 @@ version with its date.
 
 ### Changed
 
+- New agent takes you to the command center's box, focused, with a hint on what
+  to write and an example; an empty group no longer has its own New agent button
+  (2026-11-25).
 - Minor and patch updates: @eslint/js 9.39.5, eslint-plugin-react-hooks 7.1.1,
   Prettier 3.10.1 (with its formatting), @anthropic-ai/sdk 1.12.0,
   @modelcontextprotocol/sdk 1.32.2, @mantine/notifications 8.3.18, Tabler icons
