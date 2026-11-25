@@ -79,7 +79,9 @@ describe('perguntar sem parar', () => {
     afterAll(() => (globalThis.fetch = realFetch))
 
     test('answers from the conversation and leaves no trace in it', async () => {
-        process.env.OPENROUTER_API_KEY ||= 'sk-house'
+        // The config was read at import: set the key on it, not on process.env (CI runs files in another order).
+        const { config } = await import('./config.js')
+        config.openrouterApiKey ||= 'sk-house'
         globalThis.fetch = async (url, init) => {
             sent = JSON.parse(init.body)
             return new Response(JSON.stringify({ choices: [{ message: { role: 'assistant', content: 'Ele está no começo: só cumprimentou.' }, finish_reason: 'stop' }], usage: { cost: 0.001 } }), { status: 200 })
