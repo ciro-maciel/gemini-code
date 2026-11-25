@@ -15,7 +15,8 @@ name: Gemini Code — demo
 # at the same time; each writes only its own folder and retries its push with
 # a rebase, so they never conflict.
 #
-# Pull requests from forks get no preview: their workflow has no write token.
+# Pull requests from forks and from Dependabot get no preview: their workflows
+# have a read-only token, so the preview could never be removed.
 
 on:
   push:
@@ -40,7 +41,8 @@ jobs:
     if: >-
       github.event_name != 'pull_request' ||
       (github.event.action != 'closed' &&
-       github.event.pull_request.head.repo.full_name == github.repository)
+       github.event.pull_request.head.repo.full_name == github.repository &&
+       github.actor != 'dependabot[bot]')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

@@ -18,6 +18,8 @@ version with its date.
 
 ### Fixed
 
+- Dependabot pull requests get no demo preview: their read-only token could
+  never remove it (2026-11-25).
 - Texts written in Portuguese inside the English dashboard, in the agent tab,
   the composer's chips, the steps row, the skill editor, the cost lines and the
   demo, are English now and translated (2026-11-25).
