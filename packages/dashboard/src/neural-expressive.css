@@ -316,6 +316,12 @@ h3,
   border-bottom: 0;
   margin: 12px 0 8px;
 }
+/* The collapsed side too: its strip and its list of agents carried the same old rules. */
+.nav-mini,
+.mini-list {
+  border-top: 0;
+  border-bottom: 0;
+}
 .nav .acct-nav,
 .nav .acct-foot {
   border-top: 0;
