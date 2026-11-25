@@ -1,5 +1,10 @@
 {
   "texts": {
+    "Manage settings": "Gerenciar configurações",
+    "Local · no sign-in": "Local · sem login",
+    "API keys & models": "Chaves de API e modelos",
+    "Your Gemini API key and the models agents use": "Sua chave da API do Gemini e os modelos dos agentes",
+    "Server, version and runtime, to send when something fails": "Servidor, versão e ambiente, para enviar quando algo falhar",
     "API Keys & Models": "Chaves de API e modelos",
     "Diagnostics": "Diagnóstico",
     "The key is stored encrypted on the server; agents and the dashboard see only its name.": "A chave fica cifrada no servidor; os agentes e o painel só veem o nome dela.",
@@ -1258,6 +1263,7 @@
     "deleting waits for the person: say what should be deleted and why, and the person deletes it": "apagar espera a pessoa: diga o que deve ser apagado e por quê, e a pessoa apaga"
   },
   "patterns": {
+    "Hi, {0}!": "Olá, {0}!",
     "{0} turned on": "{0} ligada",
     "+ Add a {0} API key": "+ Adicionar uma chave da API do {0}",
     "The server failed to respond (error {0}). Try again in a moment; if it happens again, reload the page.": "A central falhou ao responder (erro {0}). Tente de novo em um instante; se repetir, recarregue a página.",

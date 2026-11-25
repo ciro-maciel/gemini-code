@@ -5,10 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import {
   fetchBrains,
   fetchConnections,
-  fetchRepoFiles,
   fetchSkillLibrary,
   fetchSkills,
-  saveRepoFile,
   setSkillUse,
   updateBot,
 } from '../services/api';
@@ -59,30 +57,6 @@ function Chip({
   );
 }
 
-/** Every folder that holds a file, parents included: a/b/c.md gives a and a/b. */
-export const foldersOf = (paths) =>
-  [
-    ...new Set(
-      paths.flatMap((path) =>
-        path
-          .split('/')
-          .slice(0, -1)
-          .map((_, index, parts) => parts.slice(0, index + 1).join('/')),
-      ),
-    ),
-  ].sort();
-
-/** What was typed, as a folder: no spaces at the ends, no leading or trailing slash, no way up. */
-export const cleanFolder = (text) => {
-  const parts = text
-    .split('/')
-    .map((part) => part.trim())
-    .filter(Boolean);
-  return parts.length && !parts.includes('..') && !parts.includes('.')
-    ? parts.join('/')
-    : null;
-};
-
 const save = async (bot, fields, message) => {
   try {
     await updateBot(bot.id, fields);
@@ -96,8 +70,9 @@ const save = async (bot, fields, message) => {
 /**
  * What an agent is made of, as chips on the box's bottom line: the template it
  * starts from (only before the first message), the AI account,
- * connections, skills, model and effort, and the working folder. Each opens the
- * same menu, aligned with the chip.
+ * connections, skills, model and effort. Each opens the same menu, aligned
+ * with the chip. The working folder is the agent's own (agents/<name>), shown
+ * beside the conversation, so it has no chip.
  */
 export function BuildRow({
   bot,
@@ -121,8 +96,6 @@ export function BuildRow({
     () => (bot?.id ? remembered(`skills:${bot.id}`) : undefined) ?? null,
   );
   const [library, setLibrary] = useState(null);
-  const [folders, setFolders] = useState(null);
-  const [folderQuery, setFolderQuery] = useState('');
 
   useEffect(() => {
     if (!bot?.id) return;
@@ -207,28 +180,6 @@ export function BuildRow({
       .catch(() => {});
   }, []);
 
-  // The folders are the account's files, the same ones under Arquivos, so a draft has them too.
-  const openFolders = (event) => {
-    menu.open('folder')(event);
-    setFolderQuery('');
-    fetchRepoFiles()
-      .then((data) =>
-        setFolders(foldersOf(data.items.map((file) => file.path))),
-      )
-      .catch(() => setFolders([]));
-  };
-  // A name that is not a folder yet becomes one: its LEIA.md, the way Arquivos makes folders.
-  const createFolder = async (folder) => {
-    menu.close();
-    try {
-      await saveRepoFile(`${folder}/LEIA.md`, `# ${folder.split('/').pop()}\n`);
-      change({ folder }, `Folder ${folder}/ created`);
-    } catch (error) {
-      notify.error(error.message);
-    }
-  };
-  const newFolder = cleanFolder(folderQuery);
-
   const openSkills = (event) => {
     menu.open('skills')(event);
     if (bot?.id)
@@ -296,14 +247,6 @@ export function BuildRow({
         label="Skills"
         value={`${shownSkills?.length ?? 0} ${shownSkills?.length === 1 ? 'habilidade' : 'habilidades'}`}
         onClick={openSkills}
-      />
-      <Chip
-        icon="ti-folder"
-        label="Pasta"
-        value={bot.folder ? `${bot.folder.split('/').pop()}/` : '/'}
-        title={`Folder: /${bot.folder ? `${bot.folder}/` : ''}`}
-        isShrinking
-        onClick={openFolders}
       />
 
       {menu.is('template') && (
@@ -491,48 +434,6 @@ export function BuildRow({
             <i className="ti ti-plus" />
             Connect another AI account
           </button>
-        </Menu>
-      )}
-      {menu.is('folder') && (
-        <Menu
-          anchor={menu.anchor}
-          title="Working folder"
-          search
-          onQuery={setFolderQuery}
-          width={320}
-          alignLeft
-          onClose={menu.close}
-        >
-          <Opt
-            mono
-            title="/"
-            isOn={!bot.folder}
-            onClick={() => {
-              menu.close();
-              change({ folder: null });
-            }}
-          />
-          {(folders ?? []).map((folder) => (
-            <Opt
-              key={folder}
-              mono
-              title={`${folder}/`}
-              isOn={bot.folder === folder}
-              onClick={() => {
-                menu.close();
-                change({ folder });
-              }}
-            />
-          ))}
-          {folders && newFolder && !folders.includes(newFolder) && (
-            <Opt
-              mono
-              icon={<i className="ti ti-folder-plus" />}
-              title={`Create ${newFolder}/`}
-              onClick={() => createFolder(newFolder)}
-            />
-          )}
-          {folders === null && <p className="menu-note">Loading…</p>}
         </Menu>
       )}
     </div>

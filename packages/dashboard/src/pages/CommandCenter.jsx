@@ -56,9 +56,6 @@ export function CommandCenter({
   useEffect(() => {
     if (location.state?.draft)
       composerRef.current?.setText(location.state.draft);
-    // "Novo agente nesta pasta": the folder chip starts on it.
-    if (location.state?.folder)
-      setDraft((current) => ({ ...current, folder: location.state.folder }));
     // "Novo agente neste grupo": the agent is born inside it.
     if (location.state?.sectionId)
       setDraft((current) => ({
@@ -101,7 +98,6 @@ export function CommandCenter({
       const bot = await createBot({ name: nameFrom(text), ...chosen });
       const extra = Object.fromEntries(
         Object.entries({
-          folder: draft.folder,
           connectionIds: draft.connectionIds,
           sectionId: draft.sectionId,
         }).filter(([, value]) => value !== undefined && value !== null),
@@ -158,7 +154,6 @@ export function CommandCenter({
                 effort: draft.effort ?? template?.effort,
                 instructions:
                   draft.instructions ?? template?.instructions ?? '',
-                folder: draft.folder,
                 aiAccount: draft.aiAccount,
                 connectionIds: draft.connectionIds,
               }}

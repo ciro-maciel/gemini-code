@@ -30,6 +30,12 @@ version with its date.
 
 ### Changed
 
+- The account menu is an account card in Google's pattern: the e-mail, the
+  avatar in Gemini's ring, a greeting, Manage settings, the account's lines with
+  what each holds, and the version with the changelog (2026-11-25, #31).
+- Language moved from a modal to Settings › Language · Idioma, a Material radio
+  list as Google's settings draw a choice (2026-11-25, #31).
+
 - The language picker in the dashboard's own look: tonal cards with the
   language's code, its name in its own language and in the other one, and the
   date and number format it brings; arrows move, Enter chooses (2026-11-25,
@@ -50,6 +56,11 @@ version with its date.
   translation that follows the browser's language (2026-11-25, #18).
 - `main` changes only through pull requests with the `test` check green
   (2026-11-25, #16).
+
+### Removed
+
+- The folder chip in the composer: every agent works in its own folder, shown
+  beside its conversation (2026-11-25, #31).
 
 ### Fixed
 

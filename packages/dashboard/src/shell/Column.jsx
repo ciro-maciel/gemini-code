@@ -4,7 +4,8 @@ import { useAuth, useSignOut } from '../auth/AuthContext';
 
 import { API_URL } from '../services/api';
 import { GeminiSparkle, SupportModal } from '../components/zen';
-import { LanguageModal } from '../components/LanguageModal';
+import { LANGUAGES, currentLanguage } from '../lib/language';
+import { version } from '../../package.json';
 import { Menu, useMenu } from '../ui/Menu';
 
 import { listAgents, stateOf, waitsOn } from '../state/agents';
@@ -38,6 +39,28 @@ function Item({ label, icon, isOn, onClick, extra = null }) {
   );
 }
 
+const REPO = 'https://github.com/ciro-maciel/gemini-code';
+
+/** One line of the account card: a tonal glyph, what it is and, under it, what it holds. */
+function AccountItem({ icon, title, note, isUntranslated = false, onClick }) {
+  return (
+    <button
+      className="acct-item"
+      onClick={onClick}
+      data-no-translate={isUntranslated ? '' : undefined}
+    >
+      <span className="acct-glyph">
+        <i className={`ti ${icon}`} />
+      </span>
+      <span className="acct-text">
+        <span className="acct-title">{title}</span>
+        {note && <span className="acct-note">{note}</span>}
+      </span>
+      <i className="ti ti-chevron-right acct-go" aria-hidden="true" />
+    </button>
+  );
+}
+
 const initialsOf = (name) =>
   String(name || '?')
     .split(/\s+/)
@@ -60,7 +83,6 @@ function AccountFoot({ account, isDark, onAccount, onTheme }) {
   const signOut = useSignOut();
   const navigate = useNavigate();
   const [isSupport, setIsSupport] = useState(false);
-  const [isLanguage, setIsLanguage] = useState(false);
   const name = account?.name || account?.email || 'Developer';
   const email = account?.email || '';
   const leave = async () => {
@@ -97,51 +119,88 @@ function AccountFoot({ account, isDark, onAccount, onTheme }) {
         <i className={`ti ${isDark ? 'ti-sun' : 'ti-moon'}`} />
       </button>
       {menu.is('account') && (
-        <Menu anchor={menu.anchor} alignLeft width={240} onClose={menu.close}>
-          <div className="menu-who">
-            <b>{name}</b>
-            {email && <span>{email}</span>}
+        <Menu
+          anchor={menu.anchor}
+          alignLeft
+          width={340}
+          maxHeight="calc(100vh - 16px)"
+          className="acct-menu"
+          onClose={menu.close}
+        >
+          <div className="acct-card">
+            {email && <span className="acct-email">{email}</span>}
+            <span className="acct-avatar" aria-hidden="true">
+              <span>{initialsOf(name)}</span>
+            </span>
+            <b className="acct-hi">{`Hi, ${name}!`}</b>
+            {isLocalMode && (
+              <span className="acct-mode">
+                <i className="ti ti-device-desktop" />
+                Local · no sign-in
+              </span>
+            )}
+            <button
+              className="acct-manage"
+              onClick={() => {
+                menu.close();
+                navigate('/settings/accounts');
+              }}
+            >
+              Manage settings
+            </button>
           </div>
-          <button
-            onClick={() => {
-              menu.close();
-              onAccount();
-            }}
-          >
-            <i className="ti ti-key" />
-            API Keys & Models
-          </button>
-          <button
-            onClick={() => {
-              menu.close();
-              setIsSupport(true);
-            }}
-          >
-            <i className="ti ti-help-circle" />
-            Diagnostics
-          </button>
-          <button
-            onClick={() => {
-              menu.close();
-              setIsLanguage(true);
-            }}
-            data-no-translate
-          >
-            <i className="ti ti-language" />
-            Language · Idioma
-          </button>
-          {!isLocalMode && (
-            <>
-              <hr />
-              <button onClick={leave}>
-                <i className="ti ti-logout" />
-                Sign out
-              </button>
-            </>
-          )}
+          <div className="acct-list">
+            <AccountItem
+              icon="ti-key"
+              title="API keys & models"
+              note="Your Gemini API key and the models agents use"
+              onClick={() => {
+                menu.close();
+                onAccount();
+              }}
+            />
+            <AccountItem
+              icon="ti-language"
+              title="Language · Idioma"
+              note={
+                LANGUAGES.find((item) => item.id === currentLanguage())?.label
+              }
+              isUntranslated
+              onClick={() => {
+                menu.close();
+                navigate('/settings/language');
+              }}
+            />
+            <AccountItem
+              icon="ti-stethoscope"
+              title="Diagnostics"
+              note="Server, version and runtime, to send when something fails"
+              onClick={() => {
+                menu.close();
+                setIsSupport(true);
+              }}
+            />
+            {!isLocalMode && (
+              <AccountItem icon="ti-logout" title="Sign out" onClick={leave} />
+            )}
+          </div>
+          <footer className="acct-foot-links">
+            <span>Gemini Code {version}</span>
+            <span aria-hidden="true">·</span>
+            <a
+              href={`${REPO}/blob/main/CHANGELOG.md`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Changelog
+            </a>
+            <span aria-hidden="true">·</span>
+            <a href={REPO} target="_blank" rel="noreferrer">
+              GitHub
+            </a>
+          </footer>
         </Menu>
       )}
-      <LanguageModal opened={isLanguage} onClose={() => setIsLanguage(false)} />
       <SupportModal
         opened={isSupport}
         onClose={() => setIsSupport(false)}
