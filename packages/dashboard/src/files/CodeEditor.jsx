@@ -144,7 +144,7 @@ export function CodeEditor({ path, value, onSave = null, onDirty = () => {} }) {
         // one registered answered Cmd+S for both and saved one file's text into the other (25/11/2026).
         editor.addAction({
           id: 'gemini-code.save',
-          label: 'Salvar',
+          label: 'Save',
           keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS],
           run: async (target) => {
             if (!saveRef.current) return;
@@ -155,7 +155,9 @@ export function CodeEditor({ path, value, onSave = null, onDirty = () => {} }) {
           },
         });
       })
-      .catch((error) => setFailure(error?.message || 'o editor não carregou'));
+      .catch((error) =>
+        setFailure(error?.message || 'the editor did not load'),
+      );
     return () => {
       disposed = true;
       editor?.getModel()?.dispose();
@@ -191,6 +193,6 @@ export function CodeEditor({ path, value, onSave = null, onDirty = () => {} }) {
 
   if (failure) return <pre className="src">{value}</pre>;
   return (
-    <div ref={host} className="code-editor" aria-label={`Editor de ${path}`} />
+    <div ref={host} className="code-editor" aria-label={`Editor for ${path}`} />
   );
 }

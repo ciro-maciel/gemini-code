@@ -114,7 +114,7 @@ function Pane({
                 {info.live && <span className="live" />}
                 <button
                   className="x"
-                  aria-label="Fechar"
+                  aria-label="Close"
                   onPointerDown={(event) => event.stopPropagation()}
                   onClick={(event) => {
                     event.stopPropagation();
@@ -135,8 +135,8 @@ function Pane({
         ) : (
           <div className="pane-empty">
             <i className="ti ti-layout-grid" />
-            <b>Painel vazio</b>
-            <span className="muted">arraste uma aba ou um arquivo pra cá</span>
+            <b>Empty dashboard</b>
+            <span className="muted">drag a tab or file here</span>
           </div>
         )}
       </div>

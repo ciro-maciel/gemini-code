@@ -16,9 +16,9 @@ import { Menu, Opt, useMenu } from '../ui/Menu';
 const upper = (text) =>
   text ? text.charAt(0).toUpperCase() + text.slice(1) : '';
 const REACH = {
-  read: 'lê',
-  write: 'cria e altera rascunho',
-  external: 'publica, envia, paga ou apaga',
+  read: 'reads',
+  write: 'creates and changes drafts',
+  external: 'publishes, sends, pays, or deletes',
 };
 
 function FlowRow({ template, onOpen }) {
@@ -62,7 +62,7 @@ export function TemplateTab({
     return items.length ? (
       <div className="pane-empty">
         <i className="ti ti-template-off" />
-        <b>Modelo desconhecido</b>
+        <b>Unknown model</b>
       </div>
     ) : null;
 
@@ -82,7 +82,8 @@ export function TemplateTab({
       .filter(Boolean)
       .join(' · '),
   };
-  const effort = EFFORTS.find(([id]) => id === template.effort)?.[1] || 'Médio';
+  const effort =
+    EFFORTS.find(([id]) => id === template.effort)?.[1] || 'Medium';
 
   const save = async (fields, message) => {
     try {
@@ -91,7 +92,7 @@ export function TemplateTab({
       if (message)
         notify.success(
           message,
-          'Vale pros próximos agentes; os que já existem ficam como estão.',
+          'Applies to new agents; existing ones stay as they are.',
         );
     } catch (error) {
       notify.error(error.message);
@@ -127,7 +128,7 @@ export function TemplateTab({
             {template.measure && (
               <div className="tpl-measure">
                 <i className="ti ti-target" />
-                <span>Mede</span>
+                <span>Measures</span>
                 <b>{template.measure}</b>
               </div>
             )}
@@ -139,7 +140,7 @@ export function TemplateTab({
               disabled={isCreating}
             >
               <i className="ti ti-plus" />
-              Criar agente
+              Create agent
             </button>
             {!template.isHouse && (
               <button
@@ -149,7 +150,7 @@ export function TemplateTab({
                 }
               >
                 <i className="ti ti-file-text" />
-                Abrir o arquivo
+                Open file
               </button>
             )}
           </div>
@@ -161,7 +162,7 @@ export function TemplateTab({
           </div>
           <div>
             <b>{template.uses.length}</b>
-            <span>conexões</span>
+            <span>connections</span>
           </div>
           <div>
             <b>{template.skills.length}</b>
@@ -169,23 +170,23 @@ export function TemplateTab({
           </div>
           <div>
             <b>{template.model.split('/').pop()}</b>
-            <span>esforço {effort.toLowerCase()}</span>
+            <span>effort {effort.toLowerCase()}</span>
           </div>
         </div>
         {(from.length > 0 || to.length > 0) && (
           <div className="box">
             <div className="bh">
               <i className="ti ti-arrows-exchange" />
-              <b className="grow">Na empresa</b>
+              <b className="grow">At the company</b>
               <span className="muted">
-                de quem recebe trabalho e pra quem passa
+                who it receives work from and who it hands off to
               </span>
             </div>
             <div className="bb tpl-flow">
               <div className="col">
                 <span className="label">
                   <i className="ti ti-arrow-down-right" />
-                  Recebe trabalho de
+                  Receives work from
                 </span>
                 {from.length ? (
                   from.map((item) => (
@@ -197,14 +198,14 @@ export function TemplateTab({
                   ))
                 ) : (
                   <p className="muted">
-                    De quem pede, da rotina ou da porta de entrada.
+                    From the requester, the routine, or the entry point.
                   </p>
                 )}
               </div>
               <div className="col">
                 <span className="label">
                   <i className="ti ti-arrow-up-right" />
-                  Passa trabalho pra
+                  Hands work to
                 </span>
                 {to.length ? (
                   to.map((item) => (
@@ -215,7 +216,7 @@ export function TemplateTab({
                     />
                   ))
                 ) : (
-                  <p className="muted">Entrega direto pra quem pediu.</p>
+                  <p className="muted">Delivers straight to whoever asked.</p>
                 )}
               </div>
             </div>
@@ -225,14 +226,14 @@ export function TemplateTab({
           <div className="tpl-main">
             <div className="box">
               <div className="bh">
-                <b className="grow">Instruções</b>
+                <b className="grow">Instructions</b>
                 {draft === null ? (
                   <button
                     className="btn outline sm"
                     onClick={() => setDraft(template.instructions)}
                   >
                     <i className="ti ti-pencil" />
-                    Editar
+                    Edit
                   </button>
                 ) : (
                   <>
@@ -240,19 +241,19 @@ export function TemplateTab({
                       className="btn outline sm"
                       onClick={() => setDraft(null)}
                     >
-                      Cancelar
+                      Cancel
                     </button>
                     <button
                       className="btn filled sm"
                       onClick={async () => {
                         await save(
                           { instructions: draft },
-                          'Instruções do modelo salvas',
+                          'Template instructions saved',
                         );
                         setDraft(null);
                       }}
                     >
-                      Salvar
+                      Save
                     </button>
                   </>
                 )}
@@ -287,9 +288,9 @@ export function TemplateTab({
             <div className="box">
               <div className="bh">
                 <i className="ti ti-sparkles" />
-                <b className="grow">Habilidades</b>
+                <b className="grow">Skills</b>
                 <span className="muted">
-                  em skills/, servem pra qualquer agente
+                  in skills/, available to any agent
                 </span>
               </div>
               <div className="bb tpl-skills">
@@ -301,7 +302,7 @@ export function TemplateTab({
                     </div>
                   ))
                 ) : (
-                  <p className="muted">Nenhuma.</p>
+                  <p className="muted">None.</p>
                 )}
               </div>
             </div>
@@ -309,11 +310,11 @@ export function TemplateTab({
           <div className="tpl-side">
             <div className="box">
               <div className="bh">
-                <b className="grow">Como nasce</b>
+                <b className="grow">How it starts</b>
               </div>
               <div className="bb">
                 <div className="kv">
-                  <span>Modelo e esforço</span>
+                  <span>Model and effort</span>
                   <button
                     className="select"
                     title={`${model.label} · ${effort}`}
@@ -327,8 +328,8 @@ export function TemplateTab({
                 </div>
                 <p className="fine">
                   {home
-                    ? 'Cada agente recebe uma cópia e pode mudar só pra ele. Mudar aqui vale pros próximos.'
-                    : 'Nenhuma conta de IA tem esse modelo ligado: o agente nasce na primeira chave com modelos. Escolha um modelo das suas contas.'}
+                    ? 'Each agent gets its own copy and can change it for itself. Changes here apply to new agents.'
+                    : 'No AI account has this model turned on: the agent will be created on the first key with models. Choose a model from your accounts.'}
                 </p>
               </div>
             </div>
@@ -336,12 +337,12 @@ export function TemplateTab({
               <div className="box">
                 <div className="bh">
                   <i className="ti ti-clock-play" />
-                  <b className="grow">Rotina sugerida</b>
+                  <b className="grow">Suggested routine</b>
                 </div>
                 <div className="bb">
                   <p className="tpl-when">{upper(template.when)}</p>
                   <p className="fine">
-                    Liga nos ajustes de cada agente, na aba Quando.
+                    Turn it on in each agent’s settings, in the When tab.
                   </p>
                 </div>
               </div>
@@ -349,7 +350,7 @@ export function TemplateTab({
             <div className="box">
               <div className="bh">
                 <i className="ti ti-plug" />
-                <b className="grow">Conexões</b>
+                <b className="grow">Connections</b>
               </div>
               <div className="bb">
                 {template.uses.length ? (
@@ -360,28 +361,26 @@ export function TemplateTab({
                     </div>
                   ))
                 ) : (
-                  <p className="muted">Nenhuma.</p>
+                  <p className="muted">None.</p>
                 )}
               </div>
             </div>
             <div className="box">
               <div className="bh">
                 <i className="ti ti-shield" />
-                <b className="grow">Sempre pergunta antes de</b>
+                <b className="grow">Always asks before</b>
               </div>
               <div className="bb">
                 <p className="tpl-when">
-                  {upper(template.asks || 'publicar, enviar, pagar ou apagar')}
+                  {upper(template.asks || 'publish, send, pay, or delete')}
                 </p>
-                <p className="fine">
-                  Pagar e entrar numa conta sempre perguntam.
-                </p>
+                <p className="fine">Payments and sign-ins always ask.</p>
               </div>
             </div>
             <div className="box">
               <div className="bh">
                 <i className="ti ti-users-group" />
-                <b className="grow">Agentes deste modelo</b>
+                <b className="grow">Agents using this model</b>
               </div>
               <div className="bb">
                 {mine.length ? (
@@ -395,7 +394,7 @@ export function TemplateTab({
                     </button>
                   ))
                 ) : (
-                  <p className="muted">Nenhum ainda.</p>
+                  <p className="muted">None yet.</p>
                 )}
               </div>
             </div>
@@ -405,15 +404,15 @@ export function TemplateTab({
       {menu.is('brain') && (
         <Menu
           anchor={menu.anchor}
-          title="Conta e modelo"
+          title="Account and model"
           search
           width={340}
           onClose={menu.close}
         >
           {brains.length === 0 && (
             <p className="menu-note">
-              Nenhuma conta de IA com modelos ligados ainda. Ligue a chave de um
-              provedor em Configurações, Contas de IA.
+              No AI accounts with models turned on yet. Add a provider key in
+              Settings, AI Accounts.
             </p>
           )}
           {brains.map((group) => (
@@ -430,13 +429,13 @@ export function TemplateTab({
                   }
                   onClick={() => {
                     menu.close();
-                    save({ model: item.id }, `Modelo: ${item.label}`);
+                    save({ model: item.id }, `Model: ${item.label}`);
                   }}
                 />
               ))}
             </div>
           ))}
-          <div className="h label">Esforço</div>
+          <div className="h label">Effort</div>
           {EFFORTS.map(([id, label, note]) => (
             <Opt
               key={id}
@@ -445,7 +444,7 @@ export function TemplateTab({
               isOn={template.effort === id}
               onClick={() => {
                 menu.close();
-                save({ effort: id }, `Esforço: ${label}`);
+                save({ effort: id }, `Effort: ${label}`);
               }}
             />
           ))}

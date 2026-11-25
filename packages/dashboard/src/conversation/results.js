@@ -108,7 +108,7 @@ export function resultsOf(rows) {
         key: `artifact:${row.data.artifactId}`,
         kind: 'artifact',
         label: row.data.title || 'Material',
-        detail: 'Material na conversa',
+        detail: 'Material in the conversation',
         rowId: row.id,
         at: row.createdAt ?? null,
       });

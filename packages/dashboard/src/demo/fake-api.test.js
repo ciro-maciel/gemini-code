@@ -83,7 +83,7 @@ describe('the demo fake API', () => {
     const { body } = createFakeApi().handle('GET', '/api/ai-accounts');
     expect(body.items.map((item) => item.name)).toEqual([
       'Google Gemini',
-      'Assinatura Google',
+      'Google subscription',
     ]);
     expect(body.items[0].models).toEqual([
       'gemini-3.5-flash-lite',

@@ -50,7 +50,7 @@ function ConnectionMenu({ app, onChange }) {
     <>
       <button
         className="icon-btn"
-        aria-label={`Configurar ${app.title}`}
+        aria-label={`Set up ${app.title}`}
         onClick={menu.open('connection')}
       >
         <i className="ti ti-dots" />
@@ -67,17 +67,12 @@ function ConnectionMenu({ app, onChange }) {
             onClick={async () => {
               if (isRefreshing) return;
               setIsRefreshing(true);
-              await run(
-                () => retryConnection(connection.id),
-                'Ferramentas atualizadas',
-              );
+              await run(() => retryConnection(connection.id), 'Tools updated');
               setIsRefreshing(false);
             }}
           >
             <i className={`ti ti-refresh${isRefreshing ? ' spin' : ''}`} />
-            {isRefreshing
-              ? 'Atualizando ferramentas…'
-              : 'Atualizar ferramentas'}
+            {isRefreshing ? 'Updating tools…' : 'Update tools'}
           </button>
           <button
             onClick={async () => {
@@ -90,7 +85,7 @@ function ConnectionMenu({ app, onChange }) {
             }}
           >
             <i className="ti ti-login" />
-            {app.reauthorizeLabel || 'Entrar de novo'}
+            {app.reauthorizeLabel || 'Sign in again'}
           </button>
           <hr />
           <button
@@ -100,12 +95,12 @@ function ConnectionMenu({ app, onChange }) {
               close();
               await run(
                 () => deleteConnection(connection.id),
-                `${app.title} removido`,
+                `${app.title} removed`,
               );
             }}
           >
             <i className="ti ti-plug-connected-x" />
-            {isConfirmingRemoval ? 'Clique de novo para remover' : 'Remover'}
+            {isConfirmingRemoval ? 'Click again to remove' : 'Remover'}
           </button>
         </Menu>
       )}
@@ -171,7 +166,7 @@ function ConnectionAction({ app, onChange }) {
           className="btn filled sm"
           onClick={() => openSignIn(connection.statusDetail)}
         >
-          Entrar
+          Sign in
         </button>
         <ConnectionMenu app={app} onChange={onChange} />
       </span>
@@ -183,7 +178,7 @@ function ConnectionAction({ app, onChange }) {
           className="input sm"
           type="password"
           placeholder="Token"
-          aria-label={`Token de ${app.title}`}
+          aria-label={`${app.title} token`}
           value={secret}
           onChange={(event) => setSecret(event.target.value)}
         />
@@ -194,7 +189,7 @@ function ConnectionAction({ app, onChange }) {
             run(() => saveConnectionSecret(connection.id, { value: secret }))
           }
         >
-          Salvar
+          Save
         </button>
       </span>
     );
@@ -206,7 +201,7 @@ function ConnectionAction({ app, onChange }) {
           disabled={isBusy}
           onClick={() => run(() => retryConnection(connection.id))}
         >
-          Tentar de novo
+          Try again
         </button>
         <ConnectionMenu app={app} onChange={onChange} />
       </span>
@@ -219,7 +214,7 @@ function ConnectionAction({ app, onChange }) {
           autoFocus
           placeholder={`${app.addressPrefix}…`}
           title={app.addressHint}
-          aria-label={`Endereço de ${app.title}`}
+          aria-label={`${app.title}'s address`}
           value={address}
           onChange={(event) => setAddress(event.target.value)}
           onKeyDown={(event) => {
@@ -233,7 +228,7 @@ function ConnectionAction({ app, onChange }) {
           disabled={!isAddressValid || isBusy}
           onClick={() => connect(address.trim())}
         >
-          Conectar
+          Connect
         </button>
       </span>
     );
@@ -243,7 +238,7 @@ function ConnectionAction({ app, onChange }) {
       disabled={isBusy}
       onClick={() => (app.addressPrefix ? setAddress('') : connect())}
     >
-      Conectar
+      Connect
     </button>
   );
 }
@@ -270,7 +265,7 @@ function AppRow({ app, bots, onOpenAgent, onChange }) {
         {users.length > 0 && (
           <div className="used-by">
             <i className="ti ti-users" />
-            {isEveryone ? 'Todos os agentes usam' : 'Usado por'}
+            {isEveryone ? 'All agents use' : 'Used by'}
             {!isEveryone &&
               users.map((bot) => (
                 <button key={bot.id} onClick={() => onOpenAgent(bot.id)}>
@@ -346,8 +341,10 @@ export function ConnectorsPage({ bots, onOpenAgent }) {
       <div className="page-in">
         <div className="ph">
           <div className="grow">
-            <div className="tpl-kicker">Conectado uma vez, todo agente usa</div>
-            <h1>Conectores</h1>
+            <div className="tpl-kicker">
+              Connect once, every agent can use it
+            </div>
+            <h1>Connectors</h1>
             <p className="lead">
               Os serviços que seus agentes usam, pelo login de cada um. Cada
               agente escolhe os dele no chip Conexões; o que ele faz sem
@@ -358,7 +355,7 @@ export function ConnectorsPage({ bots, onOpenAgent }) {
             <button
               className="conn-sum"
               onClick={() => setFilter('connected')}
-              aria-label="Ver os conectados"
+              aria-label="View connected"
             >
               <span className="stack">
                 {connected.slice(0, 4).map((app) => (
@@ -377,8 +374,8 @@ export function ConnectorsPage({ bots, onOpenAgent }) {
               {SEARCH_ICON}
               <input
                 autoFocus
-                placeholder="Buscar aplicativos, ou qualquer serviço no registro MCP"
-                aria-label="Buscar conectores"
+                placeholder="Search apps or any service in the MCP registry"
+                aria-label="Search connectors"
                 value={term}
                 onChange={(event) => {
                   setTerm(event.target.value);
@@ -394,7 +391,7 @@ export function ConnectorsPage({ bots, onOpenAgent }) {
                 ['all', 'Todos'],
                 [
                   'connected',
-                  `Conectados${connected.length ? ` · ${connected.length}` : ''}`,
+                  `Connected${connected.length ? ` · ${connected.length}` : ''}`,
                 ],
                 ...categories.map((category) => [category.id, category.label]),
               ].map(([id, label]) => (
@@ -430,7 +427,7 @@ export function ConnectorsPage({ bots, onOpenAgent }) {
                   className="btn outline sm"
                   onClick={() => setFilter(section.id)}
                 >
-                  Ver só esta
+                  View only this
                 </button>
               )}
             </div>
@@ -448,8 +445,8 @@ export function ConnectorsPage({ bots, onOpenAgent }) {
               ) : (
                 <p className="muted">
                   {filter === 'connected'
-                    ? 'Nenhum aplicativo conectado ainda.'
-                    : 'Nenhum aplicativo aqui.'}
+                    ? 'No connected apps yet.'
+                    : 'No apps here.'}
                 </p>
               )}
             </div>
@@ -458,13 +455,13 @@ export function ConnectorsPage({ bots, onOpenAgent }) {
         {words && filter !== 'connected' && (
           <div className="box">
             <div className="bh">
-              <b className="grow">No registro MCP</b>
+              <b className="grow">In the MCP registry</b>
             </div>
             <div className="bb">
               {registry === null ? (
                 <div className="row">
                   <span className="grow muted">
-                    Não achou “{words}”? O registro oficial tem milhares de
+                    Did not find “{words}”? O registro oficial tem milhares de
                     servidores. Às vezes leva meio minuto.
                   </span>
                   <button
@@ -472,13 +469,13 @@ export function ConnectorsPage({ bots, onOpenAgent }) {
                     disabled={isSearching}
                     onClick={searchTheRegistry}
                   >
-                    {isSearching ? 'Procurando…' : 'Procurar no registro'}
+                    {isSearching ? 'Procurando…' : 'Search the registry'}
                   </button>
                 </div>
               ) : registry.length === 0 ? (
                 <p className="muted">
-                  Nada no registro para “{words}”. Tente o nome da empresa, em
-                  inglês.
+                  Nothing in the registry for “{words}”. Tente o nome da
+                  empresa, em inglês.
                 </p>
               ) : (
                 <div className="app-grid">

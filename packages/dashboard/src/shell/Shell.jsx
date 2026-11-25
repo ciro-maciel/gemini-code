@@ -248,7 +248,9 @@ export function Shell() {
         ),
       );
       notify.success(
-        isFolder ? `Pasta ${path} apagada` : `${path.split('/').pop()} apagado`,
+        isFolder
+          ? `Folder ${path} deleted`
+          : `${path.split('/').pop()} apagado`,
       );
       setDeleting(null);
       repoFiles.reload();
@@ -270,7 +272,7 @@ export function Shell() {
         go(`file:${path}/${name}`);
       } else if (action === 'folder')
         await saveRepoFile(
-          `${path ? `${path}/` : ''}${name}/LEIA.md`,
+          `${path ? `${path}/` : ''}${name}/README.md`,
           `# ${name}\n`,
         );
       else {
@@ -278,7 +280,7 @@ export function Shell() {
           ? path.slice(0, path.lastIndexOf('/'))
           : '';
         await renameRepoFolder(path, parent ? `${parent}/${name}` : name);
-        notify.success(`Pasta renomeada pra ${name}`);
+        notify.success(`Folder renamed to ${name}`);
       }
       repoFiles.reload();
     } catch (error) {
@@ -299,20 +301,20 @@ export function Shell() {
     if (kind === 'settings')
       return {
         icon: 'ti-adjustments-horizontal',
-        name: `Ajustes · ${bot?.name || 'agente'}`,
+        name: `Settings · ${bot?.name || 'agente'}`,
       };
     if (kind === 'screen')
       return {
         icon: 'ti-device-desktop',
-        name: `Tela · ${bot?.name || 'agente'}`,
+        name: `Screen · ${bot?.name || 'agente'}`,
         live: true,
       };
     if (kind === 'template')
       return ref === 'new'
-        ? { icon: 'ti-plus', name: 'Novo modelo' }
+        ? { icon: 'ti-plus', name: 'New model' }
         : {
             icon: templateById(ref)?.icon || 'ti-template',
-            name: `Modelo · ${templateById(ref)?.name || ref}`,
+            name: `Model · ${templateById(ref)?.name || ref}`,
           };
     if (kind === 'file' || kind === 'cfile')
       return { icon: 'ti-file-text', name: ref.split('/').pop() };
@@ -328,10 +330,8 @@ export function Shell() {
       return bots === null ? null : (
         <div className="pane-empty">
           <i className="ti ti-message-off" />
-          <b>Agente desconhecido</b>
-          <span className="muted">
-            Este endereço não corresponde a nenhum agente.
-          </span>
+          <b>Unknown agent</b>
+          <span className="muted">This address doesn’t match any agent.</span>
         </div>
       );
     if (kind === 'agent')
@@ -504,7 +504,7 @@ export function Shell() {
       {naming && (
         <NameModal
           title={
-            { file: 'Novo arquivo', folder: 'Nova pasta', rename: 'Renomear' }[
+            { file: 'New file', folder: 'New folder', rename: 'Rename' }[
               naming.action
             ]
           }
@@ -522,7 +522,7 @@ export function Shell() {
                 ? 'nova-pasta'
                 : 'novo.md'
           }
-          action={naming.action === 'rename' ? 'Renomear' : 'Criar'}
+          action={naming.action === 'rename' ? 'Rename' : 'Create'}
           onSave={saveName}
           onClose={() => setNaming(null)}
         />
@@ -534,31 +534,31 @@ export function Shell() {
         target={deleting?.path.split('/').pop() ?? ''}
         context={
           deleting?.isFolder
-            ? `Pasta · ${deleting.path}/`
-            : `Arquivo · ${deleting?.path ?? ''}`
+            ? `Folder · ${deleting.path}/`
+            : `File · ${deleting?.path ?? ''}`
         }
         consequences={
           repoFiles.repo?.mode === 'github'
             ? deleting?.isFolder
               ? [
-                  'A pasta e tudo o que há nela saem dos seus arquivos, num commit no seu nome.',
-                  'O histórico fica no GitHub.',
+                  'The folder and everything in it will be removed from your files in a commit under your name.',
+                  'The history stays on GitHub.',
                 ]
               : [
-                  'O arquivo sai dos seus arquivos, num commit no seu nome.',
-                  'O histórico fica no GitHub.',
+                  'The file is removed from your files in a commit under your name.',
+                  'The history stays on GitHub.',
                 ]
             : deleting?.isFolder
               ? [
-                  'A pasta e todos os arquivos dentro dela serão removidos do workspace local.',
-                  'O histórico de revisões fica registrado na central.',
+                  'The folder and every file in it will be removed from the local workspace.',
+                  'The revision history stays on the server.',
                 ]
               : [
-                  'O arquivo será removido do workspace local.',
-                  'O histórico de revisões fica registrado na central.',
+                  'The file will be removed from the local workspace.',
+                  'The revision history stays on the server.',
                 ]
         }
-        confirmLabel={deleting?.isFolder ? 'Apagar pasta' : 'Apagar arquivo'}
+        confirmLabel={deleting?.isFolder ? 'Delete folder' : 'Delete file'}
         loading={isDeleting}
       />
       {isSearch && (

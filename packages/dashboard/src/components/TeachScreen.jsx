@@ -33,34 +33,29 @@ function NameStep({ bot, opened, onClose, onStarted }) {
       onStarted(name.trim());
       setName('');
     } catch (error) {
-      notify.error('Não consegui começar a gravar', error.message);
+      notify.error("Couldn't start recording", error.message);
     } finally {
       setIsStarting(false);
     }
   };
   return (
-    <Modal
-      opened={opened}
-      onClose={onClose}
-      title="Ensinar uma tarefa"
-      centered
-    >
+    <Modal opened={opened} onClose={onClose} title="Teach a task" centered>
       <Stack gap={16}>
         <Text fz={14} c="gray.6" lh={1.6}>
-          Faça a tarefa uma vez no computador de {bot.name}, como faria no seu.
-          Ele grava os passos e, se você quiser, a sua narração, e escreve o
+          Do the task once on the computer of {bot.name}, como faria no seu. Ele
+          grava os passos e, se você quiser, a sua narração, e escreve o
           procedimento para repetir sozinho. Senhas e códigos não são gravados.
         </Text>
         <TextInput
-          label="O que você vai ensinar"
-          placeholder="Publicar o changelog da semana"
+          label="What you'll teach"
+          placeholder="Publish the weekly changelog"
           value={name}
           onChange={(event) => setName(event.currentTarget.value)}
           onKeyDown={(event) => event.key === 'Enter' && start()}
           data-autofocus
         />
         <Button onClick={start} loading={isStarting} disabled={!name.trim()}>
-          {isStarting ? 'Preparando o computador' : 'Começar a gravar'}
+          {isStarting ? 'Preparing the computer' : 'Start recording'}
         </Button>
       </Stack>
     </Modal>
@@ -96,8 +91,8 @@ function RecordingStep({ bot, name, onDone, isPhone }) {
       })
       .catch(() => {
         notify.info(
-          'Sem microfone',
-          'A gravação segue só com os passos na tela.',
+          'No microphone',
+          'Recording continues with on-screen steps only.',
         );
         setIsNarrating(false);
       });
@@ -126,13 +121,10 @@ function RecordingStep({ bot, name, onDone, isPhone }) {
     if (mic && !mic.isClosed) mic.close();
     try {
       const skill = await finishTeaching(bot.id, narration);
-      notify.success(
-        'Habilidade aprendida',
-        `${bot.name} agora sabe: ${skill.name}.`,
-      );
+      notify.success('Skill learned', `${bot.name} now knows: ${skill.name}.`);
       onDone();
     } catch (error) {
-      notify.error('Não consegui escrever a habilidade', error.message);
+      notify.error("Couldn't write the skill", error.message);
       setIsFinishing(false);
     }
   };
@@ -183,10 +175,10 @@ function RecordingStep({ bot, name, onDone, isPhone }) {
             />
           </Group>
           <Button onClick={finish} loading={isFinishing}>
-            {isFinishing ? 'Escrevendo a habilidade' : 'Terminar'}
+            {isFinishing ? 'Writing the skill' : 'Terminar'}
           </Button>
           <Button variant="default" onClick={cancel} disabled={isFinishing}>
-            Cancelar
+            Cancel
           </Button>
         </Group>
       </Group>

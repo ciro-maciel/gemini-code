@@ -91,8 +91,8 @@ export function LiveScreen({ botId, isInteractive, height = 420 }) {
           <Box ta="center">
             <Text fz={10} fw={800} c="gray.4" tt="uppercase" lts="1.5px">
               {state === 'connecting'
-                ? 'Acordando o computador'
-                : 'Tela desconectada'}
+                ? 'Waking the computer'
+                : 'Screen disconnected'}
             </Text>
             {state === 'disconnected' && (
               <Button
@@ -105,7 +105,7 @@ export function LiveScreen({ botId, isInteractive, height = 420 }) {
                   setAttempt((value) => value + 1);
                 }}
               >
-                Conectar de novo
+                Reconnect
               </Button>
             )}
           </Box>

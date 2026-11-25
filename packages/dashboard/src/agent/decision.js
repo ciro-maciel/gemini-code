@@ -2,13 +2,13 @@
 export function decisionText(data) {
   const head =
     data.isApproved && data.note
-      ? 'Permitido com a sua mudança'
+      ? 'Allowed with your change'
       : data.isApproved
         ? data.reach === 'always'
-          ? 'Sempre permitido · vale 90 dias'
-          : 'Permitido até o fim da tarefa'
+          ? 'Always allowed · lasts 90 days'
+          : 'Allowed until the task ends'
         : data.isSuperseded
-          ? 'Ficou sem decisão: você escreveu antes'
-          : 'Recusado';
+          ? 'Left undecided: you wrote first'
+          : 'Declined';
   return `${head}${data.summary ? ` · ${data.summary}` : ''}${data.note ? ` · "${data.note}"` : ''}`;
 }

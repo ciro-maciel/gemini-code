@@ -42,8 +42,8 @@ function History({ path, onClose }) {
   return (
     <div className="hist">
       <div className="hh">
-        <span className="grow">Histórico</span>
-        <button className="icon-btn" onClick={onClose} aria-label="Fechar">
+        <span className="grow">History</span>
+        <button className="icon-btn" onClick={onClose} aria-label="Close">
           <i className="ti ti-x" />
         </button>
       </div>
@@ -59,13 +59,12 @@ function History({ path, onClose }) {
           ))}
         {items === false && (
           <p className="hist-note">
-            Não deu pra ler o histórico agora. Feche e abra de novo.
+            Couldn’t load the history right now. Close and reopen it.
           </p>
         )}
         {items?.length === 0 && (
           <p className="hist-note">
-            Nenhuma versão ainda: a primeira aparece quando alguém salvar este
-            arquivo.
+            No versions yet: the first one appears when someone saves this file.
           </p>
         )}
         {items?.map((item) => (
@@ -90,7 +89,7 @@ function History({ path, onClose }) {
                 </div>
               ) : patch === false ? (
                 <p className="hist-note">
-                  Não deu pra abrir o que mudou nesta versão.
+                  Couldn’t open the changes in this version.
                 </p>
               ) : (
                 <pre className="diff">
@@ -110,7 +109,7 @@ function History({ path, onClose }) {
                           {'\n'}
                         </span>
                       ))
-                    : 'Nada mudou no texto nesta versão.'}
+                    : 'No text changes in this version.'}
                 </pre>
               ))}
           </div>
@@ -149,8 +148,8 @@ export function RepoFileTab({ path, onDelete, repoMode = 'local' }) {
       window.dispatchEvent(new Event('assistant:repo'));
       notify.success(
         repoMode === 'github'
-          ? 'Salvo como um commit no seu nome'
-          : 'Salvo no workspace',
+          ? 'Saved as a commit under your name'
+          : 'Saved in the workspace',
       );
     } catch (error) {
       notify.error(error.message);
@@ -180,15 +179,15 @@ export function RepoFileTab({ path, onDelete, repoMode = 'local' }) {
               disabled={!file}
             >
               <i className="ti ti-pencil" />
-              Editar
+              Edit
             </button>
           ) : (
             <>
               <button className="btn outline sm" onClick={() => setDraft(null)}>
-                Cancelar
+                Cancel
               </button>
               <button className="btn filled sm" onClick={save}>
-                Salvar
+                Save
               </button>
             </>
           ))}
@@ -197,13 +196,13 @@ export function RepoFileTab({ path, onDelete, repoMode = 'local' }) {
           onClick={() => setIsHistory(!isHistory)}
         >
           <i className="ti ti-history" />
-          Histórico
+          History
         </button>
         <button
           className="icon-btn"
           onClick={menu.open('more')}
-          title="Mais"
-          aria-label="Mais ações do arquivo"
+          title="More"
+          aria-label="More file actions"
         >
           <i className="ti ti-dots" />
         </button>
@@ -217,7 +216,7 @@ export function RepoFileTab({ path, onDelete, repoMode = 'local' }) {
             <textarea
               className="editor"
               spellCheck={false}
-              aria-label="Conteúdo do arquivo"
+              aria-label="File contents"
               value={draft}
               onChange={(event) => setDraft(event.target.value)}
             />
@@ -227,7 +226,7 @@ export function RepoFileTab({ path, onDelete, repoMode = 'local' }) {
                 <FileSkeleton />
               ) : file.isMissing ? (
                 <p className="muted">
-                  Este arquivo não está mais no repositório.
+                  This file is no longer in the repository.
                 </p>
               ) : isPage && view === 'rendered' ? (
                 <iframe
@@ -262,7 +261,7 @@ export function RepoFileTab({ path, onDelete, repoMode = 'local' }) {
               }}
             >
               <i className="ti ti-code" />
-              {view === 'original' ? 'Ver renderizado' : 'Ver o original'}
+              {view === 'original' ? 'View rendered' : 'View original'}
             </button>
           )}
           <button
@@ -272,17 +271,17 @@ export function RepoFileTab({ path, onDelete, repoMode = 'local' }) {
             }}
           >
             <i className="ti ti-refresh" />
-            Recarregar
+            Reload
           </button>
           <button
             onClick={() => {
               menu.close();
               navigator.clipboard?.writeText(link);
-              notify.success('Link do arquivo copiado');
+              notify.success('File link copied');
             }}
           >
             <i className="ti ti-link" />
-            Copiar link
+            Copy link
           </button>
           <button
             onClick={() => {
@@ -291,7 +290,7 @@ export function RepoFileTab({ path, onDelete, repoMode = 'local' }) {
             }}
           >
             <i className="ti ti-download" />
-            Baixar
+            Download
           </button>
           {onDelete && (
             <>
@@ -303,7 +302,7 @@ export function RepoFileTab({ path, onDelete, repoMode = 'local' }) {
                 }}
               >
                 <i className="ti ti-trash" />
-                Apagar arquivo…
+                Delete file…
               </button>
             </>
           )}

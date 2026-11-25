@@ -56,10 +56,10 @@ export const PROVIDERS = [
   },
   {
     id: 'google-subscription',
-    name: 'Assinatura Google (AI Pro e Ultra)',
+    name: 'Google subscription (AI Pro and Ultra)',
     base: null,
     isSubscription: true,
-    keyHint: 'entre uma vez no Antigravity CLI (agy)',
+    keyHint: 'sign in once to the Antigravity CLI (agy)',
     keyUrl: 'https://antigravity.google/product/antigravity-cli',
   },
   {
@@ -72,9 +72,9 @@ export const PROVIDERS = [
 ];
 
 /** The canned answer to anything a visitor sends: the demo says what it is instead of pretending to work. */
-export const DEMO_REPLY = `Esta é uma demonstração com dados de exemplo: nenhum modelo foi chamado e nada rodou.\n\nPara ver um agente trabalhar de verdade no seu código, instale o Gemini Code (${REPO_URL}) e mande este pedido de novo.`;
+export const DEMO_REPLY = `This is a demo with example data: no model was called and nothing ran.\n\nTo see an agent really work on your code, install Gemini Code (${REPO_URL}) and send this request again.`;
 
-export const DEMO_REFUSAL = `Na demonstração isso não muda nada. Para usar de verdade, instale o Gemini Code: ${REPO_URL}`;
+export const DEMO_REFUSAL = `In the demo this changes nothing. To use it for real, install Gemini Code: ${REPO_URL}`;
 
 const SOMA_JS = `export function soma(a, b) {
     return a + b
@@ -145,9 +145,9 @@ export function aiAccounts(now) {
     },
     {
       id: ACCOUNT_IDS.subscription,
-      name: 'Assinatura Google',
+      name: 'Google subscription',
       provider: 'google-subscription',
-      providerName: 'Assinatura Google (AI Pro e Ultra)',
+      providerName: 'Google subscription (AI Pro and Ultra)',
       models: SUBSCRIPTION_MODELS.map((model) => model.id),
       createdAt: now - 2 * 86400,
       usage: { today: 0, last30Days: 0 },
@@ -207,7 +207,7 @@ export function bots(now) {
       runningCount: 1,
       lastActivityAt: now - 20,
       lastMessage:
-        'Achei onde a data é formatada; vou ajustar e rodar os testes.',
+        'Found where the date is formatted; I will fix it and run the tests.',
     }),
     bot(now, {
       id: BOT_IDS.reviewer,
@@ -217,7 +217,7 @@ export function bots(now) {
       model: 'gemini-3.5-flash-lite',
       aiAccount: ACCOUNT_IDS.gemini,
       lastActivityAt: now - 2 * 3600,
-      lastMessage: 'Revisão feita: nada bloqueia o merge.',
+      lastMessage: 'Review done: nothing blocks the merge.',
     }),
     bot(now, {
       id: BOT_IDS.neon,
@@ -226,7 +226,7 @@ export function bots(now) {
       aiAccount: ACCOUNT_IDS.subscription,
       effort: 'medium',
       instructions:
-        'Você escreve código pequeno e testado. Rode os testes antes de dizer que terminou e mostre o resultado exato.',
+        'You write small, tested code. Run the tests before you say you are done, and show the exact result.',
       status: 'ready',
       hasNews: true,
       lastActivityAt: now - 150,
@@ -249,8 +249,8 @@ export function conversations(now) {
         {
           id: engineerTask,
           prompt:
-            'A data do relatório aparece no formato americano. Deixe em dd/mm/aaaa e rode os testes.',
-          title: 'Data do relatório em dd/mm/aaaa',
+            'The report date shows in the US format. Make it dd/mm/yyyy and run the tests.',
+          title: 'Report date in dd/mm/yyyy',
           status: 'running',
           createdAt: now - 90,
         },
@@ -260,7 +260,7 @@ export function conversations(now) {
           taskId: engineerTask,
           type: 'user_message',
           data: {
-            text: 'A data do relatório aparece no formato americano. Deixe em dd/mm/aaaa e rode os testes.',
+            text: 'The report date shows in the US format. Make it dd/mm/yyyy and run the tests.',
             messageSeq: 0,
           },
           createdAt: now - 90,
@@ -274,14 +274,14 @@ export function conversations(now) {
         {
           taskId: engineerTask,
           type: 'title',
-          data: { title: 'Data do relatório em dd/mm/aaaa' },
+          data: { title: 'Report date in dd/mm/yyyy' },
           createdAt: now - 88,
         },
         {
           taskId: engineerTask,
           type: 'assistant',
           data: {
-            text: 'Vou procurar onde a data é formatada.',
+            text: 'I will look for where the date is formatted.',
             isFinal: false,
             turnId: 'demo-turn-e1',
           },
@@ -335,7 +335,7 @@ export function conversations(now) {
           taskId: engineerTask,
           type: 'assistant',
           data: {
-            text: 'Achei onde a data é formatada; vou ajustar e rodar os testes.',
+            text: 'Found where the date is formatted; I will fix it and run the tests.',
             isFinal: false,
             turnId: 'demo-turn-e2',
           },
@@ -357,8 +357,8 @@ export function conversations(now) {
       tasks: [
         {
           id: reviewerTask,
-          prompt: 'Revise a mudança em src/report.js antes do merge.',
-          title: 'Revisão de src/report.js',
+          prompt: 'Review the change in src/report.js before the merge.',
+          title: 'Review of src/report.js',
           status: 'done',
           createdAt: now - 2 * 3600 - 300,
           finishedAt: now - 2 * 3600,
@@ -369,7 +369,7 @@ export function conversations(now) {
           taskId: reviewerTask,
           type: 'user_message',
           data: {
-            text: 'Revise a mudança em src/report.js antes do merge.',
+            text: 'Review the change in src/report.js before the merge.',
             messageSeq: 0,
           },
           createdAt: now - 2 * 3600 - 300,
@@ -406,7 +406,7 @@ export function conversations(now) {
           taskId: reviewerTask,
           type: 'assistant',
           data: {
-            text: '**Revisão feita: nada bloqueia o merge.**\n\n- A troca de `en-US` para `pt-BR` resolve o formato.\n- Sugestão: um teste com uma data fixa, para o formato não voltar sem ninguém ver.',
+            text: '**Review done: nothing blocks the merge.** - Switching `en-US` to `pt-BR` fixes the format. - Suggestion: a test with a fixed date, so the format cannot come back unnoticed.',
             isFinal: true,
             turnId: 'demo-turn-r1',
           },
@@ -425,8 +425,8 @@ export function conversations(now) {
         {
           id: neonTask,
           prompt:
-            'Crie soma.js com uma função soma(a, b) e testes em soma.test.js. Rode os testes.',
-          title: 'soma.js com testes',
+            'Create soma.js with a function soma(a, b) and tests in soma.test.js. Run the tests.',
+          title: 'soma.js with tests',
           status: 'done',
           createdAt: now - 240,
           finishedAt: now - 150,
@@ -437,7 +437,7 @@ export function conversations(now) {
           taskId: neonTask,
           type: 'user_message',
           data: {
-            text: 'Crie soma.js com uma função soma(a, b) e testes em soma.test.js. Rode os testes.',
+            text: 'Create soma.js with a function soma(a, b) and tests in soma.test.js. Run the tests.',
             messageSeq: 0,
           },
           createdAt: now - 240,
@@ -451,14 +451,14 @@ export function conversations(now) {
         {
           taskId: neonTask,
           type: 'title',
-          data: { title: 'soma.js com testes' },
+          data: { title: 'soma.js with tests' },
           createdAt: now - 238,
         },
         {
           taskId: neonTask,
           type: 'assistant',
           data: {
-            text: 'Vou escrever a função, os testes, e rodar com o bun.',
+            text: 'I will write the function and the tests, and run them with bun.',
             isFinal: false,
             turnId: 'demo-turn-n1',
           },
@@ -480,7 +480,7 @@ export function conversations(now) {
           data: {
             toolCallId: 'demo-n1',
             name: 'computer_write_file',
-            preview: `arquivo gravado: ${WORKSPACE}/soma.js (${SOMA_JS.length} caracteres)`,
+            preview: `file written: ${WORKSPACE}/soma.js (${SOMA_JS.length} characters)`,
             hasImage: false,
           },
           createdAt: now - 170,
@@ -504,7 +504,7 @@ export function conversations(now) {
           data: {
             toolCallId: 'demo-n2',
             name: 'computer_write_file',
-            preview: `arquivo gravado: ${WORKSPACE}/soma.test.js (${SOMA_TEST_JS.length} caracteres)`,
+            preview: `file written: ${WORKSPACE}/soma.test.js (${SOMA_TEST_JS.length} characters)`,
             hasImage: false,
           },
           createdAt: now - 160,
@@ -534,7 +534,7 @@ export function conversations(now) {
           taskId: neonTask,
           type: 'assistant',
           data: {
-            text: '**Pronto: soma.js e soma.test.js criados, 3 pass.**\n\n`bun test soma.test.js` rodou os três testes (positivos, negativo e zero) e nenhum falhou.',
+            text: '**Done: soma.js and soma.test.js created, 3 pass.** `bun test soma.test.js` ran the three tests (positive, negative and zero) and none failed.',
             isFinal: true,
             turnId: 'demo-turn-n2',
           },
@@ -581,7 +581,7 @@ export function me(botCount) {
     runtime: { computerMode: 'local', authMode: 'local', workspaceDir: null },
     plan: {
       tier: 'free',
-      name: 'Grátis',
+      name: 'Free',
       agents: 50,
       isEnforced: false,
       used: botCount,

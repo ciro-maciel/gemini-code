@@ -58,7 +58,7 @@ function isEcho(text, log) {
 
 const STATUS_TEXT = {
   listening: 'Ouvindo',
-  hearing: 'Ouvindo você',
+  hearing: 'Listening',
   transcribing: 'Entendendo',
   thinking: 'Pensando',
   speaking: 'Falando',
@@ -168,7 +168,7 @@ export function VoiceMode({ bot, thread, events, streaming, onExit }) {
     const audio = Promise.race([
       speak(clean),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('a voz demorou')), 20_000),
+        setTimeout(() => reject(new Error('the voice took too long')), 20_000),
       ),
     ]);
     queueRef.current.push({ audio, text: clean });
@@ -197,15 +197,15 @@ export function VoiceMode({ bot, thread, events, streaming, onExit }) {
           const isApproved = YES.test(answer);
           await resolveApproval(current.id, pending.id, {
             isApproved,
-            note: isApproved ? null : 'recusado por voz',
+            note: isApproved ? null : 'declined by voice',
           });
-          say(isApproved ? 'Aprovado. Continuando.' : 'Certo, não vou fazer.');
+          say(isApproved ? 'Approved. Continuing.' : "Okay, I won't do it.");
         } else {
           await sendBotMessage(bot.id, text);
         }
         setStatus('thinking');
       } catch (error) {
-        notify.error('Não consegui ouvir', error.message);
+        notify.error("Couldn't hear you", error.message);
         setStatus('listening');
       }
     });
@@ -236,8 +236,8 @@ export function VoiceMode({ bot, thread, events, streaming, onExit }) {
       })
       .catch(() => {
         notify.error(
-          'Sem acesso ao microfone',
-          'Libere o microfone para este site nas permissões do navegador.',
+          'No microphone access',
+          'Allow microphone access for this site in your browser permissions.',
         );
         onExit();
       });
@@ -259,7 +259,7 @@ export function VoiceMode({ bot, thread, events, streaming, onExit }) {
     if (spoken.isCut || !text.trim()) return;
     if (spoken.said + text.length > TURN_BUDGET && spoken.said > 0) {
       spoken.isCut = true;
-      say('O resto está na tela.');
+      say('The rest is on screen.');
       return;
     }
     spoken.said += text.length;
@@ -316,10 +316,10 @@ export function VoiceMode({ bot, thread, events, streaming, onExit }) {
         say(event.data.arguments?.question || '');
       } else if (event.type === 'approval_requested') {
         say(
-          `Preciso da sua aprovação para: ${event.data.summary}. Diga sim para aprovar, ou não para recusar.`,
+          `I need your approval to: ${event.data.summary}. Say yes to approve, or no to decline.`,
         );
       } else if (event.type === 'status' && event.data.status === 'failed') {
-        say('Parei com um erro. Os detalhes estão na tela.');
+        say('I stopped with an error. Details are on screen.');
       }
     }
     // Only new events speak; see the effect above.
@@ -358,23 +358,23 @@ export function VoiceMode({ bot, thread, events, streaming, onExit }) {
                   : undefined
               }
             >
-              Modo voz · {STATUS_TEXT[shown]}
+              Voice mode · {STATUS_TEXT[shown]}
             </Text>
             <Text fz={13} fw={500} c="gray.6" truncate>
               {heard
                 ? `“${heard}”`
-                : `Fale com ${bot.name}. Para interromper, é só falar.`}
+                : `Talk to ${bot.name}. To interrupt, just speak.`}
             </Text>
           </Box>
         </Group>
         <Group gap={8} wrap="nowrap">
           {isBlocked && (
             <Button size="xs" h={30} onClick={() => unblockRef.current?.()}>
-              Toque para ouvir
+              Tap to listen
             </Button>
           )}
           <Button variant="default" size="xs" h={30} onClick={onExit}>
-            Encerrar
+            End
           </Button>
         </Group>
       </Group>

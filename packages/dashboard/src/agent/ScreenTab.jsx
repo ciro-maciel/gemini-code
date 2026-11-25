@@ -34,7 +34,7 @@ export function ScreenTab({ bot }) {
         thread?.status === 'waiting_user' &&
         thread.waitingReason === 'takeover'
       )
-        await sendBotMessage(bot.id, note || 'Pronto, pode continuar.');
+        await sendBotMessage(bot.id, note || 'Done, you can continue.');
     } catch (error) {
       notify.error(error.message);
     }
@@ -44,10 +44,9 @@ export function ScreenTab({ bot }) {
     return (
       <div className="pane-empty">
         <i className="ti ti-device-desktop" />
-        <b>O computador ainda não está pronto</b>
+        <b>The computer isn’t ready yet</b>
         <span className="muted">
-          Ele liga na primeira vez que o agente precisa de navegador ou
-          terminal.
+          It turns on the first time the agent needs a browser or terminal.
         </span>
       </div>
     );
@@ -56,14 +55,14 @@ export function ScreenTab({ bot }) {
     <div className="live-screen">
       <div className="ls-bar">
         <span className="live" />
-        <b>Ao vivo · computador do {bot.name}</b>
+        <b>Live · computer of {bot.name}</b>
         <span className="grow" />
         <button className="btn outline sm" onClick={() => setIsTeaching(true)}>
           <i className="ti ti-hand-finger" />
-          Ensinar uma tarefa
+          Teach a task
         </button>
         <button className="btn filled sm" onClick={takeOver}>
-          Assumir a tela
+          Take over screen
         </button>
       </div>
       <div className="ls-frame">

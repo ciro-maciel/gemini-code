@@ -38,12 +38,12 @@ export function onUnauthorized(listener) {
 // "Failed to fetch" never reaches the screen.
 export function failureText(status) {
   if (status === 413)
-    return 'O arquivo é grande demais para a central. Mande um menor ou divida em partes.';
+    return 'The file is too large. Send a smaller one or split it into parts.';
   if (status === 429)
-    return 'Muitos pedidos seguidos. Espere alguns segundos e tente de novo.';
+    return 'Too many requests in a row. Wait a few seconds and try again.';
   if (status >= 500)
-    return `A central falhou ao responder (erro ${status}). Tente de novo em um instante; se repetir, recarregue a página.`;
-  return `A central recusou o pedido (erro ${status}). Recarregue a página e tente de novo.`;
+    return `The server failed to respond (error ${status}). Try again in a moment; if it happens again, reload the page.`;
+  return `The server rejected the request (error ${status}). Reload the page and try again.`;
 }
 
 export async function reach(url, init) {
@@ -53,7 +53,7 @@ export async function reach(url, init) {
     if (error?.name === 'AbortError') throw error;
     throw Object.assign(
       new Error(
-        'Sem conexão com a central. Confira a internet; o pedido pode ser feito de novo assim que ela voltar.',
+        "Can't reach the server. Check your internet connection; you can try again once it's back.",
       ),
       { code: 'OFFLINE', status: 0 },
     );

@@ -43,7 +43,7 @@ export function sectionsOf(apps, categories, filter, term) {
     {
       id: 'results',
       label: words
-        ? `Resultados para “${String(term).trim()}”`
+        ? `Results for “${String(term).trim()}”`
         : categories.find((category) => category.id === filter)?.label ||
           'Aplicativos',
       apps: inCategory,
@@ -55,12 +55,12 @@ export function sectionsOf(apps, categories, filter, term) {
 export function lineOf(app) {
   const connection = app.connection;
   if (connection?.status === 'failed')
-    return connection.statusDetail || 'A conexão falhou';
-  if (connection?.status === 'pending_auth') return 'Precisa entrar de novo';
+    return connection.statusDetail || 'Connection failed';
+  if (connection?.status === 'pending_auth') return 'Needs to sign in again';
   if (connection?.status === 'needs_secret')
-    return 'Cole o token do serviço para terminar';
+    return 'Paste the service token to finish';
   if (connection?.status === 'connected')
-    return `${connection.tools.length} ${connection.tools.length === 1 ? 'ferramenta' : 'ferramentas'} · ${app.description}`;
+    return `${connection.tools.length} ${connection.tools.length === 1 ? 'tool' : 'tools'} · ${app.description}`;
   return app.description;
 }
 

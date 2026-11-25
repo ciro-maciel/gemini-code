@@ -52,9 +52,9 @@ function Step({ state, title, text, isLast }) {
 }
 
 function queueLine(queue) {
-  if (!queue) return 'Você está na fila. As entradas são liberadas uma a uma.';
-  if (queue.position === 1) return 'Você é a próxima pessoa da fila.';
-  return `Você é a ${queue.position}ª pessoa da fila. As entradas são liberadas uma a uma.`;
+  if (!queue) return "You're on the waitlist. Access is granted one at a time.";
+  if (queue.position === 1) return "You're next in line.";
+  return `You're number ${queue.position} in line. Access is granted one at a time.`;
 }
 
 /**
@@ -86,7 +86,7 @@ export function WaitingRoom({ account, onSaved, onSignOut }) {
       <Stack gap={40} w="100%" maw={520}>
         <Stack gap={10}>
           <Text fz={10} fw={800} c="gray.4" tt="uppercase" lts="1.5px">
-            Assistant · Lista de espera
+            Assistant · Waitlist
           </Text>
           <Text
             component="h1"
@@ -97,25 +97,25 @@ export function WaitingRoom({ account, onSaved, onSignOut }) {
             lh={1.1}
             lts="-0.04em"
           >
-            Seu acesso está a caminho
+            Your access is on the way
           </Text>
           <Text fz={16} fw={500} c="gray.6" lh={1.7}>
-            Cada bot ganha um computador próprio na nuvem. Enquanto a sua
-            entrada não sai, conte o que o seu primeiro bot vai fazer: ele já
-            começa montado.
+            Each bot gets its own cloud computer. While you wait for access,
+            tell us what your first bot will do, and it’ll be ready from the
+            start.
           </Text>
         </Stack>
 
         <Stack gap={0}>
-          <Step state="done" title="Conta criada" text={account.email} />
-          <Step state="now" title="Liberação" text={queueLine(account.queue)} />
+          <Step state="done" title="Account created" text={account.email} />
+          <Step state="now" title="Approval" text={queueLine(account.queue)} />
           <Step
             state="later"
-            title="O seu primeiro bot"
+            title="Your first bot"
             text={
               saved
-                ? 'Montado com o seu pedido assim que a entrada sair. Ele conecta o que precisar e faz o trabalho uma vez.'
-                : 'Escreva o pedido abaixo e ele é montado assim que a entrada sair.'
+                ? 'Set up with your request as soon as the entry is ready. It connects whatever it needs and does the job once.'
+                : 'Write the request below and it will be set up as soon as the entry is ready.'
             }
             isLast
           />
@@ -123,7 +123,7 @@ export function WaitingRoom({ account, onSaved, onSignOut }) {
 
         <Stack gap={12}>
           <Textarea
-            label="O que o seu primeiro bot deve fazer"
+            label="What your first bot should do"
             placeholder={AI_EXAMPLES[0]}
             autosize
             minRows={3}
@@ -155,11 +155,11 @@ export function WaitingRoom({ account, onSaved, onSignOut }) {
           <Group justify="space-between" gap={12}>
             <Text fz={12} fw={500} c="gray.5">
               {saved && !isDirty
-                ? 'Pedido guardado. Dá para mudar até a entrada sair.'
-                : 'Você pode mudar o pedido até a entrada sair.'}
+                ? "Request saved. You can change it until it's sent."
+                : 'You can change your request until access is granted.'}
             </Text>
             <Button onClick={save} loading={isSaving} disabled={!isDirty}>
-              {saved ? 'Atualizar pedido' : 'Guardar pedido'}
+              {saved ? 'Update request' : 'Save request'}
             </Button>
           </Group>
         </Stack>
@@ -171,10 +171,10 @@ export function WaitingRoom({ account, onSaved, onSignOut }) {
           style={{ borderTop: 'var(--rlg-border)' }}
         >
           <Text fz={13} fw={500} c="gray.6" truncate miw={0}>
-            Entrou como <strong>{account.email}</strong>
+            Signed in as <strong>{account.email}</strong>
           </Text>
           <Button variant="default" size="xs" onClick={onSignOut}>
-            Trocar de conta
+            Switch account
           </Button>
         </Group>
       </Stack>

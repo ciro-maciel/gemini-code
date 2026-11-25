@@ -201,7 +201,7 @@ function RichTextBody({ text, color, folder = null, onOpenPath = null }) {
             <button
               type="button"
               className="path-link"
-              title={`Abrir ${path}`}
+              title={`Open ${path}`}
               onClick={() => onOpenPath(path)}
             >
               <Code>{children}</Code>

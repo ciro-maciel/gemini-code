@@ -196,7 +196,7 @@ export function buildRows(events) {
         kind: 'failure',
         id: event.id,
         seq: event.seq,
-        text: `Aprovado ${data.approvals} vezes em ${data.days} dias, sem recusa: "${data.summary}" agora roda sem perguntar por 90 dias.`,
+        text: `Approved ${data.approvals} times in ${data.days} days, never declined: "${data.summary}" now runs without asking for 90 days.`,
         isMinor: true,
       });
     } else if (type === 'warning') {

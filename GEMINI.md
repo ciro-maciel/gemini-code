@@ -48,10 +48,14 @@ same layout and code style, on Bun and plain JavaScript.
   for classes and components, `SCREAMING_SNAKE` for module constants,
   `kebab-case.js` for files. `Id`, never `ID`. Booleans start with `is`, `has`,
   `can` or `should`.
-- **Language:** identifiers, comments and commits in English; text a person
-  reads in the product in Portuguese today, moving to English first with
-  Portuguese as a translation (see `ROADMAP.md`). When you rename, list
-  collisions first: a rename can hit visible text or an existing name.
+- **Language:** English everywhere: identifiers, comments, commits and every
+  text the dashboard shows. Brazilian Portuguese is a layer over it: each new
+  visible text gets its translation in `packages/dashboard/src/lib/pt.json`
+  (`texts` for exact matches, `patterns` with `{0}` or `{#0}` for values), and a
+  line built from pieces translates each piece with `t()` from
+  `lib/language.js`. The layer follows the browser (pt-\* reads Portuguese)
+  until the person picks a language. When you rename, list collisions first: a
+  rename can hit visible text or an existing name.
 - **Commits:** Conventional Commits,
   `type(scope): imperative sentence in lower case`.
 - **Safety:** anything that sends, pays, publishes, deletes or signs in goes

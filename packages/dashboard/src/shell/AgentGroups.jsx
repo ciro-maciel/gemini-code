@@ -41,7 +41,7 @@ export function AgentsSkeleton({ rows = 6 }) {
     <div
       className="agents-skeleton"
       aria-busy="true"
-      aria-label="Carregando os agentes"
+      aria-label="Loading agents"
     >
       {Array.from({ length: rows }, (_, index) => (
         <div key={index} className="sk-row assistant-pulse">
@@ -89,7 +89,7 @@ function AgentRow({
           {state.mark === 'live' && <span className="live" />}
           {state.mark === 'done' && <span className="done-dot" />}
           {state.word ? `${state.word}${bot.lastMessage ? ' · ' : ''}` : ''}
-          {bot.lastMessage || (state.word ? '' : 'Diga oi')}
+          {bot.lastMessage || (state.word ? '' : 'Say hi')}
         </div>
       </div>
       <div className="end">
@@ -97,7 +97,7 @@ function AgentRow({
           {shortWhen(bot.lastActivityAt || bot.createdAt)}
         </span>
         {waits ? (
-          <span className="unread wait" title="Espera você">
+          <span className="unread wait" title="Waits for you">
             {waits}
           </span>
         ) : null}
@@ -105,8 +105,8 @@ function AgentRow({
       {onMenu && (
         <button
           className="crow-more"
-          aria-label={`Mais ações de ${bot.name}`}
-          title="Não lida, mover para um grupo"
+          aria-label={`More actions for ${bot.name}`}
+          title="Unread, move to a group"
           onClick={(event) => {
             event.stopPropagation();
             onMenu(event);
@@ -175,7 +175,7 @@ export function AgentGroups({
       await store.rename(id, draftName.trim());
   };
   const newGroup = async () => {
-    const group = await store.create(`Grupo ${store.groups.length + 1}`);
+    const group = await store.create(`Group ${store.groups.length + 1}`);
     if (group) startRename(group);
   };
 
@@ -286,10 +286,10 @@ export function AgentGroups({
       {companies.length > 0 && (
         <div className="group-suggest">
           <span className="grow">
-            <b>{companies.length} empresas</b> nos nomes dos seus agentes.
+            <b>{companies.length} empresas</b> in your agents’ names.
           </span>
           <button onClick={() => store.groupByCompany(companies, bots)}>
-            Agrupar por empresa
+            Group by company
           </button>
         </div>
       )}
@@ -303,7 +303,7 @@ export function AgentGroups({
         >
           {loose.map((bot) => row(bot, null))}
           {dragged?.kind === 'agent' && dragged.sectionId ? (
-            <div className="agroup-empty">Solte aqui para tirar do grupo</div>
+            <div className="agroup-empty">Drop here to remove from group</div>
           ) : null}
         </div>
       )}
@@ -323,7 +323,7 @@ export function AgentGroups({
               tabIndex={0}
               aria-expanded={!isClosed}
               aria-label={
-                isClosed ? `Abrir ${group.name}` : `Fechar ${group.name}`
+                isClosed ? `Open ${group.name}` : `Close ${group.name}`
               }
               onClick={(event) => {
                 if (
@@ -353,7 +353,7 @@ export function AgentGroups({
                   className="agroup-input"
                   autoFocus
                   maxLength={40}
-                  aria-label="Nome do grupo"
+                  aria-label="Group name"
                   value={draftName}
                   onFocus={(event) => event.target.select()}
                   onChange={(event) => setDraftName(event.target.value)}
@@ -369,7 +369,7 @@ export function AgentGroups({
               ) : (
                 <span
                   className="agroup-name"
-                  title="Clique para abrir ou fechar; dois cliques para renomear"
+                  title="Click to open or close; double-click to rename"
                   onDoubleClick={(event) => {
                     // The two clicks before it toggled twice: the group is as it was.
                     event.stopPropagation();
@@ -383,7 +383,7 @@ export function AgentGroups({
               {group.waiting > 0 && (
                 <span
                   className="agroup-wait"
-                  title={`${group.waiting} ${group.waiting === 1 ? 'espera' : 'esperam'} você`}
+                  title={`${group.waiting} ${group.waiting === 1 ? 'espera' : 'esperam'} you`}
                 >
                   {group.waiting}
                 </span>
@@ -391,7 +391,7 @@ export function AgentGroups({
               <span className="grow" />
               <button
                 className="agroup-more"
-                aria-label={`Mais ações do grupo ${group.name}`}
+                aria-label={`More actions for group ${group.name}`}
                 onClick={(event) => {
                   setMenuGroup(group);
                   groupMenu.open('group')(event);
@@ -403,10 +403,10 @@ export function AgentGroups({
             {confirming === group.id && (
               <div className="agroup-confirm">
                 <span>
-                  Excluir o grupo <b>{group.name}</b>?{' '}
+                  Delete the group <b>{group.name}</b>?{' '}
                   {group.bots.length
-                    ? `${group.bots.length === 1 ? 'O agente volta' : `Os ${group.bots.length} agentes voltam`} para o topo, fora dos grupos.`
-                    : 'Ele está vazio.'}
+                    ? `${group.bots.length === 1 ? 'The agent goes back' : `The ${group.bots.length} agents go back`} to the top, outside groups.`
+                    : "It's empty."}
                 </span>
                 <div className="agroup-confirm-row">
                   <button
@@ -416,13 +416,13 @@ export function AgentGroups({
                       await store.remove(group.id, group.name);
                     }}
                   >
-                    Excluir grupo
+                    Delete group
                   </button>
                   <button
                     className="btn outline sm"
                     onClick={() => setConfirming(null)}
                   >
-                    Cancelar
+                    Cancel
                   </button>
                 </div>
               </div>
@@ -431,7 +431,7 @@ export function AgentGroups({
               (group.bots.length ? (
                 group.bots.map((bot) => row(bot, group))
               ) : dragged?.kind === 'agent' ? (
-                <div className="agroup-empty">Solte aqui</div>
+                <div className="agroup-empty">Drop here</div>
               ) : null)}
           </div>
         );
@@ -443,12 +443,12 @@ export function AgentGroups({
             className="agroup-head"
             onClick={() => setIsIdleOpen(!isIdleOpen)}
             aria-expanded={isIdleOpen}
-            title="Sem nada há mais de 14 dias. Uma mensagem ou uma rotina traz de volta."
+            title="Idle for more than 14 days. A message or a routine brings it back."
           >
             <i
               className={`ti ${isIdleOpen ? 'ti-chevron-down' : 'ti-chevron-right'}`}
             />
-            <span className="agroup-name">Parados</span>
+            <span className="agroup-name">Stopped</span>
             <span className="agroup-count">{idle.length}</span>
           </button>
           {isIdleOpen && idle.map((bot) => row(bot, null))}
@@ -464,7 +464,7 @@ export function AgentGroups({
             }}
           >
             <i className="ti ti-pencil" />
-            Renomear
+            Rename
           </button>
           <button
             onClick={() => {
@@ -473,7 +473,7 @@ export function AgentGroups({
             }}
           >
             <i className="ti ti-message-plus" />
-            Novo agente neste grupo
+            New agent in this group
           </button>
           <hr />
           <button
@@ -484,7 +484,7 @@ export function AgentGroups({
             }}
           >
             <i className="ti ti-trash" />
-            Excluir grupo
+            Delete group
           </button>
         </Menu>
       )}
@@ -503,16 +503,16 @@ export function AgentGroups({
                   await markBotUnread(menuBot.id);
                   botsChanged();
                 } catch (error) {
-                  notify.error('Não marquei como não lida', error.message);
+                  notify.error("Couldn't mark as unread", error.message);
                 }
               }}
             >
               <i className="ti ti-mail" />
-              Marcar como não lida
+              Mark as unread
             </button>
           )}
           {(store.groups.length > 0 || menuBot.sectionId) && (
-            <p className="menu-note">Mover para</p>
+            <p className="menu-note">Move to</p>
           )}
           {store.groups
             .filter((group) => group.id !== menuBot.sectionId)
@@ -532,11 +532,11 @@ export function AgentGroups({
             <button
               onClick={() => {
                 agentMenu.close();
-                store.moveTo(menuBot.id, null, 'fora dos grupos');
+                store.moveTo(menuBot.id, null, 'outside groups');
               }}
             >
               <i className="ti ti-folder-off" />
-              Tirar do grupo
+              Remove from group
             </button>
           )}
         </Menu>

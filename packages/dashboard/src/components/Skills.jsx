@@ -41,7 +41,7 @@ export function SkillModal({ skill, opened, onClose, onSaved }) {
       onSaved?.(saved);
       onClose();
     } catch (error) {
-      notify.error('Não consegui salvar', error.message);
+      notify.error("Couldn't save", error.message);
     } finally {
       setIsSaving(false);
     }
@@ -63,7 +63,7 @@ export function SkillModal({ skill, opened, onClose, onSaved }) {
           }
         />
         <TextInput
-          label="Quando usar"
+          label="When to use"
           value={fields.whenToUse}
           onChange={(event) =>
             setFields({ ...fields, whenToUse: event.currentTarget.value })
@@ -71,7 +71,7 @@ export function SkillModal({ skill, opened, onClose, onSaved }) {
         />
         <Textarea
           label="Passos"
-          description="Em Markdown. É isso que o bot lê antes de fazer a tarefa."
+          description="In Markdown. This is what the bot reads before doing the task."
           autosize
           minRows={8}
           maxRows={20}
@@ -87,7 +87,7 @@ export function SkillModal({ skill, opened, onClose, onSaved }) {
           }
         />
         <Button onClick={save} loading={isSaving}>
-          Salvar
+          Save
         </Button>
       </Stack>
     </Modal>
@@ -109,7 +109,7 @@ export function SkillCard({ data }) {
   if (isDiscarded)
     return (
       <Text fz={12} c="gray.5">
-        Habilidade “{skill.name}” descartada.
+        Skill “{skill.name}” discarded.
       </Text>
     );
 
@@ -118,8 +118,8 @@ export function SkillCard({ data }) {
       <Stack gap={10}>
         <Box>
           <Text fz={10} fw={800} c="gray.4" tt="uppercase" lts="1.5px">
-            Habilidade aprendida
-            {data.stepCount ? ` · ${data.stepCount} passos gravados` : ''}
+            Skill learned
+            {data.stepCount ? ` · ${data.stepCount} steps recorded` : ''}
           </Text>
           <Text fz={15} fw={800} c="gray.9" mt={4}>
             {skill.name}
@@ -139,7 +139,7 @@ export function SkillCard({ data }) {
               <IconChevronRight size={14} stroke={1.5} />
             )}
             <Text fz={12} fw={700} c="gray.7">
-              {isOpen ? 'Esconder os passos' : 'Ver os passos'}
+              {isOpen ? 'Hide steps' : 'View steps'}
             </Text>
           </Group>
         </UnstyledButton>
@@ -150,7 +150,7 @@ export function SkillCard({ data }) {
         </Collapse>
         <Group gap={8}>
           <Button size="xs" h={30} onClick={() => setIsEditing(true)}>
-            Revisar
+            Review
           </Button>
           <Button
             size="xs"
@@ -160,11 +160,11 @@ export function SkillCard({ data }) {
               deleteSkill(skill.id)
                 .then(() => setIsDiscarded(true))
                 .catch((error) =>
-                  notify.error('Não consegui descartar', error.message),
+                  notify.error("Couldn't discard", error.message),
                 )
             }
           >
-            Descartar
+            Discard
           </Button>
         </Group>
       </Stack>
@@ -192,8 +192,8 @@ export function SkillList({ botId }) {
     <Stack gap={8}>
       {skills.length === 0 && (
         <Text fz={12} c="gray.5">
-          Nenhuma ainda. Use + › Ensinar uma tarefa na conversa: faça a tarefa
-          uma vez e ele aprende.
+          None yet. Use + › Teach a task in the chat: do the task once and it
+          learns.
         </Text>
       )}
       {skills.map((skill) => (
@@ -210,7 +210,7 @@ export function SkillList({ botId }) {
             size="sm"
             variant="subtle"
             color="gray"
-            aria-label={`Editar ${skill.name}`}
+            aria-label={`Edit ${skill.name}`}
             onClick={() => setEditing(skill)}
           >
             <IconPencil size={14} stroke={1.5} />
@@ -219,7 +219,7 @@ export function SkillList({ botId }) {
             size="sm"
             variant="subtle"
             color="gray"
-            aria-label={`Apagar ${skill.name}`}
+            aria-label={`Delete ${skill.name}`}
             onClick={() => deleteSkill(skill.id).then(load)}
           >
             <IconX size={14} stroke={1.5} />

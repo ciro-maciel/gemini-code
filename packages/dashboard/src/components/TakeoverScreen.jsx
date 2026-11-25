@@ -43,10 +43,10 @@ export function TakeoverScreen({ bot, opened, onClose, onReturn, isPhone }) {
             <BotAvatar bot={bot} size={32} />
             <Box miw={0}>
               <Text fz={10} fw={800} c="gray.4" tt="uppercase" lts="1.5px">
-                Você está no controle
+                You’re in control
               </Text>
               <Text fz={14} fw={800} c="gray.9" truncate>
-                Computador de {bot.name}
+                Computer of {bot.name}
               </Text>
             </Box>
           </Group>
@@ -56,14 +56,14 @@ export function TakeoverScreen({ bot, opened, onClose, onReturn, isPhone }) {
               flex={isPhone ? 1 : undefined}
               autosize
               minRows={1}
-              placeholder="O que você fez (opcional)"
+              placeholder="What you did (optional)"
               value={note}
               onChange={(event) => setNote(event.currentTarget.value)}
               onKeyDown={getHotkeyHandler([['Enter', giveBack]])}
             />
-            <Button onClick={giveBack}>Devolver ao agente</Button>
+            <Button onClick={giveBack}>Hand back to agent</Button>
             <Button variant="default" onClick={onClose}>
-              Minimizar
+              Minimize
             </Button>
           </Group>
         </Group>

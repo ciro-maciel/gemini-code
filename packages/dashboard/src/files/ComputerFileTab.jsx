@@ -80,15 +80,15 @@ export function ComputerFileTab({ path }) {
         <span className="path" title={relative}>
           {relative}
         </span>
-        {isDirty && <span className="unsaved">Não salvo · ⌘S</span>}
-        {source === 'cloud' && <span className="unsaved">Só leitura</span>}
+        {isDirty && <span className="unsaved">Not saved · ⌘S</span>}
+        {source === 'cloud' && <span className="unsaved">Read only</span>}
         {!isImage && !isCode && (
           <span className="seg-sm tiny">
             <button
               className={view === 'rendered' ? 'on' : ''}
               onClick={() => setView('rendered')}
             >
-              {isPage ? 'Página' : 'Leitura'}
+              {isPage ? 'Page' : 'Leitura'}
             </button>
             <button
               className={view === 'original' ? 'on' : ''}
@@ -102,8 +102,8 @@ export function ComputerFileTab({ path }) {
           className="icon-btn"
           href={url}
           download={relative.split('/').pop()}
-          title="Baixar"
-          aria-label="Baixar"
+          title="Download"
+          aria-label="Download"
         >
           <i className="ti ti-download" />
         </a>

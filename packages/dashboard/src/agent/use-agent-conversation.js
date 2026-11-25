@@ -218,8 +218,8 @@ export function useAgentConversation(botId, { isVisible = true } = {}) {
         );
         if (isDiskRestored)
           notify.success(
-            'O computador do agente voltou junto',
-            'O disco está como antes daquele ponto; o que já saiu para fora continua fora.',
+            "The agent's computer was restored too",
+            'The disk is as it was before that point; anything already sent outside stays out.',
           );
         setRewindPoint(null);
         setLoadKey((key) => key + 1);
@@ -280,10 +280,10 @@ export function useAgentConversation(botId, { isVisible = true } = {}) {
     try {
       return (
         (await askSideQuestion(botId, question)).answer ||
-        'Sem resposta agora. Pergunte de novo daqui a pouco.'
+        'No answer right now. Ask again in a little while.'
       );
     } catch (error) {
-      notify.error('A resposta não veio', error.message);
+      notify.error('No response received', error.message);
       return null;
     }
   };
@@ -320,7 +320,7 @@ export function useAgentConversation(botId, { isVisible = true } = {}) {
     try {
       if (isTakenOver)
         setThread(
-          await sendBotMessage(botId, note || 'Pronto, pode continuar.'),
+          await sendBotMessage(botId, note || 'Done, you can continue.'),
         );
     } catch (error) {
       notify.error(error.message);

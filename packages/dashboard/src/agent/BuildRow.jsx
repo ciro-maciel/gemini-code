@@ -21,15 +21,16 @@ import { refresh, remembered } from '../state/remembered';
 
 // How hard the model thinks, sent to OpenRouter as reasoning.effort; null is the model's own.
 export const EFFORTS = [
-  ['low', 'Baixo', 'responde rápido, pensa pouco'],
-  ['medium', 'Médio', 'o padrão'],
-  ['high', 'Alto', 'pensa mais antes de mexer em arquivo'],
+  ['low', 'Baixo', 'answers fast, thinks less'],
+  ['medium', 'Medium', 'the default'],
+  ['high', 'Alto', 'thinks more before changing files'],
 ];
-const effortLabel = (id) => EFFORTS.find(([key]) => key === id)?.[1] || 'Médio';
+const effortLabel = (id) =>
+  EFFORTS.find(([key]) => key === id)?.[1] || 'Medium';
 const CLASS_SHORT = {
-  read: 'lê',
-  write: 'cria e altera rascunho',
-  external: 'publica, envia, paga ou apaga',
+  read: 'reads',
+  write: 'creates and changes drafts',
+  external: 'publishes, sends, pays, or deletes',
 };
 
 // keep: how long the chip keeps its words as the bar narrows ("long" goes last).
@@ -197,7 +198,7 @@ export function BuildRow({
     ? [brain.account.providerName, modelName, effortLabel(bot?.effort)].join(
         ' · ',
       )
-    : 'Escolher conta de IA';
+    : 'Choose AI account';
 
   const openModels = menu.open('brain');
   useEffect(() => {
@@ -221,7 +222,7 @@ export function BuildRow({
     menu.close();
     try {
       await saveRepoFile(`${folder}/LEIA.md`, `# ${folder.split('/').pop()}\n`);
-      change({ folder }, `Pasta ${folder}/ criada`);
+      change({ folder }, `Folder ${folder}/ created`);
     } catch (error) {
       notify.error(error.message);
     }
@@ -265,9 +266,9 @@ export function BuildRow({
     <div className="build">
       {!isStarted && (
         <Chip
-          label="Começar de"
+          label="Start from"
           keep="long"
-          value={template?.name || 'Do zero'}
+          value={template?.name || 'From scratch'}
           onClick={menu.open('template')}
         >
           <AgentAvatar
@@ -279,20 +280,20 @@ export function BuildRow({
       )}
       <Chip
         icon="ti-cpu"
-        label="Conta, modelo e esforço"
+        label="Account, model, and effort"
         keep="long"
         value={brainName}
         onClick={openModels}
       />
       <Chip
         icon="ti-plug"
-        label="Conexões"
+        label="Connections"
         value={`${used.length} ${used.length === 1 ? 'conexão' : 'conexões'}`}
         onClick={openConnections}
       />
       <Chip
         icon="ti-sparkles"
-        label="Habilidades"
+        label="Skills"
         value={`${shownSkills?.length ?? 0} ${shownSkills?.length === 1 ? 'habilidade' : 'habilidades'}`}
         onClick={openSkills}
       />
@@ -300,7 +301,7 @@ export function BuildRow({
         icon="ti-folder"
         label="Pasta"
         value={bot.folder ? `${bot.folder.split('/').pop()}/` : '/'}
-        title={`Pasta: /${bot.folder ? `${bot.folder}/` : ''}`}
+        title={`Folder: /${bot.folder ? `${bot.folder}/` : ''}`}
         isShrinking
         onClick={openFolders}
       />
@@ -308,7 +309,7 @@ export function BuildRow({
       {menu.is('template') && (
         <Menu
           anchor={menu.anchor}
-          title="Começar de"
+          title="Start from"
           search
           width={340}
           alignLeft
@@ -342,14 +343,14 @@ export function BuildRow({
             }}
           >
             <i className="ti ti-plus" />
-            Novo modelo
+            New model
           </button>
         </Menu>
       )}
       {menu.is('connections') && (
         <Menu
           anchor={menu.anchor}
-          title="Conexões deste agente"
+          title="This agent's connections"
           search
           width={340}
           alignLeft
@@ -362,14 +363,14 @@ export function BuildRow({
               title={connection.title}
               note={
                 connection.status === 'connected'
-                  ? `${connection.tools.length} ferramentas`
-                  : 'precisa conectar'
+                  ? `${connection.tools.length} tools`
+                  : 'needs connecting'
               }
               onClick={() => toggleConnection(connection)}
             />
           ))}
           {connections?.length === 0 && (
-            <p className="menu-note">Nenhuma conexão na conta ainda.</p>
+            <p className="menu-note">No connections on this account yet.</p>
           )}
           <hr />
           <button
@@ -379,11 +380,11 @@ export function BuildRow({
             }}
           >
             <i className="ti ti-plug-connected" />
-            Conectar outro aplicativo
+            Connect another app
           </button>
           <p className="menu-note">
-            O que ele faz sem perguntar só muda quando alguém toca em Permitir.
-            Pagar e entrar numa conta sempre perguntam. Até:{' '}
+            What it does without asking only changes when someone taps Allow.
+            Paying and signing in always ask. Until:{' '}
             {Object.values(CLASS_SHORT).join(' · ')}.
           </p>
         </Menu>
@@ -391,7 +392,7 @@ export function BuildRow({
       {menu.is('skills') && (
         <Menu
           anchor={menu.anchor}
-          title="Habilidades deste agente"
+          title="This agent's skills"
           search
           width={340}
           alignLeft
@@ -417,23 +418,21 @@ export function BuildRow({
                   note={skill.whenToUse}
                 />
               ))}
-          {bot.id && library === null && (
-            <p className="menu-note">Carregando…</p>
-          )}
+          {bot.id && library === null && <p className="menu-note">Loading…</p>}
           {(bot.id ? library?.length === 0 : shownSkills.length === 0) && (
             <p className="menu-note">
-              Nenhuma habilidade ainda. Ensine uma tarefa pelo mais.
+              No skills yet. Teach a task using the plus button.
             </p>
           )}
           <p className="menu-note">
-            Ficam em skills/ e servem pra qualquer agente.
+            They live in skills/ and work for any agent.
           </p>
         </Menu>
       )}
       {menu.is('brain') && (
         <Menu
           anchor={menu.anchor}
-          title="Conta e modelo"
+          title="Account and model"
           search
           width={340}
           alignLeft
@@ -441,8 +440,8 @@ export function BuildRow({
         >
           {brains.length === 0 && (
             <p className="menu-note">
-              Nenhuma conta de IA com modelos ligados ainda. Ligue a chave de um
-              provedor e marque os modelos.
+              No AI accounts with models turned on yet. Add a provider key and
+              select the models.
             </p>
           )}
           {brains.map((group) => (
@@ -462,14 +461,14 @@ export function BuildRow({
                     menu.close();
                     change(
                       { aiAccount: group.account.id, model: item.id },
-                      `Modelo: ${item.label}`,
+                      `Model: ${item.label}`,
                     );
                   }}
                 />
               ))}
             </div>
           ))}
-          <div className="h label">Esforço</div>
+          <div className="h label">Effort</div>
           {EFFORTS.map(([id, label, note]) => (
             <Opt
               key={id}
@@ -478,7 +477,7 @@ export function BuildRow({
               isOn={(bot.effort || 'medium') === id}
               onClick={() => {
                 menu.close();
-                change({ effort: id }, `Esforço: ${label}`);
+                change({ effort: id }, `Effort: ${label}`);
               }}
             />
           ))}
@@ -490,14 +489,14 @@ export function BuildRow({
             }}
           >
             <i className="ti ti-plus" />
-            Ligar outra conta de IA
+            Connect another AI account
           </button>
         </Menu>
       )}
       {menu.is('folder') && (
         <Menu
           anchor={menu.anchor}
-          title="Pasta de trabalho"
+          title="Working folder"
           search
           onQuery={setFolderQuery}
           width={320}
@@ -529,11 +528,11 @@ export function BuildRow({
             <Opt
               mono
               icon={<i className="ti ti-folder-plus" />}
-              title={`Criar ${newFolder}/`}
+              title={`Create ${newFolder}/`}
               onClick={() => createFolder(newFolder)}
             />
           )}
-          {folders === null && <p className="menu-note">Carregando…</p>}
+          {folders === null && <p className="menu-note">Loading…</p>}
         </Menu>
       )}
     </div>

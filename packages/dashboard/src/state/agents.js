@@ -9,10 +9,10 @@ export const waitsOn = (bot) =>
 /** The state word under the agent's name, and the mark it carries. */
 export function stateOf(bot) {
   if (bot.status === 'provisioning')
-    return { word: 'preparando o computador', mark: 'live' };
+    return { word: 'preparing the computer', mark: 'live' };
   if (bot.status === 'failed')
-    return { word: 'o computador não ficou pronto', mark: 'stopped' };
-  if (waitsOn(bot)) return { word: 'espera você', mark: 'wait' };
+    return { word: "the computer didn't get ready", mark: 'stopped' };
+  if (waitsOn(bot)) return { word: 'waiting for you', mark: 'wait' };
   if (bot.runningCount) return { word: 'rodando', mark: 'live' };
   if (bot.hasNews) return { word: 'terminou', mark: 'done' };
   return { word: '', mark: null };
@@ -46,14 +46,14 @@ export function listAgents(bots, filter = 'all') {
   );
 }
 
-/** "agora", "12 min", "3 h", "ontem", "2 d" from a time in seconds. */
+/** "now", "12 min", "3 h", "yesterday", "2 d" from a time in seconds. */
 export function shortWhen(seconds, nowSeconds = Date.now() / 1000) {
   if (!seconds) return '';
   const minutes = Math.floor((nowSeconds - seconds) / 60);
-  if (minutes < 1) return 'agora';
+  if (minutes < 1) return 'now';
   if (minutes < 60) return `${minutes} min`;
   const hours = Math.floor(minutes / 60);
   if (hours < 24) return `${hours} h`;
   const days = Math.floor(hours / 24);
-  return days === 1 ? 'ontem' : `${days} d`;
+  return days === 1 ? 'yesterday' : `${days} d`;
 }

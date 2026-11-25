@@ -176,7 +176,7 @@ function Chosen({ chosen }) {
         style={{ flex: 'none', marginTop: 2 }}
       />
       <Text fz={12} fw={500} c="gray.5">
-        Você escolheu: {chosen.label}
+        You chose: {chosen.label}
         {chosen.note ? ` — “${chosen.note}”` : ''}
       </Text>
     </Group>
@@ -213,7 +213,7 @@ function Choices({ choices, chosen, isOpen, onChoose }) {
           minRows={2}
           maxRows={6}
           maxLength={2000}
-          placeholder={`${noteFor.label}: o que você quer?`}
+          placeholder={`${noteFor.label}: what do you want?`}
           value={note}
           onChange={(event) => setNote(event.currentTarget.value)}
           autoFocus
@@ -225,7 +225,7 @@ function Choices({ choices, chosen, isOpen, onChoose }) {
             loading={sending === noteFor.value}
             onClick={() => send(noteFor, note.trim())}
           >
-            Enviar
+            Send
           </Button>
           <Button
             size="compact-sm"
@@ -233,7 +233,7 @@ function Choices({ choices, chosen, isOpen, onChoose }) {
             color="gray"
             onClick={() => setNoteFor(null)}
           >
-            Cancelar
+            Cancel
           </Button>
         </Group>
       </Stack>
@@ -373,11 +373,11 @@ export function ArtifactCard({ botId, data }) {
         }),
       );
     } catch (error) {
-      notify.error('Não consegui mandar a escolha', error.message);
+      notify.error("Couldn't send your choice", error.message);
       throw error;
     }
   };
-  const eyebrow = `Artifact · versão ${data.version}${state && !state.isLatest ? ` · há a versão ${state.latestVersion}` : ''}`;
+  const eyebrow = `Artifact · version ${data.version}${state && !state.isLatest ? ` · version ${state.latestVersion} exists` : ''}`;
 
   return (
     <Box style={{ border: 'var(--rlg-border)' }}>
@@ -387,7 +387,7 @@ export function ArtifactCard({ botId, data }) {
         </Text>
         <UnstyledButton
           onClick={() => setIsFull(true)}
-          aria-label="Abrir em tela cheia"
+          aria-label="Open full screen"
           style={{ display: 'flex' }}
         >
           <IconArrowsMaximize

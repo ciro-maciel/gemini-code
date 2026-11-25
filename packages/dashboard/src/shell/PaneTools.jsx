@@ -21,24 +21,20 @@ export function PaneTools({ pane, bots, change, onOpen, onReopen = null }) {
       <button
         className="icon-btn"
         onClick={menu.open('recent')}
-        title="Agentes recentes"
+        title="Recent agents"
       >
         <i className="ti ti-clock" />
       </button>
       <button
         className="icon-btn"
         onClick={menu.open('more')}
-        title="Mais"
-        aria-label={isAgent ? 'Mais ações do agente' : 'Mais ações do painel'}
+        title="More"
+        aria-label={isAgent ? 'More agent actions' : 'More panel actions'}
       >
         <i className="ti ti-dots" />
       </button>
       {menu.is('recent') && (
-        <Menu
-          anchor={menu.anchor}
-          title="Agentes recentes"
-          onClose={menu.close}
-        >
+        <Menu anchor={menu.anchor} title="Recent agents" onClose={menu.close}>
           {recent.map((bot) => (
             <button
               key={bot.id}
@@ -51,7 +47,7 @@ export function PaneTools({ pane, bots, change, onOpen, onReopen = null }) {
               <span className="grow">{bot.name}</span>
             </button>
           ))}
-          {!recent.length && <p className="menu-note">Nenhum agente ainda.</p>}
+          {!recent.length && <p className="menu-note">No agents yet.</p>}
         </Menu>
       )}
       {menu.is('more') && (
@@ -61,13 +57,11 @@ export function PaneTools({ pane, bots, change, onOpen, onReopen = null }) {
               onClick={() => {
                 navigator.clipboard?.writeText(link);
                 menu.close();
-                notify.success(
-                  isAgent ? 'Link do agente copiado' : 'Link copiado',
-                );
+                notify.success(isAgent ? 'Agent link copied' : 'Link copied');
               }}
             >
               <i className="ti ti-link" />
-              {isAgent ? 'Copiar link do agente' : 'Copiar link'}
+              {isAgent ? 'Copy agent link' : 'Copy link'}
             </button>
           )}
           {link && (
@@ -78,7 +72,7 @@ export function PaneTools({ pane, bots, change, onOpen, onReopen = null }) {
               }}
             >
               <i className="ti ti-app-window" />
-              Abrir em outra janela
+              Open in new window
             </button>
           )}
           {hasComputer && (
@@ -89,7 +83,7 @@ export function PaneTools({ pane, bots, change, onOpen, onReopen = null }) {
               }}
             >
               <i className="ti ti-device-desktop" />
-              Ver a tela ao vivo
+              View live screen
             </button>
           )}
           <hr />
@@ -99,14 +93,14 @@ export function PaneTools({ pane, bots, change, onOpen, onReopen = null }) {
                 menu.close();
                 if (!onReopen())
                   notify.info(
-                    'Nada para reabrir',
-                    'Nenhuma aba foi fechada desde que o painel abriu.',
+                    'Nothing to reopen',
+                    'No tabs have been closed since the dashboard opened.',
                   );
               }}
               title="Alt + Shift + T"
             >
               <i className="ti ti-arrow-back-up" />
-              Reabrir a última fechada
+              Reopen last closed
             </button>
           )}
           <button
@@ -116,7 +110,7 @@ export function PaneTools({ pane, bots, change, onOpen, onReopen = null }) {
             }}
           >
             <i className="ti ti-x" />
-            Fechar o painel
+            Close panel
           </button>
           <button
             onClick={() => {
@@ -125,7 +119,7 @@ export function PaneTools({ pane, bots, change, onOpen, onReopen = null }) {
             }}
           >
             <i className="ti ti-layout-off" />
-            Fechar tudo
+            Close all
           </button>
         </Menu>
       )}

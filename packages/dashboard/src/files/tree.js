@@ -45,23 +45,23 @@ export const FOLDER_ICON = {
 export function syncLineOf(repo, nowSeconds = Date.now() / 1000) {
   if (!repo) return null;
   if (repo.mode === 'local') {
-    if (!repo.syncedAt) return 'Workspace local · pronto';
+    if (!repo.syncedAt) return 'Local workspace · ready';
     const minutes = Math.floor((nowSeconds - repo.syncedAt) / 60);
-    if (minutes < 1) return 'Workspace local · atualizado agora';
-    if (minutes < 60) return `Workspace local · há ${minutes} min`;
+    if (minutes < 1) return 'Local workspace · updated just now';
+    if (minutes < 60) return `Local workspace · ${minutes} min ago`;
     const hours = Math.floor(minutes / 60);
-    if (hours < 24) return `Workspace local · há ${hours} h`;
+    if (hours < 24) return `Local workspace · ${hours} h ago`;
     return Math.floor(hours / 24) === 1
-      ? 'Workspace local · ontem'
-      : `Workspace local · há ${Math.floor(hours / 24)} dias`;
+      ? 'Local workspace · yesterday'
+      : `Local workspace · ${Math.floor(hours / 24)} days ago`;
   }
-  if (!repo.syncedAt) return 'Sincronizando com o GitHub…';
+  if (!repo.syncedAt) return 'Syncing with GitHub…';
   const minutes = Math.floor((nowSeconds - repo.syncedAt) / 60);
-  if (minutes < 1) return 'GitHub sincronizado agora';
-  if (minutes < 60) return `GitHub sincronizado há ${minutes} min`;
+  if (minutes < 1) return 'GitHub synced just now';
+  if (minutes < 60) return `GitHub synced ${minutes} min ago`;
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `GitHub sincronizado há ${hours} h`;
+  if (hours < 24) return `GitHub synced ${hours} h ago`;
   return Math.floor(hours / 24) === 1
-    ? 'GitHub sincronizado ontem'
-    : `GitHub sincronizado há ${Math.floor(hours / 24)} dias`;
+    ? 'GitHub synced yesterday'
+    : `GitHub synced ${Math.floor(hours / 24)} days ago`;
 }

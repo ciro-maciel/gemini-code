@@ -191,7 +191,7 @@ export function createFakeApi({
     const template = body.templateId
       ? fixtures.templates.items.find((item) => item.id === body.templateId)
       : null;
-    const name = body.name || template?.name || 'Novo agente';
+    const name = body.name || template?.name || 'New agent';
     const account = body.aiAccount
       ? aiAccounts.find((item) => item.id === body.aiAccount)
       : aiAccounts[0];
@@ -274,7 +274,7 @@ export function createFakeApi({
       {
         path: 'README.md',
         content:
-          '# Projeto de exemplo\n\nOs agentes, documentos e habilidades deste workspace, em Markdown.\n',
+          '# Example project The agents, documents and skills of this workspace, in Markdown.',
       },
       ...bots.map((bot) => ({
         path: bot.instructionsPath,
@@ -459,7 +459,7 @@ export function createFakeApi({
       '/api/bots/:id/inbox',
       ({ bot }) =>
         ok({
-          url: `https://sua-central.example/in/exemplo-${bot.id.slice(0, 8)}`,
+          url: `https://your-server.example/in/example-${bot.id.slice(0, 8)}`,
           createdAt: start,
         }),
     ],
@@ -485,7 +485,7 @@ export function createFakeApi({
               body: file.content,
               type: 'text/plain; charset=utf-8',
             }
-          : fail(404, 'NOT_FOUND', 'arquivo desconhecido');
+          : fail(404, 'NOT_FOUND', 'unknown file');
       },
     ],
     [
@@ -493,7 +493,7 @@ export function createFakeApi({
       '/api/tasks/:taskId/cancel',
       ({ params }) => {
         const task = tasks.get(params.taskId);
-        if (!task) return fail(404, 'NOT_FOUND', 'tarefa desconhecida');
+        if (!task) return fail(404, 'NOT_FOUND', 'unknown task');
         setTaskStatus(task, 'cancelled');
         return ok(threadOf(task.botId));
       },
@@ -530,7 +530,7 @@ export function createFakeApi({
       '/api/ai-accounts/:accountId/available-models',
       ({ params }) => {
         const account = aiAccounts.find((item) => item.id === params.accountId);
-        if (!account) return fail(404, 'NOT_FOUND', 'conta de IA desconhecida');
+        if (!account) return fail(404, 'NOT_FOUND', 'unknown AI account');
         const known = [
           ...fixtures.GEMINI_MODELS,
           ...fixtures.SUBSCRIPTION_MODELS,
@@ -578,7 +578,7 @@ export function createFakeApi({
         );
         return file
           ? ok({ path: file.path, sha: null, content: file.content })
-          : fail(404, 'NOT_FOUND', 'arquivo desconhecido');
+          : fail(404, 'NOT_FOUND', 'unknown file');
       },
     ],
     ['GET', '/api/files/history', () => ok(collection([]))],
@@ -648,14 +648,13 @@ const { BOT_IDS } = fixtures;
 const DEMO_FILES = {
   [BOT_IDS.neon]: {
     'INSTRUCTIONS.md':
-      '# Neon Engineer\n\nVocê é um engenheiro de software. Responda em português.\n',
+      '# Neon Engineer You are a software engineer. Answer in the language you are written to.',
     'soma.js': 'export function soma(a, b) {\n    return a + b\n}\n',
     'soma.test.js':
       "import { expect, test } from 'bun:test'\nimport { soma } from './soma.js'\n\ntest('soma positivos', () => expect(soma(2, 3)).toBe(5))\ntest('soma negativos', () => expect(soma(-2, -3)).toBe(-5))\ntest('soma com zero', () => expect(soma(0, 7)).toBe(7))\n",
   },
   [BOT_IDS.engineer]: {
-    'INSTRUCTIONS.md':
-      '# Software Engineer\n\nImplementa mudanças pequenas, com teste.\n',
+    'INSTRUCTIONS.md': '# Software Engineer Makes small changes, with tests.',
     'projeto/src/routes/orders.js':
       "export async function getOrders(req) {\n    const url = new URL(req.url)\n    const limit = Math.min(Number(url.searchParams.get('limit') ?? 20), 100)\n    return Response.json({ items: [], limit })\n}\n",
     'projeto/test/orders.test.js':
@@ -664,7 +663,7 @@ const DEMO_FILES = {
   },
   [BOT_IDS.reviewer]: {
     'INSTRUCTIONS.md':
-      '# Code Reviewer\n\nRevisa pull requests e aponta o que quebra.\n',
+      '# Code Reviewer Reviews pull requests and points out what breaks.',
   },
 };
 const DEMO_MARKS = {

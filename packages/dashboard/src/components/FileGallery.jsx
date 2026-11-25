@@ -208,7 +208,7 @@ function Preview({ botId, file, kind }) {
     );
   }
   if (kind === 'html' && !isText)
-    return <IconPreview icon={IconFileTypeHtml} label="Página" />;
+    return <IconPreview icon={IconFileTypeHtml} label="Page" />;
   if (kind === 'pdf') return <IconPreview icon={IconFileTypePdf} label="PDF" />;
   if (!isText)
     return (
@@ -372,7 +372,7 @@ function ZoomControls({ zoom, isFit, isActual, onZoom, onFit, hint }) {
         color="gray.9"
         onClick={onFit}
       >
-        Ajustar
+        Adjust
       </Button>
       <Button
         size="compact-sm"
@@ -424,7 +424,7 @@ function ZoomablePage({ html, title }) {
         isActual={zoom === 1}
         onZoom={(value) => setZoom(clampZoom(value))}
         onFit={() => setZoom(1)}
-        hint="⌘ ou Ctrl + rolar para zoom"
+        hint="⌘ or Ctrl + scroll to zoom"
       />
       <Box
         ref={boxRef}
@@ -467,7 +467,7 @@ function ZoomableContent({ children }) {
         isActual={zoom === 1}
         onZoom={(value) => setZoom(clampZoom(value))}
         onFit={() => setZoom(1)}
-        hint="⌘ ou Ctrl + rolar para zoom"
+        hint="⌘ or Ctrl + scroll to zoom"
       />
       <Box ref={boxRef} h="74vh" style={{ overflow: 'auto' }}>
         <Box style={{ zoom }}>{children}</Box>
@@ -566,7 +566,7 @@ function ZoomableImage({ src, alt }) {
         isActual={zoom === 1}
         onZoom={(value) => zoomTo(value)}
         onFit={() => setZoom(null)}
-        hint="⌘ ou Ctrl + rolar para zoom · duplo clique alterna"
+        hint="⌘ or Ctrl + scroll to zoom · double-click to toggle"
       />
       <Box
         ref={viewportRef}
@@ -638,7 +638,7 @@ function Viewer({ botId, file }) {
   if (!isText) {
     return (
       <Text fz={14} c="gray.6">
-        Este tipo de arquivo não tem prévia. Use o botão Baixar.
+        No preview for this file type. Use the Download button.
       </Text>
     );
   }
@@ -702,7 +702,7 @@ export function FileGallery({ botId, files }) {
       link.remove();
       setTimeout(() => URL.revokeObjectURL(href), 10_000);
     } catch (error) {
-      notify.error(`Não consegui baixar: ${error.message}`);
+      notify.error(`Couldn't download: ${error.message}`);
     } finally {
       setIsDownloading(false);
     }
@@ -717,7 +717,7 @@ export function FileGallery({ botId, files }) {
             <UnstyledButton
               key={file.path}
               onClick={() => setOpen(file)}
-              aria-label={`Abrir ${file.name}`}
+              aria-label={`Open ${file.name}`}
               bd="var(--rlg-border)"
               bg="white"
               miw={0}
@@ -769,7 +769,7 @@ export function FileGallery({ botId, files }) {
               onClick={() => download(open)}
               style={{ flex: 'none' }}
             >
-              Baixar
+              Download
             </Button>
           </Group>
         }

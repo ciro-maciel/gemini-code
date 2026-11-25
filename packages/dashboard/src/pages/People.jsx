@@ -48,7 +48,7 @@ function Row({ account, onChange }) {
       await updateAccount(account.id, { status });
       onChange();
     } catch (error) {
-      notify.error('Não consegui mudar o acesso', error.message);
+      notify.error("Couldn't change access", error.message);
     } finally {
       setIsSaving(false);
     }
@@ -68,7 +68,7 @@ function Row({ account, onChange }) {
       <Box miw={0}>
         <Text fz={13} fw={700} c="gray.9" truncate>
           {account.name || account.email}
-          {account.isOwner ? ' (você)' : ''}
+          {account.isOwner ? '(you)' : ''}
         </Text>
         <Text fz={12} fw={500} c="gray.5" truncate>
           {account.email}
@@ -83,7 +83,7 @@ function Row({ account, onChange }) {
             lineClamp={2}
             title={account.firstWish}
           >
-            Primeiro bot: {account.firstWish}
+            First bot: {account.firstWish}
           </Text>
         )}
       </Box>
@@ -111,7 +111,7 @@ function Row({ account, onChange }) {
             loading={isSaving}
             onClick={() => change('active')}
           >
-            Liberar
+            Allow
           </Button>
         )}
         {!account.isOwner && account.status !== 'blocked' && (
@@ -122,7 +122,7 @@ function Row({ account, onChange }) {
             loading={isSaving}
             onClick={() => change('blocked')}
           >
-            Bloquear
+            Block
           </Button>
         )}
       </Group>
@@ -131,18 +131,18 @@ function Row({ account, onChange }) {
 }
 
 const FAILURE_LABEL = {
-  approval_rejected: 'Aprovação recusada',
-  ask_user: 'Pergunta à pessoa',
-  takeover: 'Pessoa assumiu a tela',
-  checkpoint_restored: 'Volta a um ponto',
-  tool_error: 'Erro de ferramenta',
-  judge_unavailable: 'Risco sem avaliação',
-  task_failed: 'Tarefa falhou',
-  task_cancelled: 'Tarefa parada',
-  step_limit: 'Limite de passos',
-  empty_reply: 'Resposta vazia',
-  daily_limit: 'Limite do dia',
-  concurrency: 'Esperou vaga',
+  approval_rejected: 'Approval denied',
+  ask_user: 'Question for the person',
+  takeover: 'Person took over the screen',
+  checkpoint_restored: 'Restore point',
+  tool_error: 'Tool error',
+  judge_unavailable: 'Risk not assessed',
+  task_failed: 'Task failed',
+  task_cancelled: 'Task stopped',
+  step_limit: 'Step limit',
+  empty_reply: 'Empty answer',
+  daily_limit: 'Daily limit',
+  concurrency: 'Waited for a slot',
 };
 
 const METRICS_DAYS = 30;
@@ -153,37 +153,35 @@ function Outcomes() {
   useEffect(() => {
     fetchOutcomeMetrics(METRICS_DAYS)
       .then(setMetrics)
-      .catch((error) =>
-        notify.error('Não consegui ler as aprovações', error.message),
-      );
+      .catch((error) => notify.error("Couldn't load approvals", error.message));
   }, []);
   const outcomes = metrics?.outcomes ?? {};
   const isLoading = metrics === null;
-  const note = `últimos ${METRICS_DAYS} dias, todas as contas`;
+  const note = `last ${METRICS_DAYS} days, all accounts`;
   const approved =
     (outcomes.approved ?? 0) +
     (outcomes.approved_task ?? 0) +
     (outcomes.approved_always ?? 0);
   const tiles = [
     {
-      label: 'Pedidos de aprovação',
+      label: 'Approval requests',
       value: outcomes.approval_requested ?? 0,
       note,
     },
     {
       label: 'Aprovados',
       value: approved,
-      note: `${outcomes.approved_task ?? 0} até o fim da tarefa, ${outcomes.approved_always ?? 0} para sempre`,
+      note: `${outcomes.approved_task ?? 0} until the task ends, ${outcomes.approved_always ?? 0} always`,
     },
     { label: 'Recusados', value: outcomes.rejected ?? 0, note },
     {
-      label: 'Sem resposta em 24 h',
+      label: 'No reply in 24 h',
       value: outcomes.timed_out ?? 0,
-      note: `${metrics?.pendingApprovals ?? 0} esperando agora`,
+      note: `${metrics?.pendingApprovals ?? 0} waiting now`,
     },
-    { label: 'Assumiram a tela', value: outcomes.takeover ?? 0, note },
+    { label: 'Took over the screen', value: outcomes.takeover ?? 0, note },
     {
-      label: 'Voltas a um ponto',
+      label: 'Restore points',
       value: outcomes.checkpoint_restored ?? 0,
       note,
     },
@@ -194,7 +192,7 @@ function Outcomes() {
   return (
     <Stack gap={16}>
       <Text fz={10} fw={800} c="gray.4" tt="uppercase" lts="1.5px">
-        Aprovações e falhas
+        Approvals and failures
       </Text>
       <Box bg="white" p={24} style={{ border: 'var(--rlg-border)' }}>
         <SimpleGrid cols={{ base: 2, sm: 3, lg: 6 }} spacing={24}>
@@ -218,7 +216,7 @@ function Outcomes() {
                       `${FAILURE_LABEL[kind] ?? kind}: ${count}`,
                   )
                   .join(' · ')
-              : 'Nenhum momento de falha registrado.'}
+              : 'No failures recorded.'}
           </Text>
         )}
       </Box>
@@ -234,9 +232,7 @@ export function People() {
   const load = useCallback(() => {
     fetchAccounts()
       .then((data) => setAccounts(data.items))
-      .catch((error) =>
-        notify.error('Não consegui ler as pessoas', error.message),
-      );
+      .catch((error) => notify.error("Couldn't load people", error.message));
   }, []);
 
   useEffect(() => {
@@ -247,8 +243,8 @@ export function People() {
     return (
       <Box p={48}>
         <EmptyState
-          title="Só o dono vê esta tela"
-          description="Aqui ficam as contas do Assistant e quem espera liberação."
+          title="Only the owner sees this screen"
+          description="Gemini Code accounts and people waiting for access are listed here."
         />
       </Box>
     );
@@ -257,7 +253,7 @@ export function People() {
     (item) => item.status === 'pending',
   ).length;
   const { limits } = account;
-  const limitsLine = `Cada conta liberada pode ter até ${limits.botsPerAccount} bots, ${limits.runningTasksPerAccount} tarefas ao mesmo tempo. O modelo roda na chave de IA de cada conta.`;
+  const limitsLine = `Each approved account can have up to ${limits.botsPerAccount} bots and ${limits.runningTasksPerAccount} tasks at a time. The model runs on each account's AI key.`;
 
   return (
     <ScrollArea h="100%" bg="gray.0">
@@ -272,15 +268,15 @@ export function People() {
       >
         <Stack gap={8}>
           <Text fz={10} fw={800} c="gray.4" tt="uppercase" lts="1.5px">
-            Assistant · Acesso
+            Assistant · Access
           </Text>
           <Text fz={36} fw={900} c="gray.9" lh={1.1} lts="-0.04em">
-            Pessoas
+            People
           </Text>
           <Text fz={15} fw={500} c="gray.6" lh={1.6} maw={620}>
             {accounts === null
-              ? 'Contas do Assistant e quem espera liberação.'
-              : `${waiting ? `${waiting} ${waiting === 1 ? 'pessoa espera' : 'pessoas esperam'} liberação.` : 'Ninguém esperando.'} ${limitsLine}`}
+              ? 'Gemini Code accounts and people waiting for access.'
+              : `${waiting ? `${waiting} ${waiting === 1 ? 'person is waiting' : 'people are waiting'} for access.` : 'Nobody waiting.'} ${limitsLine}`}
           </Text>
         </Stack>
 
@@ -295,11 +291,11 @@ export function People() {
               bg="gray.1"
               style={{ display: 'grid', gridTemplateColumns: COLUMNS, gap: 16 }}
             >
-              <HeadCell>Conta</HeadCell>
-              <HeadCell>Acesso</HeadCell>
+              <HeadCell>Account</HeadCell>
+              <HeadCell>Access</HeadCell>
               <HeadCell>Bots</HeadCell>
-              <HeadCell>Hoje</HeadCell>
-              <HeadCell>Visto</HeadCell>
+              <HeadCell>Today</HeadCell>
+              <HeadCell>Seen</HeadCell>
               <Box />
             </Box>
             {accounts === null

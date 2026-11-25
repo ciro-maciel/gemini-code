@@ -43,7 +43,7 @@ function Notice({ title, text, onSignOut }) {
   return (
     <Flex h="100dvh" px="md" justify="center" align="center">
       <Stack gap={16} maw={460} align="center">
-        <Wordmark name="Assistant" />
+        <Wordmark name="Gemini Code" />
         <Text fz={32} fw={900} c="gray.9" lh={1.1} lts="-0.04em" ta="center">
           {title}
         </Text>
@@ -51,7 +51,7 @@ function Notice({ title, text, onSignOut }) {
           {text}
         </Text>
         <Button variant="default" onClick={onSignOut}>
-          Sair
+          Sign out
         </Button>
       </Stack>
     </Flex>
@@ -105,16 +105,16 @@ function AccessGate() {
   if (error?.code === 'ACCESS_BLOCKED')
     return (
       <Notice
-        title="Sem acesso"
-        text="Esta conta não tem acesso ao Assistant. Se for engano, fale com quem convidou você."
+        title="No access"
+        text="This account doesn't have access to Gemini Code. If this is a mistake, contact whoever invited you."
         onSignOut={handleSignOut}
       />
     );
   if (error)
     return (
       <Notice
-        title="Não consegui falar com o Assistant"
-        text={`${error.message}. Tente de novo em instantes.`}
+        title="Couldn't reach Gemini Code"
+        text={`${error.message}. Try again in a moment.`}
         onSignOut={handleSignOut}
       />
     );

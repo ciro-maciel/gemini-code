@@ -15,7 +15,7 @@ const BASENAME = import.meta.env.BASE_URL.replace(/\/+$/, '') || '/';
 export function DemoBanner() {
   return (
     <div className="demo-banner" role="note" data-no-translate>
-      <span>Demonstração com dados de exemplo. Para usar de verdade:</span>
+      <span>Demo with example data. To use it for real:</span>
       <a href={REPO_URL} target="_blank" rel="noopener noreferrer">
         github.com/ciro-maciel/gemini-code
       </a>

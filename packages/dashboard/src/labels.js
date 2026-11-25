@@ -1,23 +1,25 @@
+import { locale } from './lib/language';
+
 // Words a person reads, in one place, so a status is named the same on every screen.
 
 export const BOT_STATUS = {
-  idle: 'Computador desligado',
-  provisioning: 'Preparando o computador',
+  idle: 'Computer off',
+  provisioning: 'Preparing the computer',
   ready: 'Pronto',
-  failed: 'Falhou ao preparar',
+  failed: 'Failed to prepare',
 };
 
 export const POLICY_LABEL = {
   free: 'Livre',
   confirm: 'Confirma',
-  human: 'Só humano',
+  human: 'Human only',
 };
 
 // What a bot can be, in one sentence: "Criar com IA" and the waiting screen offer these.
 export const AI_EXAMPLES = [
-  'Um agente que lê todos os dias o Google Search Console e me entrega um relatório',
-  'Toda segunda, resume os e-mails da semana que ainda pedem resposta',
-  'Acompanha o preço de um produto em três lojas e me avisa quando baixar',
+  'An agent that reads Google Search Console every day and sends me a report',
+  "Every Monday, summarizes this week's emails that still need a reply",
+  "Track a product's price across three stores and let me know when it drops",
 ];
 
 export const isActive = (status) => status === 'running' || status === 'queued';
@@ -27,32 +29,32 @@ export const isActive = (status) => status === 'running' || status === 'queued';
 export const canWork = (status) => status === 'ready' || status === 'idle';
 
 const MONTHS = [
-  'jan',
-  'fev',
-  'mar',
-  'abr',
-  'mai',
-  'jun',
-  'jul',
-  'ago',
-  'set',
-  'out',
-  'nov',
-  'dez',
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
 ];
 const clockOf = (date) =>
   `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
 
 /**
- * When a message was sent (30/10): "agora", "há 12 min" within the hour, then
- * the day and the hour, "hoje, 14:32", "ontem, 09:05", "28 out, 14:32", with
- * the year when it is another one.
+ * When a message was sent (30/10): "just now", "12 min ago" within the hour,
+ * then the day and the hour, "today, 14:32", "yesterday, 09:05", "28 Oct,
+ * 14:32", with the year when it is another one.
  */
 export function messageWhen(seconds, nowSeconds = Date.now() / 1000) {
   if (!seconds) return '';
   const minutes = Math.floor((nowSeconds - seconds) / 60);
-  if (minutes < 1) return 'agora';
-  if (minutes < 60) return `há ${minutes} min`;
+  if (minutes < 1) return 'just now';
+  if (minutes < 60) return `${minutes} min ago`;
   const date = new Date(seconds * 1000);
   const today = new Date(nowSeconds * 1000);
   const yesterday = new Date(
@@ -64,8 +66,8 @@ export function messageWhen(seconds, nowSeconds = Date.now() / 1000) {
     first.getFullYear() === second.getFullYear() &&
     first.getMonth() === second.getMonth() &&
     first.getDate() === second.getDate();
-  if (isSameDay(date, today)) return `hoje, ${clockOf(date)}`;
-  if (isSameDay(date, yesterday)) return `ontem, ${clockOf(date)}`;
+  if (isSameDay(date, today)) return `today, ${clockOf(date)}`;
+  if (isSameDay(date, yesterday)) return `yesterday, ${clockOf(date)}`;
   const year =
     date.getFullYear() === today.getFullYear() ? '' : ` ${date.getFullYear()}`;
   return `${date.getDate()} ${MONTHS[date.getMonth()]}${year}, ${clockOf(date)}`;
@@ -74,10 +76,10 @@ export function messageWhen(seconds, nowSeconds = Date.now() / 1000) {
 export function formatWhen(seconds) {
   if (!seconds) return '—';
   const diff = Date.now() / 1000 - seconds;
-  if (diff < 60) return 'agora';
-  if (diff < 3600) return `há ${Math.floor(diff / 60)} min`;
-  if (diff < 86400) return `há ${Math.floor(diff / 3600)} h`;
-  return new Date(seconds * 1000).toLocaleDateString('pt-BR', {
+  if (diff < 60) return 'just now';
+  if (diff < 3600) return `${Math.floor(diff / 60)} min ago`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+  return new Date(seconds * 1000).toLocaleDateString(locale(), {
     day: '2-digit',
     month: 'short',
   });

@@ -13,10 +13,10 @@ const CONNECTORS = new Set([
   'na',
   'em',
 ]);
-export const IDEAS = ['Chefe de gabinete', 'Orgânico', 'Mídia paga', 'SDR'];
+export const IDEAS = ['Chief of staff', 'Organic', 'Paid media', 'SDR'];
 export const QUESTIONS = [
-  'Vamos montar o modelo. O que um agente que nasce dele cuida? Um número ou uma entrega.',
-  'Com o que ele precisa falar? Os serviços que os agentes dele usam.',
+  "Let's build the template. What does an agent created from it take care of? A metric or a deliverable.",
+  'What does it need to connect to? The services its agents use.',
 ];
 
 /** The template's name, from what it owns: an idea it matches, or its first words. */
@@ -33,7 +33,7 @@ export function nameFromOwns(owns) {
   while (words.length > 1 && CONNECTORS.has(words.at(-1).toLowerCase()))
     words.pop();
   const name = words.join(' ');
-  return name ? name.charAt(0).toUpperCase() + name.slice(1) : 'Novo modelo';
+  return name ? name.charAt(0).toUpperCase() + name.slice(1) : 'New model';
 }
 
 /** The services written in a sentence: "Instagram e TikTok, Gmail" becomes three. */

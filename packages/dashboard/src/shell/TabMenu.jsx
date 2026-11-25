@@ -66,14 +66,14 @@ export function TabMenu({
     >
       <button onClick={run(() => change((next) => closeTab(next, tab)))}>
         <i className="ti ti-x" />
-        Fechar
+        Close
       </button>
       {!isAlone && (
         <button
           onClick={run(() => change((next) => closeOtherTabs(next, tab)))}
         >
           <i className="ti ti-list-details" />
-          Fechar as outras
+          Close others
         </button>
       )}
       {!isLast && (
@@ -81,7 +81,7 @@ export function TabMenu({
           onClick={run(() => change((next) => closeTabsRight(next, tab)))}
         >
           <i className="ti ti-arrow-bar-to-right" />
-          Fechar as da direita
+          Close tabs to the right
         </button>
       )}
       {onReopen && (
@@ -89,14 +89,14 @@ export function TabMenu({
           onClick={run(() => {
             if (!onReopen())
               notify.info(
-                'Nada para reabrir',
-                'Nenhuma aba foi fechada desde que o painel abriu.',
+                'Nothing to reopen',
+                'No tabs have been closed since the dashboard opened.',
               );
           })}
           title="Alt + Shift + T"
         >
           <i className="ti ti-arrow-back-up" />
-          Reabrir a última fechada
+          Reopen last closed
           <kbd className="menu-kbd">Alt ⇧ T</kbd>
         </button>
       )}
@@ -109,7 +109,7 @@ export function TabMenu({
             )}
           >
             <i className="ti ti-layout-columns" />
-            Dividir à direita
+            Split right
           </button>
           <button
             onClick={run(() =>
@@ -117,7 +117,7 @@ export function TabMenu({
             )}
           >
             <i className="ti ti-layout-rows" />
-            Dividir abaixo
+            Split down
           </button>
         </>
       )}
@@ -127,7 +127,7 @@ export function TabMenu({
           {isOwner && (
             <button onClick={run(() => onOpen(`settings:${bot.id}`))}>
               <i className="ti ti-adjustments-horizontal" />
-              Ajustes do agente
+              Agent settings
             </button>
           )}
           <button
@@ -135,9 +135,9 @@ export function TabMenu({
             onClick={run(() => onOpen(`screen:${bot.id}`))}
           >
             <i className="ti ti-device-desktop" />
-            Ver a tela ao vivo
+            View live screen
             {!hasComputer && (
-              <span className="menu-why">sem computador agora</span>
+              <span className="menu-why">no computer right now</span>
             )}
           </button>
           {isOwner && (
@@ -148,14 +148,14 @@ export function TabMenu({
                   botsChanged();
                 } catch (error) {
                   notify.error(
-                    'Não marquei como não lida',
-                    `${error.message}. Tente de novo.`,
+                    "Couldn't mark as unread",
+                    `${error.message}. Try again.`,
                   );
                 }
               })}
             >
               <i className="ti ti-mail" />
-              Marcar como não lida
+              Mark as unread
             </button>
           )}
         </>
@@ -166,20 +166,18 @@ export function TabMenu({
           navigator.clipboard
             ?.writeText(link)
             .then(() =>
-              notify.success(
-                isAgent ? 'Link do agente copiado' : 'Link copiado',
-              ),
+              notify.success(isAgent ? 'Agent link copied' : 'Link copied'),
             )
-            .catch(() => notify.error('Não copiei o link', link));
+            .catch(() => notify.error("Couldn't copy the link", link));
         })}
       >
         <i className="ti ti-link" />
-        Copiar link
+        Copy link
       </button>
       {isAgent && (
         <button onClick={run(() => window.open(link, '_blank', 'noopener'))}>
           <i className="ti ti-app-window" />
-          Abrir em outra janela
+          Open in new window
         </button>
       )}
     </Menu>

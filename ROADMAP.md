@@ -29,8 +29,11 @@ same layout and code style, on Bun and plain JavaScript.
 
 ## 3. English first
 
-- [ ] Every text a person reads in English by default, with Brazilian Portuguese
-      as a translation that follows the browser's language.
+- [x] The dashboard is written in English; Brazilian Portuguese is a translation
+      layer (`lib/pt.json`) that follows the browser's language.
+- [ ] The server's messages a person reads (errors, warnings, notices) in
+      English, translated by the same layer.
+- [ ] The agent's instructions and tool results in English.
 
 ## 4. Gemini CLI as an agent engine
 

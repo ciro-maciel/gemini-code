@@ -12,6 +12,7 @@ import {
   IconSearch,
   IconTerminal2,
 } from '@tabler/icons-react';
+import { t } from '../lib/language';
 
 function hostOf(url) {
   try {
@@ -28,21 +29,25 @@ export function describeTool(name, args = {}) {
     case 'browser_navigate':
       return {
         icon: IconBrowser,
-        text: `Abriu ${hostOf(args.url)}`,
+        text: `Opened ${hostOf(args.url)}`,
         detail: args.url,
         isComputer: true,
       };
     case 'browser_navigate_back':
-      return { icon: IconBrowser, text: 'Voltou uma página', isComputer: true };
+      return { icon: IconBrowser, text: 'Went back a page', isComputer: true };
     case 'browser_snapshot':
-      return { icon: IconBrowser, text: 'Leu a página', isComputer: true };
+      return { icon: IconBrowser, text: 'Read the page', isComputer: true };
     case 'browser_take_screenshot':
-      return { icon: IconPhoto, text: 'Olhou a tela', isComputer: true };
+      return {
+        icon: IconPhoto,
+        text: 'Looked at the screen',
+        isComputer: true,
+      };
     case 'browser_click':
     case 'browser_mouse_click_xy':
       return {
         icon: IconClick,
-        text: `Clicou ${element ? `em ${element}` : 'na página'}`,
+        text: `Clicou ${element ? `em ${element}` : 'on the page'}`,
         isComputer: true,
       };
     case 'browser_type':
@@ -67,65 +72,73 @@ export function describeTool(name, args = {}) {
     case 'browser_select_option':
       return {
         icon: IconClick,
-        text: `Escolheu uma opção ${element ? `em ${element}` : ''}`,
+        text: `Chose an option${element ? ` in ${element}` : ''}`,
         isComputer: true,
       };
     case 'browser_wait_for':
-      return { icon: IconBrowser, text: 'Esperou a página', isComputer: true };
+      return {
+        icon: IconBrowser,
+        text: 'Waited for the page',
+        isComputer: true,
+      };
     case 'browser_tabs':
-      return { icon: IconBrowser, text: 'Mexeu nas abas', isComputer: true };
+      return {
+        icon: IconBrowser,
+        text: 'Worked with the tabs',
+        isComputer: true,
+      };
     case 'computer_shell':
       return {
         icon: IconTerminal2,
-        text: 'Rodou um comando',
+        text: 'Ran a command',
         detail: args.command,
         isComputer: true,
       };
     case 'computer_job_start':
       return {
         icon: IconTerminal2,
-        text: 'Começou um trabalho longo',
+        text: 'Started a long task',
         detail: args.command,
         isComputer: true,
       };
     case 'computer_job_wait':
       return {
         icon: IconTerminal2,
-        text: 'Acompanhou o trabalho longo',
+        text: 'Followed the long task',
         detail: args.id,
         isComputer: true,
       };
     case 'computer_job_stop':
       return {
         icon: IconTerminal2,
-        text: 'Parou o trabalho longo',
+        text: 'Stopped the long task',
         detail: args.id,
         isComputer: true,
       };
     case 'computer_read_file':
       return {
         icon: IconFile,
-        text: 'Leu um arquivo',
+        text: 'Read a file',
         detail: args.path,
         isComputer: true,
       };
     case 'computer_write_file':
       return {
         icon: IconFile,
-        text: 'Escreveu um arquivo',
+        text: 'Wrote a file',
         detail: args.path,
         isComputer: true,
       };
     case 'tools_search':
       return {
         icon: IconSearch,
-        text: 'Procurou ferramentas',
+        text: 'Searched for tools',
         detail: args.query,
       };
     case 'tools_enable':
       return {
         icon: IconPlugConnected,
-        text: 'Ativou ferramentas',
+        text: 'Turned on tools',
         detail: (args.names || []).join(', '),
       };
     case 'service_connect':
@@ -137,27 +150,27 @@ export function describeTool(name, args = {}) {
     case 'memory_save':
       return {
         icon: IconBrain,
-        text: 'Guardou na memória',
+        text: 'Saved to memory',
         detail: args.content,
       };
     case 'skill_save':
-      return { icon: IconBrain, text: `Guardou a habilidade: ${args.name}` };
+      return { icon: IconBrain, text: `Saved skill: ${args.name}` };
     case 'ask_user':
       return {
         icon: IconMessageQuestion,
-        text: 'Perguntou a você',
+        text: 'Asked you',
         detail: args.question,
       };
     case 'bot_handoff':
       return {
         icon: IconArrowForwardUp,
-        text: `Passou a ${args.to}`,
+        text: `Handed to ${args.to}`,
         detail: args.message,
       };
     case 'artifact_publish':
       return {
         icon: IconLayoutDashboard,
-        text: `Publicou ${args.artifact?.title ? `“${args.artifact.title}”` : 'um artifact'}`,
+        text: `Publicou ${args.artifact?.title ? `“${args.artifact.title}”` : 'an artifact'}`,
         detail: args.path,
       };
     default:
@@ -169,10 +182,10 @@ export function describeTool(name, args = {}) {
         if (four) {
           const product = four[1].charAt(0).toUpperCase() + four[1].slice(1);
           const what = {
-            guide: `Leu o guia do ${product}`,
-            read: `Lendo no ${product}`,
-            write: `Fazendo no ${product}`,
-            delete: `Apagando no ${product}`,
+            guide: `Read the ${product} guide`,
+            read: `Reading in ${product}`,
+            write: `Working in ${product}`,
+            delete: `Deleting in ${product}`,
           }[four[2]];
           return {
             icon: IconPlugConnected,
@@ -197,12 +210,13 @@ const lowerFirst = (text) => text.charAt(0).toLowerCase() + text.slice(1);
 
 /**
  * The steps between two things the agent said, as one line: what it did, the
- * same kind counted once ("Rodou um comando 3×, leu um arquivo e mais 2").
+ * same kind counted once ("Ran a command 3×, read a file and 2 more steps").
  */
 export function summarizeSteps(steps) {
   const kinds = [];
   for (const step of steps) {
-    const { text } = describeTool(step.name, step.args || {});
+    // Each piece in the reader's language first: the joined line is not in any dictionary.
+    const text = t(describeTool(step.name, step.args || {}).text);
     const kind = kinds.find((each) => each.text === text);
     if (kind) kind.count++;
     else kinds.push({ text, count: 1 });
@@ -215,9 +229,9 @@ export function summarizeSteps(steps) {
         `${index ? lowerFirst(kind.text) : kind.text}${kind.count > 1 ? ` ${kind.count}×` : ''}`,
     );
   const rest = kinds.slice(SHOWN).reduce((sum, kind) => sum + kind.count, 0);
-  if (rest) parts.push(`mais ${rest} ${rest === 1 ? 'passo' : 'passos'}`);
+  if (rest) parts.push(t(`${rest} more ${rest === 1 ? 'step' : 'steps'}`));
   return parts.length > 1
-    ? `${parts.slice(0, -1).join(', ')} e ${parts.at(-1)}`
+    ? `${parts.slice(0, -1).join(', ')} ${t('and')} ${parts.at(-1)}`
     : (parts[0] ?? '');
 }
 
@@ -234,10 +248,10 @@ export function placeOf(name = '') {
         : service.split(/[_-]+/).slice(0, 2).join(' ');
     return place ? place.charAt(0).toUpperCase() + place.slice(1) : null;
   }
-  if (name.startsWith('memory_') || name.startsWith('skill_')) return 'memória';
+  if (name.startsWith('memory_') || name.startsWith('skill_')) return 'memory';
   if (name.startsWith('computer_')) return 'computador';
   if (name.startsWith('browser_')) return 'navegador';
-  if (name.startsWith('chrome_')) return 'seu Chrome';
+  if (name.startsWith('chrome_')) return 'your Chrome';
   if (name.startsWith('file_') || name.startsWith('repo_')) return 'arquivos';
   return null;
 }

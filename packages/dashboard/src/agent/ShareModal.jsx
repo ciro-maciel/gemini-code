@@ -7,11 +7,15 @@ import { Modal } from '../ui/Modal';
 import { Menu, useMenu } from '../ui/Menu';
 
 const ACCESS = [
-  ['read', 'Só ler', 'Acompanha a conversa ao vivo, sem mandar mensagem.'],
+  [
+    'read',
+    'Read only',
+    'Follows the conversation live without sending messages.',
+  ],
   [
     'enter',
-    'Pode entrar na conversa',
-    'Manda mensagem pro mesmo agente, assinada com o próprio nome.',
+    'Can join the chat',
+    'Sends a message to the same agent, signed with its own name.',
   ],
 ];
 
@@ -72,22 +76,22 @@ export function ShareModal({ bot, onClose }) {
     if (
       await run(
         () => shareAgent(bot.id, address, access),
-        `Compartilhada com ${address}. O agente aparece na lista da pessoa.`,
+        `Shared with ${address}. The agent shows up in their list.`,
       )
     )
       setEmail('');
   };
 
   return (
-    <Modal title="Compartilhar agente" icon="ti-user-share" onClose={onClose}>
+    <Modal title="Share agent" icon="ti-user-share" onClose={onClose}>
       <div className="fine">{bot.name}</div>
-      <span className="label">Com quem</span>
+      <span className="label">With whom</span>
       <div className="share-who">
         <input
           className="input"
           type="email"
-          placeholder="E-mail da pessoa"
-          aria-label="E-mail da pessoa"
+          placeholder="Person's email"
+          aria-label="Person's email"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
           onKeyDown={(event) =>
@@ -96,7 +100,7 @@ export function ShareModal({ bot, onClose }) {
         />
         {others.length > 0 && (
           <button className="select" onClick={menu.open('who')}>
-            Do time
+            Team’s
             <i className="ti ti-chevron-down" />
           </button>
         )}
@@ -111,8 +115,8 @@ export function ShareModal({ bot, onClose }) {
         />
       ))}
       <p className="fine">
-        O agente continua rodando como você, com o seu acesso e no seu plano.
-        Pedido de permissão do agente, só você responde.
+        The agent keeps running as you, with your access and on your plan. Only
+        you can answer the agent’s permission requests.
       </p>
       <div className="mf">
         <button
@@ -121,12 +125,12 @@ export function ShareModal({ bot, onClose }) {
           disabled={!email.trim() || isSaving}
         >
           <i className="ti ti-user-share" />
-          Compartilhar
+          Share
         </button>
       </div>
       {members.length > 0 && (
         <>
-          <span className="label">Com quem já está</span>
+          <span className="label">Who already has it</span>
           {members.map((member) => (
             <div className="row" key={member.email}>
               <span className="av sm">
@@ -144,7 +148,7 @@ export function ShareModal({ bot, onClose }) {
                       run(() => shareAgent(bot.id, member.email, id))
                     }
                   >
-                    {id === 'read' ? 'Só ler' : 'Pode entrar'}
+                    {id === 'read' ? 'Read only' : 'Can enter'}
                   </button>
                 ))}
               </span>
@@ -153,11 +157,11 @@ export function ShareModal({ bot, onClose }) {
                 onClick={() =>
                   run(
                     () => unshareAgent(bot.id, member.email),
-                    `${member.name} saiu do agente`,
+                    `${member.name} left the agent`,
                   )
                 }
               >
-                Tirar
+                Remove
               </button>
             </div>
           ))}
@@ -166,7 +170,7 @@ export function ShareModal({ bot, onClose }) {
       {menu.is('who') && (
         <Menu
           anchor={menu.anchor}
-          title="Com quem"
+          title="With whom"
           width={260}
           onClose={menu.close}
         >
