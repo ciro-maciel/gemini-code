@@ -1088,17 +1088,17 @@ textarea {
   border-radius: var(--radius-pill);
   background: var(--gm-outline);
 }
-.ne-palette .pr-meta.live .dot {
+.ne-palette .pr-meta[data-mark='live'] .dot {
   background: var(--ne-glow);
   animation: ne-spin 2s linear infinite;
 }
-.ne-palette .pr-meta.wait {
+.ne-palette .pr-meta[data-mark='wait'] {
   color: #b06000;
 }
-.ne-palette .pr-meta.wait .dot {
+.ne-palette .pr-meta[data-mark='wait'] .dot {
   background: var(--ne-yellow);
 }
-.ne-palette .pr-meta.done .dot {
+.ne-palette .pr-meta[data-mark='done'] .dot {
   background: var(--ne-green);
 }
 .ne-palette .pr-enter {

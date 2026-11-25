@@ -294,7 +294,9 @@ export function SearchPalette({
                 </span>
                 {item.meta && (
                   <span
-                    className={`pr-meta${item.mark ? ` ${item.mark}` : ''}`}
+                    // The state goes in a data attribute: a class named after it ("live") hit the global dot style.
+                    className="pr-meta"
+                    data-mark={item.mark || undefined}
                   >
                     {item.mark && <i className="dot" />}
                     {item.meta}
