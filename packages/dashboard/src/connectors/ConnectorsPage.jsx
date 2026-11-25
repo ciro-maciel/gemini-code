@@ -13,15 +13,25 @@ import {
 import { notify } from '../components/zen';
 import { SEARCH_ICON } from '../shell/Column';
 import { Menu, useMenu } from '../ui/Menu';
+import { brandIconOf } from './brand-icon';
 import { fromRegistry, lineOf, sectionsOf, usedBy } from './catalog';
 import { openSignIn, whenClosed } from './sign-in';
 import { keepIfSame } from '../state/keep-if-same';
 
-/** The app's logo, on the gray scale like every image of the system. */
-function AppIcon({ src }) {
+/**
+ * The app's mark: its brand icon in its own colors when the repository has
+ * one, otherwise the image the server gives, on the gray scale.
+ */
+function AppIcon({ app }) {
+  const brand = brandIconOf(app.id);
+  const src = brand ?? app.icon;
   return (
-    <span className="app-ic">
-      {src ? <img alt="" src={src} /> : <i className="ti ti-plug-connected" />}
+    <span className={brand ? 'app-ic is-brand' : 'app-ic'}>
+      {src ? (
+        <img alt="" src={src} data-keep-colors={brand ? '' : undefined} />
+      ) : (
+        <i className="ti ti-plug-connected" />
+      )}
     </span>
   );
 }
@@ -254,7 +264,7 @@ function AppRow({ app, bots, onOpenAgent, onChange }) {
       bots.filter((bot) => (bot.access ?? 'owner') === 'owner').length;
   return (
     <div className="app-row">
-      <AppIcon src={app.icon} />
+      <AppIcon app={app} />
       <div className="grow">
         <b>{app.title}</b>
         <div
@@ -359,7 +369,7 @@ export function ConnectorsPage({ bots, onOpenAgent }) {
             >
               <span className="stack">
                 {connected.slice(0, 4).map((app) => (
-                  <AppIcon key={app.id} src={app.icon} />
+                  <AppIcon key={app.id} app={app} />
                 ))}
               </span>
               {connected.length}{' '}
