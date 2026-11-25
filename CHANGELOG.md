@@ -1,0 +1,76 @@
+# Changelog
+
+Every change to Gemini Code, newest first. The format follows
+[Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the version numbers
+follow [Semantic Versioning](https://semver.org/).
+
+Each pull request adds its line under **Unreleased**, in Added, Changed, Fixed
+or Removed, with the date it merged and its number. CI refuses a pull request
+without one (`scripts/check-changelog.js`). A release turns Unreleased into a
+version with its date.
+
+## [Unreleased]
+
+### Added
+
+- A changelog, and a CI check that every pull request adds its line to it
+  (2026-11-25, #26).
+- Subscription agents get their own folder through the files MCP (2026-11-25,
+  #25).
+- The subscription transport speaks the Agent Client Protocol (`agy acp`): every
+  tool call the agent wants to run asks Gemini Code first, and the answer keeps
+  it inside its folder and leaves deleting to the person (2026-11-25, #23).
+- A search palette with quick actions, keyboard navigation and one selection
+  (2026-11-25, #19).
+- A demo of the dashboard for every branch, at
+  `ciro-maciel.github.io/gemini-code/preview/<branch>/` (2026-11-25, #16).
+
+### Changed
+
+- The README says signing in with a Google AI Pro or Ultra subscription waits
+  for Google's official path for third-party tools; the official way today is a
+  Gemini API key from Google AI Studio (2026-11-25, #24).
+- The server's messages a person reads are in English, translated to Brazilian
+  Portuguese by the dashboard (2026-11-25, #21).
+- The dashboard is written in English first, with Brazilian Portuguese as a
+  translation that follows the browser's language (2026-11-25, #18).
+- `main` changes only through pull requests with the `test` check green
+  (2026-11-25, #16).
+
+### Fixed
+
+- A follow-up on the subscription no longer repeats the previous answer: the
+  history `session/load` replays stays out of the new one (2026-11-25, #25).
+- An MCP server a subscription agent finds in its own global settings, such as
+  the person's Playwriter, is refused (2026-11-25, #25).
+- File links inside the agent's folder show as relative paths, not the machine's
+  `file://` address (2026-11-25, #25).
+- A refused turn with no answer says what was refused and why, instead of
+  "Done." (2026-11-25, #25).
+- A tool result no longer shows twice when the agent repeats its final status
+  (2026-11-25, #25).
+- No rules on the collapsed side of the dashboard (2026-11-25, #22).
+- A preview removal is never dropped: one queue per demo target (2026-11-25,
+  #20).
+- One 12 px space between panes, not 32 (2026-11-25, #17).
+
+## [0.1.0] - 2026-11-25
+
+The first public version.
+
+### Added
+
+- A desk of coding agents built around the Gemini API: split panes, one agent
+  per pane, a command center, a risk judge before shell, browser and connector
+  actions, a per-agent encrypted vault and connectors through MCP.
+- Each agent's folder through a files MCP (guide, read, write, delete), with its
+  tree beside the conversation.
+- Code opens in Monaco, with VS Code's colors and Cmd+S to save.
+- A neural expressive look, after Google's 2026 Gemini design.
+- A public demo of the dashboard on GitHub Pages, with example agent folders.
+- The Gemini CLI layout (`packages/*`), Prettier, EditorConfig, ESLint with zero
+  warnings, `bun run preflight`, `GEMINI.md`, a roadmap and one grouped weekly
+  Dependabot update.
+
+[Unreleased]: https://github.com/ciro-maciel/gemini-code/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/ciro-maciel/gemini-code/releases/tag/v0.1.0

@@ -11,7 +11,7 @@
   "scripts": {
     "dev": "bun --filter '*' --parallel dev",
     "build": "bun --cwd packages/dashboard run build",
-    "test": "bun --cwd packages/server test src && bun --cwd packages/dashboard test src",
+    "test": "bun --cwd packages/server test src && bun --cwd packages/dashboard test src && bun test scripts",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint . --max-warnings 0",

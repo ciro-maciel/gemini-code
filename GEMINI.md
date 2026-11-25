@@ -73,6 +73,9 @@ same layout and code style, on Bun and plain JavaScript.
   `https://ciro-maciel.github.io/gemini-code/preview/<branch>/`, linked in a
   comment. Use it to show a UI change before it merges.
 - Run `bun run preflight` before every push.
+- Every pull request adds its line to `CHANGELOG.md` under `## [Unreleased]`
+  (Added, Changed, Fixed or Removed, with the merge date and the pull request
+  number). CI refuses one without it.
 
 ## Testing Conventions
 
