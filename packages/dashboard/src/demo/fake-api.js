@@ -531,10 +531,7 @@ export function createFakeApi({
       ({ params }) => {
         const account = aiAccounts.find((item) => item.id === params.accountId);
         if (!account) return fail(404, 'NOT_FOUND', 'unknown AI account');
-        const known = [
-          ...fixtures.GEMINI_MODELS,
-          ...fixtures.SUBSCRIPTION_MODELS,
-        ];
+        const known = fixtures.GEMINI_MODELS;
         return ok(
           collection(
             account.models.map((id) => ({
@@ -648,7 +645,7 @@ const { BOT_IDS } = fixtures;
 const DEMO_FILES = {
   [BOT_IDS.neon]: {
     'INSTRUCTIONS.md':
-      '# Neon Engineer You are a software engineer. Answer in the language you are written to.',
+      '# Test Engineer You are a software engineer. Answer in the language you are written to.',
     'soma.js': 'export function soma(a, b) {\n    return a + b\n}\n',
     'soma.test.js':
       "import { expect, test } from 'bun:test'\nimport { soma } from './soma.js'\n\ntest('soma positivos', () => expect(soma(2, 3)).toBe(5))\ntest('soma negativos', () => expect(soma(-2, -3)).toBe(-5))\ntest('soma com zero', () => expect(soma(0, 7)).toBe(7))\n",

@@ -10,7 +10,6 @@ export const REPO_URL = 'https://github.com/ciro-maciel/gemini-code';
 
 export const ACCOUNT_IDS = {
   gemini: 'a1f0c0de-0000-4000-8000-000000000001',
-  subscription: 'a1f0c0de-0000-4000-8000-000000000002',
 };
 export const BOT_IDS = {
   engineer: 'b07a0001-5e1f-4c0d-9e00-00000000e001',
@@ -40,12 +39,6 @@ export const GEMINI_MODELS = [
     cost: 'Google Gemini',
   },
 ];
-export const SUBSCRIPTION_MODELS = [
-  { id: 'gemini-4-neon-low', label: 'Gemini 4 Neon (Low)' },
-  { id: 'gemini-4-neon-medium', label: 'Gemini 4 Neon (Medium)' },
-  { id: 'gemini-4-neon-high', label: 'Gemini 4 Neon (High)' },
-];
-
 export const PROVIDERS = [
   {
     id: 'google',
@@ -53,21 +46,6 @@ export const PROVIDERS = [
     base: 'https://generativelanguage.googleapis.com/v1beta/openai',
     keyHint: 'AIza…',
     keyUrl: 'https://aistudio.google.com/apikey',
-  },
-  {
-    id: 'google-subscription',
-    name: 'Google subscription (AI Pro and Ultra)',
-    base: null,
-    isSubscription: true,
-    keyHint: 'sign in once to the Antigravity CLI (agy)',
-    keyUrl: 'https://antigravity.google/product/antigravity-cli',
-  },
-  {
-    id: 'gemini-cli',
-    name: 'Gemini CLI',
-    base: null,
-    keyHint: 'GEMINI_API_KEY (AIza…)',
-    keyUrl: 'https://github.com/google-gemini/gemini-cli',
   },
 ];
 
@@ -141,17 +119,7 @@ export function aiAccounts(now) {
       models: GEMINI_MODELS.map((model) => model.id),
       createdAt: now - 3 * 86400,
       usage: { today: 0, last30Days: 0 },
-      agents: 2,
-    },
-    {
-      id: ACCOUNT_IDS.subscription,
-      name: 'Google subscription',
-      provider: 'google-subscription',
-      providerName: 'Google subscription (AI Pro and Ultra)',
-      models: SUBSCRIPTION_MODELS.map((model) => model.id),
-      createdAt: now - 2 * 86400,
-      usage: { today: 0, last30Days: 0 },
-      agents: 1,
+      agents: 3,
     },
   ];
 }
@@ -221,9 +189,9 @@ export function bots(now) {
     }),
     bot(now, {
       id: BOT_IDS.neon,
-      name: 'Neon Engineer',
-      model: 'gemini-4-neon-low',
-      aiAccount: ACCOUNT_IDS.subscription,
+      name: 'Test Engineer',
+      model: 'gemini-3.6-flash',
+      aiAccount: ACCOUNT_IDS.gemini,
       effort: 'medium',
       instructions:
         'You write small, tested code. Run the tests before you say you are done, and show the exact result.',

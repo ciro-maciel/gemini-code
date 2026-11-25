@@ -228,6 +228,7 @@ export async function chatAccountFor(botId) {
  * the strongest Neon first. It holds no key.
  */
 export async function ensureSubscriptionAccount(accountId, models) {
+  if (!config.isSubscriptionOn) return null;
   const ids = models.map((model) => model.id);
   if (!ids.length) return null;
   const preferred = [

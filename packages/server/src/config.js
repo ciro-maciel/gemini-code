@@ -75,6 +75,10 @@ export const config = {
   spareComputers: Number(process.env.SPARE_COMPUTERS ?? (spritesToken ? 1 : 0)),
   spareComputersMax: Number(process.env.SPARE_COMPUTERS_MAX ?? 6),
   // Auth: 'local' (single-user open-source default, no login required) or 'jwt' (external JWKS server).
+  // Google AI Pro and Ultra through Google's own client (engine/subscription/):
+  // off until Google publishes the official path for third-party tools; on
+  // only as a personal experiment (GEMINI_SUBSCRIPTION=1).
+  isSubscriptionOn: process.env.GEMINI_SUBSCRIPTION === '1',
   authMode: process.env.AUTH_MODE || (authUrl ? 'jwt' : 'local'),
   authUrl,
   authIssuer: process.env.AUTH_ISSUER || 'gemini-code-auth',
