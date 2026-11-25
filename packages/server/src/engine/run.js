@@ -1743,6 +1743,11 @@ async function runTurnOnSubscription(taskId, bot, messages) {
             preview: event.output.slice(0, 1500),
             hasImage: false,
           });
+        // The agent asked before acting and was refused: the person sees what and why.
+        if (event.type === 'permission' && !event.isAllowed)
+          emitTaskEvent(taskId, 'warning', {
+            message: `Refused ${event.name}: ${event.reason}`,
+          });
       },
     });
   } finally {
