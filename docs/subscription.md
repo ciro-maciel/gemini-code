@@ -5,6 +5,12 @@ instead of an API key. That gives them the newest models the subscription opens,
 such as the Gemini 4 family (Neon, Carbon, Argon, Hydrogen), with no API
 billing.
 
+**Status: waiting for Google's official path.** Google has not published an
+official way for third-party tools to use the subscription. Until it does, the
+supported way to run Gemini Code is a Gemini API key from Google AI Studio, and
+what this page describes is an experiment for personal use. When Google
+publishes the official path, it replaces the transport below.
+
 ## How it works today
 
 There is no official API yet for a third-party app to use a Gemini subscription.

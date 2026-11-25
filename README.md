@@ -41,10 +41,10 @@ dashboard with example data, nothing to install.
 - **Connectors through MCP.** GitHub, Linear, Sentry, Cloudflare, Notion, Figma
   and others through their official remote MCP servers, plus a browser the agent
   can drive.
-- **Sign in with your Google subscription.** Agents can run on a Google AI Pro
-  or Ultra subscription through Google's Antigravity CLI, which opens the Gemini
-  4 family (Neon and others) with no API billing. See
-  [docs/subscription.md](docs/subscription.md).
+- **One official way to reach Gemini.** Every agent runs on the Gemini API with
+  your own key from Google AI Studio. Signing in with a Google AI Pro or Ultra
+  subscription waits for Google to publish an official path for third-party
+  tools; see [Google accounts](#google-accounts) below.
 - **Each agent's folder, through one MCP.** A files MCP server with four tools
   (guide, read, write, delete) covers listing, tree, reading, searching,
   writing, editing, moving, copying and deleting, all locked inside the agent's
@@ -91,6 +91,29 @@ In one run on 24/11/2026 (free tier, a prompt that calls one tool),
 `gemini-3.5-flash-lite` started answering in 0.75 s and `gemini-3.6-flash` in
 1.5 s. When a model is overloaded or out of quota, the engine moves to the next
 healthy one on its own.
+
+## Google accounts
+
+**The official way today is a Gemini API key.** A key from
+[Google AI Studio](https://aistudio.google.com/apikey) is the path Google
+documents and supports for third-party tools, with a free tier and billing by
+use on your own Google account. Vertex AI, the same API inside a Google Cloud
+project, is the variant for companies and may come later.
+
+**Signing in with a Google subscription is waiting for Google.** A Google AI Pro
+or Ultra subscription has no official path for third-party tools yet:
+
+- Gemini CLI's Google sign-in refuses personal subscriptions since November 2026
+  ("This client is no longer supported for Gemini Code Assist for individuals"),
+  and the Gemini CLI SDK is not published on npm.
+- Google has hinted that an official way for third-party harnesses to use the
+  subscription is coming. There is no confirmed date and no documentation yet.
+
+Until then Gemini Code offers only the API key. The subscription transport
+(Google's Antigravity CLI over the Agent Client Protocol, every tool call asking
+Gemini Code first) stays in the code as an experiment for personal use,
+described in [docs/subscription.md](docs/subscription.md). When Google publishes
+the official path, it comes back as "Sign in with Google".
 
 ## How it is built
 
