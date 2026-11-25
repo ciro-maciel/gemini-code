@@ -1,0 +1,146 @@
+name: Gemini Code — release
+
+# One executable per system (bun build --compile, the Bun runtime inside),
+# next to the dashboard's build and the cloud computer's code, packed as
+# gemini-code-<os>-<arch>.tar.gz (zip on Windows) and published with
+# SHA256SUMS on a GitHub Release. install.sh and install.ps1 download these.
+#
+# - a tag v* builds every system and publishes the release
+# - workflow_dispatch builds every system and keeps the packs as artifacts,
+#   publishing nothing
+#
+# Checks run on a machine before the tag (docs/install.md), not here.
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  BUN_VERSION: 1.4.0
+
+jobs:
+  dashboard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+      - run: bun install --frozen-lockfile
+      - run: bun run build
+        working-directory: packages/dashboard
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dashboard
+          path: packages/dashboard/dist
+          retention-days: 3
+
+  build:
+    needs: dashboard
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {
+              name: linux-x64,
+              target: bun-linux-x64,
+              runner: ubuntu-latest,
+              exe: gemini-code,
+            }
+          - {
+              name: linux-arm64,
+              target: bun-linux-arm64,
+              runner: ubuntu-latest,
+              exe: gemini-code,
+            }
+          - {
+              name: windows-x64,
+              target: bun-windows-x64,
+              runner: ubuntu-latest,
+              exe: gemini-code.exe,
+            }
+          - {
+              name: darwin-arm64,
+              target: bun-darwin-arm64,
+              runner: macos-latest,
+              exe: gemini-code,
+            }
+          - {
+              name: darwin-x64,
+              target: bun-darwin-x64,
+              runner: macos-latest,
+              exe: gemini-code,
+            }
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+      - run: bun install --frozen-lockfile
+      - id: version
+        env:
+          REF_NAME: ${{ github.ref_name }}
+          EVENT: ${{ github.event_name }}
+        run: |
+          if [ "$EVENT" = "push" ]; then echo "value=${REF_NAME#v}" >> "$GITHUB_OUTPUT"; else echo "value=0.0.0-dev.${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"; fi
+      - name: Compile
+        env:
+          VERSION: ${{ steps.version.outputs.value }}
+        run: |
+          mkdir -p out/gemini-code
+          bun build --compile --minify --target=${{ matrix.target }} \
+            --external @playwright/mcp --external playwright-core --external playwright \
+            --define "process.env.GEMINI_CODE_VERSION=\"$VERSION\"" \
+            packages/server/src/cli.js --outfile out/gemini-code/${{ matrix.exe }}
+      # An Apple silicon Mac kills an executable with no signature at all.
+      - name: Sign for macOS (ad hoc)
+        if: startsWith(matrix.name, 'darwin')
+        run: codesign --force --sign - out/gemini-code/gemini-code
+      - uses: actions/download-artifact@v4
+        with:
+          name: dashboard
+          path: out/gemini-code/dashboard
+      - name: Add the cloud computer's code and the license
+        run: |
+          mkdir -p out/gemini-code/computer
+          for file in server.js browser.js package.json bun.lock provision.sh; do
+            if [ -f "packages/computer/$file" ]; then cp "packages/computer/$file" out/gemini-code/computer/; fi
+          done
+          cp LICENSE out/gemini-code/
+      - name: Pack
+        run: |
+          cd out
+          if [ "${{ matrix.name }}" = windows-x64 ]; then
+            zip -qr "gemini-code-${{ matrix.name }}.zip" gemini-code
+          else
+            tar -czf "gemini-code-${{ matrix.name }}.tar.gz" gemini-code
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pack-${{ matrix.name }}
+          path: out/gemini-code-${{ matrix.name }}.*
+          retention-days: 7
+
+  release:
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: pack-*
+          merge-multiple: true
+          path: dist
+      - name: Checksums
+        run: cd dist && sha256sum gemini-code-* > SHA256SUMS && cat SHA256SUMS
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: gh release create "$TAG" dist/* --title "Gemini Code $TAG" --generate-notes --verify-tag

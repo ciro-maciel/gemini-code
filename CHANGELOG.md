@@ -13,6 +13,10 @@ version with its date.
 
 ### Added
 
+- An installer for macOS, Linux and Windows: one command downloads a single
+  executable with the Bun runtime inside, checks its SHA-256 and adds
+  `gemini-code` to the PATH, with no administrator rights; a tag `v*` builds the
+  five archives and publishes the release (2026-11-25, #28).
 - Each connector shows its brand's own icon, in its colors, kept in the
   repository so the app and the demo show it without fetching images from
   another host (2026-11-25, #27).

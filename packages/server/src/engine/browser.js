@@ -1,6 +1,5 @@
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
-import { createConnection } from '@playwright/mcp';
 import { fetchSpriteHttp } from '../sprites.js';
 
 // The browser runs in the bot's own computer (packages/computer/browser.js): the
@@ -72,6 +71,15 @@ export async function closeBrowserSession(bot) {
 let cachedDefinitions = null;
 export async function listBrowserToolDefinitions() {
   if (cachedDefinitions) return cachedDefinitions;
+  // Loaded only here, and optional: the installed executable (cli.js) ships
+  // without Playwright, and then the cloud browser's tools are simply absent.
+  let createConnection;
+  try {
+    ({ createConnection } = await import('@playwright/mcp'));
+  } catch {
+    cachedDefinitions = [];
+    return cachedDefinitions;
+  }
   const server = await createConnection(
     { capabilities: ['vision'] },
     async () => {
