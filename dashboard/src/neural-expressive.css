@@ -792,3 +792,14 @@ textarea {
         border-top: 1px solid var(--gm-outline-variant);
     }
 }
+
+/* The selected agent row: the old theme painted the avatar primary and then darkened everything inside
+   the row, its icon included (dark on blue). Tonal instead: a light circle with the icon in primary. */
+.crow.on .av {
+    background: var(--gm-surface);
+    border-color: transparent;
+}
+.crow.on .av,
+.crow.on .av * {
+    color: var(--gm-primary) !important;
+}
