@@ -11,6 +11,11 @@ version with its date.
 
 ## [Unreleased]
 
+### Added
+
+- The README, in English and Portuguese, shows the design system with an image
+  of its page and links to the reference and the HTML page (2026-11-25).
+
 ## [0.2.1] - 2026-11-25
 
 ### Added

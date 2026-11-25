@@ -147,6 +147,23 @@ Where to start reading: `packages/server/src/engine/run.js` (the loop),
 `packages/server/src/engine/policy.js` (what needs a person),
 `packages/server/src/engine/model-router.js` (failover).
 
+## Design system
+
+Gemini Code mirrors the Gemini app's design language (Neural Expressive on
+Material 3 Expressive) on every screen and every piece made for it.
+
+[![The Gemini Code design system page, built from its own tokens](docs/images/design-system.jpg)](docs/2026-11-25-design-system.md)
+
+- [docs/2026-11-25-design-system.md](docs/2026-11-25-design-system.md): the
+  reference. Color, type, shape, motion, voice, the dashboard's components, and
+  the rules for the landing page, site, editor, terminal, blog, text messages,
+  e-mail, slides, social posts and business cards.
+- [docs/2026-11-25-design-system.html](docs/2026-11-25-design-system.html): the
+  same system as a page built from its own tokens, with live components and a
+  specimen of each piece. Download it and open it in a browser.
+- The values live in `packages/dashboard/src/neural-expressive.css`;
+  [docs/design.md](docs/design.md) says why each choice was made.
+
 ## Roadmap
 
 **Milestone 1, almost done: each agent with its own file tree.** Done: the

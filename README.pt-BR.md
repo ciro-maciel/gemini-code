@@ -118,6 +118,23 @@ sozinho para o próximo que está bem.
 | `packages/worker/`    | Cloudflare Worker              | Porta pública e despertador opcionais para a nuvem                                                                                    |
 | `workspace/`          | Arquivos                       | Onde moram os agentes e as habilidades compartilhadas                                                                                 |
 
+## Design system
+
+O Gemini Code espelha a linguagem visual do app Gemini (Neural Expressive sobre
+Material 3 Expressive) em cada tela e em cada peça feita para ele.
+
+[![A página do design system do Gemini Code, feita com os próprios tokens](docs/images/design-system.jpg)](docs/2026-11-25-design-system.md)
+
+- [docs/2026-11-25-design-system.md](docs/2026-11-25-design-system.md): a
+  referência. Cor, tipografia, forma, movimento, voz, os componentes do painel e
+  as regras para landing page, site, editor, terminal, blog, mensagens, e-mail,
+  slides, posts e cartão de visita (em inglês).
+- [docs/2026-11-25-design-system.html](docs/2026-11-25-design-system.html): o
+  mesmo sistema como página, feita com os próprios tokens, com componentes
+  funcionando e um exemplo de cada peça. Baixe e abra no navegador.
+- Os valores ficam em `packages/dashboard/src/neural-expressive.css`;
+  [docs/design.md](docs/design.md) explica o porquê de cada escolha.
+
 ## Próximos passos
 
 **Marco 1, quase pronto: cada agente com a sua árvore de arquivos.** Feito: a
