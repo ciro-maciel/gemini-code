@@ -2284,14 +2284,14 @@ a.btn {
   border-bottom: 0;
 }
 .conv-sub .m-btn.agent-chip {
-  height: 36px;
-  gap: 8px;
-  padding: 0 10px 0 14px;
+  height: 28px;
+  gap: 6px;
+  padding: 0 8px 0 10px;
   border-radius: var(--radius-pill);
   background: var(--gm-surface-2);
   color: var(--gm-on-surface);
   font-family: var(--font);
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 600;
   transition: background var(--dur) var(--effects);
 }
@@ -2299,7 +2299,7 @@ a.btn {
   background: var(--gm-surface-3);
 }
 .conv-sub .m-btn.agent-chip .ti {
-  font-size: 16px;
+  font-size: 14px;
   color: var(--gm-on-surface-variant);
 }
 .conv-sub .chip-origin {
@@ -2318,28 +2318,33 @@ a.btn {
   font-size: 14px;
 }
 .conv-sub .icon-btn {
-  width: 36px;
-  height: 36px;
+  width: 28px;
+  height: 28px;
 }
-/* The view switch: a segmented button group on a tonal track. */
+.conv-sub .icon-btn .ti {
+  font-size: 16px;
+}
+/* The view switch: a segmented button group on a tonal track. The whole bar
+   is one height, the origin chip's 28 px, so no control looks heavier than
+   another (25/11/2026). */
 .conv-sub .view-switch {
-  height: 36px;
+  height: 28px;
   display: inline-flex;
   align-items: center;
   gap: 2px;
-  padding: 3px;
+  padding: 2px;
   border: 0;
   border-radius: var(--radius-pill);
   background: var(--gm-surface-1);
 }
 .conv-sub .view-switch button {
-  height: 30px;
-  padding: 0 14px;
+  height: 24px;
+  padding: 0 12px;
   border: 0;
   border-radius: var(--radius-pill);
   background: transparent;
   color: var(--gm-on-surface-variant);
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 600;
   letter-spacing: 0;
   text-transform: none;
@@ -2356,20 +2361,25 @@ a.btn {
   box-shadow: var(--ne-shadow);
 }
 .conv-sub .files-toggle {
-  height: 36px;
-  padding: 0 16px 0 12px;
-  gap: 8px;
+  height: 28px;
+  padding: 0 12px 0 10px;
+  gap: 6px;
   border: 0;
   background: var(--gm-surface-1);
   color: var(--gm-on-surface-variant);
-  font-size: 13px;
+  font-size: 12.5px;
+  font-weight: 600;
 }
 .conv-sub .files-toggle.on {
   background: var(--gm-primary-container);
   color: var(--gm-on-primary-container);
 }
 .conv-sub .files-toggle .ti {
-  font-size: 17px;
+  font-size: 14px;
+}
+.conv-sub .files-toggle:hover:not(.on) {
+  background: var(--gm-surface-2);
+  color: var(--gm-on-surface);
 }
 /* Focus: one 2 px ring inside the shape, never a halo with a gap. */
 .conv-sub button:focus-visible {

@@ -13,6 +13,9 @@ version with its date.
 
 ### Changed
 
+- The bar above a conversation is one height: the agent's settings chip, the
+  view switch (Conversation, Trail) and Files match the origin chip's 28 px and
+  12.5 px text (2026-11-25).
 - The agent's header row follows the design system: settings as a tonal pill,
   where the agent came from as a chip, the view switch and Files as one docked
   group at 36 px, a single inset focus ring, and no rule under it (2026-11-25).
