@@ -11,6 +11,8 @@ version with its date.
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-11-25
+
 ### Added
 
 - A design system for every piece Gemini Code makes: the dashboard, landing
@@ -157,6 +159,7 @@ The first public version.
   warnings, `bun run preflight`, `GEMINI.md`, a roadmap and one grouped weekly
   Dependabot update.
 
-[Unreleased]: https://github.com/ciro-maciel/gemini-code/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/ciro-maciel/gemini-code/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/ciro-maciel/gemini-code/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/ciro-maciel/gemini-code/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/ciro-maciel/gemini-code/releases/tag/v0.1.0
