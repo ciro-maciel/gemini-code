@@ -73,7 +73,7 @@ export function Menu({
       {search && (
         <input
           className="search-in"
-          placeholder="Buscar…"
+          placeholder="Search…"
           aria-label="Buscar"
           autoFocus
           value={query}

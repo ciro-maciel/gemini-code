@@ -49,12 +49,12 @@ export function LevelBars({ level, color = null }) {
  */
 // The parts of a step, from the largest kind to the smallest, darkest first.
 const CONTEXT_PARTS = [
-  ['people', 'O que as pessoas escreveram'],
-  ['answers', 'Respostas do agente'],
-  ['results', 'Resultados das ferramentas'],
+  ['people', 'What people wrote'],
+  ['answers', 'Agent replies'],
+  ['results', 'Tool results'],
   ['tools', 'Ferramentas'],
-  ['rules', 'Regras, memória e habilidades'],
-  ['instructions', 'Instruções do agente'],
+  ['rules', 'Rules, memory, and skills'],
+  ['instructions', 'Agent instructions'],
 ];
 // 171.900 tokens read as "171,9k", a million as "1M".
 const short = (value) =>
@@ -80,7 +80,7 @@ function ContextDetail({ context, share, releasable, onRelease }) {
   const free = window ? Math.max(0, window - context.tokens) : 0;
   return (
     <span className="ctx-pop" role="tooltip">
-      <span className="ctx-h">Contexto</span>
+      <span className="ctx-h">Context</span>
       <span className="ctx-n">
         <span className="grow">{Math.round(share * 100)}% usado</span>
         {window && (
@@ -114,7 +114,7 @@ function ContextDetail({ context, share, releasable, onRelease }) {
           ))}
           <span className="ctx-row free">
             <i />
-            <span className="grow">Espaço livre</span>
+            <span className="grow">Free space</span>
             <span className="ctx-t">{short(free)}</span>
             <span className="ctx-p">{percent(free, window)}</span>
           </span>
@@ -122,7 +122,7 @@ function ContextDetail({ context, share, releasable, onRelease }) {
       )}
       {context?.parts?.toolCount > 0 && (
         <span className="ctx-row ctx-count">
-          <span className="grow">Ferramentas ativas</span>
+          <span className="grow">Active tools</span>
           <span className="ctx-p">{context.parts.toolCount}</span>
         </span>
       )}
@@ -131,30 +131,31 @@ function ContextDetail({ context, share, releasable, onRelease }) {
         (releasable.connected > 0 || releasable.isComputer) && (
           <span className="ctx-release">
             <span className="ctx-note">
-              Sem uso nesta conversa:{' '}
+              Not used in this conversation:{' '}
               {[
                 releasable.connected > 0 &&
-                  `${releasable.connected} ${releasable.connected === 1 ? 'ferramenta de conexão' : 'ferramentas de conexões'}`,
-                releasable.isComputer && 'o computador e o navegador',
+                  `${releasable.connected} ${releasable.connected === 1 ? 'connection tool' : 'connection tools'}`,
+                releasable.isComputer && 'the computer and the browser',
               ]
                 .filter(Boolean)
-                .join(' e ')}
-              . Liberar tira do contexto; o agente traz de volta se precisar.
+                .join(' and ')}
+              . Releasing takes them out of the context; the agent brings them
+              back if it needs them.
             </span>
             <button className="btn outline sm" onClick={onRelease}>
               <i className="ti ti-eraser" />
-              Liberar contexto
+              Free up context
             </button>
           </span>
         )}
       {!parts.length && (
         <span className="ctx-note">
-          O detalhe por parte aparece a partir do próximo passo do agente.
+          The breakdown appears starting with the agent’s next step.
         </span>
       )}
       {context?.model && (
         <span className="ctx-note">
-          No último passo, em {context.model.split('/').pop()}. Resultados e
+          At the last step, on {context.model.split('/').pop()}. Resultados e
           imagens antigas entram resumidos.
         </span>
       )}
@@ -173,22 +174,22 @@ const clock = (seconds) =>
   });
 export function rewindSentence(preview) {
   if (preview === undefined)
-    return 'Editando a partir desta mensagem. Contando o que sai…';
+    return 'Editing from this message. Counting what will be removed…';
   if (preview === null)
-    return 'Editando a partir desta mensagem. Ao enviar, o que veio depois sai da conversa e da memória do agente, e fica guardado em Versões.';
+    return "Editing from this message. When you send, everything after it is removed from the conversation and the agent's memory, and saved in Versions.";
   const parts = [
     preview.messages &&
-      plural(preview.messages, 'mensagem sua', 'mensagens suas'),
+      plural(preview.messages, 'your message', 'your messages'),
     preview.replies && plural(preview.replies, 'resposta', 'respostas'),
     preview.steps && plural(preview.steps, 'passo', 'passos'),
   ].filter(Boolean);
   const cut = parts.length
-    ? `Ao enviar, saem ${parts.join(', ')}${preview.laterTasks ? ` (em ${plural(preview.laterTasks + 1, 'tarefa', 'tarefas')})` : ''}; ficam guardados em Versões.`
-    : 'Ao enviar, nada mais sai além desta mensagem.';
+    ? `When you send, ${parts.join(', ')} go out${preview.laterTasks ? ` (in ${plural(preview.laterTasks + 1, 'task', 'tasks')})` : ''}; they're kept in Versions.`
+    : 'When you send, nothing but this message is shared.';
   const disk = preview.diskAt
-    ? ` O computador do agente volta para ${clock(preview.diskAt)}; o que já saiu para fora continua fora.`
+    ? `The agent's computer goes back to ${clock(preview.diskAt)}; anything already sent out stays out.`
     : preview.steps
-      ? ' O computador do agente não volta: não há foto dele depois desta mensagem.'
+      ? "The agent's computer won't be restored: there's no snapshot after this message."
       : '';
   return `${cut}${disk}`;
 }
@@ -275,14 +276,14 @@ export function Composer({
     if (!files.length || !botId) return;
     if (items.length + files.length > MAX_FILES)
       return notify.error(
-        'Arquivos demais',
-        `Cada mensagem leva até ${MAX_FILES} arquivos.`,
+        'Too many files',
+        `Each message can include up to ${MAX_FILES} files.`,
       );
     for (const original of files) {
       if (original.size > MAX_BYTES) {
         notify.error(
-          `${original.name} é grande demais`,
-          'Cada arquivo pode ter até 25 MB.',
+          `${original.name} is too large`,
+          'Each file can be up to 25 MB.',
         );
         continue;
       }
@@ -308,7 +309,7 @@ export function Composer({
               item.localId === localId ? { ...item, status: 'error' } : item,
             ),
           );
-          notify.error(`${file.name} não subiu`, error.message);
+          notify.error(`${file.name} failed to upload`, error.message);
         });
     }
   };
@@ -394,7 +395,7 @@ export function Composer({
         );
       focusBox();
     } catch (error) {
-      notify.error('Não entendi o áudio', error.message);
+      notify.error("Couldn't understand the audio", error.message);
     } finally {
       setDictation(null);
     }
@@ -415,8 +416,8 @@ export function Composer({
       );
     } catch {
       notify.error(
-        'Sem acesso ao microfone',
-        'Libere o microfone para este site nas permissões do navegador.',
+        'No microphone access',
+        'Allow microphone access for this site in your browser permissions.',
       );
     }
   };
@@ -439,8 +440,8 @@ export function Composer({
     <button
       className="icon-btn"
       onClick={menu.open('plus')}
-      title="Anexar, habilidade ou ensinar"
-      aria-label="Anexar, habilidade ou ensinar"
+      title="Attach, skill, or teach"
+      aria-label="Attach, skill, or teach"
     >
       <i className="ti ti-plus" />
     </button>
@@ -450,8 +451,8 @@ export function Composer({
       className={`icon-btn${isDictating ? ' on' : ''}`}
       onClick={isDictating ? finishDictation : startDictation}
       disabled={dictation?.state === 'transcribing'}
-      title={isDictating ? 'Parar o ditado' : 'Ditar'}
-      aria-label={isDictating ? 'Parar o ditado' : 'Ditar'}
+      title={isDictating ? 'Stop dictation' : 'Dictate'}
+      aria-label={isDictating ? 'Stop dictation' : 'Dictate'}
     >
       {isDictating ? (
         <LevelBars level={level} />
@@ -479,8 +480,8 @@ export function Composer({
           unlockVoiceAudio();
           onVoice();
         }}
-        title="Falar com o agente"
-        aria-label="Falar com o agente"
+        title="Talk to the agent"
+        aria-label="Talk to the agent"
       >
         <i className="ti ti-wave-sine" />
       </button>
@@ -489,7 +490,7 @@ export function Composer({
         className="send"
         onClick={submit}
         disabled={!hasContent || isUploading || isSending}
-        aria-label="Enviar"
+        aria-label="Send"
       >
         <i className="ti ti-arrow-up" />
       </button>
@@ -501,7 +502,7 @@ export function Composer({
         <button
           key={item.localId}
           className="on"
-          title="Tirar"
+          title="Remove"
           onClick={() =>
             setItems((current) =>
               current.filter((candidate) => candidate.localId !== item.localId),
@@ -516,7 +517,7 @@ export function Composer({
             {item.status === 'uploading'
               ? 'enviando'
               : item.status === 'error'
-                ? 'não subiu'
+                ? "didn't start"
                 : formatSize(item.size)}
           </span>
           <i className="ti ti-x" />
@@ -531,11 +532,10 @@ export function Composer({
       rows={1}
       placeholder={
         isNote
-          ? 'Nota pra quem está na conversa (o agente não vê)…'
+          ? "Note for people in the chat (the agent can't see it)…"
           : isAsking
-            ? 'Pergunte sobre o trabalho; ele não para…'
-            : placeholder ||
-              (isWorking ? 'Mandar mais uma coisa…' : 'Responder…')
+            ? "Ask about the work; it won't stop…"
+            : placeholder || (isWorking ? 'Send something else…' : 'Reply…')
       }
       aria-label="Mensagem"
       value={text}
@@ -582,7 +582,7 @@ export function Composer({
               <i className="ti ti-arrow-back-up" />
               <span className="grow">{rewindSentence(rewind.preview)}</span>
               <button className="btn outline sm" onClick={onCancelRewind}>
-                Cancelar
+                Cancel
               </button>
             </div>
           )}
@@ -594,16 +594,16 @@ export function Composer({
                 <button
                   className="icon-btn"
                   onClick={() => setSide(null)}
-                  title="Fechar a resposta"
-                  aria-label="Fechar a resposta"
+                  title="Close reply"
+                  aria-label="Close reply"
                 >
                   <i className="ti ti-x" />
                 </button>
               </div>
               {side.answer === null ? (
                 <p className="muted">
-                  <i className="ti ti-loader-2 spin" /> Lendo o que o agente fez
-                  até aqui…
+                  <i className="ti ti-loader-2 spin" /> Reading what the agent
+                  has done so far…
                 </p>
               ) : (
                 <p>{side.answer}</p>
@@ -619,7 +619,7 @@ export function Composer({
                 <button
                   key={item.k}
                   className="on"
-                  title="Tirar do contexto"
+                  title="Remove from context"
                   onClick={() =>
                     setChosen((current) =>
                       current.filter((each) => each.k !== item.k),
@@ -634,7 +634,7 @@ export function Composer({
               {offered.map((item) => (
                 <button
                   key={item.k}
-                  title="Levar pro contexto"
+                  title="Bring into the context"
                   onClick={() => setChosen((current) => [...current, item])}
                 >
                   <i className="ti ti-plus" />
@@ -649,12 +649,12 @@ export function Composer({
               {queue.map((item) => (
                 <div key={item.id}>
                   <i className="ti ti-list" />
-                  <span className="grow">na fila: {item.text}</span>
+                  <span className="grow">queued: {item.text}</span>
                   <button
                     className="icon-btn"
                     onClick={() => onUnqueue?.(item.id)}
-                    title="Tirar da fila"
-                    aria-label="Tirar da fila"
+                    title="Remove from queue"
+                    aria-label="Remove from queue"
                   >
                     <i className="ti ti-x" />
                   </button>
@@ -674,10 +674,10 @@ export function Composer({
                   setIsNoteMode(!isNoteMode);
                   focusBox();
                 }}
-                title="Nota que o agente não vê"
+                title="Note the agent can't see"
               >
                 <i className="ti ti-lock" />
-                Entre nós
+                Between us
               </button>
             )}
             {isWorking && !isNote && (
@@ -685,18 +685,18 @@ export function Composer({
                 <button
                   className={`pill${sendMode === 'now' ? ' on' : ''}`}
                   onClick={() => setSendMode('now')}
-                  title="Manda já: o agente lê antes do próximo passo"
+                  title="Send now: the agent reads it before the next step"
                 >
                   <i className="ti ti-bolt" />
-                  Agora
+                  Now
                 </button>
                 <button
                   className={`pill${isQueueMode ? ' on' : ''}`}
                   onClick={() => setSendMode('queue')}
-                  title="Manda quando ele terminar"
+                  title="Sends when it finishes"
                 >
                   <i className="ti ti-list" />
-                  Fila
+                  Queue
                 </button>
                 {onAsk && (
                   <button
@@ -705,15 +705,15 @@ export function Composer({
                       setSendMode('side');
                       focusBox();
                     }}
-                    title="Pergunte sobre o trabalho sem parar o agente; ele não lê a pergunta"
+                    title="Ask about the work without stopping the agent; it won't read the question"
                   >
                     <i className="ti ti-message-question" />
-                    Pergunta
+                    Question
                   </button>
                 )}
               </>
             )}
-            <span className="timer" title="Tempo deste agente">
+            <span className="timer" title="This agent's time">
               <i className="ti ti-clock" />
               {Math.round(workSeconds / 60)}m
             </span>
@@ -721,7 +721,7 @@ export function Composer({
               <span
                 className="ring"
                 tabIndex={0}
-                aria-label={`Contexto usado: ${Math.round(contextShare * 100)}%`}
+                aria-label={`Context used: ${Math.round(contextShare * 100)}%`}
               >
                 <svg viewBox="0 0 18 18">
                   <circle
@@ -776,11 +776,11 @@ export function Composer({
             disabled={!botId}
           >
             <i className="ti ti-paperclip" />
-            Anexar arquivo
+            Attach file
           </button>
           <button onClick={openSkills} disabled={!botId}>
             <i className="ti ti-sparkles" />
-            Usar uma habilidade
+            Use a skill
           </button>
           {onTeach && (
             <button
@@ -790,7 +790,7 @@ export function Composer({
               }}
             >
               <i className="ti ti-hand-finger" />
-              Ensinar uma tarefa
+              Teach a task
             </button>
           )}
         </Menu>
@@ -798,13 +798,13 @@ export function Composer({
       {menu.is('skills') && (
         <Menu
           anchor={menu.anchor}
-          title="Habilidades deste agente"
+          title="This agent's skills"
           search
           width={360}
           onClose={menu.close}
         >
           {skills === null ? (
-            <p className="menu-note">Carregando…</p>
+            <p className="menu-note">Loading…</p>
           ) : skills.length ? (
             skills.map((skill) => (
               <Opt
@@ -817,7 +817,7 @@ export function Composer({
             ))
           ) : (
             <p className="menu-note">
-              Nenhuma habilidade ainda. Ensine uma tarefa pelo mais.
+              No skills yet. Teach a task using the plus button.
             </p>
           )}
         </Menu>

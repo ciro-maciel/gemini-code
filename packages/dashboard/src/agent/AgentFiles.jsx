@@ -73,23 +73,23 @@ export function AgentFiles({ bot, canWrite, onOpenFile, onClose }) {
   };
 
   return (
-    <aside className="agent-files" aria-label={`Arquivos de ${bot.name}`}>
+    <aside className="agent-files" aria-label={`Files of ${bot.name}`}>
       <div className="af-head">
-        <b>Arquivos</b>
+        <b>Files</b>
         {canWrite && (
           <>
             <button
               className="icon-btn"
-              title="Novo arquivo"
-              aria-label="Novo arquivo"
+              title="New file"
+              aria-label="New file"
               onClick={() => setNaming({ kind: 'file', parent: '' })}
             >
               <i className="ti ti-file-plus" />
             </button>
             <button
               className="icon-btn"
-              title="Nova pasta"
-              aria-label="Nova pasta"
+              title="New folder"
+              aria-label="New folder"
               onClick={() => setNaming({ kind: 'folder', parent: '' })}
             >
               <i className="ti ti-folder-plus" />
@@ -98,8 +98,8 @@ export function AgentFiles({ bot, canWrite, onOpenFile, onClose }) {
         )}
         <button
           className="icon-btn"
-          title="Fechar arquivos"
-          aria-label="Fechar arquivos"
+          title="Close files"
+          aria-label="Close files"
           onClick={onClose}
         >
           <i className="ti ti-x" />
@@ -107,7 +107,7 @@ export function AgentFiles({ bot, canWrite, onOpenFile, onClose }) {
       </div>
       <span
         className="af-root"
-        title="Só a pasta deste agente. O terminal dele começa aqui."
+        title="Only this agent's folder. Its terminal starts here."
       >
         {tree?.root || '…'}
       </span>
@@ -116,12 +116,12 @@ export function AgentFiles({ bot, canWrite, onOpenFile, onClose }) {
         <input
           value={filter}
           onChange={(event) => setFilter(event.target.value)}
-          placeholder="Filtrar"
-          aria-label="Filtrar arquivos"
+          placeholder="Filter"
+          aria-label="Filter files"
         />
       </label>
       {error ? (
-        <p className="af-msg">Não consegui ler a pasta: {error}</p>
+        <p className="af-msg">Could not read the folder: {error}</p>
       ) : tree === null ? (
         <div className="af-list">
           {[0, 1, 2, 3, 4].map((key) => (
@@ -131,8 +131,8 @@ export function AgentFiles({ bot, canWrite, onOpenFile, onClose }) {
       ) : rows.length === 0 ? (
         <p className="af-msg">
           {filter
-            ? 'Nada com esse nome.'
-            : 'A pasta está vazia. Peça ao agente para criar algo, ou crie um arquivo.'}
+            ? 'Nothing with that name.'
+            : 'The folder is empty. Ask the agent to create something, or create a file.'}
         </p>
       ) : (
         <ul className="af-list" role="tree">
@@ -166,7 +166,7 @@ export function AgentFiles({ bot, canWrite, onOpenFile, onClose }) {
               {row.mark && (
                 <span
                   className={`af-mark ${row.mark === 'A' ? 'added' : 'changed'}`}
-                  title={row.mark === 'A' ? 'Criado agora' : 'Alterado agora'}
+                  title={row.mark === 'A' ? 'Just created' : 'Just changed'}
                 >
                   {row.mark}
                 </span>
@@ -174,8 +174,8 @@ export function AgentFiles({ bot, canWrite, onOpenFile, onClose }) {
               {canWrite && row.kind !== 'link' && (
                 <button
                   className="af-del"
-                  title={`Apagar ${row.name}`}
-                  aria-label={`Apagar ${row.name}`}
+                  title={`Delete ${row.name}`}
+                  aria-label={`Delete ${row.name}`}
                   onClick={() => askDelete(row)}
                 >
                   <i className="ti ti-trash" />
@@ -187,10 +187,10 @@ export function AgentFiles({ bot, canWrite, onOpenFile, onClose }) {
       )}
       {naming && (
         <NameModal
-          title={naming.kind === 'folder' ? 'Nova pasta' : 'Novo arquivo'}
+          title={naming.kind === 'folder' ? 'New folder' : 'New file'}
           icon={naming.kind === 'folder' ? 'ti-folder-plus' : 'ti-file-plus'}
           initial={naming.kind === 'folder' ? 'nova-pasta' : 'novo.md'}
-          action="Criar"
+          action="Create"
           onSave={create}
           onClose={() => setNaming(null)}
         />
@@ -201,12 +201,12 @@ export function AgentFiles({ bot, canWrite, onOpenFile, onClose }) {
           target={deleting.path}
           context={
             deleting.kind === 'folder'
-              ? `Pasta com ${deleting.inside} itens dentro`
-              : 'Arquivo da pasta deste agente'
+              ? `Folder with ${deleting.inside} items inside`
+              : "A file in this agent's folder"
           }
-          consequences={['Apagar não tem volta.']}
+          consequences={['Deleting cannot be undone.']}
           confirmLabel={
-            deleting.kind === 'folder' ? 'Apagar a pasta' : 'Apagar o arquivo'
+            deleting.kind === 'folder' ? 'Delete the folder' : 'Delete the file'
           }
           onClose={() => setDeleting(null)}
           onConfirm={async () => {

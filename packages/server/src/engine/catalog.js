@@ -190,7 +190,7 @@ class ConnectionAuthProvider {
 
   get clientMetadata() {
     return {
-      client_name: 'Assistant',
+      client_name: 'Gemini Code',
       redirect_uris: [this.redirectUrl],
       grant_types: ['authorization_code', 'refresh_token'],
       response_types: ['code'],

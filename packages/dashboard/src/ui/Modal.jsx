@@ -19,7 +19,7 @@ export function Modal({ title, icon, onClose, children }) {
         <div className="mh">
           <i className={`ti ${icon}`} />
           <b>{title}</b>
-          <button className="icon-btn" onClick={onClose} aria-label="Fechar">
+          <button className="icon-btn" onClick={onClose} aria-label="Close">
             <i className="ti ti-x" />
           </button>
         </div>

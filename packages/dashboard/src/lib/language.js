@@ -1,20 +1,20 @@
 /**
- * The panel's language (15/11/2026): Portuguese, the language the code is written in, or English.
+ * The panel's language: English, the language the code is written in, or Brazilian Portuguese.
  *
  * The person chooses it in the account card ("Idioma · Language"); until then it follows the browser
  * (Portuguese for pt-*, English for anything else). The choice is kept in this browser.
  *
- * English is a layer over the Portuguese screen, not a second copy of it: every text the code shows was
- * extracted and translated once into `en.json` (texts by exact match, and patterns with {0}, {1}… for the
- * texts built from values). While the language is English, a MutationObserver puts the English text in
- * place of the Portuguese one in every text node and in the placeholder, title and aria-label attributes,
- * before the browser paints. What a person wrote is never touched: inputs, text areas, anything editable
- * and the areas marked [data-no-translate] (the deck and design canvases) are skipped.
+ * Portuguese is a layer over the English screen, not a second copy of it: every text the code shows has
+ * its translation in `pt.json` (texts by exact match, and patterns with {0}, {1}… for the texts built
+ * from values). While the language is Portuguese, a MutationObserver puts the Portuguese text in place of
+ * the English one in every text node and in the placeholder, title and aria-label attributes, before the
+ * browser paints. What a person wrote is never touched: inputs, text areas, anything editable and the
+ * areas marked [data-no-translate] (the deck and design canvases) are skipped.
  */
 
 export const LANGUAGES = [
   { id: 'en', label: 'English' },
-  { id: 'pt', label: 'Português' },
+  { id: 'pt', label: 'Portuguese' },
 ];
 const STORAGE_KEY = 'language';
 const ATTRIBUTES = ['placeholder', 'title', 'aria-label'];
@@ -66,7 +66,7 @@ const isCount = (value) =>
   (/\d/.test(value) && value.trim().split(/\s+/).length <= 3);
 const escape = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-/** A translator from the dictionary: Portuguese text in, English out, or null when it does not know the text. Exported for the test. */
+/** A translator from a dictionary: source text in, translation out, or null when it does not know the text. Exported for the test. */
 export function makeTranslator(
   { texts = {}, patterns = {} },
   { isLabel = false } = {},
@@ -149,7 +149,7 @@ export function makeTranslator(
   };
 }
 
-/** Puts the English layer on the page. Returns a function that stops it (tests). */
+/** Puts the translation layer on the page. Returns a function that stops it (tests). */
 export function installTranslation(
   dictionary,
   root = document.body,
@@ -247,12 +247,25 @@ export function installTranslation(
   };
 }
 
-/** Called once at boot, before the first render: the document's language and, in English, the layer. */
+// The translator of the active dictionary, for text the code builds from pieces (a list joined with
+// "and"), which the page layer cannot match as a whole. English, the source, needs none.
+let activeTranslate = null;
+
+/** A text in the reader's language: the dictionary's translation, or the text itself. */
+export const t = (text) => (activeTranslate && activeTranslate(text)) ?? text;
+
+/** For tests: set the translator `t` uses (null for English). */
+export function useTranslator(translate) {
+  activeTranslate = translate;
+}
+
+/** Called once at boot, before the first render: the document's language and, in Portuguese, the layer. */
 export async function startLanguage({ skip = '' } = {}) {
   const language = currentLanguage();
-  document.documentElement.lang = language === 'en' ? 'en' : 'pt-BR';
-  if (language !== 'en') return language;
-  const { default: dictionary } = await import('./en.json');
+  document.documentElement.lang = language === 'pt' ? 'pt-BR' : 'en';
+  if (language !== 'pt') return language;
+  const { default: dictionary } = await import('./pt.json');
+  activeTranslate = makeTranslator(dictionary);
   installTranslation(dictionary, document.body, { skip });
   return language;
 }

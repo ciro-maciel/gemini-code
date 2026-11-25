@@ -79,7 +79,7 @@ export function BotAvatar({ bot, size = 36, isInverted = false }) {
           h={mark}
           bg="gray.9"
           bd="2px solid var(--mantine-color-white)"
-          aria-label="Esperando você"
+          aria-label="Waiting for you"
         />
       )}
     </Box>

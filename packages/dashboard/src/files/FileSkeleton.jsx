@@ -10,7 +10,7 @@ const PARAGRAPHS = [
 
 export function FileSkeleton() {
   return (
-    <div className="paper" aria-busy="true" aria-label="Carregando o arquivo">
+    <div className="paper" aria-busy="true" aria-label="Loading file">
       <Skeleton h={26} w="54%" radius={0} mb={28} />
       <Stack gap={28}>
         {PARAGRAPHS.map((lines, paragraph) => (

@@ -55,9 +55,9 @@ describe('the connectors page', () => {
   });
 
   test('the line under each app says its state', () => {
-    expect(lineOf(apps[0])).toBe('2 ferramentas · E-mails');
+    expect(lineOf(apps[0])).toBe('2 tools · E-mails');
     expect(lineOf(apps[1])).toBe('Páginas e bancos');
-    expect(lineOf(apps[2])).toBe('Precisa entrar de novo');
+    expect(lineOf(apps[2])).toBe('Needs to sign in again');
     expect(
       lineOf({
         description: 'x',
@@ -66,7 +66,7 @@ describe('the connectors page', () => {
     ).toBe('token vencido');
     expect(
       lineOf({ description: 'x', connection: { status: 'needs_secret' } }),
-    ).toBe('Cole o token do serviço para terminar');
+    ).toBe('Paste the service token to finish');
   });
 
   test('who uses a connection: every own agent unless it picked a list; shared agents are not counted', () => {

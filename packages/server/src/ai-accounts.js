@@ -249,7 +249,7 @@ export async function ensureSubscriptionAccount(accountId, models) {
   ).run(
     id,
     accountId,
-    'Assinatura Google',
+    'Google subscription',
     await encrypt('subscription'),
     'google-subscription',
     JSON.stringify(enabled),

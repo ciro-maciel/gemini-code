@@ -22,9 +22,9 @@ import { pathOf } from '../mesa/routes';
 
 const money = (value) => `US$ ${(value || 0).toFixed(2).replace('.', ',')}`;
 const TABS = [
-  ['when', 'Quando'],
+  ['when', 'When'],
   ['vault', 'Cofre'],
-  ['memory', 'Memória'],
+  ['memory', 'Memory'],
 ];
 
 function Trigger({ icon, title, children, right = null }) {
@@ -52,13 +52,13 @@ function Handoffs({ botId }) {
   }, [botId]);
   const lines = passes
     ? [
-        ...passes.from.map((bot) => `Recebe trabalho de "${bot.name}".`),
-        ...passes.to.map((bot) => `Passa trabalho pra "${bot.name}".`),
+        ...passes.from.map((bot) => `Receives work from "${bot.name}".`),
+        ...passes.to.map((bot) => `Hands work to "${bot.name}".`),
       ]
     : [];
   return (
-    <Trigger icon="ti-arrows-exchange" title="Outro agente">
-      {passes === null ? 'Carregando…' : lines.join(' ') || 'Nenhuma passagem.'}
+    <Trigger icon="ti-arrows-exchange" title="Another agent">
+      {passes === null ? 'Loading…' : lines.join(' ') || 'No handoffs.'}
     </Trigger>
   );
 }
@@ -73,34 +73,34 @@ function Door({ botId }) {
   const rotate = async () => {
     try {
       setDoor(await rotateInbox(botId));
-      notify.success('Endereço trocado', 'O antigo parou na hora.');
+      notify.success('Address changed', 'The old one stopped immediately.');
     } catch (error) {
       notify.error(error.message);
     }
   };
   const copy = () => {
     navigator.clipboard?.writeText(door.url);
-    notify.success('Endereço da porta copiado');
+    notify.success('Entry point address copied');
   };
   return (
     <Trigger
       icon="ti-webhook"
-      title="Porta de entrada"
+      title="Inbound endpoint"
       right={
         <button className="btn outline sm" onClick={rotate}>
-          Trocar o endereço
+          Change address
         </button>
       }
     >
-      Outro sistema manda um POST e cai aqui:{' '}
+      Another system sends a POST and it lands here:{' '}
       {door && (
         <span className="door-addr">
           <span className="mono">{door.url.replace(/^https:\/\//, '')}</span>
           <button
             className="icon-btn"
             onClick={copy}
-            title="Copiar o endereço"
-            aria-label="Copiar o endereço"
+            title="Copy the address"
+            aria-label="Copy the address"
           >
             <i className="ti ti-copy" />
           </button>
@@ -115,7 +115,7 @@ function When({ bot }) {
     <>
       <div className="box">
         <div className="bh">
-          <b className="grow">O que escreve neste agente</b>
+          <b className="grow">What writes to this agent</b>
         </div>
         <div className="bb">
           <Trigger
@@ -123,22 +123,22 @@ function When({ bot }) {
             title="Pessoa"
             right={<span className="pill-st dark">sempre</span>}
           >
-            Quem tem acesso escreve aqui.
+            Anyone with access can write here.
           </Trigger>
-          <Trigger icon="ti-clock-play" title="Horário">
+          <Trigger icon="ti-clock-play" title="Time">
             <Routines botId={bot.id} />
           </Trigger>
           <Door botId={bot.id} />
           <Handoffs botId={bot.id} />
           <Trigger icon="ti-mail" title="E-mail">
-            A caixa fica no Messages: o que chega nela pode vir pra este agente
-            pela porta de entrada.
+            The inbox lives in Messages: anything that arrives there can come to
+            this agent through the entry point.
           </Trigger>
         </div>
       </div>
       <p className="fine">
-        O que não é uma pessoa escreve aqui com o rótulo de onde veio, mas nunca
-        responde um pedido de permissão.
+        Anything that isn’t a person writes here labeled with its source, but
+        can never answer a permission request.
       </p>
     </>
   );
@@ -146,9 +146,9 @@ function When({ bot }) {
 
 // As the prototype groups them: what a person decided, what a person prefers, what the agent observed.
 const MEMORY_KINDS = [
-  ['decision', 'Decisões', 'no arquivo memory/decisions.md'],
-  ['preference', 'Preferências', 'no arquivo memory/decisions.md'],
-  ['observation', 'Observações', 'só na central; vencem em 30 dias'],
+  ['decision', 'Decisions', 'in the memory/decisions.md file'],
+  ['preference', 'Preferences', 'in the memory/decisions.md file'],
+  ['observation', 'Notes', 'server only; expire in 30 days'],
 ];
 const when = (seconds) =>
   new Date(seconds * 1000).toLocaleDateString('pt-BR', {
@@ -173,7 +173,7 @@ function Memory({ bot }) {
     reload();
   };
   const fix = async (memory) => {
-    const content = prompt('Corrigir a memória', memory.content);
+    const content = prompt('Fix the memory', memory.content);
     if (!content?.trim() || content.trim() === memory.content) return;
     try {
       await updateMemory(bot.id, memory.id, content.trim());
@@ -193,33 +193,35 @@ function Memory({ bot }) {
         </div>
         <div className="bb">
           {items === null ? (
-            <p className="muted">Carregando…</p>
+            <p className="muted">Loading…</p>
           ) : list.length ? (
             list.map((memory) => (
               <div className="row" key={memory.id}>
                 <div className="grow">
                   <b>{memory.content}</b>
                   <div className="muted">
-                    {memory.sourceTaskId ? 'de uma conversa' : 'de uma pessoa'}{' '}
+                    {memory.sourceTaskId
+                      ? 'from a conversation'
+                      : 'from a person'}{' '}
                     · {when(memory.createdAt)}
                     {memory.daysLeft
-                      ? ` · vence em ${memory.daysLeft} ${memory.daysLeft === 1 ? 'dia' : 'dias'}`
+                      ? `· due in ${memory.daysLeft} ${memory.daysLeft === 1 ? 'dia' : 'dias'}`
                       : ''}
                   </div>
                 </div>
                 <button className="btn outline sm" onClick={() => fix(memory)}>
-                  Corrigir
+                  Fix
                 </button>
                 <button
                   className="btn outline sm"
                   onClick={() => forget(memory)}
                 >
-                  Esquecer
+                  Forget
                 </button>
               </div>
             ))
           ) : (
-            <p className="muted">Nada aqui.</p>
+            <p className="muted">Nothing here.</p>
           )}
         </div>
       </div>
@@ -257,8 +259,8 @@ export function AgentSettings({ bot, template, tab = 'when', onTab }) {
       botsChanged();
       notify.success(
         clean
-          ? `Pasta atualizada para /${clean}/`
-          : 'Pasta definida para a raiz do workspace',
+          ? `Folder updated to /${clean}/`
+          : 'Folder set to the workspace root',
       );
       window.dispatchEvent(new Event('assistant:repo'));
     } catch (error) {
@@ -289,8 +291,8 @@ export function AgentSettings({ bot, template, tab = 'when', onTab }) {
           </div>
           <p className="lead">
             {template
-              ? `${template.owns.charAt(0).toUpperCase()}${template.owns.slice(1)}. Começou do modelo ${template.name}.`
-              : 'Começou do zero.'}
+              ? `${template.owns.charAt(0).toUpperCase()}${template.owns.slice(1)}. Started from template ${template.name}.`
+              : 'Started from scratch.'}
           </p>
           <div className="agent-links">
             {bot.instructionsPath && isOwner && (
@@ -299,14 +301,14 @@ export function AgentSettings({ bot, template, tab = 'when', onTab }) {
                 onClick={() => navigate(pathOf(`file:${bot.instructionsPath}`))}
               >
                 <i className="ti ti-file-text" />
-                Instruções
+                Instructions
                 <span className="mono">{bot.instructionsPath}</span>
                 <i className="ti ti-arrow-up-right" />
               </button>
             )}
             <button className="instr-link" onClick={openAgentDocs}>
               <i className="ti ti-folder" />
-              Pasta & Documentos
+              Folder & Documents
               <span className="mono">
                 {bot.folder ? `/${bot.folder}/` : '/'}
               </span>
@@ -321,7 +323,7 @@ export function AgentSettings({ bot, template, tab = 'when', onTab }) {
                 onClick={() => setIsEditingFolder(true)}
               >
                 <i className="ti ti-folder-cog" />
-                Trocar pasta
+                Change folder
               </button>
             )}
           </div>
@@ -335,10 +337,10 @@ export function AgentSettings({ bot, template, tab = 'when', onTab }) {
         </div>
         {isEditingFolder && (
           <NameModal
-            title="Pasta de trabalho do agente"
+            title="Agent work folder"
             icon="ti-folder-cog"
             initial={bot.folder || docStats?.defaultFolder || ''}
-            action="Salvar pasta"
+            action="Save folder"
             onSave={saveFolder}
             onClose={() => setIsEditingFolder(false)}
           />
@@ -359,16 +361,16 @@ export function AgentSettings({ bot, template, tab = 'when', onTab }) {
           <>
             <div className="box">
               <div className="bh">
-                <b className="grow">Chaves deste agente</b>
+                <b className="grow">This agent’s keys</b>
               </div>
               <div className="bb">
                 <Vault botId={bot.id} />
               </div>
             </div>
             <p className="fine">
-              Ficam cifradas na central e entram em cada comando deste agente. O
-              agente e o painel só veem os nomes, e nenhuma chave vai pros
-              arquivos.
+              They stay encrypted on the server and are injected into each
+              command of this agent. The agent and the dashboard only see the
+              names, and no key goes into the files.
             </p>
           </>
         )}
@@ -398,7 +400,7 @@ function AgentName({ bot }) {
       <input
         className="name-edit"
         autoFocus
-        aria-label="Nome do agente"
+        aria-label="Agent name"
         maxLength={60}
         value={draft}
         onChange={(event) => setDraft(event.target.value)}
@@ -414,15 +416,15 @@ function AgentName({ bot }) {
     <>
       <h2
         className="name-click"
-        title="Renomear agente"
+        title="Rename agent"
         onClick={() => setDraft(bot.name)}
       >
         {bot.name}
       </h2>
       <button
         className="icon-btn"
-        title="Renomear agente"
-        aria-label="Renomear agente"
+        title="Rename agent"
+        aria-label="Rename agent"
         onClick={() => setDraft(bot.name)}
       >
         <i className="ti ti-pencil" />
@@ -445,7 +447,7 @@ function DeleteAgent({ bot }) {
     navigate('/');
     try {
       await deleteBot(bot.id);
-      notify.success(`${bot.name} foi excluído`);
+      notify.success(`${bot.name} was deleted`);
     } catch (error) {
       notify.error(error.message);
     } finally {
@@ -457,7 +459,7 @@ function DeleteAgent({ bot }) {
     <>
       <div className="box danger-zone">
         <div className="bh">
-          <b className="grow">Zona de risco</b>
+          <b className="grow">Danger zone</b>
         </div>
         <div className="bb">
           <div className="check">
@@ -465,10 +467,10 @@ function DeleteAgent({ bot }) {
               <i className="ti ti-trash" />
             </span>
             <div className="grow">
-              <b>Excluir este agente</b>
+              <b>Delete this agent</b>
               <div className="p">
-                Some o computador, a conversa e a memória. Os aplicativos
-                conectados continuam: são seus.
+                The computer, conversation, and memory go away. Connected apps
+                stay: they’re yours.
               </div>
             </div>
             <button
@@ -476,7 +478,7 @@ function DeleteAgent({ bot }) {
               onClick={() => setIsOpen(true)}
             >
               <i className="ti ti-trash" />
-              Excluir agente…
+              Delete agent…
             </button>
           </div>
         </div>
@@ -486,14 +488,14 @@ function DeleteAgent({ bot }) {
         onClose={() => setIsOpen(false)}
         onConfirm={remove}
         target={bot.name}
-        context={`Agente · ${bot.spriteName}`}
+        context={`Agent · ${bot.spriteName}`}
         consequences={[
-          'O computador na nuvem é destruído, com arquivos, programas e os logins salvos no Chrome.',
-          'A conversa, as tarefas em andamento, a memória e os pontos de restauração somem.',
-          'Os aplicativos conectados continuam: são seus.',
-          'Não há como desfazer.',
+          'The cloud computer is destroyed, along with its files, programs, and logins saved in Chrome.',
+          'The conversation, ongoing tasks, memory, and restore points will be deleted.',
+          "Connected apps remain: they're yours.",
+          "This can't be undone.",
         ]}
-        confirmLabel="Excluir agente"
+        confirmLabel="Delete agent"
       />
     </>
   );

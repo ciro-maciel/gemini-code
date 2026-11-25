@@ -32,9 +32,9 @@ function save({ blob, fileName }) {
 function Entry({ entry }) {
   const risk =
     entry.risk === 'high'
-      ? 'risco alto'
+      ? 'high risk'
       : entry.risk === 'low'
-        ? 'risco baixo'
+        ? 'low risk'
         : null;
   const decidedBy =
     entry.resolvedBy && entry.resolvedAt
@@ -53,7 +53,7 @@ function Entry({ entry }) {
         </Text>
         {decidedBy && (
           <Text fz={12} c="gray.5" truncate>
-            Decidido por {decidedBy}
+            Decided by {decidedBy}
           </Text>
         )}
       </Box>
@@ -70,7 +70,7 @@ function Entry({ entry }) {
 const percent = ({ approved, decided }) =>
   decided ? Math.round((approved / decided) * 100) : null;
 const countNote = ({ approved, decided }) =>
-  decided ? `${approved} de ${decided} decididos` : 'nenhum pedido decidido';
+  decided ? `${approved} of ${decided} decided` : 'no request decided';
 
 /**
  * Of the approvals you decided, how many were a yes: the last 7 days against
@@ -102,7 +102,7 @@ function ApprovalRate({ botId }) {
   const beforePercent = percent(before);
   const tiles = [
     {
-      label: 'Últimos 7 dias',
+      label: 'Last 7 days',
       value: lastPercent,
       note: countNote(last),
       delta:
@@ -110,14 +110,18 @@ function ApprovalRate({ botId }) {
           ? lastPercent - beforePercent
           : null,
     },
-    { label: 'Os 7 dias antes', value: beforePercent, note: countNote(before) },
-    { label: 'Últimas 8 semanas', value: percent(all), note: countNote(all) },
+    {
+      label: 'The previous 7 days',
+      value: beforePercent,
+      note: countNote(before),
+    },
+    { label: 'Last 8 weeks', value: percent(all), note: countNote(all) },
   ];
   return (
     <Box bg="white" p={16} mb={8} style={{ border: 'var(--rlg-border)' }}>
       <Text fz={12} c="gray.6" mb={12}>
-        Dos pedidos de aprovação que você decidiu, quantos você aprovou. Sobe
-        quando o agente acerta antes de pedir.
+        Of the approval requests you decided, how many you approved. Goes up
+        when the agent gets it right before asking.
       </Text>
       <SimpleGrid cols={{ base: 1, xs: 3 }} spacing={16}>
         {tiles.map((tile) => (
@@ -154,7 +158,7 @@ export function AuditTrail({ botId }) {
     try {
       save(await downloadAudit(botId, format));
     } catch (error) {
-      notify.error('Não consegui baixar o registro', error.message);
+      notify.error("Couldn't download the log", error.message);
     } finally {
       setDownloading(null);
     }
@@ -166,14 +170,14 @@ export function AuditTrail({ botId }) {
     <Stack gap={10}>
       <ApprovalRate botId={botId} />
       <Text fz={12} c="gray.6">
-        As ações que passaram por uma regra sua, pelo julgamento de risco ou por
-        uma aprovação: o que era, como foi decidido, quem aprovou e o ponto de
-        restauração.
+        Actions that went through one of your rules, a risk assessment, or an
+        approval: what it was, how it was decided, who approved it, and the
+        restore point.
       </Text>
       {trail.items.length === 0 && (
         <Text fz={12} c="gray.5">
-          Nada ainda. A primeira aparece quando o bot clicar, digitar ou usar um
-          aplicativo que escreve.
+          Nothing yet. The first one appears when the bot clicks, types, or uses
+          an app that writes.
         </Text>
       )}
       {trail.items.map((entry) => (
@@ -181,8 +185,8 @@ export function AuditTrail({ botId }) {
       ))}
       {total > trail.items.length && (
         <Text fz={12} c="gray.5">
-          Mostrando as {trail.items.length} mais recentes de {total}. O arquivo
-          traz todas.
+          Showing the {trail.items.length} most recent of {total}. The file has
+          them all.
         </Text>
       )}
       {total > 0 && (
@@ -197,7 +201,7 @@ export function AuditTrail({ botId }) {
               leftSection={<IconDownload size={14} stroke={1.5} />}
               onClick={() => download(format)}
             >
-              Baixar {format.toUpperCase()}
+              Download {format.toUpperCase()}
             </Button>
           ))}
         </Group>

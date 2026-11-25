@@ -18,6 +18,10 @@ const { createTask, fetchTask } = await import('./engine/run.js');
 // every body it was sent. Anything else (the price list, the title) fails at
 // once, off the network.
 const sent = [];
+// The calls of one task only: a late step of an earlier test's task can land in `sent`,
+// so every test uses a prompt no other test uses and counts its own calls.
+const callsFor = (prompt) =>
+  sent.filter((body) => JSON.stringify(body.messages).includes(prompt));
 let script = [];
 const sse = (chunks) =>
   new Response(
@@ -103,10 +107,11 @@ describe('a task never ends mute', () => {
       task.result,
     ]);
     // The step ran out of its output limit: it was asked again once, with more room and a note on why.
-    expect(sent).toHaveLength(2);
-    expect(sent[0].max_tokens).toBe(8000);
-    expect(sent[1].max_tokens).toBe(16_000);
-    expect(JSON.stringify(sent[1].messages.at(-1))).toContain(
+    const mine = callsFor('escreva a semana 2 e envie as 13 peças');
+    expect(mine).toHaveLength(2);
+    expect(mine[0].max_tokens).toBe(8000);
+    expect(mine[1].max_tokens).toBe(16_000);
+    expect(JSON.stringify(mine[1].messages.at(-1))).toContain(
       'acabou no limite de saída',
     );
     const failures = db
@@ -123,9 +128,7 @@ describe('a task never ends mute', () => {
     // A prompt no other test uses: a late step of an earlier test's task can land in `sent`.
     const prompt = 'revise o roteiro do episódio 7';
     const task = await settled(createTask(newBot(), prompt).id);
-    const mine = sent.filter((body) =>
-      JSON.stringify(body.messages).includes(prompt),
-    );
+    const mine = callsFor(prompt);
     expect(task.status).toBe('done');
     expect(task.result).toBe('Ficaram prontas as 13 peças.');
     expect(mine).toHaveLength(2);
@@ -137,8 +140,9 @@ describe('a task never ends mute', () => {
   test('an answer with words ends at once, as before', async () => {
     script = [{ text: 'Pronto.' }];
     sent.length = 0;
-    const task = await settled(createTask(newBot(), 'oi').id);
+    const prompt = 'diga se o build da manhã passou';
+    const task = await settled(createTask(newBot(), prompt).id);
     expect(task).toMatchObject({ status: 'done', result: 'Pronto.' });
-    expect(sent).toHaveLength(1);
+    expect(callsFor(prompt)).toHaveLength(1);
   });
 });

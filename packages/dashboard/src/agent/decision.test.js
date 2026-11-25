@@ -4,12 +4,12 @@ import { decisionText } from './decision.js';
 test('the line a decided permission leaves', () => {
   expect(
     decisionText({ isApproved: true, reach: 'task', summary: 'Enviar e-mail' }),
-  ).toBe('Permitido até o fim da tarefa · Enviar e-mail');
+  ).toBe('Allowed until the task ends · Enviar e-mail');
   expect(decisionText({ isApproved: true, reach: 'always' })).toBe(
-    'Sempre permitido · vale 90 dias',
+    'Always allowed · lasts 90 days',
   );
   expect(decisionText({ isApproved: false, note: 'não agora' })).toBe(
-    'Recusado · "não agora"',
+    'Declined · "não agora"',
   );
   expect(
     decisionText({
@@ -18,8 +18,8 @@ test('the line a decided permission leaves', () => {
       summary: 'Publicar',
       note: 'como rascunho',
     }),
-  ).toBe('Permitido com a sua mudança · Publicar · "como rascunho"');
+  ).toBe('Allowed with your change · Publicar · "como rascunho"');
   expect(decisionText({ isApproved: false, isSuperseded: true })).toBe(
-    'Ficou sem decisão: você escreveu antes',
+    'Left undecided: you wrote first',
   );
 });

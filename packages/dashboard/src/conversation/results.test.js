@@ -39,7 +39,7 @@ describe('what the agent delivered, under the conversation', () => {
     ).toEqual([
       ['pull', 'PR #12', 'acme/blog'],
       ['link', 'favicon-generator', 'blog.exemplo.com/favicon-generator'],
-      ['artifact', 'Relatório da semana', 'Material na conversa'],
+      ['artifact', 'Relatório da semana', 'Material in the conversation'],
       ['file', 'artigo.md', 'workspace/'],
     ]);
   });

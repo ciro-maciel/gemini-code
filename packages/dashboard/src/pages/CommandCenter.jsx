@@ -180,17 +180,17 @@ export function CommandCenter({
         />
         {last && (
           <button className="chip-btn" onClick={() => onOpenAgent(last.id)}>
-            Continuar “{last.name}”
+            Continue “{last.name}”
           </button>
         )}
         <div className="box" data-box="deliveries">
           <div className="bh">
             <i className="ti ti-package" />
-            <b className="grow">Últimas entregas</b>
+            <b className="grow">Recent deliveries</b>
           </div>
           <div className="bb">
             {deliveries === null ? (
-              <p className="muted">Carregando…</p>
+              <p className="muted">Loading…</p>
             ) : deliveries.length ? (
               deliveries.map((item) => (
                 <div
@@ -220,21 +220,21 @@ export function CommandCenter({
                 </div>
               ))
             ) : (
-              <p className="muted">Nenhuma entrega ainda.</p>
+              <p className="muted">No deliveries yet.</p>
             )}
           </div>
         </div>
         <div className="box" data-box="templates">
           <div className="bh">
             <i className="ti ti-template" />
-            <b className="grow">Modelos</b>
+            <b className="grow">Models</b>
             <span className="muted">
               {templates.length} modelos · de onde um agente nasce
             </span>
             {onNewTemplate && (
               <button className="btn outline sm" onClick={onNewTemplate}>
                 <i className="ti ti-plus" />
-                Novo modelo
+                New model
               </button>
             )}
           </div>
@@ -242,8 +242,8 @@ export function CommandCenter({
             <label className="tpl-q">
               {SEARCH_ICON}
               <input
-                placeholder="Buscar por nome, área, serviço ou habilidade…"
-                aria-label="Buscar modelos"
+                placeholder="Search by name, area, service, or skill…"
+                aria-label="Search models"
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
               />
@@ -295,7 +295,7 @@ export function CommandCenter({
               </div>
             ) : (
               <p className="muted" style={{ padding: '8px 0' }}>
-                Nenhum modelo com “{query}”.
+                No model with “{query}”.
               </p>
             )}
           </div>

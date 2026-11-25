@@ -7,7 +7,7 @@ export function NameModal({
   title,
   icon,
   initial = '',
-  action = 'Salvar',
+  action = 'Save',
   onSave,
   onClose,
 }) {

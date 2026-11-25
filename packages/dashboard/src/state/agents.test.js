@@ -4,10 +4,10 @@ import { listAgents, shortWhen, stateOf, waitsOn } from './agents.js';
 const bot = (id, o = {}) => ({ id, status: 'idle', createdAt: 100, ...o });
 
 describe('stateOf and waitsOn', () => {
-  test('an approval waiting counts and reads as "espera você"', () => {
+  test('an approval waiting counts and reads as "waiting for you"', () => {
     const b = bot('a', { needsYou: 'approval', waitingCount: 2 });
     expect(waitsOn(b)).toBe(2);
-    expect(stateOf(b)).toEqual({ word: 'espera você', mark: 'wait' });
+    expect(stateOf(b)).toEqual({ word: 'waiting for you', mark: 'wait' });
   });
   test('open choices in its deliveries wait for a person too', () => {
     expect(waitsOn(bot('a', { pendingChoices: 2 }))).toBe(2);
@@ -43,9 +43,9 @@ describe('listAgents', () => {
 });
 
 test('shortWhen', () => {
-  expect(shortWhen(1000, 1010)).toBe('agora');
+  expect(shortWhen(1000, 1010)).toBe('now');
   expect(shortWhen(1000, 1000 + 12 * 60)).toBe('12 min');
   expect(shortWhen(1000, 1000 + 3 * 3600)).toBe('3 h');
-  expect(shortWhen(1000, 1000 + 30 * 3600)).toBe('ontem');
+  expect(shortWhen(1000, 1000 + 30 * 3600)).toBe('yesterday');
   expect(shortWhen(1000, 1000 + 3 * 86400)).toBe('3 d');
 });

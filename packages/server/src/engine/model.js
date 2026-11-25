@@ -355,7 +355,7 @@ export async function complete(
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-Title': 'Assistant',
+      'X-Title': 'Gemini Code',
       ...headers,
     },
     body: JSON.stringify(body),

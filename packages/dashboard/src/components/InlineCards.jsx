@@ -50,25 +50,25 @@ function Description({ children, isError = false }) {
 
 const CLASS_LABELS = {
   read: 'ler',
-  write: 'criar e alterar rascunhos, agendar e propor',
-  external: 'publicar, enviar, pagar ou apagar',
+  write: 'create and change drafts, schedule and propose',
+  external: 'publish, send, pay, or delete',
 };
 const KIND_LABELS = {
-  send: 'enviar mensagens',
-  pay: 'pagar ou comprar',
-  delete: 'apagar ou sobrescrever',
-  publish: 'publicar ou fazer deploy',
-  form: 'enviar formulários',
-  auth: 'entrar em serviços',
-  other: 'ações deste tipo',
+  send: 'send messages',
+  pay: 'pay or buy',
+  delete: 'delete or overwrite',
+  publish: 'publish or deploy',
+  form: 'submit forms',
+  auth: 'sign in to services',
+  other: 'actions of this type',
 };
 
 /** What "Permitir" covers, in the person's unit: the service and its class, or the kind of computer action. */
 export function reachSentence({ service, reach }) {
   if (service && CLASS_LABELS[reach])
-    return `o ${service} para ${CLASS_LABELS[reach]}`;
+    return `the ${service} for ${CLASS_LABELS[reach]}`;
   if (KIND_LABELS[reach]) return KIND_LABELS[reach];
-  return 'esta ação';
+  return 'this action';
 }
 
 // What leaves, exactly as it will: a person approves an act, not a sentence
@@ -100,7 +100,7 @@ function OutgoingContent({ args }) {
       style={{ border: '1px solid var(--mantine-color-gray-2)' }}
     >
       <Text fz={10} fw={800} c="gray.4" tt="uppercase" lts="1.5px" mb={6}>
-        O que vai sair
+        What will be removed
       </Text>
       {entries.map(([key, value]) => (
         <Box key={key} mb={6}>
@@ -169,19 +169,19 @@ export function ApprovalCard({
   };
 
   return (
-    <Card eyebrow="Precisa da sua aprovação" title={summary}>
+    <Card eyebrow="Needs your approval" title={summary}>
       <Description>
         {reason}
         {checkpointId
-          ? ' O computador foi fotografado antes: dá para desfazer o que mudar nele, não o que sair para fora.'
+          ? 'A snapshot of the computer was taken first: changes on it can be undone, but not anything sent outside.'
           : ''}
         {isAlwaysAsk
-          ? ` Permitir libera ${covers} até o fim da tarefa. Pagamentos e contas pedem sempre: não há "sempre permitir" para isto.`
-          : ` Permitir libera ${covers} até o fim da tarefa. Sempre permitir libera ${covers} neste bot por 90 dias.`}
+          ? `Allow permits ${covers} until the task ends. Payments and accounts always ask: there's no "always allow" for this.`
+          : `Allow permits ${covers} until the task ends. Always allow permits ${covers} on this bot for 90 days.`}
       </Description>
       <OutgoingContent args={args} />
       <Textarea
-        placeholder="Opcional: peça uma mudança (Permitir com a mudança) ou diga por que recusa (o motivo vale como 'pergunte antes' para isto)"
+        placeholder="Optional: request a change (Allow with change) or say why you're declining (the reason counts as 'ask first' for this)"
         value={note}
         onChange={(event) => setNote(event.currentTarget.value)}
         autosize
@@ -192,7 +192,7 @@ export function ApprovalCard({
       <Group justify="space-between" gap={8}>
         <Checkbox
           size="xs"
-          label="Lembrar o motivo da recusa"
+          label="Remember the reason for rejecting"
           checked={shouldRemember}
           onChange={(event) => setShouldRemember(event.currentTarget.checked)}
         />
@@ -203,7 +203,7 @@ export function ApprovalCard({
             loading={busy === 'reject'}
             onClick={() => decide(false)}
           >
-            Recusar
+            Reject
           </Button>
           {!isAlwaysAsk && (
             <Button
@@ -212,7 +212,7 @@ export function ApprovalCard({
               loading={busy === 'always'}
               onClick={() => decide(true, 'always')}
             >
-              Sempre permitir
+              Always allow
             </Button>
           )}
           <Button
@@ -222,11 +222,11 @@ export function ApprovalCard({
             onClick={() => decide(true, 'task')}
             title={
               note.trim()
-                ? 'O agente refaz a ação com a sua mudança; a permissão vale para ela'
+                ? 'The agent redoes the action with your change; the permission applies to it'
                 : undefined
             }
           >
-            {note.trim() ? 'Permitir com a mudança' : 'Permitir'}
+            {note.trim() ? 'Allow with change' : 'Permitir'}
           </Button>
         </Group>
       </Group>
@@ -290,7 +290,7 @@ export function ConnectCard({
   };
 
   return (
-    <Card eyebrow="Conectar aplicativo" title={connection.title}>
+    <Card eyebrow="Connect an app" title={connection.title}>
       {reason && (
         <Text fz={14} fw={500} c="gray.9" lh={1.5} mb={6}>
           {reason}
@@ -299,29 +299,29 @@ export function ConnectCard({
       {connection.status === 'pending_auth' && (
         <>
           <Description>
-            Entre na sua conta e aprove o acesso quando quiser. O bot é avisado
-            quando você conectar.
+            Sign in to your account and approve access whenever you want. The
+            bot is notified when you connect.
           </Description>
           <Button
             radius={0}
             color="gray.9"
             onClick={() => openSignIn(connection.statusDetail)}
           >
-            Conectar
+            Connect
           </Button>
         </>
       )}
       {connection.status === 'needs_secret' && (
         <>
           <Description>
-            Este serviço pede um token de API. Ele fica criptografado na
-            central, fora desta conversa e do computador do bot.
+            This service requires an API token. It stays encrypted on the
+            server, outside this conversation and the bot’s computer.
           </Description>
           <Group gap={8} wrap="nowrap">
             <TextInput
               flex={1}
               type="password"
-              placeholder="Cole o token"
+              placeholder="Paste the token"
               value={secret}
               onChange={(event) => setSecret(event.currentTarget.value)}
               radius={0}
@@ -337,7 +337,7 @@ export function ConnectCard({
                 )
               }
             >
-              Conectar
+              Connect
             </Button>
           </Group>
         </>
@@ -347,7 +347,7 @@ export function ConnectCard({
         <>
           <Description isError={connection.status === 'failed'}>
             {connection.status === 'failed'
-              ? `Não consegui falar com o serviço: ${connection.statusDetail || 'sem detalhe'}`
+              ? `Couldn't reach the service: ${connection.statusDetail || 'sem detalhe'}`
               : 'Conectando…'}
           </Description>
           {connection.status === 'failed' && (
@@ -357,7 +357,7 @@ export function ConnectCard({
               loading={isBusy}
               onClick={() => run(() => retryConnection(connection.id))}
             >
-              Tentar de novo
+              Try again
             </Button>
           )}
         </>
@@ -368,13 +368,13 @@ export function ConnectCard({
 
 export function TakeoverCard({ onOpen }) {
   return (
-    <Card eyebrow="O computador é seu" title="Você assumiu a tela">
+    <Card eyebrow="The computer is yours" title="You took over the screen">
       <Description>
-        Faça o login, o código ou o que precisar. Quando terminar, mande uma
-        mensagem dizendo o que fez — isso devolve ao bot.
+        Sign in, enter the code, or whatever is needed. When you’re done, send a
+        message saying what you did — that hands it back to the bot.
       </Description>
       <Button radius={0} color="gray.9" onClick={onOpen}>
-        Abrir o computador
+        Open computer
       </Button>
     </Card>
   );
@@ -402,10 +402,10 @@ export function FailedCard({ taskId, onDone = () => {} }) {
         loading={isBusy}
         onClick={retry}
       >
-        Tentar de novo
+        Try again
       </Button>
       <Text fz={12} c="gray.5">
-        ou mande uma mensagem dizendo como seguir
+        or send a message saying how to proceed
       </Text>
     </Group>
   );

@@ -55,10 +55,7 @@ export function useBookmarks(botId) {
             : await addBookmark(botId, eventId),
         );
       } catch (error) {
-        notify.error(
-          'A marcação não ficou',
-          `${error.message}. Tente de novo.`,
-        );
+        notify.error("Couldn't save the mark", `${error.message}. Try again.`);
       }
     },
     [botId, ids],
@@ -76,7 +73,7 @@ export function MarkedButton({ bookmarks }) {
       <button
         className="share"
         onClick={menu.open('bookmarks')}
-        title="As respostas que você marcou"
+        title="Responses you marked"
       >
         <i className="ti ti-bookmark" />
         Marcadas {bookmarks.items.length}
@@ -84,7 +81,7 @@ export function MarkedButton({ bookmarks }) {
       {menu.is('bookmarks') && (
         <Menu
           anchor={menu.anchor}
-          title="Respostas marcadas"
+          title="Marked answers"
           width={360}
           onClose={menu.close}
         >
@@ -103,7 +100,7 @@ export function MarkedButton({ bookmarks }) {
       )}
       {opened && (
         <Modal
-          title="Resposta marcada"
+          title="Marked answer"
           icon="ti-bookmark"
           onClose={() => setOpened(null)}
         >
@@ -140,7 +137,7 @@ export function VersionsButton({ bot, account, modelLabel, refreshKey }) {
     try {
       setOpened(await fetchBranch(bot.id, branch.id));
     } catch (error) {
-      notify.error('A versão não abriu', `${error.message}. Tente de novo.`);
+      notify.error("Couldn't open the version", `${error.message}. Try again.`);
     }
   };
   return (
@@ -148,22 +145,22 @@ export function VersionsButton({ bot, account, modelLabel, refreshKey }) {
       <button
         className="share"
         onClick={menu.open('versions')}
-        title="O que um Voltar para aqui tirou da conversa, guardado para ler"
+        title="What a Go back to here removed from the chat, saved for reading"
       >
         <i className="ti ti-git-branch" />
-        Versões {items.length}
+        Versions {items.length}
       </button>
       {menu.is('versions') && (
         <Menu
           anchor={menu.anchor}
-          title="Versões guardadas"
+          title="Saved versions"
           width={360}
           onClose={menu.close}
         >
           {items.map((item) => (
             <Opt
               key={item.id}
-              title={`A partir de: ${item.title.replace(/\s+/g, ' ').slice(0, 70)}`}
+              title={`Starting from: ${item.title.replace(/\s+/g, ' ').slice(0, 70)}`}
               note={`${messageWhen(item.createdAt)} · ${item.size} ${item.size === 1 ? 'passo' : 'passos'}`}
               onClick={() => open(item)}
             />
@@ -172,12 +169,12 @@ export function VersionsButton({ bot, account, modelLabel, refreshKey }) {
       )}
       {opened && (
         <Modal
-          title="Versão guardada"
+          title="Saved version"
           icon="ti-git-branch"
           onClose={() => setOpened(null)}
         >
           <p className="fine">
-            Como a conversa seguia antes de voltar para “
+            How the conversation went before going back to “
             {opened.title.slice(0, 80)}”. Só para ler: o agente seguiu pelo
             outro caminho.
           </p>
@@ -226,8 +223,8 @@ export function ResultsBar({ rows, onOpenFile }) {
   };
   const rest = results.slice(RESULTS_IN_SIGHT);
   return (
-    <span className="results" aria-label="O que o agente entregou">
-      <span className="results-label">Entregue</span>
+    <span className="results" aria-label="What the agent delivered">
+      <span className="results-label">Delivered</span>
       {results.slice(0, RESULTS_IN_SIGHT).map((item) => (
         <button
           key={item.key}
@@ -245,7 +242,7 @@ export function ResultsBar({ rows, onOpenFile }) {
         <button
           className="result more"
           onClick={menu.open('results')}
-          title="Tudo o que o agente entregou"
+          title="Everything the agent delivered"
         >
           +{rest.length}
         </button>
@@ -253,7 +250,7 @@ export function ResultsBar({ rows, onOpenFile }) {
       {menu.is('results') && (
         <Menu
           anchor={menu.anchor}
-          title="Entregue"
+          title="Delivered"
           width={340}
           onClose={menu.close}
         >

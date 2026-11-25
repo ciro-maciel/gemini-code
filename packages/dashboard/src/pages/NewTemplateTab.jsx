@@ -32,12 +32,12 @@ export function NewTemplateTab({ onCreated }) {
         owns: answers[0],
         area: 'Outros',
         uses: servicesFrom(answers[1] || ''),
-        instructions: `O que é seu: ${answers[0]}.`,
+        instructions: `What's yours: ${answers[0]}.`,
       });
       await reloadTemplates();
       notify.success(
-        `Modelo ${template.name} criado`,
-        'Ele já está no Centro de comando; todo agente que nascer dele recebe uma cópia.',
+        `Template ${template.name} created`,
+        "It's already in the Command center; every agent created from it gets a copy.",
       );
       onCreated(template.id);
     } catch (error) {
@@ -52,7 +52,7 @@ export function NewTemplateTab({ onCreated }) {
       <AgentAvatar bot={null} icon="ti-sparkles" />
       <div className="body">
         <div className="who">
-          Assistant<small>criar um modelo</small>
+          Assistant<small>create a template</small>
         </div>
         {children}
       </div>
@@ -62,7 +62,7 @@ export function NewTemplateTab({ onCreated }) {
     <div className="m person mine" key={key}>
       <span className="av">EU</span>
       <div className="body">
-        <div className="me-label">Você</div>
+        <div className="me-label">You</div>
         <div className="txt">{value}</div>
       </div>
     </div>
@@ -105,19 +105,19 @@ export function NewTemplateTab({ onCreated }) {
                 </div>
                 <div className="art">
                   <div className="ah">
-                    <span className="label">Ficha</span>
-                    <b>Ficha do {name}</b>
+                    <span className="label">Profile</span>
+                    <b>Profile of {name}</b>
                   </div>
                   <div className="aitems">
                     <div className="ai">
-                      <span className="pill-st">cuida de</span>
+                      <span className="pill-st">takes care of</span>
                       <b>{answers[0]}</b>
                     </div>
                     <div className="ai">
                       <span className="pill-st">usa</span>
                       <b>{answers[1]}</b>
                       <span className="muted">
-                        cada um pede autorização na primeira vez
+                        each asks for permission the first time
                       </span>
                     </div>
                   </div>
@@ -127,13 +127,13 @@ export function NewTemplateTab({ onCreated }) {
                       onClick={create}
                       disabled={isSaving}
                     >
-                      Criar o modelo
+                      Create template
                     </button>
                     <button
                       className="btn outline sm"
                       onClick={() => setAnswers([])}
                     >
-                      Mudar algo
+                      Change something
                     </button>
                   </div>
                 </div>
@@ -146,7 +146,7 @@ export function NewTemplateTab({ onCreated }) {
           <textarea
             ref={inputRef}
             rows={1}
-            placeholder="Responder…"
+            placeholder="Reply…"
             aria-label="Resposta"
             value={text}
             onChange={(event) => setText(event.target.value)}
@@ -163,7 +163,7 @@ export function NewTemplateTab({ onCreated }) {
               className="send"
               onClick={() => answer(text)}
               disabled={!text.trim()}
-              aria-label="Enviar"
+              aria-label="Send"
             >
               <i className="ti ti-arrow-up" />
             </button>

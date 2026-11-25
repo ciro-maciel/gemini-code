@@ -54,16 +54,16 @@ export function useRepoFiles(isOpen) {
 
 // The prototype's folder menu, in its order.
 export const FOLDER_ACTIONS = [
-  ['cite', 'Citar no chat', 'ti-quote'],
-  ['agent', 'Novo agente nesta pasta', 'ti-message-plus'],
-  ['copy', 'Copiar caminho', 'ti-copy'],
+  ['cite', 'Mention in chat', 'ti-quote'],
+  ['agent', 'New agent in this folder', 'ti-message-plus'],
+  ['copy', 'Copy path', 'ti-copy'],
   null,
-  ['file', 'Novo arquivo…', 'ti-file-plus'],
-  ['folder', 'Nova pasta…', 'ti-folder-plus'],
-  ['upload', 'Enviar arquivos pra cá…', 'ti-upload'],
+  ['file', 'New file…', 'ti-file-plus'],
+  ['folder', 'New folder…', 'ti-folder-plus'],
+  ['upload', 'Upload files here…', 'ti-upload'],
   null,
-  ['rename', 'Renomear…', 'ti-pencil'],
-  ['delete', 'Apagar pasta…', 'ti-trash'],
+  ['rename', 'Rename…', 'ti-pencil'],
+  ['delete', 'Delete folder…', 'ti-trash'],
 ];
 
 export function FileTree({ items, repo, activePath, onOpen, onFolderAction }) {
@@ -83,21 +83,21 @@ export function FileTree({ items, repo, activePath, onOpen, onFolderAction }) {
   if (items === null)
     return (
       <p className="muted" style={{ padding: '12px 6px' }}>
-        Carregando…
+        Loading…
       </p>
     );
   if (!repo)
     return (
       <p className="muted" style={{ padding: '12px 6px' }}>
-        O workspace de arquivos ainda não está configurado.
+        The file workspace is not set up yet.
       </p>
     );
   if (!items.length)
     return (
       <p className="muted" style={{ padding: '12px 6px' }}>
         {repo.mode === 'local'
-          ? 'Workspace local pronto. Crie uma pasta ou documento acima.'
-          : 'O repositório nasce na primeira mudança de um agente.'}
+          ? 'Local workspace ready. Create a folder or document above.'
+          : "The repository is created on an agent's first change."}
       </p>
     );
 
@@ -122,7 +122,7 @@ export function FileTree({ items, repo, activePath, onOpen, onFolderAction }) {
           <span className="name">{dir.name}</span>
           <button
             className="more"
-            aria-label="Ações da pasta"
+            aria-label="Folder actions"
             onClick={(event) => {
               event.stopPropagation();
               setMenuPath(dir.path);

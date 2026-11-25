@@ -44,7 +44,7 @@ export function InboxDoor({ botId }) {
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 1500);
     } catch {
-      notify.error('Não foi possível copiar. Selecione o endereço e copie.');
+      notify.error("Couldn't copy. Select the address and copy it.");
     }
   };
   const rotate = async () => {
@@ -52,8 +52,8 @@ export function InboxDoor({ botId }) {
     try {
       setInbox(await rotateInbox(botId));
       notify.success(
-        'Endereço trocado',
-        'O antigo já não recebe nada. Ponha o novo no outro sistema.',
+        'Address changed',
+        'The old one no longer receives anything. Put the new one in the other system.',
       );
       setIsAsking(false);
     } catch (error) {
@@ -66,9 +66,9 @@ export function InboxDoor({ botId }) {
   return (
     <Stack gap={8}>
       <Text fz={12} c="gray.6">
-        Outro sistema manda para este endereço (um POST com texto ou JSON), e o
-        que chega vira uma mensagem nesta conversa. Nas instruções do bot, diga
-        o que fazer com o que chega pela porta.
+        Another system sends to this address (a POST with text or JSON), and
+        what arrives becomes a message in this chat. In the bot’s instructions,
+        say what to do with incoming messages.
       </Text>
       <Group gap={6} wrap="nowrap">
         <TextInput
@@ -77,7 +77,7 @@ export function InboxDoor({ botId }) {
           radius={0}
           readOnly
           value={inbox.url}
-          aria-label="Endereço da porta de entrada"
+          aria-label="Entry point address"
           onFocus={(event) => event.currentTarget.select()}
           styles={{
             input: { fontFamily: 'var(--mantine-font-family-monospace)' },
@@ -87,7 +87,7 @@ export function InboxDoor({ botId }) {
           size={30}
           variant="default"
           radius={0}
-          aria-label="Copiar o endereço"
+          aria-label="Copy the address"
           onClick={copy}
         >
           {isCopied ? (
@@ -99,7 +99,7 @@ export function InboxDoor({ botId }) {
       </Group>
       <Group justify="space-between">
         <Text fz={12} c="gray.5">
-          Quem tem o endereço pode mandar. Desde {formatWhen(inbox.createdAt)}.
+          Anyone with the address can send. Since {formatWhen(inbox.createdAt)}.
         </Text>
         <Button
           size="xs"
@@ -108,7 +108,7 @@ export function InboxDoor({ botId }) {
           color="gray"
           onClick={() => setIsAsking(true)}
         >
-          Trocar o endereço
+          Change address
         </Button>
       </Group>
       <Modal
@@ -117,17 +117,17 @@ export function InboxDoor({ botId }) {
         size="sm"
         title={
           <Text fz={16} fw={800} c="gray.9">
-            Trocar o endereço
+            Change address
           </Text>
         }
       >
         <Text fz={13} c="gray.7" mb="md">
-          O endereço atual para de receber na hora. Quem manda para ele precisa
-          do novo.
+          The current address stops receiving immediately. Anyone sending to it
+          needs the new one.
         </Text>
         <Group justify="flex-end">
           <Button loading={isRotating} onClick={rotate}>
-            Trocar
+            Change
           </Button>
         </Group>
       </Modal>
@@ -161,8 +161,8 @@ export function Vault({ botId }) {
       if (existing) await updateSecret(botId, existing.id, value);
       else await createSecret(botId, name, value);
       notify.success(
-        `${name} guardada no cofre`,
-        'O bot usa pelo nome; o valor não aparece mais.',
+        `${name} saved to vault`,
+        'The bot uses it by name; the value is no longer shown.',
       );
       setName('');
       setValue('');
@@ -190,7 +190,7 @@ export function Vault({ botId }) {
       </Text>
       {secrets.length === 0 && (
         <Text fz={12} c="gray.5">
-          Nenhuma chave ainda.
+          No keys yet.
         </Text>
       )}
       {secrets.map((secret) => (
@@ -208,7 +208,7 @@ export function Vault({ botId }) {
             variant="subtle"
             color="gray"
             radius={0}
-            aria-label={`Tirar ${secret.name} do cofre`}
+            aria-label={`Remove ${secret.name} from vault`}
             onClick={() => remove(secret.id)}
           >
             <IconX size={14} stroke={1.5} />
@@ -219,7 +219,7 @@ export function Vault({ botId }) {
         size="xs"
         radius={0}
         placeholder="NOME_DA_CHAVE"
-        aria-label="Nome da chave"
+        aria-label="Key name"
         value={name}
         onChange={(event) =>
           setName(
@@ -228,7 +228,7 @@ export function Vault({ botId }) {
         }
         error={
           name && !isNameValid
-            ? 'Comece com uma letra; só letras, números e _'
+            ? 'Start with a letter; only letters, numbers, and _'
             : null
         }
         styles={{
@@ -241,7 +241,7 @@ export function Vault({ botId }) {
           size="xs"
           radius={0}
           placeholder="Valor"
-          aria-label="Valor da chave"
+          aria-label="Key value"
           autoComplete="off"
           value={value}
           onChange={(event) => setValue(event.currentTarget.value)}
@@ -254,7 +254,7 @@ export function Vault({ botId }) {
           loading={isSaving}
           onClick={save}
         >
-          Guardar
+          Save
         </Button>
       </Group>
     </Stack>

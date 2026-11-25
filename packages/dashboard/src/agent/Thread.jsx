@@ -108,7 +108,7 @@ function Steps({ steps, isLive }) {
         {redone > 0 && <span className="steps-count">refeito</span>}
         {errors > 0 && (
           <span className="steps-err">
-            {errors === 1 ? '1 não feito' : `${errors} não feitos`}
+            {errors === 1 ? '1 not done' : `${errors} not done`}
           </span>
         )}
       </button>
@@ -176,8 +176,8 @@ function Work({ row, isLive, streamingText }) {
         </div>
       ));
   const head = isLive
-    ? `${now ? now.text : row.entries.at(-1)?.thought ? 'Pensando no próximo passo' : 'Começando'}${steps.length ? ` · passo ${steps.length}` : ''}`
-    : `${steps.length === 1 ? '1 passo' : `${steps.length} passos`}${places.length ? ` · ${places.join(', ')}` : ''}${row.seconds ? ` · ${secondsLabel(row.seconds)}` : ''}`;
+    ? `${now ? now.text : row.entries.at(-1)?.thought ? 'Thinking about the next step' : 'Starting'}${steps.length ? ` · step ${steps.length}` : ''}`
+    : `${steps.length === 1 ? '1 step' : `${steps.length} steps`}${places.length ? ` · ${places.join(', ')}` : ''}${row.seconds ? ` · ${secondsLabel(row.seconds)}` : ''}`;
   return (
     <>
       <div className={`work${isOpen ? ' open' : ''}`}>
@@ -193,7 +193,7 @@ function Work({ row, isLive, streamingText }) {
           {isLive && now?.detail && <span className="mono">{now.detail}</span>}
           {unresolved > 0 && (
             <span className="steps-err">
-              {unresolved === 1 ? '1 não feito' : `${unresolved} não feitos`}
+              {unresolved === 1 ? '1 not done' : `${unresolved} not done`}
             </span>
           )}
           <span className="work-toggle">{isOpen ? 'fechar' : 'ver'}</span>
@@ -232,11 +232,11 @@ function Work({ row, isLive, streamingText }) {
 
 function originLabel(row) {
   if (row.choice)
-    return `Escolha · ${row.choice.title}${row.choice.item ? ` · ${row.choice.item}` : ''}`;
-  if (row.routine) return `Rotina · ${row.routine.name}`;
+    return `Choice · ${row.choice.title}${row.choice.item ? ` · ${row.choice.item}` : ''}`;
+  if (row.routine) return `Routine · ${row.routine.name}`;
   if (row.inbound)
-    return `Porta de entrada${row.inbound.from ? ` · ${row.inbound.from}` : ''}`;
-  if (row.handoff) return `Passagem de ${row.handoff.from}`;
+    return `Inbox${row.inbound.from ? ` · ${row.inbound.from}` : ''}`;
+  if (row.handoff) return `Handoff from ${row.handoff.from}`;
   return null;
 }
 
@@ -247,7 +247,7 @@ function MemLine({ memories }) {
     <>
       <button className="memline" onClick={() => setIsOpen(!isOpen)}>
         <i className="ti ti-brain" />
-        usou {memories.length} {memories.length === 1 ? 'memória' : 'memórias'}
+        usou {memories.length} {memories.length === 1 ? 'memory' : 'memories'}
         <i className={`ti ${isOpen ? 'ti-chevron-up' : 'ti-chevron-down'}`} />
       </button>
       {isOpen && (
@@ -274,14 +274,14 @@ function NoteMessage({ row, account, onSend }) {
       </span>
       <div className="body">
         {isMine ? (
-          <div className="me-label">Você</div>
+          <div className="me-label">You</div>
         ) : (
           <div className="who">{row.author}</div>
         )}
         <div className="note">
           <span className="label">
             <i className="ti ti-lock" />
-            {isMine ? 'Sua nota' : `Nota de ${row.author}`} · o agente não vê
+            {isMine ? 'Your note' : `Note from ${row.author}`} · o agente não vê
           </span>
           <div className="txt">
             <RichText text={row.text} />
@@ -291,7 +291,7 @@ function NoteMessage({ row, account, onSend }) {
               className="btn outline sm note-btn"
               onClick={() => onSend(row.id)}
             >
-              Mandar pro agente
+              Send to agent
             </button>
           )}
         </div>
@@ -379,7 +379,7 @@ function UserMessage({ row, account, owner, isQueued, onRewind }) {
         {isMine ? (
           <div className="me-label">
             <When seconds={row.createdAt} />
-            Você
+            You
           </div>
         ) : (
           <div className="who">
@@ -388,8 +388,8 @@ function UserMessage({ row, account, owner, isQueued, onRewind }) {
               : row.routine
                 ? 'Rotina'
                 : row.inbound
-                  ? 'Porta de entrada'
-                  : 'Outro agente'}
+                  ? 'Inbound endpoint'
+                  : 'Another agent'}
             <When seconds={row.createdAt} />
           </div>
         )}
@@ -463,18 +463,18 @@ function UserMessage({ row, account, owner, isQueued, onRewind }) {
           <div className="m-acts">
             {isQueued && (
               <span className="muted">
-                <i className="ti ti-list" /> na fila · o agente lê no próximo
-                passo
+                <i className="ti ti-list" /> queued · the agent reads it on the
+                next step
               </span>
             )}
             {onRewind && (
               <button
                 className="pill"
                 onClick={onRewind}
-                title="Editar a partir daqui"
+                title="Edit from here"
               >
                 <i className="ti ti-arrow-back-up" />
-                Voltar para aqui
+                Go back to here
               </button>
             )}
           </div>
@@ -589,7 +589,7 @@ export function Thread({
     ? liveWork.entries.flatMap((entry) => entry.steps)
     : [];
   const liveStepText = liveSteps.length
-    ? `${describeTool(liveSteps.at(-1).name, liveSteps.at(-1).args || {}).text} · passo ${liveSteps.length}`
+    ? `${describeTool(liveSteps.at(-1).name, liveSteps.at(-1).args || {}).text} · step ${liveSteps.length}`
     : null;
   const turnStart =
     (thread?.updatedAt || thread?.createdAt || Date.now() / 1000) * 1000;
@@ -614,7 +614,7 @@ export function Thread({
         <AgentMessage
           key={row.id}
           bot={{ id: row.botId, name: row.name }}
-          modelLabel="chamado com @"
+          modelLabel="called with @"
         >
           <div className="txt">
             <RichText text={row.text} />
@@ -672,8 +672,8 @@ export function Thread({
                 onClick={() => onBookmark(row.id)}
                 title={
                   bookmarked?.has(row.id)
-                    ? 'Tirar a marca'
-                    : 'Marcar para achar depois'
+                    ? 'Remove the mark'
+                    : 'Bookmark for later'
                 }
               >
                 <i
@@ -788,7 +788,7 @@ export function Thread({
             <div className="callout">
               <i className="ti ti-alert-triangle" />
               <div>
-                <b>Parou</b>
+                <b>Stopped</b>
                 {row.text}
               </div>
             </div>
@@ -832,14 +832,14 @@ export function Thread({
           {isWorking && !streamingText && (
             <div className="status">
               <i className="ti ti-loader-2 spin" />
-              <b>{liveStepText ?? 'Pensando…'}</b>
+              <b>{liveStepText ?? 'Thinking…'}</b>
               <span className="mono">
-                Agente · <Since from={turnStart} />
+                Agent · <Since from={turnStart} />
               </span>
               {isUsingComputer && (
                 <button className="pill" onClick={onOpenScreen}>
                   <i className="ti ti-device-desktop" />
-                  Ver a tela
+                  View screen
                 </button>
               )}
             </div>

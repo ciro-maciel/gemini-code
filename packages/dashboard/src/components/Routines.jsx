@@ -26,20 +26,20 @@ import { notify } from './zen';
 import { keepIfSame } from '../state/keep-if-same';
 
 const REPEAT_OPTIONS = [
-  { value: 'once', label: 'Uma vez' },
-  { value: 'daily', label: 'Todo dia' },
-  { value: 'weekdays', label: 'Dia útil' },
-  { value: 'weekly', label: 'Toda semana' },
+  { value: 'once', label: 'Once' },
+  { value: 'daily', label: 'Every day' },
+  { value: 'weekdays', label: 'Business day' },
+  { value: 'weekly', label: 'Every week' },
 ];
 
 const WEEKDAYS = [
   'Domingo',
   'Segunda',
-  'Terça',
+  'Tuesday',
   'Quarta',
   'Quinta',
   'Sexta',
-  'Sábado',
+  'Saturday',
 ];
 
 function tomorrowAt() {
@@ -82,7 +82,7 @@ function NewRoutineModal({ opened, onClose, botId, onCreated }) {
         instruction,
         ...(repeat === 'once' ? { at: `${date}T${time}` } : { cron }),
       });
-      notify.success('Rotina criada');
+      notify.success('Routine created');
       onCreated();
       onClose();
     } catch (error) {
@@ -98,7 +98,7 @@ function NewRoutineModal({ opened, onClose, botId, onCreated }) {
       onClose={onClose}
       title={
         <Text fz={16} fw={800} c="gray.9">
-          Nova rotina
+          New routine
         </Text>
       }
     >
@@ -107,14 +107,14 @@ function NewRoutineModal({ opened, onClose, botId, onCreated }) {
           <TextInput
             data-autofocus
             label="Nome"
-            placeholder="Ex.: Resumo dos e-mails"
+            placeholder="E.g.: Email summary"
             value={name}
             onChange={(event) => setName(event.currentTarget.value)}
           />
           <Textarea
-            label="O que fazer"
-            description="Escreva como um pedido completo: na hora, ele faz sem perguntar. O que precisar de aprovação espera por você."
-            placeholder="Ex.: Leia meus e-mails das últimas 24 horas e me mande um resumo do que precisa de resposta"
+            label="What to do"
+            description="Write it as a complete request: when the time comes, it acts without asking. Anything that needs approval waits for you."
+            placeholder="E.g.: Read my emails from the last 24 hours and send me a summary of what needs a reply"
             autosize
             minRows={3}
             value={instruction}
@@ -122,7 +122,7 @@ function NewRoutineModal({ opened, onClose, botId, onCreated }) {
           />
           <Box>
             <Text fz={13} fw={700} mb={6}>
-              Quando
+              When
             </Text>
             <SegmentedControl
               fullWidth
@@ -143,7 +143,7 @@ function NewRoutineModal({ opened, onClose, botId, onCreated }) {
               )}
               {repeat === 'weekly' && (
                 <Select
-                  aria-label="Dia da semana"
+                  aria-label="Day of the week"
                   data={WEEKDAYS.map((label, index) => ({
                     value: String(index),
                     label,
@@ -162,7 +162,7 @@ function NewRoutineModal({ opened, onClose, botId, onCreated }) {
               />
             </Group>
             <Text fz={12} fw={500} c="gray.5" mt={6}>
-              Horário de Brasília.
+              Brasília time.
             </Text>
           </Box>
           <Group justify="flex-end">
@@ -171,7 +171,7 @@ function NewRoutineModal({ opened, onClose, botId, onCreated }) {
               loading={isSaving}
               disabled={!name.trim() || !instruction.trim() || !time}
             >
-              Criar rotina
+              Create routine
             </Button>
           </Group>
         </Stack>
@@ -221,9 +221,9 @@ function RoutineRow({ routine, onChange }) {
         <Text fz={12} fw={500} c="gray.5" lineClamp={2}>
           {routine.scheduleLabel}
           {routine.isEnabled && routine.nextRunLabel && routine.cron
-            ? ` · próxima ${routine.nextRunLabel}`
+            ? `· next ${routine.nextRunLabel}`
             : ''}
-          {isOnceAndDone ? ' · já executou' : ''}
+          {isOnceAndDone ? '· already ran' : ''}
         </Text>
       </Box>
       {!isOnceAndDone && (
@@ -232,7 +232,7 @@ function RoutineRow({ routine, onChange }) {
           color="gray.9"
           checked={routine.isEnabled}
           onChange={(event) => toggle(event.currentTarget.checked)}
-          aria-label={routine.isEnabled ? 'Pausar rotina' : 'Ligar rotina'}
+          aria-label={routine.isEnabled ? 'Pause routine' : 'Turn on routine'}
         />
       )}
       <Menu
@@ -246,13 +246,13 @@ function RoutineRow({ routine, onChange }) {
             variant="subtle"
             color="gray"
             size={24}
-            aria-label={`Opções da rotina ${routine.name}`}
+            aria-label={`Routine options for ${routine.name}`}
           >
             <IconDots size={14} stroke={1.5} />
           </ActionIcon>
         </Menu.Target>
         <Menu.Dropdown>
-          <Menu.Label>Faz</Menu.Label>
+          <Menu.Label>Does</Menu.Label>
           <Text fz={12} fw={500} c="gray.6" px={12} pb={8} lineClamp={5}>
             {routine.instruction}
           </Text>
@@ -263,7 +263,7 @@ function RoutineRow({ routine, onChange }) {
             leftSection={<IconTrash size={14} stroke={1.5} />}
             onClick={() => (isConfirming ? remove() : setIsConfirming(true))}
           >
-            {isConfirming ? 'Clique de novo para excluir' : 'Excluir rotina'}
+            {isConfirming ? 'Click again to delete' : 'Delete routine'}
           </Menu.Item>
         </Menu.Dropdown>
       </Menu>
@@ -291,8 +291,8 @@ export function Routines({ botId }) {
     <Stack gap={0}>
       {routines?.length === 0 && (
         <Text fz={12} fw={500} c="gray.5" lh={1.5} mb={10}>
-          Nenhuma ainda. Peça na conversa (“amanhã às 6h, me mande um resumo dos
-          e-mails”) ou crie aqui.
+          None yet. Ask in the conversation (“tomorrow at 6am, send me a summary
+          of my e-mails”) or create one here.
         </Text>
       )}
       {(routines ?? []).map((routine) => (
@@ -305,7 +305,7 @@ export function Routines({ botId }) {
           leftSection={<IconPlus size={14} stroke={1.5} />}
           onClick={() => setIsCreating(true)}
         >
-          Nova rotina
+          New routine
         </Button>
       </Group>
       <NewRoutineModal

@@ -1,7 +1,7 @@
 // The panel in Portuguese or English (17/11/2026, from marketing/decks): the choice, the translator and the layer on the page.
 import { describe, expect, test } from 'bun:test';
 import { Window } from 'happy-dom';
-import dictionary from './en.json';
+import dictionary from './pt.json';
 import { installTranslation, languageFor, makeTranslator } from './language.js';
 
 const tick = () => new Promise((resolve) => setTimeout(resolve, 0));
@@ -133,10 +133,10 @@ describe('o tradutor', () => {
     expect(translate('Um título que a pessoa escreveu')).toBeNull());
 });
 
-describe('o dicionário', () => {
-  test('tem os textos do painel e dos pacotes da casa', () => {
+describe('the Portuguese dictionary', () => {
+  test('holds the texts of the panel, English to Portuguese', () => {
     expect(Object.keys(dictionary.texts).length).toBeGreaterThan(400);
-    expect(dictionary.texts['Cancelar']).toBeTruthy();
+    expect(dictionary.texts['Cancel']).toBe('Cancelar');
   });
   test('o rótulo bilíngue do seletor de idioma fica como está', () => {
     expect(
@@ -144,9 +144,9 @@ describe('o dicionário', () => {
     ).toBe('Idioma · Language');
   });
   test('todo modelo traduzido guarda os mesmos {n}', () => {
-    for (const [pt, en] of Object.entries(dictionary.patterns))
-      expect([...en.matchAll(/\{#?\d+\}/g)].map((m) => m[0]).sort()).toEqual(
-        [...pt.matchAll(/\{#?\d+\}/g)].map((m) => m[0]).sort(),
+    for (const [en, pt] of Object.entries(dictionary.patterns))
+      expect([...pt.matchAll(/\{#?\d+\}/g)].map((m) => m[0]).sort()).toEqual(
+        [...en.matchAll(/\{#?\d+\}/g)].map((m) => m[0]).sort(),
       );
   });
 });

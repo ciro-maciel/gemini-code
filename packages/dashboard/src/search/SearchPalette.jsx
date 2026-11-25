@@ -61,14 +61,14 @@ export function SearchPalette({ bots, templates, onClose, onOpen, onStart }) {
           {
             key: 'new',
             icon: <i className="ti ti-message-plus" />,
-            title: `Novo agente: "${query}"`,
+            title: `New agent: "${query}"`,
             run: () => onStart(query),
           },
         ]
       : []),
     ...agents.map((bot) => ({
       key: `a${bot.id}`,
-      group: 'Agentes',
+      group: 'Agents',
       icon: <AgentAvatar bot={bot} size="sm" />,
       title: bot.name,
       note: bot.lastMessage,
@@ -76,7 +76,7 @@ export function SearchPalette({ bots, templates, onClose, onOpen, onStart }) {
     })),
     ...models.map((item) => ({
       key: `t${item.id}`,
-      group: 'Modelos',
+      group: 'Models',
       icon: <AgentAvatar bot={null} icon={item.icon} size="sm" />,
       title: item.name,
       note: item.area,
@@ -92,14 +92,14 @@ export function SearchPalette({ bots, templates, onClose, onOpen, onStart }) {
     })),
     ...(q ? files.filter(has).slice(0, 4) : []).map((path) => ({
       key: `f${path}`,
-      group: 'Arquivos',
+      group: 'Files',
       icon: <i className={`ti ${iconOf(path)}`} />,
       title: path,
       run: () => onOpen(`file:${path}`),
     })),
     ...memories.slice(0, 4).map((item) => ({
       key: `m${item.id}`,
-      group: 'Memória',
+      group: 'Memory',
       icon: <i className="ti ti-brain" />,
       title: item.content,
       note: item.botName,
@@ -119,7 +119,7 @@ export function SearchPalette({ bots, templates, onClose, onOpen, onStart }) {
           {SEARCH_ICON}
           <input
             autoFocus
-            placeholder="Buscar agente, entrega, arquivo ou memória…"
+            placeholder="Search agents, deliverables, files, or memory…"
             autoComplete="off"
             aria-label="Buscar"
             value={query}
@@ -141,7 +141,9 @@ export function SearchPalette({ bots, templates, onClose, onOpen, onStart }) {
               </button>
             </div>
           ))}
-          {!results.length && <p className="menu-note">Nada com “{query}”.</p>}
+          {!results.length && (
+            <p className="menu-note">Nothing with “{query}”.</p>
+          )}
         </div>
       </div>
     </div>

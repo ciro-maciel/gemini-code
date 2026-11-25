@@ -33,13 +33,13 @@ function originOf(events) {
   if (last.routine)
     return {
       icon: 'ti-clock-play',
-      label: `Rotina · ${last.routine.name || last.routine}`,
+      label: `Routine · ${last.routine.name || last.routine}`,
     };
-  if (last.inbound) return { icon: 'ti-webhook', label: 'Porta de entrada' };
+  if (last.inbound) return { icon: 'ti-webhook', label: 'Inbound endpoint' };
   if (last.handoff)
     return {
       icon: 'ti-arrows-exchange',
-      label: `Passagem de ${last.handoff.fromName || last.handoff.from || 'outro agente'}`,
+      label: `Handoff from ${last.handoff.fromName || last.handoff.from || 'outro agente'}`,
     };
   return { icon: 'ti-user', label: 'Pessoa' };
 }
@@ -137,14 +137,14 @@ export function AgentTab({
     try {
       const freed = await releaseContext(bot.id);
       notify.success(
-        'Contexto liberado',
+        'Context released',
         [
           freed.connected > 0 &&
             `${freed.connected} ${freed.connected === 1 ? 'ferramenta saiu' : 'ferramentas saíram'}`,
-          freed.isComputer && 'o computador e o navegador saíram',
+          freed.isComputer && 'the computer and browser were removed',
         ]
           .filter(Boolean)
-          .join('; ') + '. O efeito aparece no próximo passo.',
+          .join('; ') + '. The change takes effect on the next step.',
       );
       conversation.reloadThread();
     } catch (error) {
@@ -170,7 +170,7 @@ export function AgentTab({
   const crew = [
     bot.sharedBy
       ? { name: bot.sharedBy }
-      : { name: account?.name || account?.email || 'Você' },
+      : { name: account?.name || account?.email || 'You' },
     ...members,
   ];
   const origin = originOf(events);
@@ -198,7 +198,7 @@ export function AgentTab({
       >
         {isDropping && (
           <div className="drop-attach">
-            <b>Solte pra anexar a {bot.name}</b>
+            <b>Drop to attach to {bot.name}</b>
           </div>
         )}
         <div className="conv-sub">
@@ -206,14 +206,14 @@ export function AgentTab({
             <button
               className="m-btn agent-chip"
               onClick={onOpenSettings}
-              title="Ajustes deste agente: quando, cofre e memória"
+              title="Agent settings: schedule, vault, and memory"
             >
               <i className="ti ti-adjustments-horizontal" />
-              Ajustes do agente
+              Agent settings
               <i className="ti ti-layout-sidebar-right" />
             </button>
           )}
-          <span className="orig" title="De onde veio este agente">
+          <span className="orig" title="Where this agent came from">
             <i className={`ti ${origin.icon}`} />
             {origin.label}
           </span>
@@ -221,10 +221,10 @@ export function AgentTab({
           {isOpenElsewhere && (
             <span
               className="orig"
-              title="Você está com este agente aberto em outra janela ou aparelho; as duas recebem tudo ao vivo"
+              title="You have this agent open in another window or device; both receive everything live"
             >
               <i className="ti ti-devices" />
-              Aberta também em outra janela
+              Also open in another window
             </span>
           )}
           <MarkedButton bookmarks={bookmarks} />
@@ -239,13 +239,13 @@ export function AgentTab({
               className={view === 'conv' ? 'on' : ''}
               onClick={() => setView('conv')}
             >
-              Conversa
+              Conversation
             </button>
             <button
               className={view === 'trail' ? 'on' : ''}
               onClick={() => setView('trail')}
             >
-              Trilha
+              Trail
             </button>
           </span>
           <button
@@ -255,15 +255,15 @@ export function AgentTab({
               writeFilesOpen(!isFilesOpen);
               setIsFilesOpen(!isFilesOpen);
             }}
-            title="A pasta deste agente: só ele trabalha nela"
+            title="This agent's folder: only it works there"
           >
             <i className="ti ti-folder" />
-            Arquivos
+            Files
           </button>
           {isOwner && (
             <button className="share" onClick={() => setIsSharing(true)}>
               <i className="ti ti-user-share" />
-              Compartilhar
+              Share
             </button>
           )}
         </div>
@@ -272,15 +272,15 @@ export function AgentTab({
             <i className="ti ti-users" />
             {isOwner ? (
               <span className="grow">
-                <b>Compartilhada</b> · Cada mensagem vai pro agente com o nome
-                de quem mandou. Roda como você, no seu plano.
+                <b>Shared</b> · Each message goes to the agent with the sender’s
+                name. Runs as you, on your plan.
               </span>
             ) : (
               <span className="grow">
-                <b>Compartilhada por {bot.sharedBy}</b> ·{' '}
+                <b>Shared by {bot.sharedBy}</b> ·{' '}
                 {bot.access === 'read'
-                  ? 'Você acompanha ao vivo, sem mandar mensagem.'
-                  : 'Sua mensagem vai pro agente com o seu nome. Roda no plano de quem criou.'}
+                  ? 'You watch live without sending messages.'
+                  : "Your message goes to the agent under your name. It runs on the creator's plan."}
               </span>
             )}
             {isOwner && (
@@ -288,7 +288,7 @@ export function AgentTab({
                 className="btn outline sm"
                 onClick={() => setIsSharing(true)}
               >
-                Gerenciar
+                Manage
               </button>
             )}
           </div>
@@ -321,7 +321,7 @@ export function AgentTab({
             {others.length > 0 && (
               <span className="seeing">
                 <i className="ti ti-eye" />
-                vendo agora
+                viewing now
                 {others.map((person) => (
                   <span
                     key={person.accountId}
@@ -357,8 +357,8 @@ export function AgentTab({
             {view === 'trail' ? (
               <div className="trail">
                 <p className="fine">
-                  Cada ação deste agente, com quem fez, quando e o que a
-                  liberou. Notas entre pessoas não entram.
+                  Every action by this agent, who did it, when, and what allowed
+                  it. Notes between people aren’t included.
                 </p>
                 <AuditTrail botId={bot.id} />
               </div>
@@ -367,9 +367,9 @@ export function AgentTab({
                 <AgentAvatar bot={bot} icon={template?.icon} />
                 <b>{bot.name}</b>
                 <p className="muted">
-                  Peça qualquer coisa. Ele usa o computador dele, conecta nos
-                  seus aplicativos e pede sua aprovação antes de enviar, pagar
-                  ou apagar.
+                  Ask anything. It uses its own computer, connects to your apps,
+                  and asks for your approval before sending, paying, or
+                  deleting.
                 </p>
               </div>
             ) : (
@@ -406,8 +406,8 @@ export function AgentTab({
         {bot.access === 'read' ? (
           <div className="read-only">
             <i className="ti ti-eye" />
-            Você acompanha este agente. Para mandar mensagem, peça a{' '}
-            {bot.sharedBy} o acesso “pode entrar”.
+            You follow this agent. To send messages, ask {bot.sharedBy} o acesso
+            “pode entrar”.
           </div>
         ) : isVoice ? (
           <div className="composer voice">
@@ -450,7 +450,7 @@ export function AgentTab({
             <ResultsBar rows={rows} onOpenFile={onOpenFile} />
           )}
           <span className="cfoot-cost">
-            {template ? `Começou do modelo ${template.name} · ` : ''}
+            {template ? `Started from template ${template.name} ·` : ''}
             {money(cost)} neste agente
           </span>
         </div>

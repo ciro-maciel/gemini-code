@@ -30,9 +30,11 @@ Use [Bun](https://bun.sh) for everything (`bun install`, `bun add`, `bun test`,
   for classes, `SCREAMING_SNAKE` for module constants, `kebab-case.js` for
   files. `Id`, never `ID`. Booleans start with `is`, `has`, `can` or `should`
   and say the positive.
-- **Language:** code, identifiers, comments and commits in English. Text a
-  person reads in the product is in Portuguese today; English is welcome as a
-  second language.
+- **Language:** everything in English: code, comments, commits and every text a
+  person reads in the dashboard. Brazilian Portuguese is a translation: add the
+  new text to `packages/dashboard/src/lib/pt.json` (exact texts in `texts`,
+  texts with values in `patterns`, as `{0}`, or `{#0}` for a number). A line
+  built from pieces translates its pieces with `t()` from `lib/language.js`.
 - **Commits:** `type(scope): imperative sentence in lower case, no period`.
   Types: `feat` `fix` `refactor` `chore` `docs` `test` `ci` `perf`.
 

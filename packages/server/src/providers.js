@@ -19,10 +19,10 @@ export const PROVIDERS = [
   // A Google AI Pro or Ultra subscription, used through Google's own client (engine/subscription/).
   {
     id: 'google-subscription',
-    name: 'Assinatura Google (AI Pro e Ultra)',
+    name: 'Google subscription (AI Pro and Ultra)',
     base: null,
     isSubscription: true,
-    keyHint: 'entre uma vez no Antigravity CLI (agy)',
+    keyHint: 'sign in once to the Antigravity CLI (agy)',
     keyUrl: 'https://antigravity.google/product/antigravity-cli',
   },
   {

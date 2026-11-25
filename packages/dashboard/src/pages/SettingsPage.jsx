@@ -1,3 +1,4 @@
+import { locale } from '../lib/language';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AccountSwitcher, useSignOut } from '../auth/AuthContext';
@@ -21,27 +22,29 @@ import { DeleteModal, notify } from '../components/zen';
 import { useAccount } from '../components/Session';
 import { People } from './People';
 
-const money = (value) => `US$ ${(value || 0).toFixed(2).replace('.', ',')}`;
+// Dollars in the reader's own number format: US$ 0.00 in English, US$ 0,00 in Portuguese.
+const money = (value) =>
+  `US$ ${(value || 0).toLocaleString(locale(), { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
 const NAV = [
   [
-    'Sua conta',
+    'Your account',
     [
-      ['accounts', 'Contas de IA'],
+      ['accounts', 'AI accounts'],
       ['chrome', 'Meu Chrome'],
-      ['security', 'Segurança'],
+      ['security', 'Security'],
       ['phone', 'Celular'],
     ],
   ],
   [
-    'Organização',
+    'Organization',
     [
-      ['people', 'Pessoas', true],
-      ['files', 'Arquivos e GitHub'],
-      ['connections', 'Conexões do time'],
+      ['people', 'People', true],
+      ['files', 'Files and GitHub'],
+      ['connections', 'Team connections'],
       ['dictation', 'Ditado'],
       ['email', 'E-mail'],
-      ['org-security', 'Segurança'],
+      ['org-security', 'Security'],
     ],
   ],
 ];
@@ -72,9 +75,9 @@ const amount = (value) =>
 const priceLine = (price) =>
   price && price.input !== null && price.output !== null
     ? price.input === 0 && price.output === 0
-      ? 'grátis'
+      ? 'free'
       : `${amount(price.input)} / ${amount(price.output)}`
-    : 'sem preço';
+    : 'no price';
 
 /** Every chat model the account's key opens, newest first, searched and turned on one by one. */
 function ModelPicker({ item, onSaved }) {
@@ -112,19 +115,19 @@ function ModelPicker({ item, onSaved }) {
         className="field"
         style={{ width: '100%' }}
         autoFocus
-        placeholder="Buscar modelo…"
-        aria-label="Buscar modelo"
+        placeholder="Search model…"
+        aria-label="Search model"
         value={query}
         onChange={(event) => setQuery(event.target.value)}
       />
       {available === null && (
-        <p className="muted">Pedindo a lista à {item.providerName}…</p>
+        <p className="muted">Asking for the list from {item.providerName}…</p>
       )}
       {available?.length > 0 && (
         <div className="model-head">
-          <span className="grow">Modelo</span>
-          <span className="model-when">Lançamento</span>
-          <span className="model-price">US$ por milhão</span>
+          <span className="grow">Model</span>
+          <span className="model-when">Launch</span>
+          <span className="model-price">US$ per million</span>
         </div>
       )}
       <div className="model-pick">
@@ -187,8 +190,8 @@ function AiAccounts() {
       notify.success(
         `${created.providerName} ligada`,
         created.provider === 'claude-code'
-          ? 'O trabalho longo dos agentes passa a usar essa conta.'
-          : 'Agora escolha os modelos que os agentes podem usar.',
+          ? "The agents' long-running work will use this account."
+          : 'Now choose the models agents can use.',
       );
     } catch (error) {
       notify.error(error.message);
@@ -230,10 +233,10 @@ function AiAccounts() {
   return (
     <>
       <Head
-        title="Contas de IA"
-        lead="De onde vem a inteligência dos agentes: a chave de cada provedor, com os modelos que os agentes podem usar. O gasto cai na conta do provedor."
+        title="AI accounts"
+        lead="Where the agents' intelligence comes from: each provider's key, with the models the agents can use. Usage is billed to the provider account."
       />
-      {items === null && <p className="muted">Carregando…</p>}
+      {items === null && <p className="muted">Loading…</p>}
       {(items ?? []).map((item) => (
         <div className="box" key={item.id}>
           <div className="bh">
@@ -245,10 +248,10 @@ function AiAccounts() {
               <div className="muted">
                 {[
                   item.provider !== 'claude-code' &&
-                    `${money(item.usage?.today)} hoje · ${money(item.usage?.last30Days)} em 30 dias`,
+                    `${money(item.usage?.today)} today · ${money(item.usage?.last30Days)} in 30 days`,
                   item.agents
-                    ? `${item.agents} ${item.agents === 1 ? 'agente' : 'agentes'}`
-                    : 'nenhum agente',
+                    ? `${item.agents} ${item.agents === 1 ? 'agent' : 'agents'}`
+                    : 'no agents',
                 ]
                   .filter(Boolean)
                   .join(' · ')}
@@ -259,21 +262,21 @@ function AiAccounts() {
                 className="btn outline sm"
                 onClick={() => setPicking(picking === item.id ? null : item.id)}
               >
-                {picking === item.id ? 'Fechar' : 'Escolher modelos'}
+                {picking === item.id ? 'Close' : 'Choose models'}
               </button>
             )}
             <button
               className="btn outline sm"
               onClick={() => setRemoving(item)}
             >
-              Remover…
+              Remove…
             </button>
           </div>
           <div className="bb">
             {item.provider === 'claude-code' ? (
               <p className="muted">
-                Para o trabalho longo com o Claude Code no computador dos
-                agentes. Vale para todos os agentes da conta.
+                For long-running Claude Code work on the agents’ computers.
+                Applies to all agents on the account.
               </p>
             ) : picking === item.id ? (
               <ModelPicker item={item} onSaved={reload} />
@@ -284,8 +287,8 @@ function AiAccounts() {
                     {model}
                     <button
                       className="chip-x"
-                      title="Tirar da lista"
-                      aria-label={`Tirar ${model} da lista`}
+                      title="Remove from list"
+                      aria-label={`Remove ${model} from list`}
                       onClick={() => removeModel(item, model)}
                     >
                       <i className="ti ti-x" />
@@ -295,8 +298,7 @@ function AiAccounts() {
               </div>
             ) : (
               <p className="muted">
-                Nenhum modelo ligado ainda: os agentes ainda não veem esta
-                conta.
+                No models turned on yet: agents can’t see this account yet.
               </p>
             )}
           </div>
@@ -321,7 +323,7 @@ function AiAccounts() {
                 <div className="row">
                   <input
                     className="field"
-                    placeholder={`Nome (opcional), como ${provider.name}`}
+                    placeholder={`Name (optional), like ${provider.name}`}
                     value={form.name}
                     onChange={(event) =>
                       setForm({ ...form, name: event.target.value })
@@ -331,7 +333,7 @@ function AiAccounts() {
                     className="field grow"
                     type="password"
                     autoFocus
-                    placeholder={`Chave: ${provider.keyHint}`}
+                    placeholder={`Key: ${provider.keyHint}`}
                     value={form.token}
                     onChange={(event) =>
                       setForm({ ...form, token: event.target.value })
@@ -346,7 +348,7 @@ function AiAccounts() {
                     target="_blank"
                     rel="noreferrer"
                   >
-                    Onde pegar
+                    Where to get it
                   </a>
                 </div>
               )}
@@ -359,14 +361,14 @@ function AiAccounts() {
                   className="btn outline sm"
                   onClick={() => setForm(null)}
                 >
-                  Cancelar
+                  Cancel
                 </button>
                 <button
                   className="btn filled sm"
                   onClick={add}
                   disabled={!provider || !form.token.trim()}
                 >
-                  Ligar
+                  Turn on
                 </button>
               </div>
             </>
@@ -375,7 +377,7 @@ function AiAccounts() {
               className="chip-btn"
               onClick={() => setForm({ provider: null, name: '', token: '' })}
             >
-              + Adicionar conta
+              + Add account
             </button>
           )}
         </div>
@@ -385,20 +387,20 @@ function AiAccounts() {
         onClose={() => setRemoving(null)}
         onConfirm={remove}
         target={removing?.name ?? ''}
-        context={`Conta de IA · ${removing?.providerName ?? ''}`}
+        context={`AI account · ${removing?.providerName ?? ''}`}
         consequences={
           removing?.provider === 'claude-code'
             ? [
-                'O trabalho longo com o Claude Code nos computadores dos agentes para de usar esta conta.',
-                'A chave sai da central e não há como desfazer: para voltar, cole de novo.',
+                "Long-running Claude Code work on the agents' computers stops using this account.",
+                "The key will be removed from the hub and this can't be undone. To restore it, paste it again.",
               ]
             : [
-                `${removing?.agents ? `${removing.agents} ${removing.agents === 1 ? 'agente para' : 'agentes param'}` : 'Os agentes que usam esta conta param'} até ganhar outra conta no chip de modelo.`,
-                'Os modelos ligados nesta conta somem do chip de modelo.',
-                'A chave sai da central e não há como desfazer: para voltar, cole de novo.',
+                `${removing?.agents ? `${removing.agents} ${removing.agents === 1 ? 'agent for' : 'agents stop'}` : 'Agents using this account will stop'} until they get another account in the model chip.`,
+                'Models turned on in this account will disappear from the model chip.',
+                "The key will be removed from the hub and this can't be undone. To restore it, paste it again.",
               ]
         }
-        confirmLabel="Remover conta"
+        confirmLabel="Remove account"
         loading={isRemoving}
       />
     </>
@@ -422,10 +424,7 @@ function MyChrome() {
     try {
       setState(await linkUserBrowser(code));
       setCode('');
-      notify.success(
-        'Chrome ligado',
-        'Os agentes já podem agir no seu navegador.',
-      );
+      notify.success('Chrome connected', 'Agents can now act in your browser.');
     } catch (error) {
       notify.error(error.message);
     } finally {
@@ -447,7 +446,7 @@ function MyChrome() {
     <>
       <Head
         title="Meu Chrome"
-        lead="Os agentes agem no seu próprio Chrome, com os seus logins: um painel, uma caixa de entrada, uma conta que só abre logada como você. Cada ação que muda algo passa pelo mesmo juiz de risco das outras."
+        lead="Agents act in your own Chrome with your logins: a dashboard, an inbox, an account that only opens when logged in as you. Every action that changes something goes through the same risk check as the others."
       />
       {state?.isLinked ? (
         <div className="box">
@@ -457,7 +456,7 @@ function MyChrome() {
                 <i className="ti ti-brand-chrome" />
               </span>
               <div className="grow">
-                <b>Ligado</b>
+                <b>On</b>
                 <div className="p">
                   Os agentes desta conta agem no seu Chrome pelo Assistant
                   Navigation. Para cortar na hora, desligue na janela da
@@ -465,7 +464,7 @@ function MyChrome() {
                 </div>
               </div>
               <button className="btn outline sm" onClick={unlink}>
-                Desligar
+                Turn off
               </button>
             </div>
           </div>
@@ -476,46 +475,45 @@ function MyChrome() {
             <div className="setup-step">
               <span className="setup-n">1</span>
               <i className="ti ti-download setup-ic" />
-              <b>Baixe o Assistant Navigation</b>
+              <b>Download Assistant Navigation</b>
               <p>
-                A extensão de código aberto que deixa os agentes agirem no seu
-                Chrome. Descompacte numa pasta que vai ficar no computador.
+                The open-source extension that lets agents act in your Chrome.
+                Unzip it into a folder that will stay on your computer.
               </p>
               <a
                 className="btn filled sm"
                 href="https://github.com/ciro-maciel/assistant-navigation/releases/latest/download/assistant-navigation-extension.zip"
               >
                 <i className="ti ti-download" />
-                Baixar
+                Download
               </a>
             </div>
             <div className="setup-step">
               <span className="setup-n">2</span>
               <i className="ti ti-puzzle setup-ic" />
-              <b>Carregue no Chrome</b>
+              <b>Load in Chrome</b>
               <p>
-                Em <span className="mono">chrome://extensions</span>, ligue o
-                Modo do desenvolvedor e use Carregar sem compactação com essa
-                pasta.
+                In <span className="mono">chrome://extensions</span>, turn on
+                Developer mode and use Load unpacked with that folder.
               </p>
               <button
                 className="btn outline sm"
                 onClick={() => {
                   navigator.clipboard?.writeText('chrome://extensions');
                   notify.success(
-                    'Endereço copiado',
-                    'Cole numa aba nova do Chrome.',
+                    'Address copied',
+                    'Paste into a new Chrome tab.',
                   );
                 }}
               >
                 <i className="ti ti-copy" />
-                Copiar endereço
+                Copy address
               </button>
             </div>
             <div className="setup-step">
               <span className="setup-n">3</span>
               <i className="ti ti-link setup-ic" />
-              <b>Cole o código, uma vez</b>
+              <b>Paste the code once</b>
               <p>
                 A extensão abre com o código de conexão. Copie e cole aqui; ele
                 não muda mais.
@@ -525,7 +523,7 @@ function MyChrome() {
                   className="field"
                   type="password"
                   placeholder="wss://…/extension"
-                  aria-label="Código de conexão do Assistant Navigation"
+                  aria-label="Assistant Navigation connection code"
                   value={code}
                   onChange={(event) => setCode(event.target.value)}
                   onKeyDown={(event) =>
@@ -537,7 +535,7 @@ function MyChrome() {
                   onClick={link}
                   disabled={!code.trim() || isLinking}
                 >
-                  {isLinking ? 'Ligando…' : 'Ligar'}
+                  {isLinking ? 'Ligando…' : 'Turn on'}
                 </button>
               </div>
             </div>
@@ -545,15 +543,15 @@ function MyChrome() {
           <div className="setup-facts">
             <span>
               <i className="ti ti-power" />
-              Liga sozinha quando o Chrome abre, sem aba presa
+              Turns on automatically when Chrome opens, no pinned tab
             </span>
             <span>
               <i className="ti ti-hand-stop" />
-              Desligar na extensão corta na hora
+              Turning it off in the extension cuts it off immediately
             </span>
             <span>
               <i className="ti ti-shield-check" />
-              Sem faixa de depuração e sem aba presa
+              No debug banner and no stuck tab
             </span>
           </div>
         </>
@@ -568,8 +566,8 @@ function Security() {
   return (
     <>
       <Head
-        title="Segurança"
-        lead="Entrar é sempre por um código no seu e-mail: não há senha para vazar. As chaves de cada agente ficam cifradas na central e nunca vão para o disco do computador dele."
+        title="Security"
+        lead="You always sign in with a code sent to your email: there's no password to leak. Each agent's keys stay encrypted on the server and never go to its computer's disk."
       />
       <div className="box">
         <div className="bb">
@@ -578,9 +576,9 @@ function Security() {
               <i className="ti ti-mail" />
             </span>
             <div className="grow">
-              <b>Código por e-mail</b>
+              <b>Code by email</b>
               <div className="p">
-                Cada entrada pede um código novo, que vale 10 minutos.
+                Each sign-in requires a new code, valid for 10 minutes.
               </div>
             </div>
           </div>
@@ -600,7 +598,7 @@ function Security() {
           }}
         >
           <i className="ti ti-logout" />
-          Sair desta conta
+          Sign out of this account
         </button>
       </div>
     </>
@@ -618,35 +616,35 @@ function Connections() {
   return (
     <>
       <Head
-        title="Conexões do time"
-        lead="Os serviços que a conta ligou. Cada agente marca, no chip de Conexões, quais deles usa."
+        title="Team connections"
+        lead="The services this account has connected. Each agent selects which ones it uses in the Connections chip."
       />
       <div className="box">
         <div className="bh">
           <b className="grow">
             {items
               ? `${items.length} ${items.length === 1 ? 'conexão' : 'conexões'}`
-              : 'Conexões'}
+              : 'Connections'}
           </b>
           <button
             className="btn filled sm"
             onClick={() => navigate('/connectors')}
           >
             <i className="ti ti-plug-connected" />
-            Abrir os conectores
+            Open connectors
           </button>
         </div>
         <div className="bb">
           {items === null ? (
-            <p className="muted">Carregando…</p>
+            <p className="muted">Loading…</p>
           ) : items.length ? (
             items.map((connection) => (
               <div className="row" key={connection.id}>
                 <b style={{ width: 220 }}>{connection.title}</b>
                 <span className="grow muted">
                   {connection.status === 'connected'
-                    ? `${connection.tools.length} ferramentas`
-                    : 'precisa conectar'}
+                    ? `${connection.tools.length} tools`
+                    : 'needs connecting'}
                 </span>
                 <span
                   className={`pill-st${connection.status === 'connected' ? ' dark' : ' dash'}`}
@@ -656,7 +654,7 @@ function Connections() {
               </div>
             ))
           ) : (
-            <p className="muted">Nenhuma ainda.</p>
+            <p className="muted">None yet.</p>
           )}
         </div>
       </div>
@@ -668,8 +666,8 @@ function OrgSecurity() {
   return (
     <>
       <Head
-        title="Segurança"
-        lead="O que vale pra todo mundo deste Assistant e os passos que protegem os computadores dos agentes."
+        title="Security"
+        lead="What applies to everyone on this Gemini Code and the steps that protect the agents' computers."
       />
       <div className="box">
         <div className="bb">
@@ -678,7 +676,7 @@ function OrgSecurity() {
               <i className="ti ti-lock" />
             </span>
             <div className="grow">
-              <b>Computadores dos agentes sem segredo</b>
+              <b>Agent computers have no secrets</b>
               <div className="p">
                 As chaves ficam no cofre da central e entram em cada comando;
                 nunca ficam no disco do computador do agente, e voltam
@@ -691,10 +689,10 @@ function OrgSecurity() {
               <i className="ti ti-shield" />
             </span>
             <div className="grow">
-              <b>Pagar e entrar numa conta sempre perguntam</b>
+              <b>Payments and sign-ins always ask</b>
               <div className="p">
-                Mesmo com “sempre permitir”, que vale 90 dias por agente e por
-                serviço.
+                Even with “always allow”, which lasts 90 days per agent and per
+                service.
               </div>
             </div>
           </div>
@@ -717,20 +715,18 @@ function Files() {
   return (
     <>
       <Head
-        title="Arquivos e GitHub"
-        lead="Instruções, habilidades, rotinas e decisões de cada agente, mais o trabalho, são arquivos em Markdown no repositório da sua conta. Cada mudança vira um commit, com quem fez e o que mudou."
+        title="Files and GitHub"
+        lead="Each agent's instructions, skills, routines, and decisions, plus its work, are Markdown files in your account's repository. Every change becomes a commit showing who made it and what changed."
       />
       <div className="box">
         <div className="bb">
           {state === null ? (
-            <p className="muted">Carregando…</p>
+            <p className="muted">Loading…</p>
           ) : !state.repo ? (
-            <p className="muted">
-              Os arquivos no GitHub ainda não estão ligados nesta central.
-            </p>
+            <p className="muted">GitHub files aren’t enabled here yet.</p>
           ) : (
             <div className="kv">
-              <span>Repositório</span>
+              <span>Repository</span>
               <a
                 className="mono"
                 href={link}
@@ -744,8 +740,8 @@ function Files() {
           {state?.repo && (
             <p className="fine">
               {state.count
-                ? `${state.count} arquivos. Particular: só quem é da organização vê.`
-                : 'O repositório nasce na primeira mudança de um agente.'}
+                ? `${state.count} files. Private: only organization members can see.`
+                : "The repository is created on an agent's first change."}
             </p>
           )}
         </div>
@@ -773,13 +769,13 @@ function Phone() {
       if (state.isOn) await turnOff();
       else if (!(await turnOn(state.publicKey)))
         notify.error(
-          'O navegador não deixou mandar avisos. Libere nas permissões do site.',
+          'The browser blocked notifications. Allow them in the site permissions.',
         );
       await load();
     } catch {
       // The browser refused the subscription itself (a private window, push turned off).
       notify.error(
-        'Este navegador não deixou ligar os avisos. Numa janela anônima eles não funcionam.',
+        "This browser didn't allow notifications. They don't work in a private window.",
       );
     } finally {
       setIsBusy(false);
@@ -789,43 +785,43 @@ function Phone() {
     <>
       <Head
         title="Celular"
-        lead="Um aviso quando um agente precisa de você ou entrega alguma coisa. Tocar abre direto nele. Não avisa do que você já está olhando."
+        lead="A notification when an agent needs you or delivers something. Tapping opens it directly. No alerts for what you're already viewing."
       />
       <div className="box">
         <div className="bb">
           {state === null ? (
-            <p className="muted">Carregando…</p>
+            <p className="muted">Loading…</p>
           ) : !state.isReady ? (
             <p className="muted">
-              Os avisos no celular ainda não estão ligados nesta central.
+              Mobile notifications aren’t enabled here yet.
             </p>
           ) : !canPush() ? (
             <p className="muted">
-              Este navegador não recebe avisos. No iPhone, adicione o Assistant
-              à tela de início (Compartilhar, Adicionar à Tela de Início) e abra
-              por lá.
+              This browser doesn’t receive notifications. On iPhone, add
+              Assistant to your Home Screen (Share, Add to Home Screen) and open
+              it from there.
             </p>
           ) : (
             <div className="kv">
               <span>
                 {state.isOn
-                  ? 'Este aparelho recebe avisos'
-                  : 'Este aparelho não recebe avisos'}
+                  ? 'This device receives notifications'
+                  : "This device doesn't receive notifications"}
               </span>
               <button
                 className={`btn ${state.isOn ? 'outline' : 'filled'} sm`}
                 onClick={toggle}
                 disabled={isBusy}
               >
-                {state.isOn ? 'Desligar' : 'Ligar avisos'}
+                {state.isOn ? 'Turn off' : 'Turn on alerts'}
               </button>
             </div>
           )}
           {state?.isReady && (
             <p className="fine">
               {state.devices === 1
-                ? '1 aparelho ligado nesta conta.'
-                : `${state.devices} aparelhos ligados nesta conta.`}
+                ? '1 device connected to this account.'
+                : `${state.devices} devices connected to this account.`}
             </p>
           )}
         </div>
@@ -858,9 +854,7 @@ export function SettingsPage({ section }) {
       <div className="page-in">
         <div className="settings">
           <div className="subnav">
-            <h1 style={{ fontSize: 24, padding: '0 10px 4px' }}>
-              Configurações
-            </h1>
+            <h1 style={{ fontSize: 24, padding: '0 10px 4px' }}>Settings</h1>
             {nav.map(([group, items]) => [
               <div className="label" key={group}>
                 {group}

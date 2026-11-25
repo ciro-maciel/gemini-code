@@ -52,8 +52,7 @@ export function useGroups() {
     isLoaded: groups !== null,
     create: (name) => run(() => createSection(name)),
     rename: (id, name) => run(() => renameSection(id, name)),
-    remove: (id, name) =>
-      run(() => deleteSection(id), `Grupo ${name} excluído`),
+    remove: (id, name) => run(() => deleteSection(id), `Group ${name} deleted`),
     reorder: (ids) => {
       setGroups((current) =>
         ids
@@ -65,10 +64,7 @@ export function useGroups() {
     // A group's agents in their new order; the moved one lands in the group with them.
     place: (groupId, botIds) => run(() => reorderSection(groupId, botIds)),
     moveTo: (botId, groupId, name) =>
-      run(
-        () => updateBot(botId, { sectionId: groupId }),
-        `Movido para ${name}`,
-      ),
+      run(() => updateBot(botId, { sectionId: groupId }), `Moved to ${name}`),
     // One group per company, from the start of the agents' names, each with its agents.
     groupByCompany: (companies, bots) =>
       run(async () => {
@@ -79,7 +75,7 @@ export function useGroups() {
             .map((bot) => bot.id);
           if (ids.length) await reorderSection(group.id, ids);
         }
-      }, `${companies.length} grupos criados`),
+      }, `${companies.length} groups created`),
     reload,
   };
 }

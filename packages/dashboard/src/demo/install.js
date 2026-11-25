@@ -125,7 +125,7 @@ export function installDemo(target = window) {
       setTimeout(() => {
         const closed = new CloseEvent('close', {
           code: 1000,
-          reason: 'demonstração sem computador',
+          reason: 'demo without a computer',
           wasClean: true,
         });
         this.onclose?.(closed);

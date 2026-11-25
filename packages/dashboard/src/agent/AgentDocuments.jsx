@@ -14,14 +14,14 @@ import { botsChanged } from '../state/use-bots';
 export const DOC_GROUPS = [
   { id: 'all', label: 'Todos' },
   { id: 'work', label: 'Trabalho' },
-  { id: 'core', label: 'Instruções & Memória' },
-  { id: 'skill', label: 'Habilidades' },
+  { id: 'core', label: 'Instructions & Memory' },
+  { id: 'skill', label: 'Skills' },
 ];
 
 export const GROUP_BADGE = {
   work: { label: 'Trabalho', icon: 'ti-file-text' },
-  instructions: { label: 'Instruções', icon: 'ti-file-description' },
-  memory: { label: 'Memória', icon: 'ti-brain' },
+  instructions: { label: 'Instructions', icon: 'ti-file-description' },
+  memory: { label: 'Memory', icon: 'ti-brain' },
   routine: { label: 'Rotina', icon: 'ti-clock-play' },
   skill: { label: 'Habilidade', icon: 'ti-sparkles' },
 };
@@ -149,7 +149,7 @@ export function AgentDocuments({
         name,
         content: initialContent,
       });
-      notify.success(`Documento criado: ${name}`);
+      notify.success(`Document created: ${name}`);
       load();
       window.dispatchEvent(new Event('assistant:repo'));
       if (created?.path) onOpenRepoFile?.(created.path);
@@ -164,7 +164,7 @@ export function AgentDocuments({
     try {
       const { paths } = await uploadBotDocuments(bot.id, '', files);
       notify.success(
-        `${paths.length} ${paths.length === 1 ? 'documento enviado' : 'documentos enviados'} para a pasta de ${bot.name}`,
+        `${paths.length} ${paths.length === 1 ? 'documento enviado' : 'documentos enviados'} to the folder of ${bot.name}`,
       );
       load();
       window.dispatchEvent(new Event('assistant:repo'));
@@ -190,8 +190,8 @@ export function AgentDocuments({
       botsChanged();
       notify.success(
         clean
-          ? `Pasta atualizada para /${clean}/`
-          : 'Pasta definida para a raiz do workspace',
+          ? `Folder updated to /${clean}/`
+          : 'Folder set to the workspace root',
       );
       load();
       window.dispatchEvent(new Event('assistant:repo'));
@@ -231,7 +231,7 @@ export function AgentDocuments({
         },
       }),
     );
-    notify.success(`"${item.name}" adicionado ao contexto do chat`);
+    notify.success(`"${item.name}" added to the chat context`);
   };
 
   return (
@@ -261,16 +261,16 @@ export function AgentDocuments({
         </div>
         <div className="doc-folder-meta grow">
           <div className="doc-folder-head">
-            <b>Pasta do agente</b>
+            <b>Agent folder</b>
             <span className="tag">
               {data?.mode === 'github' ? 'GitHub' : 'Workspace local'}
             </span>
           </div>
           <div
             className="doc-folder-path mono"
-            title={activeFolder ? `/${activeFolder}/` : '/ (raiz do workspace)'}
+            title={activeFolder ? `/${activeFolder}/` : '/ (workspace root)'}
           >
-            {activeFolder ? `/${activeFolder}/` : '/ (raiz do workspace)'}
+            {activeFolder ? `/${activeFolder}/` : '/ (workspace root)'}
           </div>
         </div>
         <div className="doc-folder-actions">
@@ -281,7 +281,7 @@ export function AgentDocuments({
                 onClick={() => setIsCreating(true)}
               >
                 <i className="ti ti-file-plus" />
-                Novo documento
+                New document
               </button>
               <button className="btn outline sm" onClick={openFilePicker}>
                 <i className="ti ti-upload" />
@@ -293,10 +293,10 @@ export function AgentDocuments({
             <button
               className="btn outline sm"
               onClick={() => setIsEditingFolder(true)}
-              title="Alterar a pasta de trabalho deste agente"
+              title="Change this agent's work folder"
             >
               <i className="ti ti-folder-cog" />
-              Trocar pasta
+              Change folder
             </button>
           )}
         </div>
@@ -306,10 +306,10 @@ export function AgentDocuments({
         <div className="tpl-q doc-search">
           <i className="ti ti-search" />
           <input
-            placeholder="Buscar nos documentos deste agente…"
+            placeholder="Search this agent's documents…"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            aria-label="Buscar documentos"
+            aria-label="Search documents"
           />
           {query && (
             <button
@@ -336,21 +336,21 @@ export function AgentDocuments({
       </div>
 
       {data === null ? (
-        <p className="muted doc-state">Carregando documentos…</p>
+        <p className="muted doc-state">Loading documents…</p>
       ) : visible.length === 0 ? (
         <div className="doc-empty">
           <i className="ti ti-files-off" />
           <b>
             {query
-              ? 'Nenhum documento encontrado'
+              ? 'No documents found'
               : group === 'work'
-                ? 'Nenhum documento de trabalho ainda'
-                : 'Nenhum documento neste filtro'}
+                ? 'No work documents yet'
+                : 'No documents in this filter'}
           </b>
           <p className="muted">
             {query
-              ? `Nenhum arquivo corresponde a "${query}".`
-              : 'Crie um documento ou arraste arquivos para esta área — o agente já lê e escreve aqui automaticamente.'}
+              ? `No file matches "${query}".`
+              : 'Create a document or drop files here: the agent reads and writes here on its own.'}
           </p>
           {canWrite && !query && (
             <button
@@ -358,7 +358,7 @@ export function AgentDocuments({
               onClick={() => setIsCreating(true)}
             >
               <i className="ti ti-file-plus" />
-              Criar primeiro documento
+              Create the first document
             </button>
           )}
         </div>
@@ -400,16 +400,16 @@ export function AgentDocuments({
                 >
                   <button
                     className="icon-btn"
-                    title="Citar no chat"
-                    aria-label={`Citar ${item.name} no chat`}
+                    title="Mention in chat"
+                    aria-label={`Quote ${item.name} in the chat`}
                     onClick={(event) => citeInChat(event, item)}
                   >
                     <i className="ti ti-quote" />
                   </button>
                   <button
                     className="icon-btn"
-                    title="Abrir na Mesa"
-                    aria-label={`Abrir ${item.name}`}
+                    title="Open on the desk"
+                    aria-label={`Open ${item.name}`}
                     onClick={() => onOpenRepoFile?.(item.path)}
                   >
                     <i className="ti ti-arrow-up-right" />
@@ -417,8 +417,8 @@ export function AgentDocuments({
                   {canWrite && item.isDeletable && (
                     <button
                       className="icon-btn"
-                      title="Apagar documento"
-                      aria-label={`Apagar ${item.name}`}
+                      title="Delete document"
+                      aria-label={`Delete ${item.name}`}
                       onClick={() => setDeleting(item)}
                     >
                       <i className="ti ti-trash" />
@@ -433,20 +433,20 @@ export function AgentDocuments({
 
       {isCreating && (
         <NameModal
-          title="Novo documento na pasta do agente"
+          title="New document in the agent folder"
           icon="ti-file-plus"
           initial="notas.md"
-          action="Criar e abrir"
+          action="Create and open"
           onSave={handleCreateDoc}
           onClose={() => setIsCreating(false)}
         />
       )}
       {isEditingFolder && (
         <NameModal
-          title="Pasta de trabalho do agente"
+          title="Agent work folder"
           icon="ti-folder-cog"
           initial={activeFolder || data?.defaultFolder || ''}
-          action="Salvar pasta"
+          action="Save folder"
           onSave={handleChangeFolder}
           onClose={() => setIsEditingFolder(false)}
         />
@@ -456,12 +456,12 @@ export function AgentDocuments({
         onClose={() => setDeleting(null)}
         onConfirm={handleDelete}
         target={deleting?.name ?? ''}
-        context={`Documento · /${deleting?.path ?? ''}`}
+        context={`Document · /${deleting?.path ?? ''}`}
         consequences={[
-          'O documento será removido da pasta deste agente.',
-          'O histórico de revisões continua disponível na central.',
+          "The document will be removed from this agent's folder.",
+          'The revision history stays available on the server.',
         ]}
-        confirmLabel="Apagar documento"
+        confirmLabel="Delete document"
         loading={isDeleting}
       />
     </div>

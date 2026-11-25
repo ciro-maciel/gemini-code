@@ -238,7 +238,7 @@ export function Column({
       ref={navRef}
       className={`nav${collapsed ? ' collapsed' : ''}`}
       style={collapsed ? undefined : { width }}
-      aria-label="Navegação"
+      aria-label="Navigation"
     >
       <div className="top">
         <button
@@ -267,14 +267,14 @@ export function Column({
         />
       )}
       <Item
-        label="Centro de comando"
+        label="Command center"
         icon={<i className="ti ti-layout-grid" />}
         isOn={isHome}
         onClick={onHome}
       />
       {collapsed ? (
         <div className="nav-mini">
-          <button className="item" onClick={onNewAgent} title="Agente novo">
+          <button className="item" onClick={onNewAgent} title="New agent">
             <i className="ti ti-message-plus" />
           </button>
           <div className="mini-list">
@@ -292,23 +292,23 @@ export function Column({
         <div className="nav-side">
           <div className="side-head">
             <div className="side-tabs">
-              <b className="side-title grow">Agentes</b>
+              <b className="side-title grow">Agents</b>
               <>
                 <button
                   className="icon-btn"
                   onClick={() =>
                     window.dispatchEvent(new CustomEvent('assistant:new-group'))
                   }
-                  title="Novo grupo"
-                  aria-label="Novo grupo"
+                  title="New group"
+                  aria-label="New group"
                 >
                   <i className="ti ti-category-plus" />
                 </button>
                 <button
                   className="icon-btn"
                   onClick={onNewAgent}
-                  title="Agente novo"
-                  aria-label="Agente novo"
+                  title="New agent"
+                  aria-label="New agent"
                 >
                   <i className="ti ti-message-plus" />
                 </button>
@@ -331,7 +331,7 @@ export function Column({
                 />
               ) : (
                 <p className="muted" style={{ padding: '12px 6px' }}>
-                  Nenhum agente ainda.
+                  No agents yet.
                 </p>
               )}
             </>
@@ -341,13 +341,13 @@ export function Column({
       {/* The account's navigation under a rule, secondary in gray, as the kit's accountNav. */}
       <div className="acct-nav">
         <Item
-          label="Conectores"
+          label="Connectors"
           icon={<i className="ti ti-plug-connected" />}
           isOn={isConnectors}
           onClick={onConnectors}
         />
         <Item
-          label="Configurações"
+          label="Settings"
           icon={<i className="ti ti-adjustments-horizontal" />}
           isOn={isSettings}
           onClick={onSettings}
@@ -361,7 +361,7 @@ export function Column({
       />
       <div
         className="nav-grip"
-        title="Arraste pra abrir ou fechar o menu"
+        title="Drag to open or close the menu"
         aria-hidden="true"
         onPointerDown={startDrag}
       />
