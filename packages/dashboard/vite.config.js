@@ -12,7 +12,8 @@ export default defineConfig(({ mode }) => {
   // in-browser fake API and no control server, so no proxy either.
   const isDemo = mode === 'demo';
   return {
-    base: isDemo ? '/gemini-code/' : '/',
+    // A branch preview builds under /gemini-code/preview/<branch>/ (DEMO_BASE, set by the demo workflow).
+    base: isDemo ? process.env.DEMO_BASE || '/gemini-code/' : '/',
     plugins: [react(), ...(isDemo ? [demoSite()] : [])],
     server: {
       port: 5180,

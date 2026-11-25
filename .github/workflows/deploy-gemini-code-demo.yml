@@ -1,7 +1,15 @@
 name: Gemini Code — demo
 
-# The public demo of the panel (packages/dashboard/src/demo/): the real UI against an
-# in-browser fake API with example data, published on GitHub Pages.
+# The public demo of the panel (packages/dashboard/src/demo/): the real UI
+# against an in-browser fake API with example data, on GitHub Pages from the
+# gh-pages branch.
+#
+# - main publishes the demo at the site root: /gemini-code/
+# - every pull request from a branch of this repository publishes a preview at
+#   /gemini-code/preview/<branch>/ and comments the link on the pull request
+# - closing the pull request (merged or not) removes its preview
+#
+# Pull requests from forks get no preview: their workflow has no write token.
 
 on:
   push:
@@ -9,39 +17,93 @@ on:
     paths:
       - 'packages/dashboard/**'
       - '.github/workflows/deploy-gemini-code-demo.yml'
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
+  pull-requests: write
 
+# One writer at a time on the gh-pages branch.
 concurrency:
-  group: pages
+  group: demo-pages
   cancel-in-progress: false
 
 jobs:
-  build:
+  publish:
+    if: >-
+      github.event_name != 'pull_request' ||
+      (github.event.action != 'closed' &&
+       github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - id: where
+        name: Where this build lives
+        env:
+          BRANCH: ${{ github.head_ref }}
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            slug=$(printf '%s' "$BRANCH" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+//; s/-+$//' | cut -c1-40)
+            echo "base=/gemini-code/preview/$slug/" >> "$GITHUB_OUTPUT"
+            echo "dir=preview/$slug" >> "$GITHUB_OUTPUT"
+            echo "url=https://ciro-maciel.github.io/gemini-code/preview/$slug/" >> "$GITHUB_OUTPUT"
+          else
+            echo "base=/gemini-code/" >> "$GITHUB_OUTPUT"
+            echo "dir=." >> "$GITHUB_OUTPUT"
+            echo "url=https://ciro-maciel.github.io/gemini-code/" >> "$GITHUB_OUTPUT"
+          fi
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: 1.4.0
       - run: bun install --frozen-lockfile
       - run: bun run build:demo
         working-directory: packages/dashboard
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+        env:
+          DEMO_BASE: ${{ steps.where.outputs.base }}
+          DEMO_SITE_BASE: /gemini-code/
+      - uses: peaceiris/actions-gh-pages@v4
         with:
-          path: packages/dashboard/dist/demo
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: packages/dashboard/dist/demo
+          destination_dir: ${{ steps.where.outputs.dir }}
+          # The root build keeps the previews; a preview keeps the root.
+          keep_files: true
+          commit_message: 'demo: ${{ steps.where.outputs.dir }} from ${{ github.sha }}'
+      - name: Link the preview on the pull request
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        env:
+          URL: ${{ steps.where.outputs.url }}
+        with:
+          script: |
+            const marker = '<!-- gemini-code-demo-preview -->';
+            const body = `${marker}\n**Demonstração deste ramo:** ${process.env.URL}\n\nAtualiza a cada push no ramo e some quando o pull request fecha. Leva um ou dois minutos para o GitHub Pages servir a versão nova.`;
+            const { owner, repo } = context.repo;
+            const issue_number = context.issue.number;
+            const comments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number });
+            const mine = comments.find(comment => comment.body?.includes(marker));
+            if (mine) await github.rest.issues.updateComment({ owner, repo, comment_id: mine.id, body });
+            else await github.rest.issues.createComment({ owner, repo, issue_number, body });
 
-  deploy:
-    needs: build
+  remove-preview:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.action == 'closed' &&
+      github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
+      - uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+      - name: Remove this branch's preview
+        env:
+          BRANCH: ${{ github.head_ref }}
+        run: |
+          slug=$(printf '%s' "$BRANCH" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+//; s/-+$//' | cut -c1-40)
+          [ -d "preview/$slug" ] || { echo "no preview for $slug"; exit 0; }
+          git rm -rq "preview/$slug"
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -qm "demo: remove preview/$slug"
+          git push origin gh-pages

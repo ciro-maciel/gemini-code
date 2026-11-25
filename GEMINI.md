@@ -61,6 +61,15 @@ same layout and code style, on Bun and plain JavaScript.
   shipped.
 - Never commit secrets, machine paths, personal e-mail addresses or `.env`.
 
+## Branches and Pull Requests
+
+- `main` is protected. Never push to it: create a branch from `main`, push it,
+  and open a pull request. It merges (squash) only when the `test` check passes.
+- Every pull request from a branch of this repository gets its own demo at
+  `https://ciro-maciel.github.io/gemini-code/preview/<branch>/`, linked in a
+  comment. Use it to show a UI change before it merges.
+- Run `bun run preflight` before every push.
+
 ## Testing Conventions
 
 - A test counts only if breaking the code it protects turns it red. Break it on
