@@ -30,6 +30,10 @@ version with its date.
 
 ### Changed
 
+- The language picker in the dashboard's own look: tonal cards with the
+  language's code, its name in its own language and in the other one, and the
+  date and number format it brings; arrows move, Enter chooses (2026-11-25,
+  #28).
 - The README says signing in with a Google AI Pro or Ultra subscription waits
   for Google's official path for third-party tools; the official way today is a
   Gemini API key from Google AI Studio (2026-11-25, #24).
@@ -42,6 +46,8 @@ version with its date.
 
 ### Fixed
 
+- "API Keys & Models" and "Diagnostics" in the account menu show in Portuguese
+  too (2026-11-25, #28).
 - Notion, Atlassian and the other servers that accept a URL as the client id
   connect on `http://localhost`: the URL is offered only on HTTPS, and the
   sign-in registers otherwise (2026-11-25, #27).
