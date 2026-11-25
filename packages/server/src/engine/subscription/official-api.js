@@ -7,14 +7,23 @@
 // against whatever Google ships (REST, WebSocket or an SDK) and setting
 // SUBSCRIPTION_TRANSPORT=official-api. Nothing else in Gemini Code changes.
 
-import { OFFICIAL_API } from './state.js'
+import { OFFICIAL_API } from './state.js';
 
-export const id = 'official-api'
+export const id = 'official-api';
 
 export async function probe() {
-    return { status: 'error', transport: id, error: `The official subscription API is not available yet (expected ${OFFICIAL_API.expectedOn}, unconfirmed). Use SUBSCRIPTION_TRANSPORT=antigravity-cli.` }
+  return {
+    status: 'error',
+    transport: id,
+    error: `The official subscription API is not available yet (expected ${OFFICIAL_API.expectedOn}, unconfirmed). Use SUBSCRIPTION_TRANSPORT=antigravity-cli.`,
+  };
 }
 
 export async function runTurn() {
-    return { conversationId: null, text: '', status: 'ERROR', error: 'The official subscription API is not available yet.' }
+  return {
+    conversationId: null,
+    text: '',
+    status: 'ERROR',
+    error: 'The official subscription API is not available yet.',
+  };
 }

@@ -1,14 +1,17 @@
 {
-    "printWidth": 240,
-    "singleAttributePerLine": true,
-    "tabWidth": 4,
-    "useTabs": false,
-    "semi": false,
-    "singleQuote": true,
-    "quoteProps": "as-needed",
-    "trailingComma": "es5",
-    "bracketSpacing": true,
-    "bracketSameLine": false,
-    "arrowParens": "avoid",
-    "endOfLine": "lf"
+  "semi": true,
+  "trailingComma": "all",
+  "singleQuote": true,
+  "printWidth": 80,
+  "tabWidth": 2,
+  "overrides": [
+    {
+      "files": ["**/*.md"],
+      "options": {
+        "tabWidth": 2,
+        "printWidth": 80,
+        "proseWrap": "always"
+      }
+    }
+  ]
 }

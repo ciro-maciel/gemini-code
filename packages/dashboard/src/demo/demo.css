@@ -1,41 +1,44 @@
 /* The demo's banner sits above the whole panel; the panel keeps the rest of the height. */
 :root {
-    --demo-banner-height: 32px;
+  --demo-banner-height: 32px;
 }
 
 body.is-demo #root {
-    height: calc(100dvh - var(--demo-banner-height));
-    margin-top: var(--demo-banner-height);
+  height: calc(100dvh - var(--demo-banner-height));
+  margin-top: var(--demo-banner-height);
 }
 
 body.is-demo .app {
-    height: 100%;
+  height: 100%;
 }
 
 .demo-banner {
-    position: fixed;
-    inset: 0 0 auto 0;
-    z-index: 1000;
-    height: var(--demo-banner-height);
-    padding: 0 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    overflow: hidden;
-    white-space: nowrap;
-    font: 600 12.5px/1 'Google Sans Flex', system-ui, sans-serif;
-    background: var(--gm-primary-container, #d8e5ff);
-    color: var(--gm-on-primary-container, #0b2a5c);
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 1000;
+  height: var(--demo-banner-height);
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  overflow: hidden;
+  white-space: nowrap;
+  font:
+    600 12.5px/1 'Google Sans Flex',
+    system-ui,
+    sans-serif;
+  background: var(--gm-primary-container, #d8e5ff);
+  color: var(--gm-on-primary-container, #0b2a5c);
 }
 
 .demo-banner span {
-    overflow: hidden;
-    text-overflow: ellipsis;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .demo-banner a {
-    color: inherit;
-    text-decoration: underline;
-    text-underline-offset: 2px;
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }

@@ -5,7 +5,14 @@
 // with a name and an id, each followed by its result.
 
 /** The calls worth running: named ones, each with an id. */
-export const wellFormedCalls = calls => (calls ?? []).filter(call => call?.function?.name?.trim()).map(call => (call.id ? call : { ...call, id: `call_${crypto.randomUUID().replaceAll('-', '')}` }))
+export const wellFormedCalls = (calls) =>
+  (calls ?? [])
+    .filter((call) => call?.function?.name?.trim())
+    .map((call) =>
+      call.id
+        ? call
+        : { ...call, id: `call_${crypto.randomUUID().replaceAll('-', '')}` },
+    );
 
 // Each result goes right after the reply that asked for it (04/11/2026): a reply
 // with three calls, the first waiting on an approval, a person who wrote, and the
@@ -14,28 +21,32 @@ export const wellFormedCalls = calls => (calls ?? []).filter(call => call?.funct
 
 /** The conversation without nameless or idless calls, results without a call, or replies left empty; each result right after its call. */
 export function wellFormedHistory(messages) {
-    const results = new Map()
-    for (const message of messages) if (message.role === 'tool' && !results.has(message.tool_call_id)) results.set(message.tool_call_id, message)
-    const kept = []
-    const placed = new Set()
-    for (const message of messages) {
-        if (message.role === 'tool') continue
-        if (message.role !== 'assistant' || !message.tool_calls) {
-            kept.push(message)
-            continue
-        }
-        const calls = message.tool_calls.filter(call => call?.id && call.function?.name?.trim())
-        if (calls.length === message.tool_calls.length) kept.push(message)
-        else if (calls.length || message.content) {
-            // Claude's own blocks describe the old calls; without them the reply is rebuilt from the calls kept.
-            const { native, tool_calls, ...rest } = message
-            kept.push(calls.length ? { ...rest, tool_calls: calls } : rest)
-        }
-        for (const call of calls) {
-            if (!results.has(call.id) || placed.has(call.id)) continue
-            placed.add(call.id)
-            kept.push(results.get(call.id))
-        }
+  const results = new Map();
+  for (const message of messages)
+    if (message.role === 'tool' && !results.has(message.tool_call_id))
+      results.set(message.tool_call_id, message);
+  const kept = [];
+  const placed = new Set();
+  for (const message of messages) {
+    if (message.role === 'tool') continue;
+    if (message.role !== 'assistant' || !message.tool_calls) {
+      kept.push(message);
+      continue;
     }
-    return kept
+    const calls = message.tool_calls.filter(
+      (call) => call?.id && call.function?.name?.trim(),
+    );
+    if (calls.length === message.tool_calls.length) kept.push(message);
+    else if (calls.length || message.content) {
+      // Claude's own blocks describe the old calls; without them the reply is rebuilt from the calls kept.
+      const { native, tool_calls, ...rest } = message;
+      kept.push(calls.length ? { ...rest, tool_calls: calls } : rest);
+    }
+    for (const call of calls) {
+      if (!results.has(call.id) || placed.has(call.id)) continue;
+      placed.add(call.id);
+      kept.push(results.get(call.id));
+    }
+  }
+  return kept;
 }

@@ -1,25 +1,39 @@
 <!doctype html>
 <html lang="en" data-mantine-color-scheme="light">
-    <head>
-        <!-- Resolve light/dark scheme before first paint to prevent theme flash. -->
-        <script>try{var s=localStorage.getItem('mantine-color-scheme-value');var d=s==='dark'||(s!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.setAttribute('data-mantine-color-scheme',d?'dark':'light')}catch(e){}</script>
-        <meta charset="UTF-8" />
-        <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="manifest" href="/manifest.webmanifest" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <link rel="apple-touch-icon" href="/images/apple-touch-icon.png" />
-        <title>Gemini Code</title>
-        <meta name="description" content="Open-source autonomous coding agent workspace powered by Google Gemini, Material Design 3, MCP connectors, and hybrid local/cloud execution." />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link
-            rel="stylesheet"
-            href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght,ROND@6..144,100..1000,0..100&family=Google+Sans+Code:wght@400..700&display=swap"
-        />
-    </head>
-    <body>
-        <div id="root"></div>
-        <script type="module" src="/src/main.jsx"></script>
-    </body>
+  <head>
+    <!-- Resolve light/dark scheme before first paint to prevent theme flash. -->
+    <script>
+      try {
+        var s = localStorage.getItem('mantine-color-scheme-value');
+        var d =
+          s === 'dark' ||
+          (s !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.setAttribute(
+          'data-mantine-color-scheme',
+          d ? 'dark' : 'light',
+        );
+      } catch (e) {}
+    </script>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link rel="apple-touch-icon" href="/images/apple-touch-icon.png" />
+    <title>Gemini Code</title>
+    <meta
+      name="description"
+      content="Open-source autonomous coding agent workspace powered by Google Gemini, Material Design 3, MCP connectors, and hybrid local/cloud execution."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght,ROND@6..144,100..1000,0..100&family=Google+Sans+Code:wght@400..700&display=swap"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>

@@ -1,15 +1,15 @@
 .assistant-pulse {
-    animation: assistant-pulse 1.4s ease-in-out infinite;
+  animation: assistant-pulse 1.4s ease-in-out infinite;
 }
 
 @keyframes assistant-pulse {
-    0%,
-    100% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 0.35;
-    }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
 }
 
 /*
@@ -18,73 +18,73 @@
  * hover) and when it is focused or open, so the column stays clean to read.
  */
 .assistant-rewind {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid transparent;
-    color: var(--mantine-color-gray-5);
-    opacity: 0;
-    transition:
-        opacity 120ms ease,
-        color 120ms ease,
-        border-color 120ms ease,
-        background 120ms ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  color: var(--mantine-color-gray-5);
+  opacity: 0;
+  transition:
+    opacity 120ms ease,
+    color 120ms ease,
+    border-color 120ms ease,
+    background 120ms ease;
 }
 .assistant-user-message:hover .assistant-rewind,
 .assistant-rewind:focus-visible,
 .assistant-rewind[aria-expanded='true'] {
-    opacity: 1;
+  opacity: 1;
 }
 .assistant-rewind:hover,
 .assistant-rewind[aria-expanded='true'] {
-    color: var(--mantine-color-gray-9);
-    border-color: var(--mantine-color-gray-2);
-    background: var(--mantine-color-gray-1);
+  color: var(--mantine-color-gray-9);
+  border-color: var(--mantine-color-gray-2);
+  background: var(--mantine-color-gray-1);
 }
 @media (hover: none) {
-    .assistant-rewind {
-        opacity: 1;
-    }
+  .assistant-rewind {
+    opacity: 1;
+  }
 }
 /*
  * Where it sits: on the message itself, in its top right corner, in the
  * message's own ink so it reads on the dark bubble and on the light one.
  */
 .assistant-rewind-slot {
-    position: absolute;
-    top: 6px;
-    right: 6px;
+  position: absolute;
+  top: 6px;
+  right: 6px;
 }
 .assistant-rewind-slot .assistant-rewind {
-    color: var(--mantine-color-white);
+  color: var(--mantine-color-white);
 }
 .assistant-rewind-slot .assistant-rewind:hover,
 .assistant-rewind-slot .assistant-rewind[aria-expanded='true'] {
-    color: var(--mantine-color-white);
-    border-color: transparent;
-    background: color-mix(in srgb, currentColor 18%, transparent);
+  color: var(--mantine-color-white);
+  border-color: transparent;
+  background: color-mix(in srgb, currentColor 18%, transparent);
 }
 @media (prefers-reduced-motion: reduce) {
-    .assistant-rewind {
-        transition: none;
-    }
+  .assistant-rewind {
+    transition: none;
+  }
 }
 
 /* A refresh in progress: the icon itself turns until the work ends. */
 .assistant-spin {
-    animation: assistant-spin 0.9s linear infinite;
+  animation: assistant-spin 0.9s linear infinite;
 }
 
 @keyframes assistant-spin {
-    to {
-        transform: rotate(360deg);
-    }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .assistant-spin {
-        animation: assistant-pulse 1.4s ease-in-out infinite;
-    }
+  .assistant-spin {
+    animation: assistant-pulse 1.4s ease-in-out infinite;
+  }
 }
 
 /*
@@ -93,10 +93,10 @@
  * the margin on the element, which a :last-child rule cannot undo).
  */
 .assistant-rich > * {
-    margin: 0;
+  margin: 0;
 }
 .assistant-rich > * + * {
-    margin-top: 10px;
+  margin-top: 10px;
 }
 
 /*
@@ -105,7 +105,7 @@
  * works because the art is gray (no hue to flip).
  */
 [data-mantine-color-scheme='dark'] .assistant-mascot {
-    filter: invert(1);
+  filter: invert(1);
 }
 
 /*
@@ -115,8 +115,8 @@
  * an ellipsis. To go up to the dashboard-kit's SidebarShell.
  */
 .zen-sidebar-scroll .mantine-ScrollArea-content {
-    min-width: 0 !important;
-    width: 100%;
+  min-width: 0 !important;
+  width: 100%;
 }
 
 /*
@@ -125,10 +125,10 @@
  * enlarged and the empty margin is cropped.
  */
 .assistant-mascot-frame {
-    overflow: hidden;
+  overflow: hidden;
 }
 .assistant-mascot-frame .assistant-mascot {
-    transform: scale(1.45);
+  transform: scale(1.45);
 }
 
 /*
@@ -143,21 +143,21 @@
 .mantine-ActionIcon-root[data-variant='default']:not(:disabled):hover,
 .mantine-Button-root[data-variant='subtle']:not(:disabled):hover,
 .mantine-ActionIcon-root[data-variant='subtle']:not(:disabled):hover {
-    background-color: var(--rlg-hover);
+  background-color: var(--rlg-hover);
 }
 
 /* A section's "⋯" appears where the pointer is; on touch it stays visible. */
 .assistant-section-menu {
-    opacity: 0;
-    transition: opacity 120ms ease;
+  opacity: 0;
+  transition: opacity 120ms ease;
 }
 .assistant-section-header:hover .assistant-section-menu,
 .assistant-section-menu[data-expanded],
 .assistant-section-menu:focus-visible {
-    opacity: 1;
+  opacity: 1;
 }
 @media (hover: none) {
-    .assistant-section-menu {
-        opacity: 1;
-    }
+  .assistant-section-menu {
+    opacity: 1;
+  }
 }

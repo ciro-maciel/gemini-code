@@ -36,17 +36,8 @@
           "whenToUse": "Reproduces a bug with a failing test first, applies the minimal fix, and verifies the suite."
         }
       ],
-      "from": [
-        "tech-lead",
-        "code-reviewer",
-        "debugger",
-        "architect"
-      ],
-      "to": [
-        "code-reviewer",
-        "test-engineer",
-        "docs-writer"
-      ],
+      "from": ["tech-lead", "code-reviewer", "debugger", "architect"],
+      "to": ["code-reviewer", "test-engineer", "docs-writer"],
       "isHouse": true
     },
     {
@@ -81,15 +72,8 @@
           "whenToUse": "Verifies breaking changes in public APIs, schemas, and CLI contracts."
         }
       ],
-      "from": [
-        "software-engineer",
-        "frontend-engineer",
-        "refactor-specialist"
-      ],
-      "to": [
-        "software-engineer",
-        "security-auditor"
-      ],
+      "from": ["software-engineer", "frontend-engineer", "refactor-specialist"],
+      "to": ["software-engineer", "security-auditor"],
       "isHouse": true
     },
     {
@@ -128,14 +112,8 @@
           "whenToUse": "Isolates timing, shared state, or environment leaks causing intermittent failures."
         }
       ],
-      "from": [
-        "tech-lead",
-        "devops-engineer"
-      ],
-      "to": [
-        "software-engineer",
-        "test-engineer"
-      ],
+      "from": ["tech-lead", "devops-engineer"],
+      "to": ["software-engineer", "test-engineer"],
       "isHouse": true
     },
     {
@@ -178,15 +156,8 @@
           "whenToUse": "Maps module coupling, circular dependencies, and clean extraction seams."
         }
       ],
-      "from": [
-        "tech-lead",
-        "researcher"
-      ],
-      "to": [
-        "software-engineer",
-        "devops-engineer",
-        "security-auditor"
-      ],
+      "from": ["tech-lead", "researcher"],
+      "to": ["software-engineer", "devops-engineer", "security-auditor"],
       "isHouse": true
     },
     {
@@ -221,14 +192,8 @@
           "whenToUse": "Writes deterministic Playwright browser tests for core user journeys."
         }
       ],
-      "from": [
-        "software-engineer",
-        "debugger",
-        "frontend-engineer"
-      ],
-      "to": [
-        "software-engineer"
-      ],
+      "from": ["software-engineer", "debugger", "frontend-engineer"],
+      "to": ["software-engineer"],
       "isHouse": true
     },
     {
@@ -267,14 +232,8 @@
           "whenToUse": "Checks contrast, focus rings, ARIA roles, and responsive breakpoints."
         }
       ],
-      "from": [
-        "tech-lead",
-        "architect"
-      ],
-      "to": [
-        "code-reviewer",
-        "test-engineer"
-      ],
+      "from": ["tech-lead", "architect"],
+      "to": ["code-reviewer", "test-engineer"],
       "isHouse": true
     },
     {
@@ -305,14 +264,8 @@
           "whenToUse": "Measures latency, memory, and bundle size before and after optimizations."
         }
       ],
-      "from": [
-        "tech-lead",
-        "code-reviewer"
-      ],
-      "to": [
-        "code-reviewer",
-        "test-engineer"
-      ],
+      "from": ["tech-lead", "code-reviewer"],
+      "to": ["code-reviewer", "test-engineer"],
       "isHouse": true
     },
     {
@@ -347,15 +300,8 @@
           "whenToUse": "Reviews auth, injection vectors, path traversal, SSRF, and privilege boundaries."
         }
       ],
-      "from": [
-        "tech-lead",
-        "code-reviewer",
-        "architect"
-      ],
-      "to": [
-        "software-engineer",
-        "devops-engineer"
-      ],
+      "from": ["tech-lead", "code-reviewer", "architect"],
+      "to": ["software-engineer", "devops-engineer"],
       "isHouse": true
     },
     {
@@ -398,15 +344,8 @@
           "whenToUse": "Creates minimal multi-stage Dockerfiles and compose configs for self-hosting."
         }
       ],
-      "from": [
-        "tech-lead",
-        "architect",
-        "security-auditor"
-      ],
-      "to": [
-        "debugger",
-        "docs-writer"
-      ],
+      "from": ["tech-lead", "architect", "security-auditor"],
+      "to": ["debugger", "docs-writer"],
       "isHouse": true
     },
     {
@@ -441,14 +380,8 @@
           "whenToUse": "Verifies every command and environment variable in README matches the actual code."
         }
       ],
-      "from": [
-        "software-engineer",
-        "devops-engineer",
-        "tech-lead"
-      ],
-      "to": [
-        "code-reviewer"
-      ],
+      "from": ["software-engineer", "devops-engineer", "tech-lead"],
+      "to": ["code-reviewer"],
       "isHouse": true
     },
     {
@@ -487,14 +420,8 @@
           "whenToUse": "Compares candidate libraries by bundle size, license, maintenance, and API ergonomics."
         }
       ],
-      "from": [
-        "tech-lead",
-        "architect"
-      ],
-      "to": [
-        "architect",
-        "software-engineer"
-      ],
+      "from": ["tech-lead", "architect"],
+      "to": ["architect", "software-engineer"],
       "isHouse": true
     },
     {
@@ -533,11 +460,7 @@
           "whenToUse": "Reviews open PRs, CI failures, and blocked tasks and delegates each to the right agent."
         }
       ],
-      "from": [
-        "researcher",
-        "security-auditor",
-        "debugger"
-      ],
+      "from": ["researcher", "security-auditor", "debugger"],
       "to": [
         "software-engineer",
         "frontend-engineer",

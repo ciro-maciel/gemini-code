@@ -3,104 +3,109 @@
 // and a hundred of them in one control process was the first thing to give out.
 // Here it costs the bot's own machine, and Chrome is one hop away on localhost.
 
-import { createRequire } from 'node:module'
-import { mkdirSync, readFileSync } from 'node:fs'
-import { Client } from '@modelcontextprotocol/sdk/client/index.js'
-import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js'
-import { createConnection } from '@playwright/mcp'
+import { createRequire } from 'node:module';
+import { mkdirSync, readFileSync } from 'node:fs';
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
+import { createConnection } from '@playwright/mcp';
 
 // Playwright MCP checks the objects it receives against its own Playwright
 // build, so the browser must come from the copy it depends on.
-const requireFromMcp = createRequire(import.meta.resolve('@playwright/mcp'))
-const { chromium } = requireFromMcp('playwright')
+const requireFromMcp = createRequire(import.meta.resolve('@playwright/mcp'));
+const { chromium } = requireFromMcp('playwright');
 
-const CDP_URL = `http://127.0.0.1:${process.env.CDP_PORT || 9222}`
-const OUTPUT_DIR = '/home/sprite/.browser-output'
-const MAX_SNAPSHOT_CHARS = 30_000
+const CDP_URL = `http://127.0.0.1:${process.env.CDP_PORT || 9222}`;
+const OUTPUT_DIR = '/home/sprite/.browser-output';
+const MAX_SNAPSHOT_CHARS = 30_000;
 
 // Element refs belong to a session: a new one numbers the page again. It
 // outlives a long approval, and closing it never closes Chrome.
-const IDLE_CLOSE_MS = 10 * 60 * 1000
+const IDLE_CLOSE_MS = 10 * 60 * 1000;
 
-let session = null
-let idleTimer = null
-let queue = Promise.resolve()
+let session = null;
+let idleTimer = null;
+let queue = Promise.resolve();
 
 async function openSession() {
-    mkdirSync(OUTPUT_DIR, { recursive: true })
-    const browser = await chromium.connectOverCDP(CDP_URL, { timeout: 60_000 })
-    const server = await createConnection(
-        {
-            capabilities: ['vision'],
-            snapshot: { mode: 'full' },
-            outputDir: OUTPUT_DIR,
-            filePaths: 'absolute',
-            imageResponses: 'allow',
-        },
-        async () => browser.contexts()[0] ?? (await browser.newContext())
-    )
-    const [serverSide, clientSide] = InMemoryTransport.createLinkedPair()
-    await server.connect(serverSide)
-    const client = new Client({ name: 'assistant-computer', version: '0.2.0' })
-    await client.connect(clientSide)
-    return { browser, client }
+  mkdirSync(OUTPUT_DIR, { recursive: true });
+  const browser = await chromium.connectOverCDP(CDP_URL, { timeout: 60_000 });
+  const server = await createConnection(
+    {
+      capabilities: ['vision'],
+      snapshot: { mode: 'full' },
+      outputDir: OUTPUT_DIR,
+      filePaths: 'absolute',
+      imageResponses: 'allow',
+    },
+    async () => browser.contexts()[0] ?? (await browser.newContext()),
+  );
+  const [serverSide, clientSide] = InMemoryTransport.createLinkedPair();
+  await server.connect(serverSide);
+  const client = new Client({ name: 'assistant-computer', version: '0.2.0' });
+  await client.connect(clientSide);
+  return { browser, client };
 }
 
 export async function closeSession() {
-    clearTimeout(idleTimer)
-    const current = session
-    session = null
-    try {
-        await current?.client.close()
-    } catch {}
+  clearTimeout(idleTimer);
+  const current = session;
+  session = null;
+  try {
+    await current?.client.close();
+  } catch {}
 }
 
 async function ensureSession() {
-    if (session?.browser.isConnected()) return session
-    await closeSession()
-    session = await openSession()
-    return session
+  if (session?.browser.isConnected()) return session;
+  await closeSession();
+  session = await openSession();
+  return session;
 }
 
 // Action tools write the page snapshot to a file and link it; the model needs
 // it inline to pick the next element.
 function formatResult(result) {
-    const texts = []
-    const images = []
-    for (const part of result.content ?? []) {
-        if (part.type === 'image') {
-            images.push({ data: part.data, mimeType: part.mimeType || 'image/png' })
-            continue
-        }
-        if (part.type !== 'text') continue
-        texts.push(
-            part.text.replace(/- \[Snapshot\]\(([^)]+)\)/g, (match, filePath) => {
-                try {
-                    const snapshot = readFileSync(filePath, 'utf8')
-                    const cut = snapshot.length > MAX_SNAPSHOT_CHARS ? `${snapshot.slice(0, MAX_SNAPSHOT_CHARS)}\n[... página cortada; use browser_find para procurar o resto]` : snapshot
-                    return '```yaml\n' + cut + '\n```'
-                } catch {
-                    return match
-                }
-            })
-        )
+  const texts = [];
+  const images = [];
+  for (const part of result.content ?? []) {
+    if (part.type === 'image') {
+      images.push({ data: part.data, mimeType: part.mimeType || 'image/png' });
+      continue;
     }
-    return { text: texts.join('\n'), images, isError: Boolean(result.isError) }
+    if (part.type !== 'text') continue;
+    texts.push(
+      part.text.replace(/- \[Snapshot\]\(([^)]+)\)/g, (match, filePath) => {
+        try {
+          const snapshot = readFileSync(filePath, 'utf8');
+          const cut =
+            snapshot.length > MAX_SNAPSHOT_CHARS
+              ? `${snapshot.slice(0, MAX_SNAPSHOT_CHARS)}\n[... página cortada; use browser_find para procurar o resto]`
+              : snapshot;
+          return '```yaml\n' + cut + '\n```';
+        } catch {
+          return match;
+        }
+      }),
+    );
+  }
+  return { text: texts.join('\n'), images, isError: Boolean(result.isError) };
 }
 
 /** One tool call at a time: the page is one, and refs depend on order. */
 export function callBrowserTool(name, args) {
-    const run = queue.then(async () => {
-        clearTimeout(idleTimer)
-        const { client } = await ensureSession()
-        try {
-            return formatResult(await client.callTool({ name, arguments: args ?? {} }))
-        } finally {
-            idleTimer = setTimeout(closeSession, IDLE_CLOSE_MS)
-        }
-    })
-    queue = run.catch(() => {})
-    return run
+  const run = queue.then(async () => {
+    clearTimeout(idleTimer);
+    const { client } = await ensureSession();
+    try {
+      return formatResult(
+        await client.callTool({ name, arguments: args ?? {} }),
+      );
+    } finally {
+      idleTimer = setTimeout(closeSession, IDLE_CLOSE_MS);
+    }
+  });
+  queue = run.catch(() => {});
+  return run;
 }
 
 // --- Teaching: a person does the task once, the steps are written down -------
@@ -136,64 +141,74 @@ const RECORDER = `(() => {
     addEventListener('keydown', event => {
         if (event.key === 'Enter' || event.key === 'Tab' || event.key === 'Escape') report({ type: 'press', key: event.key, url: location.href })
     }, true)
-})()`
+})()`;
 
-const MAX_SHOTS = 15
-const SHOT_EVERY_MS = 1500
+const MAX_SHOTS = 15;
+const SHOT_EVERY_MS = 1500;
 
-let recording = null
+let recording = null;
 
 async function onStep(page, step) {
-    if (!recording) return
-    const at = Date.now() - recording.startedAt
-    recording.steps.push({ ...step, at })
-    // A picture after the step, at most every second and a half.
-    if (recording.shots.length < MAX_SHOTS && Date.now() - recording.lastShotAt > SHOT_EVERY_MS) {
-        recording.lastShotAt = Date.now()
-        try {
-            await new Promise(resolve => setTimeout(resolve, 400))
-            const shot = await page.screenshot({ type: 'jpeg', quality: 50 })
-            recording.shots.push({ at, data: shot.toString('base64') })
-        } catch {}
-    }
+  if (!recording) return;
+  const at = Date.now() - recording.startedAt;
+  recording.steps.push({ ...step, at });
+  // A picture after the step, at most every second and a half.
+  if (
+    recording.shots.length < MAX_SHOTS &&
+    Date.now() - recording.lastShotAt > SHOT_EVERY_MS
+  ) {
+    recording.lastShotAt = Date.now();
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 400));
+      const shot = await page.screenshot({ type: 'jpeg', quality: 50 });
+      recording.shots.push({ at, data: shot.toString('base64') });
+    } catch {}
+  }
 }
 
 function watchNavigation(page) {
-    if (page.__assistantWatched) return
-    page.__assistantWatched = true
-    page.on('framenavigated', frame => {
-        if (!recording || frame !== page.mainFrame()) return
-        const url = frame.url()
-        const last = recording.steps.findLast(step => step.type === 'navigate')
-        if (last?.url === url || url === 'about:blank') return
-        page.title()
-            .catch(() => '')
-            .then(title => onStep(page, { type: 'navigate', url, title }))
-    })
+  if (page.__assistantWatched) return;
+  page.__assistantWatched = true;
+  page.on('framenavigated', (frame) => {
+    if (!recording || frame !== page.mainFrame()) return;
+    const url = frame.url();
+    const last = recording.steps.findLast((step) => step.type === 'navigate');
+    if (last?.url === url || url === 'about:blank') return;
+    page
+      .title()
+      .catch(() => '')
+      .then((title) => onStep(page, { type: 'navigate', url, title }));
+  });
 }
 
 export async function startRecording() {
-    clearTimeout(idleTimer)
-    const { browser } = await ensureSession()
-    const context = browser.contexts()[0]
-    if (!context.__assistantRecorder) {
-        context.__assistantRecorder = true
-        await context.exposeBinding('__assistantRecord', ({ page }, step) => onStep(page, step))
-        await context.addInitScript(RECORDER)
-        context.on('page', watchNavigation)
-    }
-    recording = { startedAt: Date.now(), steps: [], shots: [], lastShotAt: 0 }
-    for (const page of context.pages()) {
-        watchNavigation(page)
-        await page.evaluate(RECORDER).catch(() => {})
-    }
-    return { startedAt: recording.startedAt }
+  clearTimeout(idleTimer);
+  const { browser } = await ensureSession();
+  const context = browser.contexts()[0];
+  if (!context.__assistantRecorder) {
+    context.__assistantRecorder = true;
+    await context.exposeBinding('__assistantRecord', ({ page }, step) =>
+      onStep(page, step),
+    );
+    await context.addInitScript(RECORDER);
+    context.on('page', watchNavigation);
+  }
+  recording = { startedAt: Date.now(), steps: [], shots: [], lastShotAt: 0 };
+  for (const page of context.pages()) {
+    watchNavigation(page);
+    await page.evaluate(RECORDER).catch(() => {});
+  }
+  return { startedAt: recording.startedAt };
 }
 
 export function stopRecording() {
-    const done = recording
-    recording = null
-    idleTimer = setTimeout(closeSession, IDLE_CLOSE_MS)
-    if (!done) return { steps: [], shots: [], durationMs: 0 }
-    return { steps: done.steps, shots: done.shots, durationMs: Date.now() - done.startedAt }
+  const done = recording;
+  recording = null;
+  idleTimer = setTimeout(closeSession, IDLE_CLOSE_MS);
+  if (!done) return { steps: [], shots: [], durationMs: 0 };
+  return {
+    steps: done.steps,
+    shots: done.shots,
+    durationMs: Date.now() - done.startedAt,
+  };
 }

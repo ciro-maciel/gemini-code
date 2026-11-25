@@ -1,34 +1,35 @@
 {
-    "name": "gemini-code-dashboard",
-    "private": true,
-    "version": "0.1.0",
-    "type": "module",
-    "scripts": {
-        "dev": "vite",
-        "dev:demo": "vite --mode demo",
-        "build": "vite build",
-        "build:demo": "vite build --mode demo",
-        "preview": "vite preview",
-        "test": "bun test src"
-    },
-    "dependencies": {
-        "@mantine/core": "^8.3.18",
-        "@mantine/form": "^8.3.18",
-        "@mantine/hooks": "^8.3.18",
-        "@mantine/notifications": "8.3.15",
-        "@monaco-editor/loader": "1.7.0",
-        "@novnc/novnc": "1.7.0",
-        "@tabler/icons-react": "^3.46.0",
-        "@tabler/icons-webfont": "3.49.0",
-        "react": "^19.2.8",
-        "react-dom": "^19.2.8",
-        "react-markdown": "10.1.0",
-        "react-router-dom": "^7.18.3",
-        "remark-gfm": "4.0.1"
-    },
-    "devDependencies": {
-        "@vitejs/plugin-react": "^5.2.0",
-        "happy-dom": "15",
-        "vite": "^7.3.6"
-    }
+  "name": "gemini-code-dashboard",
+  "license": "Apache-2.0",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "dev:demo": "vite --mode demo",
+    "build": "vite build",
+    "build:demo": "vite build --mode demo",
+    "preview": "vite preview",
+    "test": "bun test src"
+  },
+  "dependencies": {
+    "@mantine/core": "^8.3.18",
+    "@mantine/form": "^8.3.18",
+    "@mantine/hooks": "^8.3.18",
+    "@mantine/notifications": "8.3.15",
+    "@monaco-editor/loader": "1.7.0",
+    "@novnc/novnc": "1.7.0",
+    "@tabler/icons-react": "^3.46.0",
+    "@tabler/icons-webfont": "3.49.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-markdown": "10.1.0",
+    "react-router-dom": "^7.18.3",
+    "remark-gfm": "4.0.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.2.0",
+    "happy-dom": "15",
+    "vite": "^7.3.6"
+  }
 }
