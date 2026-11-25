@@ -29,9 +29,11 @@ const HOLD_MS = 550
 function Pane({ pane, tabInfo, renderTab, tools, onTab, onClose, onDragStart, onFocus, onTabMenu = null }) {
     const holdRef = useRef(null)
     const openMenu = (tab, x, y) => onTabMenu?.({ x, y, pane, tab })
+    // An agent at work in this pane: its edge carries the working glow (neural-expressive.css).
+    const isLive = pane.tabs.some(tab => tabInfo(tab).live)
     return (
         <section
-            className="pane"
+            className={`pane${isLive ? ' is-live' : ''}`}
             data-pane={pane.id}
             // A click anywhere in a pane puts its tab in front: the column follows the pane in use (30/10).
             onPointerDownCapture={() => pane.active && onFocus?.(pane.active)}

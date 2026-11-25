@@ -1,0 +1,568 @@
+/* ============================================================================
+   Gemini Code — Neural Expressive layer (2026)
+   Google's design language for Gemini (I/O, 19/05/2026) on top of Material 3
+   Expressive: a soft blue gradient wash behind everything, tonal surfaces
+   instead of borders, the M3 Expressive corner scale, Google Sans Flex with
+   its roundness axis, spring motion, and a glow that cycles Google's colors
+   while an agent works. Why each choice: docs/design.md.
+   Loaded last: it wins over assistant.css and gemini-theme.css.
+   ============================================================================ */
+
+:root {
+    /* Type */
+    --font: 'Google Sans Flex', 'Google Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --mono: 'Google Sans Code', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    --ne-rond: 'ROND' 40;
+
+    /* M3 Expressive corner scale (extra-small to extra-extra-large, then full) */
+    --radius-xs: 8px;
+    --radius-sm: 12px;
+    --radius-md: 16px;
+    --radius-lg: 20px;
+    --radius-xl: 28px;
+    --radius-2xl: 32px;
+    --radius-pill: 9999px;
+
+    /* Spring motion, as the CSS approximations Material publishes for the web */
+    --spring-fast: cubic-bezier(0.42, 1.67, 0.21, 0.9);
+    --spring: cubic-bezier(0.38, 1.21, 0.22, 1);
+    --effects-fast: cubic-bezier(0.31, 0.94, 0.34, 1);
+    --effects: cubic-bezier(0.34, 0.8, 0.34, 1);
+    --ease: var(--effects);
+    --dur-fast: 150ms;
+    --dur: 200ms;
+    --dur-spatial: 350ms;
+
+    /* Google's four colors, cycled by the working glow */
+    --ne-blue: #4285F4;
+    --ne-red: #EA4335;
+    --ne-yellow: #FBBC04;
+    --ne-green: #34A853;
+    --ne-violet: #9B72CB;
+    --ne-glow: conic-gradient(from var(--ne-angle), var(--ne-blue), var(--ne-violet), var(--ne-red), var(--ne-yellow), var(--ne-green), var(--ne-blue));
+
+    /* Light: a white-and-blue wash, tonal surfaces on top */
+    --gm-canvas: #F6F8FC;
+    --gm-surface: #FFFFFF;
+    --gm-surface-1: #F2F5FA;
+    --gm-surface-2: #E9EEF6;
+    --gm-surface-3: #DFE6F1;
+    --gm-on-surface: #1B1C1F;
+    --gm-on-surface-variant: #45474D;
+    --gm-outline: #C3C7CF;
+    --gm-outline-variant: #E2E6EE;
+    --gm-primary: #0B57D0;
+    --gm-on-primary: #FFFFFF;
+    --gm-primary-container: #D8E5FF;
+    --gm-on-primary-container: #041E49;
+    --gray-4: #6F737B;
+    --gray-5: #5A5E66;
+    --ne-wash:
+        radial-gradient(1100px 620px at 8% -12%, #D6E4FF 0%, rgba(214, 228, 255, 0) 62%),
+        radial-gradient(900px 520px at 100% -8%, #EBE2FB 0%, rgba(235, 226, 251, 0) 58%),
+        radial-gradient(800px 600px at 60% 110%, #E1F0FF 0%, rgba(225, 240, 255, 0) 60%),
+        var(--gm-canvas);
+    --ne-pane-edge: rgba(255, 255, 255, 0.7);
+    --ne-shadow: 0 1px 2px rgba(23, 43, 77, 0.04), 0 8px 24px -12px rgba(23, 43, 77, 0.12);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-mantine-color-scheme='light']) {
+        --gm-canvas: #0D0E11;
+        --gm-surface: #16171B;
+        --gm-surface-1: #1C1E23;
+        --gm-surface-2: #23262C;
+        --gm-surface-3: #2B2F36;
+        --gm-on-surface: #E6E8ED;
+        --gm-on-surface-variant: #B9BDC6;
+        --gm-outline: #5B606A;
+        --gm-outline-variant: #2A2D33;
+        --gm-primary: #A8C7FA;
+        --gm-on-primary: #062E6F;
+        --gm-primary-container: #0F3A78;
+        --gm-on-primary-container: #D8E5FF;
+        --gray-4: #8C919B;
+        --gray-5: #A3A8B2;
+        --ne-wash:
+            radial-gradient(1100px 620px at 8% -12%, rgba(66, 133, 244, 0.22) 0%, rgba(66, 133, 244, 0) 62%),
+            radial-gradient(900px 520px at 100% -8%, rgba(155, 114, 203, 0.18) 0%, rgba(155, 114, 203, 0) 58%),
+            var(--gm-canvas);
+        --ne-pane-edge: rgba(255, 255, 255, 0.06);
+        --ne-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 32px -16px rgba(0, 0, 0, 0.6);
+    }
+}
+[data-mantine-color-scheme='dark'] {
+    --gm-canvas: #0D0E11;
+    --gm-surface: #16171B;
+    --gm-surface-1: #1C1E23;
+    --gm-surface-2: #23262C;
+    --gm-surface-3: #2B2F36;
+    --gm-on-surface: #E6E8ED;
+    --gm-on-surface-variant: #B9BDC6;
+    --gm-outline: #5B606A;
+    --gm-outline-variant: #2A2D33;
+    --gm-primary: #A8C7FA;
+    --gm-on-primary: #062E6F;
+    --gm-primary-container: #0F3A78;
+    --gm-on-primary-container: #D8E5FF;
+    --gray-4: #8C919B;
+    --gray-5: #A3A8B2;
+    --ne-wash:
+        radial-gradient(1100px 620px at 8% -12%, rgba(66, 133, 244, 0.22) 0%, rgba(66, 133, 244, 0) 62%),
+        radial-gradient(900px 520px at 100% -8%, rgba(155, 114, 203, 0.18) 0%, rgba(155, 114, 203, 0) 58%),
+        var(--gm-canvas);
+    --ne-pane-edge: rgba(255, 255, 255, 0.06);
+    --ne-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 32px -16px rgba(0, 0, 0, 0.6);
+}
+
+@property --ne-angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+}
+
+/* ---------------------------------------------------------------- Type -- */
+
+html,
+body {
+    font-family: var(--font);
+    font-variation-settings: var(--ne-rond);
+    font-optical-sizing: auto;
+    -webkit-font-smoothing: antialiased;
+    background: var(--ne-wash);
+    background-attachment: fixed;
+    color: var(--gm-on-surface);
+}
+code,
+pre,
+kbd,
+.mono,
+pre.src,
+textarea.editor,
+.diff {
+    font-family: var(--mono);
+    font-variation-settings: normal;
+}
+h1,
+h2,
+h3,
+.brand,
+.conv-empty b {
+    letter-spacing: -0.02em;
+    font-weight: 600;
+}
+
+/* The Zen labels: tiny, heavy, uppercase and tracked wide. The single thing that dates the screen most. */
+.label,
+.segment button,
+.ptab .k,
+.state,
+.tag,
+.pill-st,
+.tpl-area,
+.tpl-kicker,
+.danger-zone .bh b,
+.model-head,
+.ctx-h,
+.agroup-name,
+.agroup-input,
+.nav .user-card .who span,
+.search kbd {
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 600;
+    font-size: 12.5px;
+}
+
+/* ------------------------------------------------------------- Canvas -- */
+
+/* .page painted the canvas over the wash and cut it in a straight line at the side's edge. */
+.app,
+.mesa,
+.page {
+    background: transparent;
+}
+
+/* Focus: a thin ring that follows the shape, only for keyboard focus. */
+:focus:not(:focus-visible) {
+    outline: none;
+}
+:focus-visible {
+    outline: 2px solid var(--gm-primary);
+    outline-offset: 2px;
+}
+.nav .item:focus-visible,
+.ptab:focus-visible,
+.btn:focus-visible,
+.icon-btn:focus-visible {
+    outline-offset: 2px;
+    border-radius: var(--radius-pill);
+}
+.mesa {
+    padding: 8px 12px 12px 4px;
+}
+.split {
+    gap: 12px;
+}
+
+/* --------------------------------------------------------- Navigation -- */
+
+.nav {
+    background: transparent;
+    border-right: 0;
+    padding: 14px 10px 14px 12px;
+}
+.nav .wordmark {
+    width: 36px;
+    height: 36px;
+    background: var(--gm-surface);
+    border: 0;
+    box-shadow: var(--ne-shadow);
+    transition: transform var(--dur-spatial) var(--spring-fast);
+}
+.nav .wordmark:hover {
+    transform: rotate(-12deg) scale(1.06);
+}
+.nav .brand {
+    font-size: 17px;
+    font-weight: 600;
+    font-variation-settings: 'ROND' 60, 'opsz' 24;
+}
+.nav .item {
+    height: 44px;
+    border-radius: var(--radius-pill);
+    padding: 0 14px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--gm-on-surface-variant);
+    transition: background var(--dur) var(--effects), color var(--dur) var(--effects);
+}
+.nav .item:hover {
+    background: color-mix(in srgb, var(--gm-on-surface) 6%, transparent);
+    color: var(--gm-on-surface);
+}
+.nav .item.on {
+    background: var(--gm-primary-container);
+    color: var(--gm-on-primary-container);
+    font-weight: 600;
+}
+/* Sections of the side are set apart by space, not by rules: the old list border and
+   the account border met as two lines above Conectores. */
+.nav-side {
+    border-top: 0;
+    border-bottom: 0;
+    margin: 12px 0 8px;
+}
+.nav .acct-nav,
+.nav .acct-foot {
+    border-top: 0;
+    margin-top: 4px;
+    padding-top: 4px;
+}
+.nav .segment {
+    background: color-mix(in srgb, var(--gm-on-surface) 5%, transparent);
+    border: 0;
+    border-radius: var(--radius-pill);
+    padding: 4px;
+    gap: 4px;
+}
+.nav .segment button {
+    height: 34px;
+    border: 0 !important;
+    border-radius: var(--radius-pill);
+    color: var(--gm-on-surface-variant);
+    background: transparent;
+    font-size: 13px;
+    transition: background var(--dur) var(--effects), color var(--dur) var(--effects);
+}
+.nav .segment button.on {
+    background: var(--gm-surface);
+    color: var(--gm-on-surface);
+    box-shadow: var(--ne-shadow);
+}
+
+/* ---------------------------------------------------------------- Panes -- */
+
+.pane {
+    position: relative;
+    background: var(--gm-surface);
+    border: 1px solid var(--ne-pane-edge);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--ne-shadow);
+    overflow: hidden;
+    isolation: isolate;
+}
+.pane-bar {
+    height: 52px;
+    padding: 0 12px;
+    background: transparent;
+    border-bottom: 0;
+}
+.ptab {
+    height: 36px;
+    padding: 0 10px 0 14px;
+    border-radius: var(--radius-pill);
+    font-weight: 500;
+    color: var(--gm-on-surface-variant);
+    transition: background var(--dur) var(--effects), color var(--dur) var(--effects), transform var(--dur-spatial) var(--spring-fast);
+}
+.ptab:active {
+    transform: scale(0.96);
+}
+.ptab:not(.on):hover {
+    background: var(--gm-surface-1);
+    color: var(--gm-on-surface);
+}
+.ptab.on {
+    background: var(--gm-surface-2);
+    color: var(--gm-on-surface);
+    font-weight: 600;
+}
+.pane-empty {
+    border: 0;
+    border-radius: var(--radius-lg);
+    background: var(--gm-surface-1);
+    margin: 16px;
+}
+
+/* While an agent in the pane works, Google's colors run along the pane's edge. */
+.pane.is-live::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 2px;
+    border-radius: inherit;
+    background: var(--ne-glow);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: ne-spin 4s linear infinite;
+    pointer-events: none;
+    z-index: 2;
+    opacity: 0.85;
+}
+.pane.is-live::after {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 160px;
+    background: radial-gradient(70% 100% at 50% 0%, color-mix(in srgb, var(--ne-blue) 14%, transparent), transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+    animation: ne-breathe 2.4s var(--effects) infinite alternate;
+}
+@keyframes ne-spin {
+    to {
+        --ne-angle: 360deg;
+    }
+}
+@keyframes ne-breathe {
+    from {
+        opacity: 0.35;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* ------------------------------------------------------- Conversation -- */
+
+.thread {
+    padding: 8px 20px 28px;
+    position: relative;
+    z-index: 1;
+}
+.md,
+.conv-sub {
+    line-height: 1.62;
+    font-size: 15px;
+}
+.conv-empty b {
+    font-size: 28px;
+    font-variation-settings: 'ROND' 60, 'opsz' 32;
+    background: linear-gradient(90deg, var(--ne-blue), var(--ne-violet) 55%, var(--ne-red));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+.typing b {
+    width: 7px;
+    height: 7px;
+    border-radius: var(--radius-pill);
+    background: var(--ne-blue);
+    animation: ne-dot 1.1s var(--spring) infinite;
+}
+.typing b:nth-child(2) {
+    background: var(--ne-red);
+}
+.typing b:nth-child(3) {
+    background: var(--ne-yellow);
+}
+@keyframes ne-dot {
+    0%,
+    100% {
+        transform: translateY(0) scale(0.8);
+        opacity: 0.6;
+    }
+    50% {
+        transform: translateY(-4px) scale(1);
+        opacity: 1;
+    }
+}
+.live {
+    width: 8px;
+    height: 8px;
+    border-radius: var(--radius-pill);
+    background: var(--ne-glow);
+    animation: ne-spin 2s linear infinite;
+}
+
+/* The composer: a floating, tonal pill-ish container with no border. */
+.composer {
+    margin: 0 16px 16px;
+    border: 0;
+    border-radius: var(--radius-xl);
+    background: var(--gm-surface-1);
+    box-shadow: inset 0 0 0 1px var(--gm-outline-variant);
+    transition: box-shadow var(--dur) var(--effects), background var(--dur) var(--effects);
+    position: relative;
+    z-index: 1;
+}
+.composer:focus-within {
+    background: var(--gm-surface);
+    box-shadow: inset 0 0 0 2px var(--gm-primary), var(--ne-shadow);
+}
+.pane.is-live .composer {
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ne-blue) 40%, transparent);
+}
+
+/* -------------------------------------------------------------- Controls -- */
+
+.btn {
+    height: 40px;
+    padding: 0 18px;
+    border-radius: var(--radius-pill);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: none;
+    transition: background var(--dur) var(--effects), transform var(--dur-spatial) var(--spring-fast), border-radius var(--dur-spatial) var(--spring);
+}
+.btn:active {
+    transform: scale(0.96);
+    border-radius: var(--radius-md);
+}
+.btn.sm {
+    height: 32px;
+    padding: 0 14px;
+    font-size: 13px;
+}
+.btn.filled {
+    background: var(--gm-primary);
+    color: var(--gm-on-primary);
+}
+.btn.filled:hover {
+    transform: none;
+    filter: none;
+    background: color-mix(in srgb, var(--gm-primary) 88%, var(--gm-on-surface));
+}
+.btn.outline {
+    border: 0;
+    background: var(--gm-surface-2);
+    color: var(--gm-on-surface);
+}
+.btn.outline:hover {
+    background: var(--gm-surface-3);
+}
+.icon-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-pill);
+    transition: background var(--dur) var(--effects), transform var(--dur-spatial) var(--spring-fast);
+}
+.icon-btn:active {
+    transform: scale(0.9);
+}
+.icon-btn .ti {
+    font-size: 19px;
+}
+.segment {
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: var(--gm-surface-1);
+    padding: 4px;
+    gap: 4px;
+}
+.segment button {
+    border: 0 !important;
+    border-radius: var(--radius-pill);
+    height: 32px;
+}
+.segment button.on {
+    background: var(--gm-surface);
+    color: var(--gm-on-surface);
+    box-shadow: var(--ne-shadow);
+}
+.chip,
+.tag,
+.pill,
+.pill-st,
+.bchip {
+    border-radius: var(--radius-xs);
+    border: 0;
+    background: var(--gm-surface-2);
+}
+.state,
+.pill-st {
+    border-radius: var(--radius-pill);
+    padding: 2px 10px;
+}
+.input,
+input[type='text'],
+input[type='search'],
+textarea {
+    border-radius: var(--radius-md);
+}
+
+/* ------------------------------------------------------- Cards, menus -- */
+
+.tile,
+.card,
+.art,
+.box {
+    border: 0;
+    border-radius: var(--radius-lg);
+    background: var(--gm-surface-1);
+    transition: background var(--dur) var(--effects), transform var(--dur-spatial) var(--spring-fast);
+}
+.tile:hover,
+.card:hover {
+    background: var(--gm-surface-2);
+    transform: translateY(-2px);
+}
+.menu,
+.palette,
+.modal {
+    border: 0;
+    border-radius: var(--radius-xl);
+    background: var(--gm-surface);
+    box-shadow: 0 24px 64px -24px rgba(23, 43, 77, 0.35), 0 0 0 1px var(--gm-outline-variant);
+}
+.mantine-Modal-content,
+.mantine-Menu-dropdown,
+.mantine-Popover-dropdown {
+    border-radius: var(--radius-xl) !important;
+}
+.mantine-Button-root {
+    font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

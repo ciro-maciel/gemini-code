@@ -10,6 +10,7 @@ import './global.css'
 import '@tabler/icons-webfont/dist/tabler-icons-300.min.css'
 import './assistant.css'
 import './gemini-theme.css'
+import './neural-expressive.css'
 
 // Language layer starts before React paints so English (default) or Portuguese renders cleanly.
 startLanguage({ skip: '.assistant-rich, .txt' }).finally(() => {
