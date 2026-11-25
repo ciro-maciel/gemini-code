@@ -11,6 +11,12 @@ version with its date.
 
 ## [Unreleased]
 
+### Changed
+
+- The README's download buttons: five equal pills in one line, each with its
+  system's logo, in light and dark, instead of a table of oversized buttons that
+  named each system twice (2026-11-25).
+
 ### Fixed
 
 - A flaky test of empty answers: each test now answers from its own script, so a

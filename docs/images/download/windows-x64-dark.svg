@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="152" height="40" viewBox="0 0 152 40" role="img" aria-label="Download for Windows x64">
+  <rect width="152" height="40" rx="20" fill="#0F3A78"/>
+  <g transform="translate(16 11)" fill="#A8C7FA"><rect x="0.5" y="0.5" width="7.8" height="7.8" rx="1.4"/><rect x="9.7" y="0.5" width="7.8" height="7.8" rx="1.4"/><rect x="0.5" y="9.7" width="7.8" height="7.8" rx="1.4"/><rect x="9.7" y="9.7" width="7.8" height="7.8" rx="1.4"/></g>
+  <text x="89" y="25.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="14"><tspan font-weight="700" fill="#FFFFFF">Windows</tspan><tspan dx="5" font-weight="500" fill="#C7DAFF">x64</tspan></text>
+</svg>

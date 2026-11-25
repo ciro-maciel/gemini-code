@@ -34,29 +34,15 @@ vivo</a>: o painel de verdade com dados de exemplo, sem instalar nada.</sub>
 
 ## Baixar
 
-<table width="100%">
-  <tr>
-    <th width="33%">macOS</th>
-    <th width="33%">Linux</th>
-    <th width="33%">Windows</th>
-  </tr>
-  <tr>
-    <td align="center">
-      <a href="https://github.com/ciro-maciel/gemini-code/releases/latest/download/gemini-code-darwin-arm64.tar.gz"><img src="docs/images/download/darwin-arm64.svg" width="248" height="60" alt="Download macOS Apple silicon"></a><br>
-      <a href="https://github.com/ciro-maciel/gemini-code/releases/latest/download/gemini-code-darwin-x64.tar.gz"><img src="docs/images/download/darwin-x64.svg" width="248" height="60" alt="Download macOS Intel"></a><br>
-      <sub>Assinado e notarizado pela Apple</sub>
-    </td>
-    <td align="center">
-      <a href="https://github.com/ciro-maciel/gemini-code/releases/latest/download/gemini-code-linux-x64.tar.gz"><img src="docs/images/download/linux-x64.svg" width="248" height="60" alt="Download Linux x64"></a><br>
-      <a href="https://github.com/ciro-maciel/gemini-code/releases/latest/download/gemini-code-linux-arm64.tar.gz"><img src="docs/images/download/linux-arm64.svg" width="248" height="60" alt="Download Linux ARM64"></a><br>
-      <sub>Qualquer distribuição com glibc</sub>
-    </td>
-    <td align="center">
-      <a href="https://github.com/ciro-maciel/gemini-code/releases/latest/download/gemini-code-windows-x64.zip"><img src="docs/images/download/windows-x64.svg" width="248" height="60" alt="Download Windows x64"></a><br>
-      <sub>Windows 10 e 11, 64 bits</sub>
-    </td>
-  </tr>
-</table>
+<p align="center">
+<a href="https://github.com/ciro-maciel/gemini-code/releases/latest/download/gemini-code-darwin-arm64.tar.gz"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/download/darwin-arm64-dark.svg"><img src="docs/images/download/darwin-arm64-light.svg" height="40" alt="Baixar para macOS Apple silicon"></picture></a>&nbsp;
+<a href="https://github.com/ciro-maciel/gemini-code/releases/latest/download/gemini-code-darwin-x64.tar.gz"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/download/darwin-x64-dark.svg"><img src="docs/images/download/darwin-x64-light.svg" height="40" alt="Baixar para macOS Intel"></picture></a>&nbsp;
+<a href="https://github.com/ciro-maciel/gemini-code/releases/latest/download/gemini-code-linux-x64.tar.gz"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/download/linux-x64-dark.svg"><img src="docs/images/download/linux-x64-light.svg" height="40" alt="Baixar para Linux x64"></picture></a>&nbsp;
+<a href="https://github.com/ciro-maciel/gemini-code/releases/latest/download/gemini-code-linux-arm64.tar.gz"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/download/linux-arm64-dark.svg"><img src="docs/images/download/linux-arm64-light.svg" height="40" alt="Baixar para Linux ARM64"></picture></a>&nbsp;
+<a href="https://github.com/ciro-maciel/gemini-code/releases/latest/download/gemini-code-windows-x64.zip"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/download/windows-x64-dark.svg"><img src="docs/images/download/windows-x64-light.svg" height="40" alt="Baixar para Windows x64"></picture></a>
+</p>
+
+<p align="center"><sub>macOS: assinado e notarizado pela Apple · Linux: qualquer distribuição com glibc · Windows 10 e 11, 64 bits</sub></p>
 
 Ou instale com uma linha, sem administrador. Ela escolhe o arquivo certo,
 confere o SHA-256 e põe `gemini-code` no PATH:
