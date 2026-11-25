@@ -36,6 +36,23 @@ Use [Bun](https://bun.sh) for everything (`bun install`, `bun add`, `bun test`,
 - **Commits:** `type(scope): imperative sentence in lower case, no period`.
   Types: `feat` `fix` `refactor` `chore` `docs` `test` `ci` `perf`.
 
+## How a change gets in
+
+`main` is protected: nobody pushes to it directly, not even maintainers, and it
+cannot be force-pushed or deleted.
+
+1. Branch from `main` (`feat/agent-worktree`, `fix/tree-focus`).
+2. Push the branch and open a pull request. CI runs `bun run preflight`, and a
+   comment on the pull request links to the **demo of your branch**, at
+   `https://ciro-maciel.github.io/gemini-code/preview/<branch>/`. It updates on
+   every push.
+3. The pull request merges once the `test` check is green. Merging squashes it
+   into one commit on `main`, deletes the branch, updates the main demo and
+   removes the preview.
+
+Pull requests from forks run CI but get no preview: GitHub gives their workflows
+no write access.
+
 ## Where things are
 
 Read the "How it is built" section of the [README](README.md). The agent loop is
