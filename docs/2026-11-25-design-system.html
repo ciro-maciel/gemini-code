@@ -1,0 +1,3069 @@
+<title>Gemini Code Design System</title>
+<meta name="claude:viewport-fit-sides" content="cover" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght,ROND@6..144,100..1000,0..100&family=Google+Sans+Code:wght@400..700&display=swap"
+/>
+<style>
+  /* Layout: the dashboard's own shell. A transparent column of sections on the
+   wash at left, the reference on tonal surfaces at right; every specimen is
+   built from the tokens it documents. Values: neural-expressive.css. */
+  :root {
+    --font:
+      'Google Sans Flex', 'Google Sans', system-ui, -apple-system, 'Segoe UI',
+      Roboto, sans-serif;
+    --mono:
+      'Google Sans Code', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo,
+      monospace;
+    --ne-rond: 'ROND' 40;
+
+    --radius-xs: 8px;
+    --radius-sm: 12px;
+    --radius-md: 16px;
+    --radius-lg: 20px;
+    --radius-xl: 28px;
+    --radius-2xl: 32px;
+    --radius-pill: 9999px;
+
+    --spring-fast: cubic-bezier(0.42, 1.67, 0.21, 0.9);
+    --spring: cubic-bezier(0.38, 1.21, 0.22, 1);
+    --effects-fast: cubic-bezier(0.31, 0.94, 0.34, 1);
+    --effects: cubic-bezier(0.34, 0.8, 0.34, 1);
+    --dur-fast: 150ms;
+    --dur: 200ms;
+    --dur-spatial: 350ms;
+
+    --ne-blue: #4285f4;
+    --ne-red: #ea4335;
+    --ne-yellow: #fbbc04;
+    --ne-green: #34a853;
+    --ne-violet: #9b72cb;
+
+    --gm-canvas: #f6f8fc;
+    --gm-surface: #ffffff;
+    --gm-surface-1: #f2f5fa;
+    --gm-surface-2: #e9eef6;
+    --gm-surface-3: #dfe6f1;
+    --gm-on-surface: #1b1c1f;
+    --gm-on-surface-variant: #45474d;
+    --gm-outline: #c3c7cf;
+    --gm-outline-variant: #e2e6ee;
+    --gm-primary: #0b57d0;
+    --gm-on-primary: #ffffff;
+    --gm-primary-container: #d8e5ff;
+    --gm-on-primary-container: #041e49;
+    --gray-4: #6f737b;
+    --wash-a: #d6e4ff;
+    --wash-a-0: rgba(214, 228, 255, 0);
+    --wash-b: #ebe2fb;
+    --wash-b-0: rgba(235, 226, 251, 0);
+    --wash-c: #e1f0ff;
+    --wash-c-0: rgba(225, 240, 255, 0);
+    --ne-shadow:
+      0 1px 2px rgba(23, 43, 77, 0.04), 0 8px 24px -12px rgba(23, 43, 77, 0.12);
+    --float-shadow:
+      0 0 0 1px var(--gm-outline-variant),
+      0 24px 64px -24px rgba(23, 43, 77, 0.35);
+    --term-bg: #16171b;
+    --term-fg: #e6e8ed;
+    --term-dim: #8c919b;
+    --term-green: #81c995;
+    --term-yellow: #fdd663;
+    --term-red: #f28b82;
+    --card-dark: #0d0e11;
+    --card-dark-fg: #e6e8ed;
+    --card-dark-note: #b9bdc6;
+    --paper: #ffffff;
+    --paper-fg: #1b1c1f;
+    --paper-note: #45474d;
+    --bubble-in: #ffffff;
+    --bubble-out: #d8e5ff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) {
+      --gm-canvas: #0d0e11;
+      --gm-surface: #16171b;
+      --gm-surface-1: #1c1e23;
+      --gm-surface-2: #23262c;
+      --gm-surface-3: #2b2f36;
+      --gm-on-surface: #e6e8ed;
+      --gm-on-surface-variant: #b9bdc6;
+      --gm-outline: #5b606a;
+      --gm-outline-variant: #2a2d33;
+      --gm-primary: #a8c7fa;
+      --gm-on-primary: #062e6f;
+      --gm-primary-container: #0f3a78;
+      --gm-on-primary-container: #d8e5ff;
+      --gray-4: #8c919b;
+      --wash-a: rgba(66, 133, 244, 0.22);
+      --wash-a-0: rgba(66, 133, 244, 0);
+      --wash-b: rgba(155, 114, 203, 0.18);
+      --wash-b-0: rgba(155, 114, 203, 0);
+      --wash-c: rgba(13, 14, 17, 0);
+      --wash-c-0: rgba(13, 14, 17, 0);
+      --ne-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 32px -16px rgba(0, 0, 0, 0.6);
+      --float-shadow:
+        0 0 0 1px var(--gm-outline-variant),
+        0 24px 64px -24px rgba(0, 0, 0, 0.7);
+      --term-bg: #0d0e11;
+      --bubble-in: #23262c;
+      --bubble-out: #0f3a78;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme='dark'] {
+    --gm-canvas: #0d0e11;
+    --gm-surface: #16171b;
+    --gm-surface-1: #1c1e23;
+    --gm-surface-2: #23262c;
+    --gm-surface-3: #2b2f36;
+    --gm-on-surface: #e6e8ed;
+    --gm-on-surface-variant: #b9bdc6;
+    --gm-outline: #5b606a;
+    --gm-outline-variant: #2a2d33;
+    --gm-primary: #a8c7fa;
+    --gm-on-primary: #062e6f;
+    --gm-primary-container: #0f3a78;
+    --gm-on-primary-container: #d8e5ff;
+    --gray-4: #8c919b;
+    --wash-a: rgba(66, 133, 244, 0.22);
+    --wash-a-0: rgba(66, 133, 244, 0);
+    --wash-b: rgba(155, 114, 203, 0.18);
+    --wash-b-0: rgba(155, 114, 203, 0);
+    --wash-c: rgba(13, 14, 17, 0);
+    --wash-c-0: rgba(13, 14, 17, 0);
+    --ne-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 32px -16px rgba(0, 0, 0, 0.6);
+    --float-shadow:
+      0 0 0 1px var(--gm-outline-variant), 0 24px 64px -24px rgba(0, 0, 0, 0.7);
+    --term-bg: #0d0e11;
+    --bubble-in: #23262c;
+    --bubble-out: #0f3a78;
+    color-scheme: dark;
+  }
+
+  @property --ne-angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    font-family: var(--font);
+    font-variation-settings: var(--ne-rond);
+    font-optical-sizing: auto;
+    -webkit-font-smoothing: antialiased;
+    font-size: 14px;
+    line-height: 22px;
+    color: var(--gm-on-surface);
+    background:
+      radial-gradient(
+        1100px 620px at 8% -12%,
+        var(--wash-a) 0%,
+        var(--wash-a-0) 62%
+      ),
+      radial-gradient(
+        900px 520px at 100% -8%,
+        var(--wash-b) 0%,
+        var(--wash-b-0) 58%
+      ),
+      radial-gradient(
+        800px 600px at 60% 110%,
+        var(--wash-c) 0%,
+        var(--wash-c-0) 60%
+      ),
+      var(--gm-canvas);
+    background-attachment: fixed;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 0 48px;
+  }
+  code,
+  kbd,
+  pre,
+  .mono {
+    font-family: var(--mono);
+    font-variation-settings: normal;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    margin: 0;
+    font-weight: 600;
+    text-wrap: balance;
+  }
+  p {
+    margin: 0;
+  }
+  a {
+    color: var(--gm-primary);
+    text-underline-offset: 3px;
+  }
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+  :focus-visible {
+    outline: 2px solid var(--gm-primary);
+    outline-offset: 2px;
+  }
+
+  /* -------- Shell -------- */
+  .shell {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 248px minmax(0, 1fr);
+    gap: 24px;
+  }
+  .side {
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    align-self: start;
+    height: calc(100vh - env(safe-area-inset-top, 0px));
+    overflow-y: auto;
+    padding: 20px 4px 20px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 8px;
+  }
+  .brand-mark {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-pill);
+    background: var(--gm-surface);
+    box-shadow: var(--ne-shadow);
+    display: grid;
+    place-items: center;
+    transition: transform var(--dur-spatial) var(--spring-fast);
+  }
+  .brand-mark:hover {
+    transform: rotate(-12deg) scale(1.06);
+  }
+  .brand b {
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    font-variation-settings:
+      'ROND' 60,
+      'opsz' 24;
+  }
+  .nav {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .nav-title {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--gm-on-surface-variant);
+    padding: 12px 14px 4px;
+  }
+  .nav a {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    border-radius: var(--radius-pill);
+    color: var(--gm-on-surface-variant);
+    text-decoration: none;
+    font-weight: 500;
+    transition:
+      background var(--dur) var(--effects),
+      color var(--dur) var(--effects);
+  }
+  .nav a:hover {
+    background: color-mix(in srgb, var(--gm-on-surface) 6%, transparent);
+    color: var(--gm-on-surface);
+  }
+  .nav a.on {
+    background: var(--gm-primary-container);
+    color: var(--gm-on-primary-container);
+    font-weight: 600;
+  }
+  .theme-row {
+    margin-top: auto;
+    padding: 0 8px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  main {
+    min-width: 0;
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  /* -------- Hero -------- */
+  .hero {
+    background: var(--gm-surface);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--ne-shadow);
+    padding: 40px;
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    gap: 32px;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .eyebrow {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--gm-on-surface-variant);
+  }
+  .hero h1 {
+    font-size: 48px;
+    line-height: 54px;
+    letter-spacing: -0.03em;
+    margin-top: 8px;
+  }
+  .hero .lead {
+    font-size: 17px;
+    line-height: 27px;
+    color: var(--gm-on-surface-variant);
+    margin-top: 16px;
+    max-width: 54ch;
+  }
+  .hero .facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 24px;
+  }
+  .notice {
+    font-size: 12.5px;
+    line-height: 18px;
+    color: var(--gm-on-surface-variant);
+    margin-top: 20px;
+    max-width: 62ch;
+  }
+
+  /* -------- Sections -------- */
+  .section {
+    background: var(--gm-surface);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--ne-shadow);
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    scroll-margin-top: 16px;
+  }
+  .section-head {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-width: 72ch;
+  }
+  .section-head h2 {
+    font-size: 28px;
+    line-height: 36px;
+    letter-spacing: -0.02em;
+  }
+  .section-head p {
+    color: var(--gm-on-surface-variant);
+    font-size: 15px;
+    line-height: 24px;
+  }
+  .sub {
+    font-size: 18px;
+    line-height: 26px;
+    letter-spacing: -0.01em;
+  }
+  .note {
+    font-size: 13px;
+    line-height: 20px;
+    color: var(--gm-on-surface-variant);
+  }
+  .rules {
+    margin: 0;
+    padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-width: 72ch;
+  }
+  .rules li::marker {
+    color: var(--gm-primary);
+  }
+  .grid {
+    display: grid;
+    gap: 12px;
+  }
+  .g2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .g3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .g4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .tile {
+    background: var(--gm-surface-1);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+  }
+  .tile h3 {
+    font-size: 15px;
+    line-height: 22px;
+  }
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+
+  /* -------- Color -------- */
+  .swatch {
+    border: 0;
+    text-align: left;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    background: var(--gm-surface-1);
+    border-radius: var(--radius-lg);
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: transform var(--dur) var(--spring-fast);
+  }
+  .swatch:active {
+    transform: scale(0.985);
+  }
+  .chip-color {
+    height: 64px;
+    border-radius: var(--radius-sm);
+    box-shadow: inset 0 0 0 1px var(--gm-outline-variant);
+  }
+  .swatch .name {
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 16px;
+    padding: 0 6px;
+    overflow-wrap: anywhere;
+  }
+  .swatch .vals {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--gm-on-surface-variant);
+    padding: 0 6px 4px;
+    font-variant-numeric: tabular-nums;
+  }
+  .swatch .use {
+    font-size: 12.5px;
+    color: var(--gm-on-surface-variant);
+    padding: 0 6px 6px;
+  }
+  .four {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .dot {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-pill);
+  }
+
+  /* -------- Type -------- */
+  .type-row {
+    display: grid;
+    grid-template-columns: 168px minmax(0, 1fr);
+    gap: 16px;
+    align-items: baseline;
+    padding: 12px 0;
+    border-top: 1px solid var(--gm-outline-variant);
+  }
+  .type-row:first-child {
+    border-top: 0;
+  }
+  .type-meta {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--gm-on-surface-variant);
+    font-variant-numeric: tabular-nums;
+  }
+  .type-sample {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  /* -------- Shape -------- */
+  .radius-box {
+    height: 88px;
+    background: var(--gm-primary-container);
+    color: var(--gm-on-primary-container);
+    display: flex;
+    align-items: flex-end;
+    padding: 12px;
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+  .space-bar {
+    height: 12px;
+    background: var(--gm-primary);
+    border-radius: var(--radius-pill);
+  }
+  .space-row {
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr);
+    gap: 12px;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--gm-on-surface-variant);
+  }
+
+  /* -------- Motion -------- */
+  .motion-demo {
+    height: 56px;
+    border-radius: var(--radius-pill);
+    background: var(--gm-surface-2);
+    position: relative;
+    overflow: hidden;
+  }
+  .motion-ball {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-pill);
+    background: var(--gm-primary);
+  }
+  .motion-demo:hover .motion-ball,
+  .motion-demo:focus-visible .motion-ball {
+    left: calc(100% - 48px);
+  }
+
+  /* -------- Components -------- */
+  .btn {
+    height: 40px;
+    padding: 0 20px;
+    border: 0;
+    border-radius: var(--radius-pill);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition:
+      transform var(--dur) var(--spring-fast),
+      background var(--dur) var(--effects);
+    text-decoration: none;
+  }
+  .btn:active {
+    transform: scale(0.96);
+  }
+  .btn-filled {
+    background: var(--gm-primary);
+    color: var(--gm-on-primary);
+  }
+  .btn-tonal {
+    background: var(--gm-surface-2);
+    color: var(--gm-on-surface);
+  }
+  .btn-tonal:hover {
+    background: var(--gm-surface-3);
+  }
+  .icon-btn {
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--gm-on-surface);
+    display: inline-grid;
+    place-items: center;
+    cursor: pointer;
+  }
+  .icon-btn:hover {
+    background: var(--gm-surface-2);
+  }
+  .chip {
+    height: 32px;
+    padding: 0 12px;
+    border-radius: var(--radius-pill);
+    background: var(--gm-surface-2);
+    font-size: 12.5px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }
+  .chip.code {
+    font-family: var(--mono);
+    font-weight: 500;
+    border-radius: var(--radius-xs);
+  }
+  .chip.sel {
+    background: var(--gm-primary-container);
+    color: var(--gm-on-primary-container);
+  }
+  svg.ic {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    flex: none;
+  }
+
+  .pane {
+    background: var(--gm-surface);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--ne-shadow);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    position: relative;
+    min-width: 0;
+  }
+  .pane.working::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 2px;
+    background: conic-gradient(
+      from var(--ne-angle),
+      var(--ne-blue),
+      var(--ne-violet),
+      var(--ne-red),
+      var(--ne-yellow),
+      var(--ne-green),
+      var(--ne-blue)
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: ne-turn 4s linear infinite;
+    pointer-events: none;
+  }
+  .pane.working::after {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto;
+    height: 72px;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    background: radial-gradient(
+      60% 100% at 50% 0%,
+      color-mix(in srgb, var(--ne-blue) 22%, transparent),
+      transparent
+    );
+    animation: ne-breathe 2.4s var(--effects) infinite alternate;
+    pointer-events: none;
+  }
+  @keyframes ne-turn {
+    to {
+      --ne-angle: 360deg;
+    }
+  }
+  @keyframes ne-breathe {
+    from {
+      opacity: 0.35;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  .pane-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-pill);
+    background: var(--gm-primary-container);
+    color: var(--gm-on-primary-container);
+    display: grid;
+    place-items: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex: none;
+  }
+  .who b {
+    display: block;
+    font-size: 14px;
+    line-height: 18px;
+  }
+  .who span {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--gm-on-surface-variant);
+  }
+  .steps {
+    background: var(--gm-surface-1);
+    border-radius: var(--radius-lg);
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+  }
+  .typing {
+    display: inline-flex;
+    gap: 4px;
+  }
+  .typing i {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    animation: ne-bounce 1s var(--spring) infinite;
+  }
+  .typing i:nth-child(1) {
+    background: var(--ne-blue);
+  }
+  .typing i:nth-child(2) {
+    background: var(--ne-red);
+    animation-delay: 0.15s;
+  }
+  .typing i:nth-child(3) {
+    background: var(--ne-yellow);
+    animation-delay: 0.3s;
+  }
+  @keyframes ne-bounce {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    40% {
+      transform: translateY(-5px);
+    }
+  }
+  .bubble-me {
+    align-self: flex-end;
+    background: var(--gm-surface-2);
+    border-radius: var(--radius-lg) var(--radius-lg) var(--radius-xs)
+      var(--radius-lg);
+    padding: 10px 14px;
+    max-width: 86%;
+  }
+  .approval {
+    background: var(--gm-primary-container);
+    color: var(--gm-on-primary-container);
+    border-radius: var(--radius-lg);
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .approval b {
+    font-size: 14px;
+  }
+  .approval code {
+    font-size: 12.5px;
+    overflow-wrap: anywhere;
+  }
+  .refusal {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 12px;
+    align-items: center;
+    font-size: 12.5px;
+    color: var(--gm-on-surface-variant);
+    text-align: center;
+  }
+  .refusal::before,
+  .refusal::after {
+    content: '';
+    height: 1px;
+    background: var(--gm-outline-variant);
+  }
+  .composer {
+    background: var(--gm-surface-1);
+    border-radius: var(--radius-xl);
+    padding: 14px 14px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-shadow: inset 0 0 0 2px transparent;
+    transition: box-shadow var(--dur) var(--effects);
+  }
+  .composer:focus-within {
+    box-shadow: inset 0 0 0 2px var(--gm-primary);
+  }
+  .composer textarea {
+    border: 0;
+    background: transparent;
+    resize: none;
+    font: inherit;
+    color: inherit;
+    outline: none;
+    min-height: 44px;
+  }
+  .composer-bar {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .send {
+    margin-left: auto;
+    width: 40px;
+    height: 40px;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: var(--gm-primary);
+    color: var(--gm-on-primary);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: border-radius var(--dur-spatial) var(--spring-fast);
+  }
+  .send:active {
+    border-radius: var(--radius-sm);
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .option {
+    border: 0;
+    width: 100%;
+    min-height: 64px;
+    font: inherit;
+    color: var(--gm-on-surface);
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 16px 12px 12px;
+    border-radius: var(--radius-lg);
+    background: var(--gm-surface-1);
+    cursor: pointer;
+    transition:
+      background var(--dur-fast) var(--effects),
+      transform var(--dur) var(--spring-fast);
+  }
+  .option:hover {
+    background: var(--gm-surface-2);
+  }
+  .option:active {
+    transform: scale(0.985);
+  }
+  .option[aria-checked='true'] {
+    background: var(--gm-primary-container);
+    color: var(--gm-on-primary-container);
+  }
+  .code-dot {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-pill);
+    background: var(--gm-surface);
+    color: var(--gm-primary);
+    display: grid;
+    place-items: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex: none;
+  }
+  .option[aria-checked='true'] .code-dot {
+    background: var(--gm-primary);
+    color: var(--gm-on-primary);
+  }
+  .option .txt {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .option .txt b {
+    font-size: 15px;
+  }
+  .option .txt span {
+    font-size: 12.5px;
+    color: var(--gm-on-surface-variant);
+    font-variant-numeric: tabular-nums;
+  }
+  .option[aria-checked='true'] .txt span {
+    color: inherit;
+    opacity: 0.8;
+  }
+  .mark {
+    width: 26px;
+    height: 26px;
+    border-radius: var(--radius-pill);
+    box-shadow: inset 0 0 0 2px var(--gm-outline);
+    display: grid;
+    place-items: center;
+    flex: none;
+  }
+  .option[aria-checked='true'] .mark {
+    background: var(--gm-primary);
+    color: var(--gm-on-primary);
+    box-shadow: none;
+  }
+
+  .menu {
+    background: var(--gm-surface);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--float-shadow);
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    animation: ne-pop var(--dur-spatial) var(--spring-fast);
+  }
+  @keyframes ne-pop {
+    from {
+      transform: translateY(8px) scale(0.97);
+      opacity: 0;
+    }
+  }
+  .acct {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 12px 16px;
+    text-align: center;
+  }
+  .ring {
+    width: 72px;
+    height: 72px;
+    padding: 3px;
+    border-radius: var(--radius-pill);
+    background: conic-gradient(
+      var(--ne-blue),
+      var(--ne-violet),
+      var(--ne-red),
+      var(--ne-yellow),
+      var(--ne-green),
+      var(--ne-blue)
+    );
+  }
+  .ring span {
+    width: 100%;
+    height: 100%;
+    border-radius: var(--radius-pill);
+    background: var(--gm-primary);
+    color: var(--gm-on-primary);
+    border: 3px solid var(--gm-surface);
+    display: grid;
+    place-items: center;
+    font-size: 26px;
+    font-weight: 600;
+  }
+  .menu-list {
+    background: var(--gm-surface-1);
+    border-radius: var(--radius-lg);
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+  }
+  .menu-list div {
+    height: 44px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 12px;
+    border-radius: var(--radius-sm);
+  }
+  .menu-list div:hover {
+    background: var(--gm-surface-2);
+  }
+  .toast {
+    background: var(--gm-on-surface);
+    color: var(--gm-surface);
+    border-radius: var(--radius-md);
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .toast b {
+    font-size: 14px;
+  }
+  .toast span {
+    font-size: 13px;
+    opacity: 0.8;
+  }
+  .connector {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: var(--gm-surface-1);
+    border-radius: var(--radius-lg);
+  }
+  .brand-tile {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-sm);
+    background: #ffffff;
+    box-shadow: inset 0 0 0 1px var(--gm-outline-variant);
+    display: grid;
+    place-items: center;
+    flex: none;
+  }
+  .connector .txt {
+    flex: 1;
+    min-width: 0;
+  }
+  .connector .txt b {
+    display: block;
+  }
+  .connector .txt span {
+    font-size: 12.5px;
+    color: var(--gm-on-surface-variant);
+  }
+  .tree {
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 26px;
+  }
+  .tree div {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 8px;
+    border-radius: var(--radius-xs);
+  }
+  .tree div:hover {
+    background: var(--gm-surface-1);
+  }
+  .tree em {
+    font-style: normal;
+    font-weight: 600;
+    color: var(--gm-primary);
+  }
+  .skel {
+    height: 14px;
+    border-radius: var(--radius-pill);
+    background: var(--gm-surface-2);
+  }
+
+  /* -------- Words -------- */
+  .do-dont {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .do-dont .tile b {
+    font-size: 12.5px;
+    color: var(--gm-on-surface-variant);
+  }
+  .say {
+    font-size: 15px;
+    line-height: 24px;
+  }
+  .table-wrap {
+    overflow-x: auto;
+    border-radius: var(--radius-lg);
+    background: var(--gm-surface-1);
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 520px;
+    font-size: 13.5px;
+  }
+  th,
+  td {
+    text-align: left;
+    padding: 10px 14px;
+    vertical-align: top;
+  }
+  th {
+    font-size: 12.5px;
+    color: var(--gm-on-surface-variant);
+    font-weight: 600;
+  }
+  tr + tr td {
+    border-top: 1px solid var(--gm-outline-variant);
+  }
+
+  /* -------- Applications -------- */
+  .app-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .app-card {
+    background: var(--gm-surface-1);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+  }
+  .app-card h3 {
+    font-size: 16px;
+    line-height: 22px;
+  }
+  .specimen {
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    min-width: 0;
+  }
+
+  .mini-landing {
+    background:
+      radial-gradient(
+        420px 220px at 10% -20%,
+        var(--wash-a) 0%,
+        var(--wash-a-0) 70%
+      ),
+      radial-gradient(
+        360px 200px at 100% -10%,
+        var(--wash-b) 0%,
+        var(--wash-b-0) 70%
+      ),
+      var(--gm-canvas);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .mini-landing .nav-mini {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: var(--gm-on-surface-variant);
+  }
+  .mini-landing h4 {
+    font-size: 22px;
+    line-height: 27px;
+    letter-spacing: -0.03em;
+  }
+  .mini-landing p {
+    font-size: 12.5px;
+    line-height: 18px;
+    color: var(--gm-on-surface-variant);
+  }
+  .mini-landing .btns {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .mini-landing .btn {
+    height: 30px;
+    padding: 0 12px;
+    font-size: 12px;
+  }
+  .mini-panes {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+    margin-top: 4px;
+  }
+  .mini-panes div {
+    height: 54px;
+    border-radius: var(--radius-sm);
+    background: var(--gm-surface);
+    box-shadow: var(--ne-shadow);
+  }
+
+  .mini-site {
+    background: var(--gm-surface);
+    display: grid;
+    grid-template-columns: 92px minmax(0, 1fr);
+    min-height: 190px;
+  }
+  .mini-site aside {
+    background: var(--gm-surface-1);
+    padding: 12px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 11.5px;
+    color: var(--gm-on-surface-variant);
+  }
+  .mini-site aside span.on {
+    color: var(--gm-on-primary-container);
+    background: var(--gm-primary-container);
+    border-radius: var(--radius-pill);
+    padding: 2px 8px;
+    font-weight: 600;
+  }
+  .mini-site article {
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+  }
+  .mini-site article h4 {
+    font-size: 16px;
+  }
+  .mini-site pre {
+    margin: 0;
+    background: var(--gm-surface-1);
+    border-radius: var(--radius-sm);
+    padding: 8px 10px;
+    font-size: 11.5px;
+    overflow-x: auto;
+  }
+
+  pre.specimen {
+    margin: 0;
+  }
+  .editor {
+    background: var(--term-bg);
+    color: var(--term-fg);
+    padding: 12px 0;
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 20px;
+    overflow-x: auto;
+  }
+  .editor .ln {
+    display: inline-block;
+    width: 32px;
+    text-align: right;
+    padding-right: 12px;
+    color: var(--term-dim);
+    user-select: none;
+  }
+  .editor .k {
+    color: #c58af9;
+  }
+  .editor .s {
+    color: #81c995;
+  }
+  .editor .f {
+    color: #8ab4f8;
+  }
+  .terminal {
+    background: var(--term-bg);
+    color: var(--term-fg);
+    padding: 14px 16px;
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 20px;
+    overflow-x: auto;
+    white-space: pre;
+  }
+  .terminal .ok {
+    color: var(--term-green);
+  }
+  .terminal .wait {
+    color: var(--term-yellow);
+  }
+  .terminal .bad {
+    color: var(--term-red);
+  }
+  .terminal .dim {
+    color: var(--term-dim);
+  }
+
+  .mini-blog {
+    background: var(--gm-surface);
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .mini-blog .meta {
+    font-size: 11.5px;
+    color: var(--gm-on-surface-variant);
+  }
+  .mini-blog h4 {
+    font-size: 19px;
+    line-height: 24px;
+    letter-spacing: -0.02em;
+  }
+  .mini-blog p {
+    font-size: 13px;
+    line-height: 21px;
+    color: var(--gm-on-surface-variant);
+    max-width: 52ch;
+  }
+
+  .chat {
+    background: var(--gm-surface-2);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .msg {
+    max-width: 86%;
+    padding: 10px 12px;
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    line-height: 19px;
+  }
+  .msg.in {
+    background: var(--bubble-in);
+    border-bottom-left-radius: var(--radius-xs);
+  }
+  .msg.out {
+    background: var(--bubble-out);
+    color: var(--gm-on-primary-container);
+    align-self: flex-end;
+    border-bottom-right-radius: var(--radius-xs);
+  }
+  .msg a {
+    overflow-wrap: anywhere;
+  }
+  .msg small {
+    display: block;
+    text-align: right;
+    font-size: 10.5px;
+    opacity: 0.7;
+    margin-top: 2px;
+  }
+
+  .email {
+    background: var(--gm-canvas);
+    padding: 16px;
+  }
+  .email-card {
+    background: var(--gm-surface);
+    border-radius: var(--radius-lg);
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 13px;
+    line-height: 20px;
+  }
+  .email-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+  }
+  .email-subject {
+    font-size: 11.5px;
+    color: var(--gm-on-surface-variant);
+  }
+  .email-card ul {
+    margin: 0;
+    padding-left: 18px;
+  }
+  .email-foot {
+    font-size: 11px;
+    line-height: 16px;
+    color: var(--gm-on-surface-variant);
+    padding: 10px 4px 0;
+  }
+
+  .slide {
+    aspect-ratio: 16 / 9;
+    max-width: 100%;
+    background:
+      radial-gradient(60% 80% at 0% 0%, var(--wash-a) 0%, var(--wash-a-0) 70%),
+      radial-gradient(
+        50% 70% at 100% 0%,
+        var(--wash-b) 0%,
+        var(--wash-b-0) 70%
+      ),
+      var(--gm-canvas);
+    padding: 6% 7%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .slide h4 {
+    font-size: clamp(16px, 2.4vw, 26px);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    max-width: 18ch;
+  }
+  .slide .foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    font-size: 10.5px;
+    color: var(--gm-on-surface-variant);
+  }
+
+  .social {
+    aspect-ratio: 1200 / 630;
+    max-width: 100%;
+    background:
+      radial-gradient(70% 90% at 0% 0%, var(--wash-a) 0%, var(--wash-a-0) 70%),
+      var(--gm-canvas);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 4%;
+    padding: 5%;
+    align-items: center;
+  }
+  .social h4 {
+    font-size: clamp(14px, 2vw, 22px);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+  .social .shot {
+    height: 100%;
+    border-radius: var(--radius-sm);
+    background: var(--gm-surface);
+    box-shadow: var(--ne-shadow);
+    padding: 8%;
+    display: flex;
+    flex-direction: column;
+    gap: 8%;
+  }
+  .social .shot i {
+    display: block;
+    height: 10%;
+    border-radius: var(--radius-pill);
+    background: var(--gm-surface-2);
+  }
+  .social .shot i.p {
+    background: var(--gm-primary-container);
+  }
+  .social small {
+    display: block;
+    font-size: 10px;
+    color: var(--gm-on-surface-variant);
+    margin-top: 8px;
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .bcard {
+    aspect-ratio: 90 / 50;
+    max-width: 100%;
+    border-radius: 6px;
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.12),
+      0 10px 24px -14px rgba(0, 0, 0, 0.4);
+    padding: 7%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+  }
+  .bcard.front {
+    background: var(--card-dark);
+    color: var(--card-dark-fg);
+    align-items: center;
+    text-align: center;
+  }
+  .bcard.front b {
+    font-size: clamp(11px, 1.4vw, 15px);
+    letter-spacing: -0.02em;
+    margin-top: 6px;
+  }
+  .bcard.front span {
+    font-size: clamp(8px, 0.9vw, 10px);
+    color: var(--card-dark-note);
+  }
+  .bcard.back {
+    background: var(--paper);
+    color: var(--paper-fg);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px;
+  }
+  .bcard.back .lines {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: clamp(8px, 0.9vw, 10.5px);
+    color: var(--paper-note);
+    min-width: 0;
+  }
+  .bcard.back .lines b {
+    font-size: clamp(10px, 1.2vw, 13px);
+    color: var(--paper-fg);
+  }
+  .bcard.back .lines code {
+    font-size: clamp(7.5px, 0.85vw, 9.5px);
+    overflow-wrap: anywhere;
+  }
+  .qr {
+    width: clamp(40px, 5vw, 58px);
+    aspect-ratio: 1;
+  }
+  .bcard .tm {
+    grid-column: 1 / -1;
+    font-size: clamp(6px, 0.7vw, 8px);
+    color: var(--paper-note);
+  }
+
+  .repo {
+    background: var(--gm-surface);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 13px;
+  }
+  .repo h4 {
+    font-size: 18px;
+  }
+  .repo blockquote {
+    margin: 0;
+    padding: 8px 12px;
+    border-left: 3px solid var(--gm-outline);
+    color: var(--gm-on-surface-variant);
+    font-size: 12px;
+  }
+
+  /* -------- Accessibility -------- */
+  .ratio-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: center;
+    padding: 10px 14px;
+    border-radius: var(--radius-md);
+  }
+  .ratio-row b {
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+  }
+  .pass {
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  footer {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 8px 8px 0 272px;
+    font-size: 12.5px;
+    color: var(--gm-on-surface-variant);
+  }
+
+  @media (max-width: 1020px) {
+    .shell {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .side {
+      position: static;
+      height: auto;
+      overflow: visible;
+      padding-bottom: 0;
+    }
+    .nav {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+    .nav-title {
+      display: none;
+    }
+    .nav a {
+      height: 34px;
+      background: var(--gm-surface);
+    }
+    .theme-row {
+      margin-top: 0;
+    }
+    .hero {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    footer {
+      padding-left: 8px;
+    }
+  }
+  @media (max-width: 720px) {
+    .g3,
+    .g4 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .g2,
+    .app-grid,
+    .do-dont,
+    .cards {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .hero,
+    .section {
+      padding: 22px;
+    }
+    .hero h1 {
+      font-size: 34px;
+      line-height: 40px;
+    }
+    .type-row {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 4px;
+    }
+  }
+  @media (max-width: 420px) {
+    .g3,
+    .g4 {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>
+
+<svg width="0" height="0" style="position: absolute" aria-hidden="true">
+  <defs>
+    <linearGradient
+      id="spark"
+      x1="2"
+      y1="2"
+      x2="26"
+      y2="26"
+      gradientUnits="userSpaceOnUse"
+    >
+      <stop offset="0%" stop-color="#4285F4" />
+      <stop offset="52%" stop-color="#9B72CB" />
+      <stop offset="100%" stop-color="#D96570" />
+    </linearGradient>
+  </defs>
+</svg>
+
+<div class="shell">
+  <aside class="side">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 28 28">
+          <path
+            d="M14 2C14.7 8.4 19.6 13.3 26 14C19.6 14.7 14.7 19.6 14 26C13.3 19.6 8.4 14.7 2 14C8.4 13.3 13.3 8.4 14 2Z"
+            fill="url(#spark)"
+          />
+        </svg>
+      </span>
+      <b>Gemini Code</b>
+    </div>
+    <nav class="nav" aria-label="Sections">
+      <span class="nav-title">Foundations</span>
+      <a href="#who" class="on">Who meets it</a>
+      <a href="#mark">Name and mark</a>
+      <a href="#color">Color</a>
+      <a href="#type">Type</a>
+      <a href="#shape">Shape and space</a>
+      <a href="#motion">Motion</a>
+      <span class="nav-title">Building</span>
+      <a href="#words">Voice and words</a>
+      <a href="#components">Components</a>
+      <span class="nav-title">Everywhere</span>
+      <a href="#applications">Applications</a>
+      <a href="#access">Accessibility</a>
+      <a href="#change">How it changes</a>
+    </nav>
+    <div class="theme-row">
+      <button
+        class="btn btn-tonal"
+        id="theme-toggle"
+        type="button"
+        aria-label="Switch light and dark"
+      >
+        <svg class="ic" viewBox="0 0 24 24">
+          <path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z" />
+        </svg>
+        <span id="theme-label">Theme: system</span>
+      </button>
+    </div>
+  </aside>
+
+  <main>
+    <header class="hero">
+      <div>
+        <span class="eyebrow">Design system · 25/11/2026</span>
+        <h1>Every piece of Gemini Code, from one set of tokens.</h1>
+        <p class="lead">
+          The dashboard, the landing page, the site, the editor, the blog, a
+          text message, an e-mail, a slide, a business card and the terminal.
+          This page is built with the system it describes: every color, corner,
+          curve and component below is the real one.
+        </p>
+        <div class="facts">
+          <span class="chip">Neural Expressive on Material 3 Expressive</span>
+          <span class="chip">Google Sans Flex · ROND 40</span>
+          <span class="chip">Light and dark</span>
+        </div>
+        <p class="notice">
+          Independent open-source project. Not affiliated with, sponsored or
+          endorsed by Google. "Gemini" is a trademark of Google LLC.
+        </p>
+      </div>
+      <div
+        class="pane working"
+        aria-label="An agent pane while the agent works"
+      >
+        <div class="pane-head">
+          <span class="avatar">TE</span>
+          <div class="who">
+            <b>Test Engineer</b><span>gemini-3.6-flash</span>
+          </div>
+        </div>
+        <div class="bubble-me">
+          Add tests for the temperature converter and run them.
+        </div>
+        <div class="steps">
+          <span>4 steps · 16 s</span
+          ><span class="typing" aria-label="working"
+            ><i></i><i></i><i></i
+          ></span>
+        </div>
+        <p>
+          Created <code>temperatura.test.js</code>: freezing, boiling, absolute
+          zero and a value below it. <b>4 pass, 0 fail.</b>
+        </p>
+      </div>
+    </header>
+
+    <section class="section" id="who">
+      <div class="section-head">
+        <h2>Who meets Gemini Code</h2>
+        <p>
+          Every piece starts from the person who meets it: a developer who
+          already uses one coding agent and wants several working at once.
+        </p>
+      </div>
+      <div class="grid g4">
+        <div class="tile">
+          <h3>Arrives</h3>
+          <p class="note">
+            Curious and slightly wary, from GitHub, a post or a search.
+          </p>
+        </div>
+        <div class="tile">
+          <h3>Wants</h3>
+          <p class="note">
+            Work done in parallel without babysitting, and nothing risky done
+            behind their back.
+          </p>
+        </div>
+        <div class="tile">
+          <h3>Fears</h3>
+          <p class="note">
+            Losing control of what ran, an unexpected bill, a tool that hides
+            what it does.
+          </p>
+        </div>
+        <div class="tile">
+          <h3>Leaves with</h3>
+          <p class="note">
+            Agents side by side, each in its folder, every risky action waiting
+            for them.
+          </p>
+        </div>
+      </div>
+      <ul class="rules">
+        <li>
+          <b>Show the desk working:</b> panes, listed steps, an approval
+          waiting. Never an abstract picture of "AI".
+        </li>
+        <li>
+          <b>Name things:</b> the model, the agent, the folder and the cost.
+        </li>
+        <li>
+          <b>Give before asking:</b> the live demo and the open code come before
+          any sign-up.
+        </li>
+        <li>
+          <b>True facts only:</b> a measured number carries its date and
+          conditions.
+        </li>
+      </ul>
+    </section>
+
+    <section class="section" id="mark">
+      <div class="section-head">
+        <h2>The name, the mark and the trademark rule</h2>
+        <p>
+          <b>Gemini Code</b>, two words, both capitalized;
+          <code>gemini-code</code> in code and URLs. In one line: an open-source
+          desk of coding agents built around Google Gemini.
+        </p>
+      </div>
+      <div class="grid g3">
+        <div class="tile">
+          <h3>Mark only</h3>
+          <div style="display: flex; gap: 12px; align-items: center">
+            <svg
+              width="56"
+              height="56"
+              viewBox="0 0 32 32"
+              role="img"
+              aria-label="The current mark"
+            >
+              <rect width="32" height="32" rx="9" fill="#131314" />
+              <path
+                d="M16 4.5C16.65 10.6 21.4 15.35 27.5 16C21.4 16.65 16.65 21.4 16 27.5C15.35 21.4 10.6 16.65 4.5 16C10.6 15.35 15.35 10.6 16 4.5Z"
+                fill="url(#spark)"
+              />
+            </svg>
+            <svg width="24" height="24" viewBox="0 0 32 32" aria-hidden="true">
+              <rect width="32" height="32" rx="9" fill="#131314" />
+              <path
+                d="M16 4.5C16.65 10.6 21.4 15.35 27.5 16C21.4 16.65 16.65 21.4 16 27.5C15.35 21.4 10.6 16.65 4.5 16C10.6 15.35 15.35 10.6 16 4.5Z"
+                fill="url(#spark)"
+              />
+            </svg>
+            <svg width="16" height="16" viewBox="0 0 32 32" aria-hidden="true">
+              <rect width="32" height="32" rx="9" fill="#131314" />
+              <path
+                d="M16 4.5C16.65 10.6 21.4 15.35 27.5 16C21.4 16.65 16.65 21.4 16 27.5C15.35 21.4 10.6 16.65 4.5 16C10.6 15.35 15.35 10.6 16 4.5Z"
+                fill="url(#spark)"
+              />
+            </svg>
+          </div>
+          <p class="note">
+            Minimum 16 px on screen, 8 mm in print. Clear space: half the mark's
+            width.
+          </p>
+        </div>
+        <div class="tile">
+          <h3>Horizontal lockup</h3>
+          <div class="brand" style="padding: 0">
+            <span class="brand-mark" aria-hidden="true"
+              ><svg width="22" height="22" viewBox="0 0 28 28">
+                <path
+                  d="M14 2C14.7 8.4 19.6 13.3 26 14C19.6 14.7 14.7 19.6 14 26C13.3 19.6 8.4 14.7 2 14C8.4 13.3 13.3 8.4 14 2Z"
+                  fill="url(#spark)"
+                /></svg
+            ></span>
+            <b>Gemini Code</b>
+          </div>
+          <p class="note">
+            Google Sans Flex 600, tracking -0.02 em. Mark and word half a mark
+            apart.
+          </p>
+        </div>
+        <div class="tile">
+          <h3>Proposed: the panes mark</h3>
+          <svg
+            width="56"
+            height="56"
+            viewBox="0 0 32 32"
+            role="img"
+            aria-label="Proposed mark: three panes, one working"
+          >
+            <defs>
+              <linearGradient id="edge" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#4285F4" />
+                <stop offset="0.35" stop-color="#9B72CB" />
+                <stop offset="0.65" stop-color="#EA4335" />
+                <stop offset="0.85" stop-color="#FBBC04" />
+                <stop offset="1" stop-color="#34A853" />
+              </linearGradient>
+            </defs>
+            <rect width="32" height="32" rx="9" fill="#131314" />
+            <rect x="5" y="7" width="6.5" height="18" rx="2.6" fill="#2B2F36" />
+            <rect
+              x="12.75"
+              y="7"
+              width="6.5"
+              height="18"
+              rx="2.6"
+              fill="#16171B"
+              stroke="url(#edge)"
+              stroke-width="1.4"
+            />
+            <rect
+              x="20.5"
+              y="7"
+              width="6.5"
+              height="18"
+              rx="2.6"
+              fill="#2B2F36"
+            />
+          </svg>
+          <p class="note">
+            Waiting for Ciro's decision. It draws what the product is, a desk
+            with one agent at work, and belongs to no one else.
+          </p>
+        </div>
+      </div>
+      <div class="approval" role="note">
+        <b>The trademark rule, absolute</b>
+        <p>
+          Every public piece that carries the name carries the notice when it
+          has room: "Independent open-source project. Not affiliated with,
+          sponsored or endorsed by Google. 'Gemini' is a trademark of Google
+          LLC." Short form: "Independent open source. Not affiliated with
+          Google." Never Google's logo, the "G", the Gemini app icon or
+          "official" phrasing.
+        </p>
+      </div>
+      <p class="note">
+        Open risk: the current star and its gradient are very close to the
+        Gemini app's own mark. Until the decision, never enlarge the star alone
+        as a hero image, and keep the notice next to it.
+      </p>
+    </section>
+
+    <section class="section" id="color">
+      <div class="section-head">
+        <h2>Color</h2>
+        <p>
+          Tonal surfaces instead of borders, one blue for action and selection,
+          and Google's four colors only while an agent works. Click a swatch to
+          copy its token. The values switch with the theme.
+        </p>
+      </div>
+      <div class="grid g4" id="swatches"></div>
+      <h3 class="sub">Google's four colors: the working state only</h3>
+      <div class="four" aria-label="Working colors">
+        <span
+          class="dot"
+          style="background: var(--ne-blue)"
+          title="--ne-blue #4285F4"
+        ></span>
+        <span
+          class="dot"
+          style="background: var(--ne-violet)"
+          title="--ne-violet #9B72CB"
+        ></span>
+        <span
+          class="dot"
+          style="background: var(--ne-red)"
+          title="--ne-red #EA4335"
+        ></span>
+        <span
+          class="dot"
+          style="background: var(--ne-yellow)"
+          title="--ne-yellow #FBBC04"
+        ></span>
+        <span
+          class="dot"
+          style="background: var(--ne-green)"
+          title="--ne-green #34A853"
+        ></span>
+      </div>
+      <ul class="rules">
+        <li>
+          The glow on a working pane's edge, the typing dots, the ring around
+          the account avatar.
+        </li>
+        <li>
+          Never text, never a button fill, never success or error on their own:
+          a color is a hint, the word is the meaning.
+        </li>
+        <li>
+          The wash behind this page is the one gradient a static piece may use
+          as its ground.
+        </li>
+      </ul>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>State</th>
+              <th>How it shows</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Working</td>
+              <td>
+                The conic glow on the pane's edge and a breathing blue light
+                from its top
+              </td>
+            </tr>
+            <tr>
+              <td>Waiting for you</td>
+              <td>
+                The approval card, primary container, with the action and its
+                target named
+              </td>
+            </tr>
+            <tr>
+              <td>Done</td>
+              <td>The agent's last line, plain; never a green check alone</td>
+            </tr>
+            <tr>
+              <td>Failed</td>
+              <td>The reason in words; red only on the warning icon</td>
+            </tr>
+            <tr>
+              <td>Refused</td>
+              <td>A centered line: what was refused and why</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section" id="type">
+      <div class="section-head">
+        <h2>Type</h2>
+        <p>
+          Google Sans Flex for what a person reads, at roundness 40. Google Sans
+          Code for code, paths, model ids and commands. Both are open source and
+          load from Google Fonts. Sentence case everywhere; hierarchy by size
+          and weight.
+        </p>
+      </div>
+      <div>
+        <div class="type-row">
+          <span class="type-meta">Display · 56/60 · 600</span
+          ><span
+            class="type-sample"
+            style="
+              font-size: 56px;
+              line-height: 60px;
+              font-weight: 600;
+              letter-spacing: -0.03em;
+            "
+            >Several agents at once.</span
+          >
+        </div>
+        <div class="type-row">
+          <span class="type-meta">Headline · 32/40 · 600</span
+          ><span
+            class="type-sample"
+            style="
+              font-size: 32px;
+              line-height: 40px;
+              font-weight: 600;
+              letter-spacing: -0.02em;
+            "
+            >Connectors</span
+          >
+        </div>
+        <div class="type-row">
+          <span class="type-meta">Title large · 24/32</span
+          ><span
+            class="type-sample"
+            style="
+              font-size: 24px;
+              line-height: 32px;
+              font-weight: 600;
+              letter-spacing: -0.02em;
+            "
+            >Each agent works in its own folder</span
+          >
+        </div>
+        <div class="type-row">
+          <span class="type-meta">Title · 18/26</span
+          ><span
+            class="type-sample"
+            style="
+              font-size: 18px;
+              line-height: 26px;
+              font-weight: 600;
+              letter-spacing: -0.01em;
+            "
+            >Idioma · Language</span
+          >
+        </div>
+        <div class="type-row">
+          <span class="type-meta">Body large · 16/26</span
+          ><span class="type-sample" style="font-size: 16px; line-height: 26px"
+            >The risk judge reads every shell command, browser action and
+            connector write before it runs.</span
+          >
+        </div>
+        <div class="type-row">
+          <span class="type-meta">Body · 14/22</span
+          ><span class="type-sample"
+            >Created <code>mult.js</code> and its test; 3 pass.</span
+          >
+        </div>
+        <div class="type-row">
+          <span class="type-meta">Body small · 13/20</span
+          ><span
+            class="type-sample"
+            style="
+              font-size: 13px;
+              line-height: 20px;
+              color: var(--gm-on-surface-variant);
+            "
+            >US$ 0.00 today · US$ 0.02 in 30 days · 2 agents</span
+          >
+        </div>
+        <div class="type-row">
+          <span class="type-meta">Label · 12.5/16 · 600</span
+          ><span
+            class="type-sample"
+            style="font-size: 12.5px; line-height: 16px; font-weight: 600"
+            >Waiting for you</span
+          >
+        </div>
+        <div class="type-row">
+          <span class="type-meta">Code · 13/20</span
+          ><span class="type-sample mono" style="font-size: 13px"
+            >bun run preflight</span
+          >
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="shape">
+      <div class="section-head">
+        <h2>Shape, space and elevation</h2>
+        <p>
+          The Material 3 Expressive corner scale. No square corners anywhere a
+          person looks. Surfaces are told apart by tone; only what floats gets a
+          shadow.
+        </p>
+      </div>
+      <div class="grid g4">
+        <div class="radius-box" style="border-radius: var(--radius-xs)">
+          xs · 8 · code chips
+        </div>
+        <div class="radius-box" style="border-radius: var(--radius-sm)">
+          sm · 12 · inputs
+        </div>
+        <div class="radius-box" style="border-radius: var(--radius-md)">
+          md · 16 · toasts
+        </div>
+        <div class="radius-box" style="border-radius: var(--radius-lg)">
+          lg · 20 · cards, rows
+        </div>
+        <div class="radius-box" style="border-radius: var(--radius-xl)">
+          xl · 28 · panes, menus
+        </div>
+        <div class="radius-box" style="border-radius: var(--radius-2xl)">
+          2xl · 32 · modals
+        </div>
+        <div
+          class="radius-box"
+          style="
+            border-radius: var(--radius-pill);
+            align-items: center;
+            justify-content: center;
+          "
+        >
+          full · buttons
+        </div>
+        <div
+          class="radius-box"
+          style="
+            border-radius: var(--radius-lg);
+            background: var(--gm-surface);
+            color: var(--gm-on-surface);
+            box-shadow: var(--float-shadow);
+          "
+        >
+          floating
+        </div>
+      </div>
+      <h3 class="sub">A 4 px grid</h3>
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <div class="space-row">
+          <span>4</span><span class="space-bar" style="width: 4px"></span>
+        </div>
+        <div class="space-row">
+          <span>8</span><span class="space-bar" style="width: 8px"></span>
+        </div>
+        <div class="space-row">
+          <span>12</span><span class="space-bar" style="width: 12px"></span>
+        </div>
+        <div class="space-row">
+          <span>16</span><span class="space-bar" style="width: 16px"></span>
+        </div>
+        <div class="space-row">
+          <span>24</span><span class="space-bar" style="width: 24px"></span>
+        </div>
+        <div class="space-row">
+          <span>32</span><span class="space-bar" style="width: 32px"></span>
+        </div>
+        <div class="space-row">
+          <span>48</span><span class="space-bar" style="width: 48px"></span>
+        </div>
+        <div class="space-row">
+          <span>96</span><span class="space-bar" style="width: 96px"></span>
+        </div>
+      </div>
+      <p class="note">
+        Inside a control 8 to 12 by 14 to 16. Between items 8, between groups
+        24, between sections 48 (96 on the landing). Between two panes: 12, the
+        same as the desk's edge.
+      </p>
+    </section>
+
+    <section class="section" id="motion">
+      <div class="section-head">
+        <h2>Motion</h2>
+        <p>
+          Springs for what moves, effect curves for what changes color. Hover or
+          focus a track to run its curve. Reduced motion turns every animation
+          off.
+        </p>
+      </div>
+      <div class="grid g2">
+        <div class="tile">
+          <h3>--spring-fast · 350 ms</h3>
+          <div class="motion-demo" tabindex="0" aria-label="spring-fast demo">
+            <span
+              class="motion-ball"
+              style="transition: left var(--dur-spatial) var(--spring-fast)"
+            ></span>
+          </div>
+          <p class="note">Menus and modals popping in, presses.</p>
+        </div>
+        <div class="tile">
+          <h3>--spring · 350 ms</h3>
+          <div class="motion-demo" tabindex="0" aria-label="spring demo">
+            <span
+              class="motion-ball"
+              style="transition: left var(--dur-spatial) var(--spring)"
+            ></span>
+          </div>
+          <p class="note">Panes and larger movements.</p>
+        </div>
+        <div class="tile">
+          <h3>--effects · 200 ms</h3>
+          <div class="motion-demo" tabindex="0" aria-label="effects demo">
+            <span
+              class="motion-ball"
+              style="transition: left var(--dur) var(--effects)"
+            ></span>
+          </div>
+          <p class="note">Hover and selection colors.</p>
+        </div>
+        <div class="tile">
+          <h3>The working glow</h3>
+          <div
+            class="pane working"
+            style="height: 56px; padding: 0; border-radius: var(--radius-pill)"
+            aria-label="working glow"
+          ></div>
+          <p class="note">
+            Means "working", never "how far along": the steps stay listed.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="words">
+      <div class="section-head">
+        <h2>Voice and words</h2>
+        <p>
+          A careful colleague who did the work and shows it: direct, specific,
+          calm. English first; Brazilian Portuguese is a full translation. No
+          emoji, anywhere.
+        </p>
+      </div>
+      <div class="do-dont">
+        <div class="tile">
+          <b>Say</b>
+          <p class="say">Created <code>mult.js</code> and its test; 3 pass.</p>
+        </div>
+        <div class="tile">
+          <b>Not</b>
+          <p class="say">Great news! I've successfully completed your task!</p>
+        </div>
+        <div class="tile">
+          <b>Say</b>
+          <p class="say">
+            I did not do it: <code>/etc/hosts</code> is outside the agent
+            folder.
+          </p>
+        </div>
+        <div class="tile">
+          <b>Not</b>
+          <p class="say">Oops, something went wrong.</p>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Use</th>
+              <th>Not</th>
+              <th>Meaning</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>agent</td>
+              <td>bot, assistant, AI</td>
+              <td>One worker with its folder, model and instructions</td>
+            </tr>
+            <tr>
+              <td>the desk</td>
+              <td>workspace, board</td>
+              <td>The panes of agents side by side</td>
+            </tr>
+            <tr>
+              <td>pane</td>
+              <td>window, tab</td>
+              <td>One agent's place on the desk</td>
+            </tr>
+            <tr>
+              <td>agent folder</td>
+              <td>sandbox</td>
+              <td>The only folder an agent can read and write</td>
+            </tr>
+            <tr>
+              <td>connector</td>
+              <td>integration, plugin</td>
+              <td>A service the agents reach through MCP</td>
+            </tr>
+            <tr>
+              <td>approval</td>
+              <td>confirmation popup</td>
+              <td>A risky action waiting for the person</td>
+            </tr>
+            <tr>
+              <td>AI account</td>
+              <td>provider, credentials</td>
+              <td>A Gemini API key and the models it opens</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">
+        Dates 25/11/2026 in Portuguese, 11/25/2026 in English. Numbers 1.234,5
+        and 1,234.5. Money in the provider's currency with the date of the
+        price: US$ 3 per million input tokens.
+      </p>
+    </section>
+
+    <section class="section" id="components">
+      <div class="section-head">
+        <h2>Components</h2>
+        <p>
+          The parts the dashboard is built from, live. Every screen exists in
+          light and dark, at phone and desktop width, empty, loading, failed and
+          full.
+        </p>
+      </div>
+      <div class="grid g2">
+        <div class="tile">
+          <h3>Buttons and chips</h3>
+          <div class="tag-row">
+            <button class="btn btn-filled" type="button">Allow</button>
+            <button class="btn btn-tonal" type="button">Refuse</button>
+            <button class="icon-btn" type="button" aria-label="Close">
+              <svg class="ic" viewBox="0 0 24 24">
+                <path d="M6 6l12 12M18 6L6 18" />
+              </svg>
+            </button>
+          </div>
+          <div class="tag-row">
+            <span class="chip">3 connections</span>
+            <span class="chip sel">Waiting for you</span>
+            <span class="chip code"
+              >gemini-3.6-flash
+              <svg
+                class="ic"
+                viewBox="0 0 24 24"
+                style="width: 14px; height: 14px"
+                aria-label="Remove"
+              >
+                <path d="M6 6l12 12M18 6L6 18" /></svg
+            ></span>
+          </div>
+          <p class="note">
+            One filled button per view; the rest tonal. Every icon button has a
+            name.
+          </p>
+        </div>
+        <div class="tile">
+          <h3>Composer</h3>
+          <div class="composer">
+            <label
+              for="demo-composer"
+              class="note"
+              style="
+                position: absolute;
+                width: 1px;
+                height: 1px;
+                overflow: hidden;
+              "
+              >Message</label
+            >
+            <textarea
+              id="demo-composer"
+              rows="2"
+              placeholder="Reply…"
+            ></textarea>
+            <div class="composer-bar">
+              <span class="chip">Google Gemini · gemini-3.6-flash</span>
+              <span class="chip">3 connections</span>
+              <span class="chip">docs/</span>
+              <button class="send" type="button" aria-label="Send">
+                <svg class="ic" viewBox="0 0 24 24">
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+              </button>
+            </div>
+          </div>
+          <p class="note">
+            Tonal, 28 px corners, a 2 px primary ring on focus. The send button
+            squares off while pressed.
+          </p>
+        </div>
+        <div class="tile">
+          <h3>Approval and refusal</h3>
+          <div class="approval">
+            <b>Software Engineer wants to push to a branch</b>
+            <code>git push origin fix/login-timeout</code>
+            <div class="tag-row">
+              <button class="btn btn-filled" type="button">Allow</button
+              ><button class="btn btn-tonal" type="button">Refuse</button>
+            </div>
+          </div>
+          <p class="refusal">
+            Refused read_file: /etc/hosts is outside the agent folder
+          </p>
+        </div>
+        <div class="tile">
+          <h3>Option list</h3>
+          <div class="options" role="radiogroup" aria-label="Language">
+            <button
+              class="option"
+              role="radio"
+              aria-checked="false"
+              type="button"
+            >
+              <span class="code-dot">EN</span
+              ><span class="txt"
+                ><b>English</b><span>Inglês · 11/25/2026 · 1,234.5</span></span
+              ><span class="mark"></span>
+            </button>
+            <button
+              class="option"
+              role="radio"
+              aria-checked="true"
+              type="button"
+            >
+              <span class="code-dot">PT</span
+              ><span class="txt"
+                ><b>Português</b
+                ><span>Portuguese (Brazil) · 25/11/2026 · 1.234,5</span></span
+              ><span class="mark"
+                ><svg
+                  class="ic"
+                  viewBox="0 0 24 24"
+                  style="width: 14px; height: 14px"
+                >
+                  <path d="M5 12l5 5 9-10" /></svg
+              ></span>
+            </button>
+          </div>
+        </div>
+        <div class="tile">
+          <h3>Account card</h3>
+          <div class="menu" style="max-width: 320px">
+            <div class="acct">
+              <span class="note">developer@local.gemini-code</span>
+              <span class="ring"><span>C</span></span>
+              <b style="font-size: 18px">Hi, Ciro</b>
+              <span class="btn btn-tonal" style="height: 34px">Settings</span>
+            </div>
+            <div class="menu-list">
+              <div>Keys and models</div>
+              <div>Diagnostics</div>
+            </div>
+            <span class="note" style="text-align: center; padding: 8px 0 4px"
+              >Gemini Code 0.2.0</span
+            >
+          </div>
+        </div>
+        <div class="tile">
+          <h3>Connector, file tree, toast, skeleton</h3>
+          <div class="connector">
+            <span class="brand-tile" aria-hidden="true"
+              ><svg width="20" height="20" viewBox="0 0 24 24">
+                <path
+                  fill="#181717"
+                  d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.4-4-1.4-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2 0 1.9 1.2 1.9 1.2 1 1.8 2.8 1.3 3.5 1 0-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.2.5-2.3 1.3-3.1-.2-.4-.6-1.6 0-3.2 0 0 1-.3 3.4 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.6.2 2.8 0 3.2.9.8 1.3 1.9 1.3 3.2 0 4.6-2.8 5.6-5.5 5.9.5.4.9 1 .9 2.2v3.3c0 .3.1.7.8.6A12 12 0 0 0 12 .3"
+                /></svg
+            ></span>
+            <span class="txt"
+              ><b>GitHub</b
+              ><span>Repositories, issues and pull requests</span></span
+            >
+            <span class="btn btn-tonal" style="height: 34px">Connect</span>
+          </div>
+          <div class="tree">
+            <div>conversoes/temperatura.js <em>A</em></div>
+            <div>conversoes/index.html <em>A</em></div>
+            <div>soma.test.js <em>M</em></div>
+          </div>
+          <div class="toast">
+            <b>Google Gemini turned on</b
+            ><span>Now choose the models agents can use.</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <span class="skel" style="width: 70%"></span
+            ><span class="skel" style="width: 48%"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="applications">
+      <div class="section-head">
+        <h2>Applications</h2>
+        <p>
+          The same tokens outside the dashboard. Each specimen follows the rules
+          written in <code>docs/2026-11-25-design-system.md</code>.
+        </p>
+      </div>
+      <div class="app-grid">
+        <div class="app-card">
+          <h3>Landing page</h3>
+          <div class="specimen mini-landing">
+            <div class="nav-mini">
+              <b style="color: var(--gm-on-surface)">Gemini Code</b
+              ><span>Docs · Changelog · GitHub</span>
+            </div>
+            <h4>Several coding agents at once. You decide what matters.</h4>
+            <p>
+              An open-source desk built around Gemini: each agent in its own
+              folder, every risky action waiting for you.
+            </p>
+            <div class="btns">
+              <span class="btn btn-filled">See the live demo</span
+              ><span class="btn btn-tonal">View on GitHub</span>
+            </div>
+            <div class="mini-panes">
+              <div></div>
+              <div
+                class="pane working"
+                style="
+                  padding: 0;
+                  border-radius: var(--radius-sm);
+                  box-shadow: none;
+                "
+              ></div>
+              <div></div>
+            </div>
+          </div>
+          <p class="note">
+            Hero names the tension, a real screenshot, two actions, the notice.
+            Then how it works, what stays in your hands, built around Gemini,
+            open source, start.
+          </p>
+        </div>
+        <div class="app-card">
+          <h3>Website and docs</h3>
+          <div class="specimen mini-site">
+            <aside>
+              <span class="on">Quickstart</span><span>Models</span
+              ><span>Files MCP</span><span>Subscription</span
+              ><span>Changelog</span>
+            </aside>
+            <article>
+              <h4>Quickstart</h4>
+              <p class="note">
+                You need Bun 1.2+ and a Gemini API key from Google AI Studio.
+              </p>
+              <pre>
+git clone https://github.com/ciro-maciel/gemini-code.git
+bun install
+bun run dev</pre
+              >
+            </article>
+          </div>
+          <p class="note">
+            Pages at left, the article at 680 px, every command runnable as
+            written.
+          </p>
+        </div>
+        <div class="app-card">
+          <h3>IDE: the editor</h3>
+          <pre
+            class="specimen editor"
+            aria-label="Code editor sample"
+          ><span class="ln">1</span><span class="k">export function</span> <span class="f">celsiusToKelvin</span>(c) {
+<span class="ln">2</span>  <span class="k">if</span> (c &lt; -273.15)
+<span class="ln">3</span>    <span class="k">throw new</span> RangeError(<span class="s">'below absolute zero'</span>);
+<span class="ln">4</span>  <span class="k">return</span> c + 273.15;
+<span class="ln">5</span>}</pre>
+          <p class="note">
+            Monaco on the pane's surface, Google Sans Code 13 px, VS Code's own
+            syntax colors.
+          </p>
+        </div>
+        <div class="app-card">
+          <h3>Terminal</h3>
+          <pre
+            class="specimen terminal"
+            aria-label="Terminal sample"
+          ><span class="dim">$</span> bun run dev
+<span class="dim">[server]</span> listening on :8787
+<span class="dim">[subscription]</span> <span class="wait">off</span> until Google's official path
+<span class="dim">[catalog]</span> <span class="ok">ready</span> (24 apps)
+<span class="dim">[connector]</span> <span class="bad">failed</span> Figma accepts only the MCP clients it approved</pre>
+          <p class="note">
+            One fact per line, the part in brackets, ANSI color only with the
+            word.
+          </p>
+        </div>
+        <div class="app-card">
+          <h3>Blog</h3>
+          <div class="specimen mini-blog">
+            <span class="meta">25/11/2026 · Ciro Cesar Maciel</span>
+            <h4>An agent summed its own history into the answer</h4>
+            <p>
+              On a follow-up, the Agent Client Protocol replays the whole
+              session before the new prompt. Here is how we found it, the
+              one-line fix, and the test that turns red without it.
+            </p>
+          </div>
+          <p class="note">
+            Problem first, evidence with dates, one next step. 680 px, body
+            large.
+          </p>
+        </div>
+        <div class="app-card">
+          <h3>Text message</h3>
+          <div class="specimen chat">
+            <div class="msg in">
+              How do you run agents in parallel without them stepping on each
+              other?<small>14:02</small>
+            </div>
+            <div class="msg out">
+              Ciro here, I make Gemini Code (open source, built around Gemini).
+              Each agent works in its own folder. This demo shows three at work,
+              no install needed.<br /><a
+                href="https://ciro-maciel.github.io/gemini-code/"
+                target="_blank"
+                rel="noreferrer"
+                >ciro-maciel.github.io/gemini-code</a
+              ><small>14:05</small>
+            </div>
+          </div>
+          <p class="note">
+            One subject, three lines, who is writing, the link last. No emoji.
+          </p>
+        </div>
+        <div class="app-card">
+          <h3>E-mail</h3>
+          <div class="specimen email">
+            <p class="email-subject">
+              Subject: Gemini Code 0.2.0: install with one command
+            </p>
+            <div class="email-card">
+              <div class="email-head">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 32 32"
+                  aria-hidden="true"
+                >
+                  <rect width="32" height="32" rx="9" fill="#131314" />
+                  <path
+                    d="M16 4.5C16.65 10.6 21.4 15.35 27.5 16C21.4 16.65 16.65 21.4 16 27.5C15.35 21.4 10.6 16.65 4.5 16C10.6 15.35 15.35 10.6 16 4.5Z"
+                    fill="url(#spark)"
+                  /></svg
+                >Gemini Code
+              </div>
+              <p>You watch the repository, so here is what 0.2.0 changed:</p>
+              <ul>
+                <li>One command installs it on macOS, Linux and Windows.</li>
+                <li>Settings › Diagnostics checks every part for real.</li>
+              </ul>
+              <span
+                class="btn btn-filled"
+                style="align-self: flex-start; height: 36px"
+                >Read the release notes</span
+              >
+            </div>
+            <p class="email-foot">
+              You get this because you watch ciro-maciel/gemini-code. Not
+              affiliated with Google.
+            </p>
+          </div>
+          <p class="note">
+            600 px, one HTML button, a plain-text part, the reason in the
+            footer.
+          </p>
+        </div>
+        <div class="app-card">
+          <h3>Slide</h3>
+          <div class="specimen slide">
+            <h4>Each agent works in its own folder.</h4>
+            <div
+              class="mini-panes"
+              style="grid-template-columns: repeat(3, minmax(0, 1fr))"
+            >
+              <div></div>
+              <div
+                class="pane working"
+                style="
+                  padding: 0;
+                  border-radius: var(--radius-sm);
+                  box-shadow: none;
+                "
+              ></div>
+              <div></div>
+            </div>
+            <div class="foot">
+              <span>Gemini Code · Not affiliated with Google</span
+              ><span>3 / 12</span>
+            </div>
+          </div>
+          <p class="note">
+            16:9, one sentence per slide, a real screenshot, the short notice.
+          </p>
+        </div>
+        <div class="app-card">
+          <h3>Social post and link preview</h3>
+          <div class="specimen social">
+            <div>
+              <h4>Three agents. One folder each. You approve what matters.</h4>
+              <small>Gemini Code · Not affiliated with Google</small>
+            </div>
+            <div class="shot">
+              <i></i><i class="p"></i><i style="width: 70%"></i
+              ><i style="width: 50%"></i>
+            </div>
+          </div>
+          <p class="note">
+            1200 × 630. Eight words or fewer, one cropped screenshot, the mark
+            and the notice.
+          </p>
+        </div>
+        <div class="app-card">
+          <h3>Business card · 90 × 50 mm</h3>
+          <div class="cards">
+            <div class="specimen bcard front">
+              <svg
+                width="34"
+                height="34"
+                viewBox="0 0 32 32"
+                aria-hidden="true"
+              >
+                <rect width="32" height="32" rx="9" fill="#131314" />
+                <path
+                  d="M16 4.5C16.65 10.6 21.4 15.35 27.5 16C21.4 16.65 16.65 21.4 16 27.5C15.35 21.4 10.6 16.65 4.5 16C10.6 15.35 15.35 10.6 16 4.5Z"
+                  fill="url(#spark)"
+                />
+              </svg>
+              <b>Gemini Code</b>
+              <span>An open-source desk of coding agents</span>
+            </div>
+            <div class="specimen bcard back">
+              <div class="lines">
+                <b>Ciro Cesar Maciel</b><span>Maker of Gemini Code</span
+                ><code>github.com/ciro-maciel/gemini-code</code>
+              </div>
+              <svg
+                class="qr"
+                viewBox="0 0 21 21"
+                role="img"
+                aria-label="QR code placeholder to the live demo"
+                shape-rendering="crispEdges"
+              >
+                <rect width="21" height="21" fill="#fff" />
+                <path
+                  fill="#1b1c1f"
+                  d="M0 0h7v7H0zM1 1v5h5V1zM2 2h3v3H2zM14 0h7v7h-7zM15 1v5h5V1zM16 2h3v3h-3zM0 14h7v7H0zM1 15v5h5v-5zM2 16h3v3H2zM9 0h1v2H9zM11 1h2v1h-2zM8 3h2v2H8zM11 4h1v3h-1zM9 8h3v1H9zM0 8h2v1H0zM3 9h3v1H3zM13 8h2v2h-2zM16 9h3v1h-3zM19 11h2v2h-2zM8 11h1v3H8zM10 12h3v1h-3zM14 12h2v2h-2zM9 15h2v2H9zM12 15h1v3h-1zM15 16h3v1h-3zM17 18h4v1h-4zM14 19h2v2h-2zM9 19h2v1H9z"
+                />
+              </svg>
+              <span class="tm"
+                >Independent open source. Not affiliated with Google.</span
+              >
+            </div>
+          </div>
+          <p class="note">
+            Front dark, back white, QR at least 18 mm to the live demo, sRGB
+            files proofed on paper. The QR above is a placeholder, not a code.
+          </p>
+        </div>
+        <div class="app-card">
+          <h3>GitHub README</h3>
+          <div class="specimen repo">
+            <h4>Gemini Code</h4>
+            <p>
+              <b
+                >An open-source desk where several coding agents, built around
+                Google Gemini, work on your software at the same time and ask a
+                person before anything risky.</b
+              >
+            </p>
+            <blockquote>
+              Independent open-source project. Not affiliated with, sponsored or
+              endorsed by Google. "Gemini" is a trademark of Google LLC.
+            </blockquote>
+          </div>
+          <p class="note">
+            Promise first, the demo link, the notice, then what it does and how
+            to start.
+          </p>
+        </div>
+        <div class="app-card">
+          <h3>Status in every medium</h3>
+          <div class="table-wrap" style="background: var(--gm-surface)">
+            <table style="min-width: 0">
+              <tbody>
+                <tr>
+                  <td><b>Screen</b></td>
+                  <td>
+                    The glow while working; the approval card when waiting
+                  </td>
+                </tr>
+                <tr>
+                  <td><b>Terminal</b></td>
+                  <td>The word in brackets, its color as a hint</td>
+                </tr>
+                <tr>
+                  <td><b>E-mail, text</b></td>
+                  <td>The outcome in the first line</td>
+                </tr>
+                <tr>
+                  <td><b>Print</b></td>
+                  <td>No status: the card names the product only</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="access">
+      <div class="section-head">
+        <h2>Accessibility</h2>
+        <p>
+          Body text at least 4.5:1, large text and icons at least 3:1. Ratios
+          measured on 25/11/2026 with the WCAG 2 formula.
+        </p>
+      </div>
+      <div class="grid g2">
+        <div class="ratio-row" style="background: #ffffff; color: #1b1c1f">
+          <span>On surface on surface · light</span><b>17.0</b>
+        </div>
+        <div class="ratio-row" style="background: #16171b; color: #e6e8ed">
+          <span>On surface on surface · dark</span><b>14.6</b>
+        </div>
+        <div class="ratio-row" style="background: #f2f5fa; color: #45474d">
+          <span>Variant on surface-1 · light</span><b>8.5</b>
+        </div>
+        <div class="ratio-row" style="background: #1c1e23; color: #b9bdc6">
+          <span>Variant on surface-1 · dark</span><b>8.9</b>
+        </div>
+        <div class="ratio-row" style="background: #ffffff; color: #0b57d0">
+          <span>Primary on surface · light</span><b>6.4</b>
+        </div>
+        <div class="ratio-row" style="background: #16171b; color: #a8c7fa">
+          <span>Primary on surface · dark</span><b>10.4</b>
+        </div>
+        <div class="ratio-row" style="background: #d8e5ff; color: #041e49">
+          <span>On primary container · light</span><b>12.9</b>
+        </div>
+        <div class="ratio-row" style="background: #0f3a78; color: #d8e5ff">
+          <span>On primary container · dark</span><b>8.7</b>
+        </div>
+        <div
+          class="ratio-row"
+          style="
+            background: #ffffff;
+            color: #1b1c1f;
+            box-shadow: inset 0 0 0 1px #e2e6ee;
+          "
+        >
+          <span
+            ><span style="color: #fbbc04">Google yellow</span> as text ·
+            fails</span
+          ><b>1.7</b>
+        </div>
+        <div
+          class="ratio-row"
+          style="
+            background: #ffffff;
+            color: #1b1c1f;
+            box-shadow: inset 0 0 0 1px #e2e6ee;
+          "
+        >
+          <span
+            ><span style="color: #34a853">Google green</span> as text ·
+            fails</span
+          ><b>3.1</b>
+        </div>
+      </div>
+      <ul class="rules">
+        <li>
+          Everything reachable by keyboard; focus is a 2 px primary ring that
+          follows the shape.
+        </li>
+        <li>
+          Dialogs start focus on the current choice and close on Escape. Option
+          lists are radiogroups.
+        </li>
+        <li>
+          Every icon button and removable chip has a name. Live updates are
+          announced politely.
+        </li>
+        <li>
+          Reduced motion turns animation off. Touch targets at least 40 px on
+          phone.
+        </li>
+      </ul>
+    </section>
+
+    <section class="section" id="change">
+      <div class="section-head">
+        <h2>How this system changes</h2>
+        <p>
+          The values live in
+          <code>packages/dashboard/src/neural-expressive.css</code>; the rules
+          for every other piece live in
+          <code>docs/2026-11-25-design-system.md</code>. A deviation is a bug:
+          fix the piece, or change the system on purpose with the reason written
+          down.
+        </p>
+      </div>
+      <div class="grid g3">
+        <div class="tile">
+          <h3>A change</h3>
+          <p class="note">
+            A small commit on <code>main</code> with its CHANGELOG line and
+            screenshots in light and dark. The pre-push hook runs the preflight.
+          </p>
+        </div>
+        <div class="tile">
+          <h3>Open decision</h3>
+          <p class="note">The mark: keep the star or move to the panes mark.</p>
+        </div>
+        <div class="tile">
+          <h3>Not built yet</h3>
+          <p class="note">
+            The landing page, the site and a published VS Code theme are
+            specified, not built.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+<footer>
+  Gemini Code design system · 25/11/2026 · Apache License 2.0. Independent
+  open-source project. Not affiliated with, sponsored or endorsed by Google.
+  "Gemini" is a trademark of Google LLC.
+</footer>
+
+<script>
+  (() => {
+    const SWATCHES = [
+      ['--gm-canvas', '#F6F8FC', '#0D0E11', 'The page under everything'],
+      ['--gm-surface', '#FFFFFF', '#16171B', 'Panes, cards, menus, the editor'],
+      [
+        '--gm-surface-1',
+        '#F2F5FA',
+        '#1C1E23',
+        'A row or card inside a surface',
+      ],
+      ['--gm-surface-2', '#E9EEF6', '#23262C', 'Hover, chips, icon circles'],
+      ['--gm-surface-3', '#DFE6F1', '#2B2F36', 'Pressed'],
+      ['--gm-on-surface', '#1B1C1F', '#E6E8ED', 'Text and icons'],
+      ['--gm-on-surface-variant', '#45474D', '#B9BDC6', 'Secondary text'],
+      ['--gm-outline', '#C3C7CF', '#5B606A', 'Empty radio ring'],
+      [
+        '--gm-outline-variant',
+        '#E2E6EE',
+        '#2A2D33',
+        'Hairline on floating surfaces',
+      ],
+      ['--gm-primary', '#0B57D0', '#A8C7FA', 'The one action color'],
+      ['--gm-on-primary', '#FFFFFF', '#062E6F', 'Text on primary'],
+      ['--gm-primary-container', '#D8E5FF', '#0F3A78', 'The selected item'],
+    ];
+    const host = document.getElementById('swatches');
+    for (const [token, light, dark, use] of SWATCHES) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'swatch';
+      button.setAttribute('aria-label', `Copy ${token}`);
+      button.innerHTML = `<span class="chip-color" style="background:var(${token})"></span><span class="name">${token}</span><span class="vals">${light} · ${dark}</span><span class="use">${use}</span>`;
+      button.addEventListener('click', () => {
+        const name = button.querySelector('.name');
+        const done = () => {
+          name.textContent = 'Copied';
+          setTimeout(() => (name.textContent = token), 1200);
+        };
+        navigator.clipboard?.writeText(`var(${token})`).then(done, () => {
+          const range = document.createRange();
+          range.selectNodeContents(name);
+          const selection = getSelection();
+          selection.removeAllRanges();
+          selection.addRange(range);
+        });
+      });
+      host.appendChild(button);
+    }
+
+    const root = document.documentElement;
+    const label = document.getElementById('theme-label');
+    const order = ['system', 'light', 'dark'];
+    const apply = (mode) => {
+      if (mode === 'system') root.removeAttribute('data-theme');
+      else root.setAttribute('data-theme', mode);
+      label.textContent = `Theme: ${mode}`;
+    };
+    let mode = 'system';
+    try {
+      mode = localStorage.getItem('gc-ds-theme') || 'system';
+    } catch {
+      mode = 'system';
+    }
+    apply(mode);
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      mode = order[(order.indexOf(mode) + 1) % order.length];
+      apply(mode);
+      try {
+        localStorage.setItem('gc-ds-theme', mode);
+      } catch {
+        // A private window keeps the choice until the page closes.
+      }
+    });
+
+    const links = [...document.querySelectorAll('.nav a')];
+    const sections = links.map((link) =>
+      document.querySelector(link.getAttribute('href')),
+    );
+    const mark = () => {
+      let current = sections[0];
+      for (const section of sections)
+        if (section && section.getBoundingClientRect().top < 140)
+          current = section;
+      links.forEach((link, index) =>
+        link.classList.toggle('on', sections[index] === current),
+      );
+    };
+    addEventListener('scroll', mark, { passive: true });
+    mark();
+
+    document
+      .querySelectorAll('.option')
+      .forEach((option) =>
+        option.addEventListener('click', () =>
+          document
+            .querySelectorAll('.option')
+            .forEach((item) =>
+              item.setAttribute('aria-checked', String(item === option)),
+            ),
+        ),
+      );
+  })();
+</script>

@@ -13,6 +13,11 @@ version with its date.
 
 ### Added
 
+- A design system for every piece Gemini Code makes: the dashboard, landing
+  page, site, IDE, blog, text messages, e-mail, slides, social posts, business
+  cards and the terminal, with the trademark rule and the open decision on the
+  mark; and the same system as a page built from its own tokens and live
+  components, `docs/2026-11-25-design-system.html` (2026-11-25).
 - The macOS builds are signed with a Developer ID, run with the hardened runtime
   and are notarized by Apple (2026-11-25).
 

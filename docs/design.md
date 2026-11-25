@@ -4,7 +4,9 @@ Gemini Code follows the design language Google introduced for Gemini at I/O on
 19/05/2026, **Neural Expressive**, which sits on top of **Material 3
 Expressive**. This page says what those define, what we took, what we left out
 and why. The tokens live in `packages/dashboard/src/neural-expressive.css`,
-loaded last.
+loaded last. The full design system, for the dashboard and every other piece
+(site, e-mail, slides, print), is
+[2026-11-25-design-system.md](2026-11-25-design-system.md).
 
 ## What Google defined
 
