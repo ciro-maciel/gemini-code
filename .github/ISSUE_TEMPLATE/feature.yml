@@ -1,0 +1,13 @@
+name: Idea
+description: Something Gemini Code should do
+labels: [idea]
+body:
+  - type: textarea
+    attributes:
+      label: What you are trying to do
+      description: The work you want done, not the feature. What gets in the way today?
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: What would help

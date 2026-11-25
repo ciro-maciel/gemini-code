@@ -1,0 +1,163 @@
+.assistant-pulse {
+    animation: assistant-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes assistant-pulse {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.35;
+    }
+}
+
+/*
+ * "Voltar para aqui": a quiet square above each of the person's messages. It
+ * shows on hovering the message (always on a touch screen, where there is no
+ * hover) and when it is focused or open, so the column stays clean to read.
+ */
+.assistant-rewind {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid transparent;
+    color: var(--mantine-color-gray-5);
+    opacity: 0;
+    transition:
+        opacity 120ms ease,
+        color 120ms ease,
+        border-color 120ms ease,
+        background 120ms ease;
+}
+.assistant-user-message:hover .assistant-rewind,
+.assistant-rewind:focus-visible,
+.assistant-rewind[aria-expanded='true'] {
+    opacity: 1;
+}
+.assistant-rewind:hover,
+.assistant-rewind[aria-expanded='true'] {
+    color: var(--mantine-color-gray-9);
+    border-color: var(--mantine-color-gray-2);
+    background: var(--mantine-color-gray-1);
+}
+@media (hover: none) {
+    .assistant-rewind {
+        opacity: 1;
+    }
+}
+/*
+ * Where it sits: on the message itself, in its top right corner, in the
+ * message's own ink so it reads on the dark bubble and on the light one.
+ */
+.assistant-rewind-slot {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+}
+.assistant-rewind-slot .assistant-rewind {
+    color: var(--mantine-color-white);
+}
+.assistant-rewind-slot .assistant-rewind:hover,
+.assistant-rewind-slot .assistant-rewind[aria-expanded='true'] {
+    color: var(--mantine-color-white);
+    border-color: transparent;
+    background: color-mix(in srgb, currentColor 18%, transparent);
+}
+@media (prefers-reduced-motion: reduce) {
+    .assistant-rewind {
+        transition: none;
+    }
+}
+
+/* A refresh in progress: the icon itself turns until the work ends. */
+.assistant-spin {
+    animation: assistant-spin 0.9s linear infinite;
+}
+
+@keyframes assistant-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .assistant-spin {
+        animation: assistant-pulse 1.4s ease-in-out infinite;
+    }
+}
+
+/*
+ * Space goes between blocks, never after the last one: a margin on each
+ * paragraph left an empty line at the bottom of every bubble (Mantine writes
+ * the margin on the element, which a :last-child rule cannot undo).
+ */
+.assistant-rich > * {
+    margin: 0;
+}
+.assistant-rich > * + * {
+    margin-top: 10px;
+}
+
+/*
+ * The mascots are gray-scale line art drawn for a light page. On the dark
+ * ramp they invert: the outline turns light and the fills recede, which only
+ * works because the art is gray (no hue to flip).
+ */
+[data-mantine-color-scheme='dark'] .assistant-mascot {
+    filter: invert(1);
+}
+
+/*
+ * The kit's column scrolls inside Mantine's ScrollArea, whose content box has
+ * min-width: min-content: the longest last message (354px) set the list wider
+ * than the 275px column, and the text was cut by the edge instead of ending in
+ * an ellipsis. To go up to the dashboard-kit's SidebarShell.
+ */
+.zen-sidebar-scroll .mantine-ScrollArea-content {
+    min-width: 0 !important;
+    width: 100%;
+}
+
+/*
+ * The bank's illustrations fill only the middle of their 550px frame (57–95%).
+ * In a 40px portrait that left a thumbnail inside the square; the art is
+ * enlarged and the empty margin is cropped.
+ */
+.assistant-mascot-frame {
+    overflow: hidden;
+}
+.assistant-mascot-frame .assistant-mascot {
+    transform: scale(1.45);
+}
+
+/*
+ * Mantine paints hover with --mantine-color-default-hover, which on the house
+ * ramp is almost the column's own background in both schemes: "Conectar
+ * aplicativos" and the secondary buttons had no visible hover. The kit's
+ * --rlg-hover (6% of gray.9) darkens on light and lightens on dark, on any
+ * surface. To go up to the dashboard-kit, where NavItem lives.
+ */
+.mantine-NavLink-root:not([data-active]):hover,
+.mantine-Button-root[data-variant='default']:not(:disabled):hover,
+.mantine-ActionIcon-root[data-variant='default']:not(:disabled):hover,
+.mantine-Button-root[data-variant='subtle']:not(:disabled):hover,
+.mantine-ActionIcon-root[data-variant='subtle']:not(:disabled):hover {
+    background-color: var(--rlg-hover);
+}
+
+/* A section's "⋯" appears where the pointer is; on touch it stays visible. */
+.assistant-section-menu {
+    opacity: 0;
+    transition: opacity 120ms ease;
+}
+.assistant-section-header:hover .assistant-section-menu,
+.assistant-section-menu[data-expanded],
+.assistant-section-menu:focus-visible {
+    opacity: 1;
+}
+@media (hover: none) {
+    .assistant-section-menu {
+        opacity: 1;
+    }
+}

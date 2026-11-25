@@ -1,0 +1,17 @@
+node_modules/
+.env
+.env.*
+!.env.example
+.sprite
+*.db
+*.db-*
+logs/
+.DS_Store
+# The panel's build settings: only public values (the Auth pu_, the API URL).
+!dashboard/.env.production
+!dashboard/.env.development
+# The production build of the panel.
+dashboard/dist/
+# Local state: the database, the generated encryption key, and agents' own folders.
+control/data/
+workspace/agents/

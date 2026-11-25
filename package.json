@@ -1,0 +1,18 @@
+{
+    "name": "gemini-code",
+    "version": "0.1.0",
+    "description": "Open-source autonomous coding agent workspace powered by Google Gemini, Material Design 3, MCP connectors, and hybrid local/cloud execution.",
+    "license": "MIT",
+    "private": true,
+    "type": "module",
+    "workspaces": [
+        "control",
+        "dashboard"
+    ],
+    "scripts": {
+        "dev": "bun --filter '*' --parallel dev",
+        "build": "bun --cwd dashboard run build",
+        "test": "bun --cwd control test src && bun --cwd dashboard test src",
+        "format": "bunx prettier --write \"control/src/**/*.js\" \"computer/*.js\" \"scripts/*.js\" \"dashboard/src/**/*.{js,jsx,css}\""
+    }
+}
