@@ -54,6 +54,9 @@ version with its date.
 
 ### Removed
 
+- Dependabot's weekly pull requests: with trunk-based development updates go
+  straight to main. Dependabot keeps only the vulnerability alerts, in the
+  repository's Security tab, and opens no pull request on its own (2026-11-25).
 - Cloud mode: the cloud computers (Fly Sprites), their spares, the live screen,
   taking over the screen, teaching a task by recording it, disk restore points,
   the cloud browser and the Cloudflare Worker gateway, with packages/computer
