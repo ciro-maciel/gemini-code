@@ -15,6 +15,6 @@
     "assistant-navigation": "github:ciro-maciel/assistant-navigation#v1.1.0",
     "croner": "10.0.1",
     "jose": "5.10.0",
-    "web-push": "3.6.7"
+    "web-push": "4.0.0"
   }
 }
