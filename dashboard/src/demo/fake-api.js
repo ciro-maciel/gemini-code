@@ -261,6 +261,9 @@ export function createFakeApi({ now = () => Math.floor(Date.now() / 1000), reply
         ['GET', '/api/bots/:id/artifacts', () => ok(collection([]))],
         ['GET', '/api/bots/:id/audit', () => ok(collection([]))],
         ['GET', '/api/bots/:id/members', () => ok({ items: [] })],
+        // The agent folder (the files MCP's routes): each example agent has its own small tree.
+        ['GET', '/api/bots/:id/fs/tree', ({ bot }) => ok({ path: '', items: demoTree(bot.id), isTruncated: false })],
+        ['GET', '/api/bots/:id/fs/read', ({ bot, query }) => ok({ path: query.get('path'), content: DEMO_FILES[bot.id]?.[query.get('path')] ?? '', totalLines: 1, offset: 1 })],
         ['GET', '/api/bots/:id/handoffs', () => ok({ from: [], to: [] })],
         ['GET', '/api/bots/:id/approval-rate', () => ok({ weeks: Array.from({ length: 8 }, () => ({ approved: 0, decided: 0 })) })],
         ['GET', '/api/bots/:id/inbox', ({ bot }) => ok({ url: `https://sua-central.example/in/exemplo-${bot.id.slice(0, 8)}`, createdAt: start })],
@@ -363,4 +366,46 @@ export function createFakeApi({ now = () => Math.floor(Date.now() / 1000), reply
     const eventsAfter = (botId, afterSeq = 0) => (events.get(botId) ?? []).filter(event => event.seq > afterSeq)
 
     return { handle, match, subscribe, eventsAfter, routes: routes.map(({ method, pattern }) => `${method} ${pattern}`) }
+}
+
+// --- Example agent folders --------------------------------------------------
+
+const { BOT_IDS } = fixtures
+
+const DEMO_FILES = {
+    [BOT_IDS.neon]: {
+        'INSTRUCTIONS.md': '# Neon Engineer\n\nVocê é um engenheiro de software. Responda em português.\n',
+        'soma.js': 'export function soma(a, b) {\n    return a + b\n}\n',
+        'soma.test.js': "import { expect, test } from 'bun:test'\nimport { soma } from './soma.js'\n\ntest('soma positivos', () => expect(soma(2, 3)).toBe(5))\ntest('soma negativos', () => expect(soma(-2, -3)).toBe(-5))\ntest('soma com zero', () => expect(soma(0, 7)).toBe(7))\n",
+    },
+    [BOT_IDS.engineer]: {
+        'INSTRUCTIONS.md': '# Software Engineer\n\nImplementa mudanças pequenas, com teste.\n',
+        'projeto/src/routes/orders.js': "export async function getOrders(req) {\n    const url = new URL(req.url)\n    const limit = Math.min(Number(url.searchParams.get('limit') ?? 20), 100)\n    return Response.json({ items: [], limit })\n}\n",
+        'projeto/test/orders.test.js': "import { test } from 'bun:test'\n\ntest('pagina os pedidos', () => {})\n",
+        'projeto/package.json': '{ "name": "loja", "type": "module" }\n',
+    },
+    [BOT_IDS.reviewer]: { 'INSTRUCTIONS.md': '# Code Reviewer\n\nRevisa pull requests e aponta o que quebra.\n' },
+}
+const DEMO_MARKS = { 'soma.js': 'A', 'soma.test.js': 'A', 'projeto/src/routes/orders.js': 'M', 'projeto/test/orders.test.js': 'A' }
+
+/** The files of one example agent as the tree route answers it: folders first, marks on what changed. */
+export function demoTree(botId) {
+    const root = []
+    for (const filePath of Object.keys(DEMO_FILES[botId] ?? {})) {
+        const parts = filePath.split('/')
+        let level = root
+        parts.forEach((name, index) => {
+            const at = parts.slice(0, index + 1).join('/')
+            const isFile = index === parts.length - 1
+            let node = level.find(item => item.name === name)
+            if (!node) {
+                node = { path: at, name, kind: isFile ? 'file' : 'folder', size: isFile ? DEMO_FILES[botId][filePath].length : null, modifiedAt: 0, ...(isFile ? (DEMO_MARKS[at] ? { mark: DEMO_MARKS[at] } : {}) : { children: [] }) }
+                level.push(node)
+            }
+            if (!isFile) level = node.children
+        })
+    }
+    const sort = items => items.sort((a, b) => (a.kind === b.kind ? a.name.localeCompare(b.name) : a.kind === 'folder' ? -1 : 1)).forEach(item => item.children && sort(item.children))
+    sort(root)
+    return root
 }

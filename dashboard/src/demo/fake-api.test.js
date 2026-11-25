@@ -116,3 +116,15 @@ describe('the demo fake API', () => {
         expect(isApiUrl('https://fonts.googleapis.com/css2', 'https://example.test')).toBe(false)
     })
 })
+
+describe('the agent folder in the demo', () => {
+    test('each example agent has its own tree, folders first, with marks', async () => {
+        const { demoTree } = await import('./fake-api.js')
+        const { BOT_IDS } = await import('./fixtures.js')
+        const engineer = demoTree(BOT_IDS.engineer)
+        expect(engineer[0]).toMatchObject({ name: 'projeto', kind: 'folder' })
+        expect(JSON.stringify(engineer)).toContain('"mark":"M"')
+        expect(demoTree(BOT_IDS.neon).map(item => item.name)).toEqual(['INSTRUCTIONS.md', 'soma.js', 'soma.test.js'])
+        expect(demoTree('nobody')).toEqual([])
+    })
+})
