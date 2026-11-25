@@ -149,7 +149,10 @@ describe('judgments and the audit trail', () => {
       verdict: 'ask',
     });
     const csv = trail.auditCsv('a1');
-    const lines = csv.replace(/^﻿/, '').trim().split('\r\n');
+    const lines = csv
+      .replace(/^\uFEFF/, '')
+      .trim()
+      .split('\r\n');
     expect(lines[0]).toStartWith('data_hora,tarefa,acao');
     expect(lines).toHaveLength(1 + trail.auditJson('a1').length);
     expect(csv).toContain(`"'=HYPERLINK(""x"")"`);

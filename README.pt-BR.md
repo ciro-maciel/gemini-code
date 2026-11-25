@@ -114,7 +114,7 @@ Os marcos seguintes são discutidos nas issues.
 ## Contribuir
 
 Issues e pull requests são bem-vindos. Leia o [CONTRIBUTING.md](CONTRIBUTING.md)
-antes; agentes que trabalham neste repositório leem o [AGENTS.md](AGENTS.md).
+antes; agentes que trabalham neste repositório leem o [GEMINI.md](GEMINI.md).
 
 ## Quem faz
 

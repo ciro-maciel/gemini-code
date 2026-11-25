@@ -120,13 +120,18 @@ describe('a task never ends mute', () => {
   test('an empty answer asked again that comes back with words ends the task with those words', async () => {
     script = [{ empty: 'stop' }, { text: 'Ficaram prontas as 13 peças.' }];
     sent.length = 0;
-    const task = await settled(createTask(newBot(), 'escreva a semana 2').id);
+    // A prompt no other test uses: a late step of an earlier test's task can land in `sent`.
+    const prompt = 'revise o roteiro do episódio 7';
+    const task = await settled(createTask(newBot(), prompt).id);
+    const mine = sent.filter((body) =>
+      JSON.stringify(body.messages).includes(prompt),
+    );
     expect(task.status).toBe('done');
     expect(task.result).toBe('Ficaram prontas as 13 peças.');
-    expect(sent).toHaveLength(2);
+    expect(mine).toHaveLength(2);
     // Not cut by the limit: same room, and the note says the answer was empty.
-    expect(sent[1].max_tokens).toBe(8000);
-    expect(JSON.stringify(sent[1].messages.at(-1))).toContain('veio vazia');
+    expect(mine[1].max_tokens).toBe(8000);
+    expect(JSON.stringify(mine[1].messages.at(-1))).toContain('veio vazia');
   });
 
   test('an answer with words ends at once, as before', async () => {

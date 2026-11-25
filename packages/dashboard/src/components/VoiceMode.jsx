@@ -285,6 +285,8 @@ export function VoiceMode({ bot, thread, events, streaming, onExit }) {
       sayPart(pendingText.slice(0, cut));
       spokenRef.current.upTo += cut;
     }
+    // Only new text speaks: say and sayPart are new on every render, and listing them would speak again.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [streaming]);
 
   useEffect(() => {
@@ -320,6 +322,8 @@ export function VoiceMode({ bot, thread, events, streaming, onExit }) {
         say('Parei com um erro. Os detalhes estão na tela.');
       }
     }
+    // Only new events speak; see the effect above.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [events]);
 
   const isBotWorking =

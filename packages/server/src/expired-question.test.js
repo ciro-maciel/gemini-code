@@ -18,9 +18,9 @@ const { createTask, fetchTask, sendBotMessage, QUESTION_EXPIRES_SECONDS } =
 // once, off the network.
 const sent = [];
 let script = [];
-let onStep = null;
-let onJudge = null;
-let judge = null;
+const onStep = null;
+const onJudge = null;
+const judge = null;
 const sse = (chunks) =>
   new Response(
     chunks.map((chunk) => `data: ${JSON.stringify(chunk)}\n\n`).join('') +

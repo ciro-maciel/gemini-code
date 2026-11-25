@@ -141,7 +141,7 @@ export function SearchPalette({ bots, templates, onClose, onOpen, onStart }) {
               </button>
             </div>
           ))}
-          {!results.length && <p className="menu-note">Nada com "{query}".</p>}
+          {!results.length && <p className="menu-note">Nada com “{query}”.</p>}
         </div>
       </div>
     </div>

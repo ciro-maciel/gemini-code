@@ -166,7 +166,7 @@ const COMPONENTS = {
 // A file path the agent wrote, like `seo/pautas/2026-10-29.md`: without a
 // leading slash it is inside the agent's folder, as its file tools read it.
 const FILE_PATH =
-  /^\/?(?:home\/sprite\/workspace\/)?[\w.\-]+(?:\/[\w.\-]+)*\.[a-z0-9]{1,8}$/i;
+  /^\/?(?:home\/sprite\/workspace\/)?[\w.-]+(?:\/[\w.-]+)*\.[a-z0-9]{1,8}$/i;
 export function repoPathOf(text, folder) {
   const raw = String(text || '').trim();
   if (!FILE_PATH.test(raw)) return null;

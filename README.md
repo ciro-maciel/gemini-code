@@ -120,11 +120,12 @@ Later milestones are discussed in the issues.
 ## Contributing
 
 Issues and pull requests are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md)
-first; agents working on this repository read [AGENTS.md](AGENTS.md).
+first; agents working on this repository read [GEMINI.md](GEMINI.md).
 
 ```bash
-bun run test     # unit tests in packages/server and packages/dashboard
-bun run format   # Prettier
+bun run preflight   # format check, lint and every test, before a pull request
+bun run test        # unit tests in packages/server and packages/dashboard
+bun run format      # Prettier, in the Gemini CLI style
 ```
 
 ## Who makes it

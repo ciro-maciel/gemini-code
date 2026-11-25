@@ -108,7 +108,7 @@ export function MarkedButton({ bookmarks }) {
           onClose={() => setOpened(null)}
         >
           <p className="fine">
-            Esta resposta saiu da conversa num "Voltar para aqui"; a marcação
+            Esta resposta saiu da conversa num “Voltar para aqui”; a marcação
             guardou o texto.
           </p>
           <div className="txt">
@@ -177,8 +177,8 @@ export function VersionsButton({ bot, account, modelLabel, refreshKey }) {
           onClose={() => setOpened(null)}
         >
           <p className="fine">
-            Como a conversa seguia antes de voltar para "
-            {opened.title.slice(0, 80)}". Só para ler: o agente seguiu pelo
+            Como a conversa seguia antes de voltar para “
+            {opened.title.slice(0, 80)}”. Só para ler: o agente seguiu pelo
             outro caminho.
           </p>
           <div className="thread-inner version">

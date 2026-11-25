@@ -133,7 +133,6 @@ function OutgoingContent({ args }) {
 export function ApprovalCard({
   taskId,
   approvalId,
-  toolName,
   summary,
   reason,
   checkpointId,
@@ -381,7 +380,7 @@ export function TakeoverCard({ onOpen }) {
   );
 }
 
-export function FailedCard({ taskId, error, onDone = () => {} }) {
+export function FailedCard({ taskId, onDone = () => {} }) {
   const [isBusy, setIsBusy] = useState(false);
   const retry = async () => {
     setIsBusy(true);

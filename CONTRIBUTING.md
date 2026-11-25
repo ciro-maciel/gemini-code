@@ -8,9 +8,11 @@ change looks like and how it gets in.
 ```bash
 bun install
 cp .env.example .env      # GEMINI_API_KEY from https://aistudio.google.com/apikey
-bun run dev               # control on :8787, dashboard on :5180
-bun run test              # every unit test
+bun run dev               # server on :8787, dashboard on :5180
+bun run preflight         # format check, lint and every test: run it before a pull request
 ```
+
+Coding agents working here read [GEMINI.md](GEMINI.md) first.
 
 Use [Bun](https://bun.sh) for everything (`bun install`, `bun add`, `bun test`,
 `bunx`). Do not use npm: two dependency trees drift apart without warning.

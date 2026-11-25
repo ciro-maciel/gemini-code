@@ -299,7 +299,7 @@ function withoutEmoji(text) {
       KEPT_SYMBOLS.has(char) ? char : '',
     )
     .replace(
-      /[\u200D\uFE0F\u20E3]|[\u{1F3FB}-\u{1F3FF}]|[\u{1F1E6}-\u{1F1FF}]/gu,
+      /\u200D|\uFE0F|\u20E3|[\u{1F3FB}-\u{1F3FF}]|[\u{1F1E6}-\u{1F1FF}]/gu,
       '',
     )
     .replace(/[ \t]+\n/g, '\n');

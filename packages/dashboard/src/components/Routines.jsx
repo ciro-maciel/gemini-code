@@ -291,8 +291,8 @@ export function Routines({ botId }) {
     <Stack gap={0}>
       {routines?.length === 0 && (
         <Text fz={12} fw={500} c="gray.5" lh={1.5} mb={10}>
-          Nenhuma ainda. Peça na conversa ("amanhã às 6h, me mande um resumo dos
-          e-mails") ou crie aqui.
+          Nenhuma ainda. Peça na conversa (“amanhã às 6h, me mande um resumo dos
+          e-mails”) ou crie aqui.
         </Text>
       )}
       {(routines ?? []).map((routine) => (

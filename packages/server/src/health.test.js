@@ -76,8 +76,8 @@ describe('the health report', () => {
     for (let i = 0; i < 2; i++)
       fail(none.seo, 'y: erro: {"error":{"code":"NOT_FOUND"}}');
     const sent = [];
-    sendHealthReports((botId, text) => sent.push(botId), { at: morning });
-    sendHealthReports((botId, text) => sent.push(botId), { at: morning });
+    sendHealthReports((botId) => sent.push(botId), { at: morning });
+    sendHealthReports((botId) => sent.push(botId), { at: morning });
     expect(sent.filter((id) => id === director)).toHaveLength(1);
     expect(sent.some((id) => id.startsWith('acc-h4'))).toBe(false);
   });

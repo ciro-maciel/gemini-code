@@ -19,13 +19,13 @@ Gemini Code is a lean cousin of
 [google-gemini/gemini-cli](https://github.com/google-gemini/gemini-cli): the
 same layout and code style, on Bun and plain JavaScript.
 
-- [ ] `packages/server`, `packages/dashboard`, `packages/computer`,
+- [x] `packages/server`, `packages/dashboard`, `packages/computer`,
       `packages/worker` as Bun workspaces.
-- [ ] Prettier and `.editorconfig` in the Gemini CLI style; ESLint with zero
+- [x] Prettier and `.editorconfig` in the Gemini CLI style; ESLint with zero
       warnings.
-- [ ] `bun run preflight`: format check, lint and every test, the one command
+- [x] `bun run preflight`: format check, lint and every test, the one command
       before a pull request.
-- [ ] `GEMINI.md` as the context file for agents working on this repository.
+- [x] `GEMINI.md` as the context file for agents working on this repository.
 
 ## 3. English first
 

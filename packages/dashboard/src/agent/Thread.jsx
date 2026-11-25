@@ -550,7 +550,6 @@ export function Thread({
   thread,
   isWorking,
   streamingText,
-  thinkingText = '',
   rewindFromSeq,
   onRewind,
   onSendNote,

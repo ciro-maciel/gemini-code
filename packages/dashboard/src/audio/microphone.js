@@ -100,7 +100,7 @@ export async function openMicrophone({
 
   let recorded = [];
   let utterance = [];
-  let preRoll = [];
+  const preRoll = [];
   let isSpeaking = false;
   let hasSpoken = false;
   let loudFrames = 0;

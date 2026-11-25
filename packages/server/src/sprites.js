@@ -163,6 +163,8 @@ export async function runCommand(
     signal: AbortSignal.timeout((timeoutSeconds + 90) * 1000),
   });
   const raw = Buffer.from(await response.arrayBuffer()).toString('latin1');
+  // The terminal's control bytes are stripped on purpose.
+  // eslint-disable-next-line no-control-regex
   const clean = raw.replace(/[\x00-\x08]/g, '');
   const endIndex = clean.lastIndexOf(END_MARK);
   if (endIndex === -1)

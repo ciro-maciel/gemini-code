@@ -16,7 +16,6 @@ import {
   deleteRepoPath,
   renameRepoFolder,
   saveRepoFile,
-  uploadRepoFiles,
 } from '../services/api';
 import { DeleteModal, notify } from '../components/zen';
 import { NameModal } from '../ui/NameModal';
@@ -40,8 +39,7 @@ import { AgentSettings } from '../agent/AgentSettings';
 import { ScreenTab } from '../agent/ScreenTab';
 import { ComputerFileTab } from '../files/ComputerFileTab';
 import { RepoFileTab } from '../files/RepoFileTab';
-import { FileTree, useRepoFiles } from '../files/FileTree';
-import { syncLineOf } from '../files/tree';
+import { useRepoFiles } from '../files/FileTree';
 import { CommandCenter } from '../pages/CommandCenter';
 import { SearchPalette } from '../search/SearchPalette';
 import { Column, NAV_MAX, NAV_MIN } from './Column';
@@ -235,48 +233,6 @@ export function Shell() {
       return [];
     });
 
-  // Files sent from the panel go straight into the repository, as one commit.
-  const upload = (folder) => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.multiple = true;
-    input.onchange = async () => {
-      try {
-        const { paths } = await uploadRepoFiles(folder, [...input.files]);
-        notify.success(
-          `${paths.length} ${paths.length === 1 ? 'arquivo enviado' : 'arquivos enviados'} pra ${folder || 'a raiz'}/`,
-        );
-        repoFiles.reload();
-      } catch (error) {
-        notify.error(error.message);
-      }
-    };
-    input.click();
-  };
-  const folderAction = (action, path) => {
-    if (action === 'cite') {
-      if (!activeBotId) return notify.error('Abra um agente pra citar a pasta');
-      window.dispatchEvent(
-        new CustomEvent('assistant:cite', {
-          detail: {
-            botId: activeBotId,
-            item: {
-              k: `dir:${path}`,
-              name: `${path}/`,
-              icon: 'ti-folder',
-              path,
-            },
-          },
-        }),
-      );
-    } else if (action === 'agent') navigate('/', { state: { folder: path } });
-    else if (action === 'copy') {
-      navigator.clipboard?.writeText(path);
-      notify.success('Caminho copiado');
-    } else if (action === 'upload') upload(path);
-    else if (action === 'delete') setDeleting({ path, isFolder: true });
-    else setNaming({ action, path });
-  };
   // A file or a folder deleted: one commit, and the tabs of what is gone close.
   const removeRepoPath = async () => {
     const { path, isFolder } = deleting;
@@ -495,37 +451,11 @@ export function Shell() {
         isSettings={isSettings}
         isConnectors={isConnectors}
         onConnectors={() => navigate('/connectors')}
-        side="agents"
         filter={nav.filter}
         collapsed={nav.collapsed}
         width={nav.width}
         isDark={isDark}
         account={account}
-        files={
-          nav.side === 'files'
-            ? {
-                tree: (
-                  <FileTree
-                    items={repoFiles.items}
-                    repo={repoFiles.repo}
-                    activePath={
-                      activeTab?.startsWith('file:') ? refOf(activeTab) : null
-                    }
-                    onOpen={(path) => go(`file:${path}`)}
-                    onFolderAction={folderAction}
-                  />
-                ),
-                syncLine: syncLineOf(repoFiles.repo),
-              }
-            : null
-        }
-        onSide={(side, open) =>
-          setNav((current) => ({
-            ...current,
-            side,
-            ...(open ? { collapsed: false } : {}),
-          }))
-        }
         onFilter={(filter) => setNav((current) => ({ ...current, filter }))}
         onToggle={() =>
           setNav((current) => ({ ...current, collapsed: !current.collapsed }))
@@ -551,12 +481,6 @@ export function Shell() {
               ? { state: { sectionId } }
               : undefined,
           )
-        }
-        onUpload={repoFiles.repo ? () => upload('') : null}
-        onNewFolder={
-          repoFiles.repo
-            ? () => setNaming({ action: 'folder', path: '' })
-            : null
         }
         onSettings={(section) =>
           navigate(

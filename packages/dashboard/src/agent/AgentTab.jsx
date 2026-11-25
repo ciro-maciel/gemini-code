@@ -407,7 +407,7 @@ export function AgentTab({
           <div className="read-only">
             <i className="ti ti-eye" />
             Você acompanha este agente. Para mandar mensagem, peça a{' '}
-            {bot.sharedBy} o acesso "pode entrar".
+            {bot.sharedBy} o acesso “pode entrar”.
           </div>
         ) : isVoice ? (
           <div className="composer voice">

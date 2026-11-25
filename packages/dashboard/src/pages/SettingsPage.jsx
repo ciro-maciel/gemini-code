@@ -160,7 +160,7 @@ function ModelPicker({ item, onSaved }) {
   );
 }
 
-function AiAccounts({ account }) {
+function AiAccounts() {
   const [items, setItems] = useState(null);
   const [providers, setProviders] = useState([]);
   const [form, setForm] = useState(null);
@@ -693,7 +693,7 @@ function OrgSecurity() {
             <div className="grow">
               <b>Pagar e entrar numa conta sempre perguntam</b>
               <div className="p">
-                Mesmo com "sempre permitir", que vale 90 dias por agente e por
+                Mesmo com “sempre permitir”, que vale 90 dias por agente e por
                 serviço.
               </div>
             </div>

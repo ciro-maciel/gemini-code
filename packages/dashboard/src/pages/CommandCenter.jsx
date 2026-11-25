@@ -180,7 +180,7 @@ export function CommandCenter({
         />
         {last && (
           <button className="chip-btn" onClick={() => onOpenAgent(last.id)}>
-            Continuar "{last.name}"
+            Continuar “{last.name}”
           </button>
         )}
         <div className="box" data-box="deliveries">
@@ -295,7 +295,7 @@ export function CommandCenter({
               </div>
             ) : (
               <p className="muted" style={{ padding: '8px 0' }}>
-                Nenhum modelo com "{query}".
+                Nenhum modelo com “{query}”.
               </p>
             )}
           </div>
