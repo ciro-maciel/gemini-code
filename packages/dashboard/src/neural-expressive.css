@@ -2271,3 +2271,121 @@ a.btn {
   flex: none;
   align-self: flex-start;
 }
+
+/* ---------------------------------------------- The agent's header row -- */
+
+/* One row, one height (36 px), set apart by space: no rule under it. On the
+   left the agent's settings (tonal: never the main action) and where it came
+   from (a chip); on the right a docked group: the view switch and the folder. */
+.conv-sub {
+  height: 56px;
+  gap: 8px;
+  padding: 0 16px;
+  border-bottom: 0;
+}
+.conv-sub .m-btn.agent-chip {
+  height: 36px;
+  gap: 8px;
+  padding: 0 10px 0 14px;
+  border-radius: var(--radius-pill);
+  background: var(--gm-surface-2);
+  color: var(--gm-on-surface);
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 600;
+  transition: background var(--dur) var(--effects);
+}
+.conv-sub .m-btn.agent-chip:hover {
+  background: var(--gm-surface-3);
+}
+.conv-sub .m-btn.agent-chip .ti {
+  font-size: 16px;
+  color: var(--gm-on-surface-variant);
+}
+.conv-sub .chip-origin {
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px 0 10px;
+  border-radius: var(--radius-pill);
+  background: var(--gm-surface-1);
+  color: var(--gm-on-surface-variant);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.conv-sub .chip-origin .ti {
+  font-size: 14px;
+}
+.conv-sub .icon-btn {
+  width: 36px;
+  height: 36px;
+}
+/* The view switch: a segmented button group on a tonal track. */
+.conv-sub .view-switch {
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--gm-surface-1);
+}
+.conv-sub .view-switch button {
+  height: 30px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--gm-on-surface-variant);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  transition:
+    background var(--dur) var(--effects),
+    color var(--dur) var(--effects);
+}
+.conv-sub .view-switch button:hover {
+  color: var(--gm-on-surface);
+}
+.conv-sub .view-switch button.on {
+  background: var(--gm-surface);
+  color: var(--gm-on-surface);
+  box-shadow: var(--ne-shadow);
+}
+.conv-sub .files-toggle {
+  height: 36px;
+  padding: 0 16px 0 12px;
+  gap: 8px;
+  border: 0;
+  background: var(--gm-surface-1);
+  color: var(--gm-on-surface-variant);
+  font-size: 13px;
+}
+.conv-sub .files-toggle.on {
+  background: var(--gm-primary-container);
+  color: var(--gm-on-primary-container);
+}
+.conv-sub .files-toggle .ti {
+  font-size: 17px;
+}
+/* Focus: one 2 px ring inside the shape, never a halo with a gap. */
+.conv-sub button:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--gm-primary);
+}
+.conv-sub .view-switch button.on:focus-visible {
+  box-shadow:
+    inset 0 0 0 2px var(--gm-primary),
+    var(--ne-shadow);
+}
+@media (max-width: 760px) {
+  .conv-sub .chip-origin {
+    display: none;
+  }
+  .conv-sub .m-btn.agent-chip .ti-layout-sidebar-right {
+    display: none;
+  }
+}

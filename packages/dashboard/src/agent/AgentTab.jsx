@@ -204,7 +204,7 @@ export function AgentTab({
               <i className="ti ti-layout-sidebar-right" />
             </button>
           )}
-          <span className="orig" title="Where this agent came from">
+          <span className="orig chip-origin" title="Where this agent came from">
             <i className={`ti ${origin.icon}`} />
             {origin.label}
           </span>
@@ -225,15 +225,23 @@ export function AgentTab({
             modelLabel={modelLabel}
             refreshKey={conversation.loadKey}
           />
-          <span className="seg-sm tiny">
+          <span
+            className="seg-sm tiny view-switch"
+            role="tablist"
+            aria-label="View"
+          >
             <button
               className={view === 'conv' ? 'on' : ''}
+              role="tab"
+              aria-selected={view === 'conv'}
               onClick={() => setView('conv')}
             >
               Conversation
             </button>
             <button
               className={view === 'trail' ? 'on' : ''}
+              role="tab"
+              aria-selected={view === 'trail'}
               onClick={() => setView('trail')}
             >
               Trail

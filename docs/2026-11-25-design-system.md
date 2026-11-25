@@ -346,28 +346,29 @@ from the person.
 The parts below exist today; build new screens from them. Each lives in
 `neural-expressive.css` under the section of the same name.
 
-| Part                | Shape and tone                                                                    | Notes                                             |
-| ------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------- |
-| Navigation column   | Transparent on the wash; items 44 px pills; selected in primary container         | Sections set apart by space, never by rules       |
-| Agent row           | Avatar, name, last line, time; selected row filled                                | Keyboard focus is a 2 px inset ring               |
-| Pane                | Surface, `--radius-xl`, pane shadow; working glow on the edge                     | 12 px between panes                               |
-| Conversation        | Person on the right in a tonal bubble; agent on the left, name and model on top   | Steps fold into "N steps · time"                  |
-| Approval card       | Primary container, the action and its target named, Allow and Refuse              | The only place an agent waits for a person        |
-| Refusal line        | Centered small text between hairlines                                             | Says what and why                                 |
-| Composer            | Tonal container, 28 px corners, 2 px primary ring on focus                        | Chips for model, connections, skills, folder      |
-| Chip                | Pill, `--gm-surface-2`, label 12.5 px                                             | Removable chips carry an × with an aria-label     |
-| Button              | Pill. Filled primary for the one main action, tonal for the rest                  | Never two filled buttons side by side             |
-| Icon button         | 36 px circle, transparent, `--gm-surface-2` on hover                              | Always an aria-label                              |
-| Menu                | Surface, `--radius-xl`, hairline and drop shadow, pop-in                          | Closes on Escape and outside click                |
-| Account card        | Menu at `--radius-2xl`: e-mail, avatar in the four-color ring, greeting, one pill | The version at the foot                           |
-| Modal               | Surface, `--radius-2xl`, blurred backdrop, glyph in a circle, title, ×            | Escape closes; focus starts on the current choice |
-| Option list         | Rows at `--radius-lg` on `--gm-surface-1`; chosen in primary container with check | A radiogroup; arrows move, Enter chooses          |
-| Search palette (⌘K) | 680 px, `--radius-xl`, 64 px input, results in groups with icon circles           | One selection at a time                           |
-| Connector tile      | Brand icon on white, name, line, Connect                                          | A failure says why in words                       |
-| File tree           | Rows with A (added) and M (modified) marks                                        | Updates live                                      |
-| Code editor         | Monaco on `--gm-surface`, Google Sans Code                                        | Cmd/Ctrl+S saves                                  |
-| Toast               | `--radius-md`, title and one line                                                 | Says what happened, never "Success!"              |
-| Skeleton            | `--gm-surface-1` blocks in the shape of the content                               | After the one loader                              |
+| Part                | Shape and tone                                                                                                        | Notes                                                         |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| Navigation column   | Transparent on the wash; items 44 px pills; selected in primary container                                             | Sections set apart by space, never by rules                   |
+| Agent row           | Avatar, name, last line, time; selected row filled                                                                    | Keyboard focus is a 2 px inset ring                           |
+| Pane                | Surface, `--radius-xl`, pane shadow; working glow on the edge                                                         | 12 px between panes                                           |
+| Agent header        | One 56 px row, no rule under it: settings as a tonal pill, origin as a chip, then a docked group (view switch, Files) | All controls 36 px on one midline; focus is a 2 px inset ring |
+| Conversation        | Person on the right in a tonal bubble; agent on the left, name and model on top                                       | Steps fold into "N steps · time"                              |
+| Approval card       | Primary container, the action and its target named, Allow and Refuse                                                  | The only place an agent waits for a person                    |
+| Refusal line        | Centered small text between hairlines                                                                                 | Says what and why                                             |
+| Composer            | Tonal container, 28 px corners, 2 px primary ring on focus                                                            | Chips for model, connections, skills, folder                  |
+| Chip                | Pill, `--gm-surface-2`, label 12.5 px                                                                                 | Removable chips carry an × with an aria-label                 |
+| Button              | Pill. Filled primary for the one main action, tonal for the rest                                                      | Never two filled buttons side by side                         |
+| Icon button         | 36 px circle, transparent, `--gm-surface-2` on hover                                                                  | Always an aria-label                                          |
+| Menu                | Surface, `--radius-xl`, hairline and drop shadow, pop-in                                                              | Closes on Escape and outside click                            |
+| Account card        | Menu at `--radius-2xl`: e-mail, avatar in the four-color ring, greeting, one pill                                     | The version at the foot                                       |
+| Modal               | Surface, `--radius-2xl`, blurred backdrop, glyph in a circle, title, ×                                                | Escape closes; focus starts on the current choice             |
+| Option list         | Rows at `--radius-lg` on `--gm-surface-1`; chosen in primary container with check                                     | A radiogroup; arrows move, Enter chooses                      |
+| Search palette (⌘K) | 680 px, `--radius-xl`, 64 px input, results in groups with icon circles                                               | One selection at a time                                       |
+| Connector tile      | Brand icon on white, name, line, Connect                                                                              | A failure says why in words                                   |
+| File tree           | Rows with A (added) and M (modified) marks                                                                            | Updates live                                                  |
+| Code editor         | Monaco on `--gm-surface`, Google Sans Code                                                                            | Cmd/Ctrl+S saves                                              |
+| Toast               | `--radius-md`, title and one line                                                                                     | Says what happened, never "Success!"                          |
+| Skeleton            | `--gm-surface-1` blocks in the shape of the content                                                                   | After the one loader                                          |
 
 Every screen exists in light and dark, at 390 px wide and at desktop width, with
 its empty, loading, error and full states. "Nothing here yet" is never shown for

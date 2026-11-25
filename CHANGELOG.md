@@ -13,6 +13,9 @@ version with its date.
 
 ### Changed
 
+- The agent's header row follows the design system: settings as a tonal pill,
+  where the agent came from as a chip, the view switch and Files as one docked
+  group at 36 px, a single inset focus ring, and no rule under it (2026-11-25).
 - The README's download buttons: five equal pills in one line, each with its
   system's logo, in light and dark, instead of a table of oversized buttons that
   named each system twice (2026-11-25).
