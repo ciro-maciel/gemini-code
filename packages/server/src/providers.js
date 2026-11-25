@@ -1,3 +1,5 @@
+import { config } from './config.js';
+
 // The AI providers an account can connect (29/10/2026). Each speaks the
 // OpenAI chat format at its base address and lists its models at /models, so
 // one engine serves them all; only the headers and the noise in each model
@@ -92,10 +94,21 @@ export const PROVIDERS = [
 
 export const providerOf = (id) =>
   PROVIDERS.find((provider) => provider.id === id) || null;
+
+/**
+ * Whether the dashboard offers a provider (25/11/2026): Gemini Code works only
+ * with Gemini, through the official Gemini API key. The engine still speaks
+ * the others; the subscription comes back when Google publishes its official
+ * path, or as a personal experiment with GEMINI_SUBSCRIPTION=1.
+ */
+export const isOffered = (id) =>
+  id === 'google' || (id === 'google-subscription' && config.isSubscriptionOn);
+export const offeredProviders = () =>
+  PROVIDERS.filter((provider) => isOffered(provider.id));
 export const isChatProvider = (id) => Boolean(providerOf(id)?.base);
 /** A provider an agent talks in without an API key: the person's subscription. */
 export const isSubscriptionProvider = (id) =>
-  Boolean(providerOf(id)?.isSubscription);
+  Boolean(providerOf(id)?.isSubscription) && config.isSubscriptionOn;
 /** Whether an agent can hold a conversation on this provider: an API, or a subscription. */
 export const talksInChat = (id) =>
   isChatProvider(id) || isSubscriptionProvider(id);

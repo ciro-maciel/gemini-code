@@ -14,7 +14,7 @@
 
 export const LANGUAGES = [
   { id: 'en', label: 'English' },
-  { id: 'pt', label: 'Portuguese' },
+  { id: 'pt', label: 'Português' },
 ];
 const STORAGE_KEY = 'language';
 const ATTRIBUTES = ['placeholder', 'title', 'aria-label'];

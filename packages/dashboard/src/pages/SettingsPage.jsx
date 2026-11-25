@@ -188,7 +188,7 @@ function AiAccounts() {
       await reload();
       if (created.provider !== 'claude-code') setPicking(created.id);
       notify.success(
-        `${created.providerName} ligada`,
+        `${created.providerName} turned on`,
         created.provider === 'claude-code'
           ? "The agents' long-running work will use this account."
           : 'Now choose the models agents can use.',
@@ -308,17 +308,19 @@ function AiAccounts() {
         <div className="bb">
           {form ? (
             <>
-              <div className="chips">
-                {providers.map((item) => (
-                  <button
-                    key={item.id}
-                    className={`chip-btn${form.provider === item.id ? ' on' : ''}`}
-                    onClick={() => setForm({ ...form, provider: item.id })}
-                  >
-                    {item.name}
-                  </button>
-                ))}
-              </div>
+              {providers.length > 1 && (
+                <div className="chips">
+                  {providers.map((item) => (
+                    <button
+                      key={item.id}
+                      className={`chip-btn${form.provider === item.id ? ' on' : ''}`}
+                      onClick={() => setForm({ ...form, provider: item.id })}
+                    >
+                      {item.name}
+                    </button>
+                  ))}
+                </div>
+              )}
               {provider && (
                 <div className="row">
                   <input
@@ -354,8 +356,8 @@ function AiAccounts() {
               )}
               <div className="row">
                 <span className="grow muted">
-                  A chave fica cifrada na central; os agentes e o painel só veem
-                  o nome.
+                  The key is stored encrypted on the server; agents and the
+                  dashboard see only its name.
                 </span>
                 <button
                   className="btn outline sm"
@@ -375,9 +377,17 @@ function AiAccounts() {
           ) : (
             <button
               className="chip-btn"
-              onClick={() => setForm({ provider: null, name: '', token: '' })}
+              onClick={() =>
+                setForm({
+                  provider: providers.length === 1 ? providers[0].id : null,
+                  name: '',
+                  token: '',
+                })
+              }
             >
-              + Add account
+              {providers.length === 1
+                ? `+ Add a ${providers[0].name} API key`
+                : '+ Add account'}
             </button>
           )}
         </div>

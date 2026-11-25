@@ -1,5 +1,9 @@
 {
   "texts": {
+    "API Keys & Models": "Chaves de API e modelos",
+    "Diagnostics": "Diagnóstico",
+    "The key is stored encrypted on the server; agents and the dashboard see only its name.": "A chave fica cifrada no servidor; os agentes e o painel só veem o nome dela.",
+    "Gemini Code works only with Google Gemini: add a Gemini API key": "O Gemini Code trabalha só com o Google Gemini: adicione uma chave da API do Gemini",
     "(you)": "(você)",
     "+ Add account": "+ Adicionar conta",
     "+ Your subscription": "+ Sua assinatura",
@@ -1254,6 +1258,8 @@
     "deleting waits for the person: say what should be deleted and why, and the person deletes it": "apagar espera a pessoa: diga o que deve ser apagado e por quê, e a pessoa apaga"
   },
   "patterns": {
+    "{0} turned on": "{0} ligada",
+    "+ Add a {0} API key": "+ Adicionar uma chave da API do {0}",
     "The server failed to respond (error {0}). Try again in a moment; if it happens again, reload the page.": "A central falhou ao responder (erro {0}). Tente de novo em um instante; se repetir, recarregue a página.",
     "The server rejected the request (error {0}). Reload the page and try again.": "A central recusou o pedido (erro {0}). Recarregue a página e tente de novo.",
     "Starting from: {0}": "A partir de: {0}",
@@ -1531,6 +1537,8 @@
     "Refused {0}: {1}": "Recusei {0}: {1}",
     "{0} is outside the agent folder; work only inside it": "{0} fica fora da pasta do agente; trabalhe só dentro dela",
     "I did not do it: {0}.": "Não fiz: {0}.",
+    "the server refused the automatic sign-in": "o servidor recusou o login automático",
+    "{0} accepts only the MCP clients it approved, and Gemini Code is not one of them yet": "{0} aceita só os clientes MCP que aprovou, e o Gemini Code ainda não é um deles",
     "{0} is not one of this agent's connections in Gemini Code": "{0} não é uma das conexões deste agente no Gemini Code"
   }
 }

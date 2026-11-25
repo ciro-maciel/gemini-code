@@ -15,8 +15,11 @@ version with its date.
 
 - An installer for macOS, Linux and Windows: one command downloads a single
   executable with the Bun runtime inside, checks its SHA-256 and adds
-  `gemini-code` to the PATH, with no administrator rights; a tag `v*` builds the
-  five archives and publishes the release (2026-11-25).
+  `gemini-code` to the PATH, with no administrator rights; a tag `v*` builds
+  the five archives and publishes the release (2026-11-25, #28).
+- Each connector shows its brand's own icon, in its colors, kept in the
+  repository so the app and the demo show it without fetching images from
+  another host (2026-11-25, #27).
 - A changelog, and a CI check that every pull request adds its line to it
   (2026-11-25, #26).
 - Subscription agents get their own folder through the files MCP (2026-11-25,
@@ -31,6 +34,17 @@ version with its date.
 
 ### Changed
 
+- The language picker in the dashboard's own look: tonal cards with the
+  language's code, its name in its own language and in the other one, and the
+  date and number format it brings; arrows move, Enter chooses (2026-11-25,
+  #29).
+- Gemini Code works only with Gemini: AI accounts offer only a Gemini API key
+  from Google AI Studio. The subscription account is no longer made on its own
+  or shown until Google publishes its official path, and stays as a personal
+  experiment behind `GEMINI_SUBSCRIPTION=1`; the demo shows only Gemini too
+  (2026-11-25, #30).
+- The changelog check also accepts a release that turns Unreleased into a new
+  version (2026-11-25, #30).
 - The README says signing in with a Google AI Pro or Ultra subscription waits
   for Google's official path for third-party tools; the official way today is a
   Gemini API key from Google AI Studio (2026-11-25, #24).
@@ -43,6 +57,13 @@ version with its date.
 
 ### Fixed
 
+- "API Keys & Models" and "Diagnostics" in the account menu show in Portuguese
+  too (2026-11-25, #29).
+- Notion, Atlassian and the other servers that accept a URL as the client id
+  connect on `http://localhost`: the URL is offered only on HTTPS, and the
+  sign-in registers otherwise (2026-11-25, #27).
+- A server that lets in only the MCP clients it approved (Figma) says so in
+  words, not as a JSON parse error (2026-11-25, #27).
 - A follow-up on the subscription no longer repeats the previous answer: the
   history `session/load` replays stays out of the new one (2026-11-25, #25).
 - An MCP server a subscription agent finds in its own global settings, such as

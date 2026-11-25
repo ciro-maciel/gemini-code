@@ -32,7 +32,7 @@ const SCREEN_ROUTES = [
   ['GET', `/api/bots/${bot}/inbox`],
   ['GET', '/api/ai-accounts'],
   ['GET', '/api/ai-providers'],
-  ['GET', `/api/ai-accounts/${ACCOUNT_IDS.subscription}/available-models`],
+  ['GET', `/api/ai-accounts/${ACCOUNT_IDS.gemini}/available-models`],
   ['GET', '/api/apps'],
   ['GET', '/api/connections'],
   ['POST', `/api/bots/${bot}/messages`],
@@ -64,12 +64,12 @@ describe('the demo fake API', () => {
     expect(body.items.map((item) => item.name)).toEqual([
       'Software Engineer',
       'Code Reviewer',
-      'Neon Engineer',
+      'Test Engineer',
     ]);
-    const neon = body.items.find((item) => item.name === 'Neon Engineer');
-    expect(neon).toMatchObject({
-      model: 'gemini-4-neon-low',
-      aiAccount: ACCOUNT_IDS.subscription,
+    const tester = body.items.find((item) => item.name === 'Test Engineer');
+    expect(tester).toMatchObject({
+      model: 'gemini-3.6-flash',
+      aiAccount: ACCOUNT_IDS.gemini,
     });
     expect(
       body.items.find((item) => item.name === 'Software Engineer').runningCount,
@@ -79,21 +79,17 @@ describe('the demo fake API', () => {
     ).toBe(0);
   });
 
-  test('AI accounts are Google Gemini with three models and the Google subscription', () => {
+  test('the only AI account is Google Gemini, with three models', () => {
     const { body } = createFakeApi().handle('GET', '/api/ai-accounts');
-    expect(body.items.map((item) => item.name)).toEqual([
-      'Google Gemini',
-      'Google subscription',
-    ]);
+    expect(body.items.map((item) => item.name)).toEqual(['Google Gemini']);
     expect(body.items[0].models).toEqual([
       'gemini-3.5-flash-lite',
       'gemini-3.6-flash',
       'gemini-3.5-flash',
     ]);
-    expect(body.items[1].models).toContain('gemini-4-neon-low');
   });
 
-  test("the Neon Engineer's conversation reads as steps that wrote soma.js and soma.test.js and a 3 pass answer", () => {
+  test("the Test Engineer's conversation reads as steps that wrote soma.js and soma.test.js and a 3 pass answer", () => {
     const { body } = createFakeApi().handle(
       'GET',
       `/api/bots/${bot}/conversation`,

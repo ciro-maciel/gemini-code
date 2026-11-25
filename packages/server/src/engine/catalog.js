@@ -171,7 +171,7 @@ function staticClientFor(connectionUrl, redirectUrl) {
   return null;
 }
 
-class ConnectionAuthProvider {
+export class ConnectionAuthProvider {
   constructor(connectionId, connectionUrl) {
     this.connectionId = connectionId;
     this.connectionUrl = connectionUrl;
@@ -183,8 +183,12 @@ class ConnectionAuthProvider {
 
   // An authorization server that accepts a URL as the client id (CIMD) reads
   // who we are there (the door serves it); one that does not gets the
-  // dynamic registration below.
+  // dynamic registration below. The URL must be HTTPS, and a local server on
+  // http://localhost cannot be read from outside anyway: there every sign-in
+  // goes through the registration (Notion, Atlassian and Figma failed with
+  // "clientMetadataUrl must be a valid HTTPS URL", 25/11/2026).
   get clientMetadataUrl() {
+    if (!config.publicUrl.startsWith('https://')) return undefined;
     return `${config.publicUrl}/oauth/client.json`;
   }
 
@@ -335,6 +339,17 @@ async function openClient(connection) {
  * listed), pending_auth (the person must sign in at status_detail) or
  * needs_secret (the server takes a token the person pastes).
  */
+/**
+ * What the person reads when a connection fails. A server that lets in only
+ * the MCP clients it approved answers the registration with a bare 403
+ * (Figma, 25/11/2026), which the SDK reports as a JSON parse error.
+ */
+export function failureDetail(error, title) {
+  if (/HTTP 403/.test(error.message) && /OAuth/i.test(error.message))
+    return `${title} accepts only the MCP clients it approved, and Gemini Code is not one of them yet`;
+  return error.message.slice(0, 500);
+}
+
 export async function connect(connectionId) {
   const connection = fetchConnection(connectionId);
   try {
@@ -359,7 +374,7 @@ export async function connect(connectionId) {
       if (current.status !== 'pending_auth')
         updateConnection(connectionId, {
           status: 'needs_secret',
-          status_detail: 'o servidor recusou o login automático',
+          status_detail: 'the server refused the automatic sign-in',
         });
     } else if (
       connection.transport === 'streamable' &&
@@ -371,7 +386,7 @@ export async function connect(connectionId) {
     } else {
       updateConnection(connectionId, {
         status: 'failed',
-        status_detail: error.message.slice(0, 500),
+        status_detail: failureDetail(error, connection.title),
       });
     }
   }

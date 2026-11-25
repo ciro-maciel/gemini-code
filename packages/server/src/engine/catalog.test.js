@@ -8,7 +8,10 @@ process.env.SPRITES_TOKEN ||= 'test';
 process.env.ENCRYPTION_KEY ||= Buffer.alloc(32).toString('base64');
 
 const { db } = await import('../db.js');
+const { config } = await import('../config.js');
 const {
+  ConnectionAuthProvider,
+  failureDetail,
   fetchConnection,
   formatServiceNotes,
   refreshAccountTools,
@@ -138,4 +141,38 @@ test("a search reads the account's tools again, at most once a minute, and only 
     isForced: true,
   });
   expect(opened).toEqual(['c-feeds-a', 'c-feeds-a']);
+});
+
+test('the client id is a URL (CIMD) only on an HTTPS address; on localhost the sign-in registers instead', () => {
+  const before = config.publicUrl;
+  try {
+    config.publicUrl = 'http://localhost:8787';
+    expect(
+      new ConnectionAuthProvider('c1', 'https://mcp.notion.com/mcp')
+        .clientMetadataUrl,
+    ).toBeUndefined();
+    config.publicUrl = 'https://gemini.example.com';
+    expect(
+      new ConnectionAuthProvider('c1', 'https://mcp.notion.com/mcp')
+        .clientMetadataUrl,
+    ).toBe('https://gemini.example.com/oauth/client.json');
+  } finally {
+    config.publicUrl = before;
+  }
+});
+
+test('a server that lets in only the clients it approved is said in words, not as a parse error', () => {
+  expect(
+    failureDetail(
+      new Error(
+        'HTTP 403: Invalid OAuth error response: SyntaxError: JSON Parse error: Unexpected identifier "Forbidden". Raw body: Forbidden',
+      ),
+      'Figma',
+    ),
+  ).toBe(
+    'Figma accepts only the MCP clients it approved, and Gemini Code is not one of them yet',
+  );
+  expect(failureDetail(new Error('fetch failed'), 'Figma')).toBe(
+    'fetch failed',
+  );
 });
