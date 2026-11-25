@@ -14,8 +14,8 @@ describe('stateOf and waitsOn', () => {
     expect(stateOf(bot('a', { pendingChoices: 1 })).mark).toBe('wait');
   });
   test('running, finished and quiet', () => {
-    expect(stateOf(bot('a', { runningCount: 1 })).word).toBe('rodando');
-    expect(stateOf(bot('a', { hasNews: true })).word).toBe('terminou');
+    expect(stateOf(bot('a', { runningCount: 1 })).word).toBe('running');
+    expect(stateOf(bot('a', { hasNews: true })).word).toBe('finished');
     expect(stateOf(bot('a')).mark).toBeNull();
   });
   test('a computer that failed says so before anything else', () => {

@@ -13,8 +13,8 @@ export function stateOf(bot) {
   if (bot.status === 'failed')
     return { word: "the computer didn't get ready", mark: 'stopped' };
   if (waitsOn(bot)) return { word: 'waiting for you', mark: 'wait' };
-  if (bot.runningCount) return { word: 'rodando', mark: 'live' };
-  if (bot.hasNews) return { word: 'terminou', mark: 'done' };
+  if (bot.runningCount) return { word: 'running', mark: 'live' };
+  if (bot.hasNews) return { word: 'finished', mark: 'done' };
   return { word: '', mark: null };
 }
 

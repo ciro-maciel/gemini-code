@@ -1021,7 +1021,15 @@
     "What should we build, debug, or review today?": "O que vamos construir, depurar ou revisar hoje?",
     "1 agent": "1 agente",
     "and": "e",
-    "1 more step": "mais 1 passo"
+    "1 more step": "mais 1 passo",
+    "Deliverables": "Entregas",
+    "Quick actions": "Ações rápidas",
+    "Start a new agent": "Começar um agente novo com isso",
+    "to move": "para mover",
+    "to open": "para abrir",
+    "to close": "para fechar",
+    "running": "rodando",
+    "finished": "terminou"
   },
   "patterns": {
     "The server failed to respond (error {0}). Try again in a moment; if it happens again, reload the page.": "A central falhou ao responder (erro {0}). Tente de novo em um instante; se repetir, recarregue a página.",
@@ -1219,6 +1227,7 @@
     "{#0} agents": "{#0} agentes",
     "{0} today": "{0} hoje",
     "{0} in 30 days": "{0} em 30 dias",
-    "{#0} more steps": "mais {#0} passos"
+    "{#0} more steps": "mais {#0} passos",
+    "Nothing matches “{0}”.": "Nada com “{0}”."
   }
 }
