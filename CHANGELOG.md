@@ -11,6 +11,11 @@ version with its date.
 
 ## [Unreleased]
 
+### Added
+
+- A CODEOWNERS file and a "Who maintains it" section: Ciro Cesar Maciel is the
+  one maintainer and reviews every pull request (2026-11-25).
+
 ### Fixed
 
 - Texts written in Portuguese inside the English dashboard, in the agent tab,
