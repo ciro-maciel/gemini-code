@@ -13,6 +13,10 @@ version with its date.
 
 ### Added
 
+- A design system for every piece Gemini Code makes: the dashboard, landing
+  page, site, IDE, blog, text messages, e-mail, slides, social posts, business
+  cards and the terminal, with the trademark rule and the open decision on the
+  mark (2026-11-25, #32).
 - Each connector shows its brand's own icon, in its colors, kept in the
   repository so the app and the demo show it without fetching images from
   another host (2026-11-25, #27).
