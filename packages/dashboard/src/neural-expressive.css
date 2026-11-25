@@ -1158,174 +1158,254 @@ textarea {
   }
 }
 
-/* ------------------------------------------------ Language picker -- */
+/* ------------------------------------------- Settings › Language -- */
 
-/* Idioma · Language: the search palette's surface and motion, two options as
-   tonal cards, the chosen one in the primary container. */
-.ne-lang {
-  width: min(500px, calc(100vw - 32px));
+/* A choice as Google's settings draw it: one list, a Material radio per row,
+   a hairline between rows, the chosen radio in the primary color. */
+.set-language {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.gm-radio-list {
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+}
+.gm-radio-row {
+  width: 100%;
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 16px;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--gm-on-surface);
+  text-align: left;
+  cursor: pointer;
+  position: relative;
+  transition: background var(--dur-fast) var(--effects);
+}
+.gm-radio-row + .gm-radio-row::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 52px;
+  right: 16px;
+  border-top: 1px solid var(--gm-outline-variant);
+}
+.gm-radio-row:hover:not(:disabled) {
+  background: var(--gm-surface-2);
+}
+.gm-radio-row:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--gm-primary);
+}
+.gm-radio-row:disabled {
+  cursor: progress;
+  opacity: 0.6;
+}
+.gm-radio {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  border-radius: var(--radius-pill);
+  box-shadow: inset 0 0 0 2px var(--gm-on-surface-variant);
+  transition: box-shadow var(--dur) var(--spring-fast);
+}
+.gm-radio-row.on .gm-radio {
+  box-shadow:
+    inset 0 0 0 2px var(--gm-primary),
+    inset 0 0 0 5px var(--gm-surface-1),
+    inset 0 0 0 10px var(--gm-primary);
+}
+.gm-radio-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.gm-radio-title {
+  font-size: 15px;
+  font-weight: 500;
+}
+.gm-radio-note {
+  font-size: 13px;
+  color: var(--gm-on-surface-variant);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------- Account card -- */
+
+/* The account menu as Google draws its account card: the e-mail on top, the
+   avatar in Gemini's ring, a greeting, one pill to manage the settings, then
+   the account's lines on a tonal surface and the version at the foot. */
+.menu.acct-menu {
+  padding: 8px;
   border-radius: var(--radius-2xl);
   background: var(--gm-surface);
   box-shadow:
     0 0 0 1px var(--gm-outline-variant),
-    0 32px 80px -32px rgba(23, 43, 77, 0.45);
+    0 24px 64px -24px rgba(23, 43, 77, 0.35);
   animation: ne-pop var(--dur-spatial) var(--spring-fast);
-  overflow: hidden;
-  align-self: center;
 }
-.ne-lang-head {
+.acct-card {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 14px;
-  padding: 20px 16px 8px 20px;
+  gap: 8px;
+  padding: 14px 12px 16px;
+  text-align: center;
 }
-.ne-lang-glyph {
-  width: 44px;
-  height: 44px;
-  flex: none;
-  display: inline-flex;
+.acct-email {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--gm-on-surface-variant);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.acct-avatar {
+  width: 72px;
+  height: 72px;
+  margin-top: 6px;
+  padding: 3px;
+  border-radius: var(--radius-pill);
+  background: conic-gradient(
+    var(--ne-blue),
+    var(--ne-violet),
+    var(--ne-red),
+    var(--ne-yellow),
+    var(--ne-green),
+    var(--ne-blue)
+  );
+}
+.acct-avatar span {
+  width: 100%;
+  height: 100%;
+  display: flex;
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-pill);
-  background: var(--gm-primary-container);
-  color: var(--gm-on-primary-container);
-}
-.ne-lang-glyph .ti {
-  font-size: 22px;
-}
-.ne-lang-titles {
-  flex: 1 1 auto;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-.ne-lang-titles b {
-  font-size: 18px;
+  border: 3px solid var(--gm-surface);
+  background: var(--gm-primary);
+  color: var(--gm-on-primary);
+  font-size: 24px;
   font-weight: 600;
+}
+.acct-hi {
+  font-size: 20px;
+  font-weight: 500;
   letter-spacing: -0.01em;
   color: var(--gm-on-surface);
 }
-.ne-lang-titles span {
-  font-size: 13px;
-  color: var(--gm-on-surface-variant);
-}
-.ne-lang-head .icon-btn {
-  align-self: flex-start;
+.acct-mode {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 10px;
   border-radius: var(--radius-pill);
+  background: var(--gm-surface-2);
+  color: var(--gm-on-surface-variant);
+  font-size: 12px;
+  font-weight: 500;
 }
-.ne-lang-options {
+.acct-mode .ti {
+  font-size: 14px;
+}
+.menu.acct-menu .acct-manage {
+  width: auto;
+  height: 36px;
+  margin-top: 6px;
+  padding: 0 20px;
+  border-radius: var(--radius-pill);
+  box-shadow: inset 0 0 0 1px var(--gm-outline);
+  background: transparent;
+  color: var(--gm-primary);
+  font-size: 14px;
+  font-weight: 500;
+  justify-content: center;
+}
+.menu.acct-menu .acct-manage:hover {
+  background: color-mix(in srgb, var(--gm-primary) 8%, transparent);
+}
+.acct-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 12px 16px 8px;
-}
-.ne-lang-option {
-  width: 100%;
-  min-height: 68px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 12px 16px 12px 12px;
-  border: 0;
-  border-radius: var(--radius-lg);
+  gap: 2px;
+  padding: 6px;
+  border-radius: var(--radius-xl);
   background: var(--gm-surface-1);
+}
+.menu.acct-menu .acct-item {
+  height: auto;
+  min-height: 56px;
+  padding: 8px 12px;
+  gap: 14px;
+  border-radius: var(--radius-lg);
+  background: transparent;
   color: var(--gm-on-surface);
   text-align: left;
-  cursor: pointer;
-  transition:
-    background var(--dur-fast) var(--effects),
-    transform var(--dur) var(--spring-fast);
 }
-.ne-lang-option:hover {
+.menu.acct-menu .acct-item:hover {
   background: var(--gm-surface-2);
 }
-.ne-lang-option:active:not(:disabled) {
-  transform: scale(0.985);
-}
-.ne-lang-option:focus-visible {
+.menu.acct-menu .acct-item:focus-visible {
   outline: none;
   box-shadow: inset 0 0 0 2px var(--gm-primary);
 }
-.ne-lang-option.on {
-  background: var(--gm-primary-container);
-  color: var(--gm-on-primary-container);
-}
-.ne-lang-option:disabled {
-  cursor: progress;
-}
-.ne-lang-code {
-  width: 40px;
-  height: 40px;
+.acct-glyph {
+  width: 36px;
+  height: 36px;
   flex: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-pill);
   background: var(--gm-surface);
+}
+.menu.acct-menu .acct-glyph .ti {
+  font-size: 18px;
   color: var(--gm-primary);
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
 }
-.ne-lang-option.on .ne-lang-code {
-  background: var(--gm-primary);
-  color: var(--gm-on-primary);
-}
-.ne-lang-text {
+.acct-text {
   flex: 1 1 auto;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
 }
-.ne-lang-name {
-  font-size: 16px;
-  font-weight: 600;
+.acct-title {
+  font-size: 14px;
+  font-weight: 500;
 }
-.ne-lang-note {
-  font-size: 12.5px;
+.acct-note {
+  font-size: 12px;
+  line-height: 1.35;
   color: var(--gm-on-surface-variant);
-  font-variant-numeric: tabular-nums;
+  white-space: normal;
 }
-.ne-lang-option.on .ne-lang-note {
-  color: inherit;
-  opacity: 0.8;
-}
-.ne-lang-mark {
-  width: 28px;
-  height: 28px;
-  flex: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--radius-pill);
-  box-shadow: inset 0 0 0 2px var(--gm-outline);
-}
-.ne-lang-option.on .ne-lang-mark {
-  background: var(--gm-primary);
-  color: var(--gm-on-primary);
-  box-shadow: none;
-}
-.ne-lang-mark .ti {
+.menu.acct-menu .acct-go {
   font-size: 16px;
+  color: var(--gm-on-surface-variant);
 }
-.ne-lang-spin {
-  animation: ne-lang-turn 0.8s linear infinite;
-}
-@keyframes ne-lang-turn {
-  to {
-    transform: rotate(360deg);
-  }
-}
-.ne-lang-foot {
+.acct-foot-links {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 20px 18px;
-  font-size: 12.5px;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px 8px 6px;
+  font-size: 12px;
   color: var(--gm-on-surface-variant);
 }
-.ne-lang-foot .ti {
-  font-size: 15px;
+.acct-foot-links a {
+  color: inherit;
+  text-decoration: none;
+}
+.acct-foot-links a:hover {
+  color: var(--gm-primary);
+  text-decoration: underline;
 }

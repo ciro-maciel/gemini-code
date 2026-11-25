@@ -21,6 +21,7 @@ import { canPush, currentSubscription, turnOff, turnOn } from '../push/phone';
 import { DeleteModal, notify } from '../components/zen';
 import { useAccount } from '../components/Session';
 import { People } from './People';
+import { LanguageSettings } from '../components/LanguageSettings';
 
 // Dollars in the reader's own number format: US$ 0.00 in English, US$ 0,00 in Portuguese.
 const money = (value) =>
@@ -31,6 +32,7 @@ const NAV = [
     'Your account',
     [
       ['accounts', 'AI accounts'],
+      ['language', 'Language · Idioma'],
       ['chrome', 'Meu Chrome'],
       ['security', 'Security'],
       ['phone', 'Celular'],
@@ -882,6 +884,7 @@ export function SettingsPage({ section }) {
           </div>
           <div className="grow">
             {section === 'accounts' && <AiAccounts account={account} />}
+            {section === 'language' && <LanguageSettings />}
             {section === 'chrome' && <MyChrome />}
             {section === 'org-security' && <OrgSecurity />}
             {section === 'security' && <Security />}

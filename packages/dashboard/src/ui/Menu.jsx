@@ -15,6 +15,7 @@ export function Menu({
   width = 300,
   alignLeft = false,
   maxHeight = null,
+  className = '',
   onClose,
   onQuery = null,
   children,
@@ -65,7 +66,7 @@ export function Menu({
   return createPortal(
     <div
       ref={ref}
-      className="menu opts"
+      className={`menu opts${className ? ` ${className}` : ''}`}
       role="menu"
       style={{ width, ...(maxHeight ? { maxHeight } : {}), ...place }}
     >
