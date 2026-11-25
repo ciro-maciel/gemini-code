@@ -46,6 +46,12 @@ same layout and code style, on Bun and plain JavaScript.
       a Gemini API key remains possible.
 - [ ] Permission requests open an approval card when the rules alone cannot
       decide, as Gemini Code's own tools do.
+- [x] A subscription agent gets its folder through the files MCP; an MCP server
+      it finds in its own global settings (such as the person's Playwriter) is
+      refused.
+- [ ] The person's connections (GitHub, Linear...) and Gemini Code's browser
+      reach a subscription agent through an MCP proxy on the server, so secrets
+      stay there and writes still pass the risk judge.
 
 ## 5. The official subscription API
 

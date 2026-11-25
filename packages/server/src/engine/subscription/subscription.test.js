@@ -10,6 +10,7 @@ import {
   resetInMs,
   runTurn,
   useSpawner,
+  withFolderLinks,
 } from './antigravity-cli.js';
 import { decidePermission, outcomeFor } from './permission.js';
 import {
@@ -58,12 +59,31 @@ function fakeAcpAgent({ asks = [], failPrompt = null } = {}) {
           return true;
         }
         seen.methods.push(message.method);
+        if (message.params?.mcpServers)
+          seen.mcpServers = message.params.mcpServers;
         const reply = (result) => out({ id: message.id, result });
         if (message.method === 'initialize') reply({ protocolVersion: 1 });
         else if (message.method === 'session/new')
           reply({ sessionId: 's-new' });
-        else if (message.method === 'session/load') reply({});
-        else if (message.method === 'session/set_model') reply({});
+        else if (message.method === 'session/load') {
+          // A real agent replays the whole history before it answers the load.
+          const sessionId = message.params.sessionId;
+          update(sessionId, {
+            sessionUpdate: 'user_message_chunk',
+            content: { type: 'text', text: 'hi' },
+          });
+          update(sessionId, {
+            sessionUpdate: 'agent_message_chunk',
+            content: { type: 'text', text: 'Old answer.' },
+          });
+          update(sessionId, {
+            sessionUpdate: 'tool_call',
+            toolCallId: 'old-call',
+            name: 'read_file',
+            status: 'completed',
+          });
+          reply({});
+        } else if (message.method === 'session/set_model') reply({});
         else if (message.method === 'session/prompt') {
           const sessionId = message.params.sessionId;
           (async () => {
@@ -194,12 +214,18 @@ describe('the Antigravity CLI over ACP', () => {
 
   test('a follow-up loads the same session instead of starting a new one', async () => {
     const seen = fakeAcpAgent();
+    const events = [];
     const answer = await runTurn({
       prompt: 'and now?',
       cwd: agentFolder(),
       conversationId: 's-old',
+      onEvent: (event) => events.push(event),
     });
     expect(answer.conversationId).toBe('s-old');
+    // The history the load replays is not part of the new answer.
+    expect(answer.text).not.toContain('Old answer.');
+    expect(events.some((event) => event.id === 'old-call')).toBe(false);
+    expect(events.some((event) => event.text === 'Old answer.')).toBe(false);
     expect(seen.methods).toEqual([
       'initialize',
       'session/load',
@@ -295,6 +321,17 @@ describe('the Antigravity CLI over ACP', () => {
         started,
       ),
     ).toMatchObject({ type: 'tool_end', output: 'x' });
+    // agy repeats the final status of a refused call: still one end.
+    expect(
+      eventOfUpdate(
+        {
+          sessionUpdate: 'tool_call_update',
+          toolCallId: 't',
+          status: 'failed',
+        },
+        started,
+      ),
+    ).toBeNull();
     expect(
       eventOfUpdate({ sessionUpdate: 'usage_update' }, started),
     ).toBeNull();
@@ -390,5 +427,69 @@ describe('the subscription state tree', () => {
     store.set({ quota: { resetsAt: Date.now() - 1 } });
     await runSubscriptionTurn({ taskId: 't1', prompt: 'y', cwd: '/tmp' });
     expect(store.get().status).toBe('ready');
+  });
+});
+
+describe('links in the answer', () => {
+  test('a file link inside the agent folder becomes its relative path; outside stays', () => {
+    const folder = agentFolder();
+    const text = [
+      `- [temperatura.js](file://${folder}/temperatura.js): the library`,
+      `- see file://${folder}/docs/a%20b.md`,
+      '- [hosts](file:///etc/hosts)',
+    ].join('\n');
+    expect(withFolderLinks(text, folder)).toBe(
+      [
+        '- `temperatura.js`: the library',
+        '- see docs/a b.md',
+        '- [hosts](file:///etc/hosts)',
+      ].join('\n'),
+    );
+  });
+});
+
+describe('connections of a subscription agent', () => {
+  const FILES = {
+    type: 'http',
+    name: 'files',
+    url: 'http://127.0.0.1:8787/api/bots/b1/mcp/files',
+    headers: [],
+  };
+
+  test('the session gets the MCP servers Gemini Code hands it', async () => {
+    const seen = fakeAcpAgent();
+    await runTurn({ prompt: 'x', cwd: agentFolder(), mcpServers: [FILES] });
+    expect(seen.mcpServers).toEqual([FILES]);
+  });
+
+  test("a tool of a handed server is allowed; one from the agent's own settings is refused", async () => {
+    const root = agentFolder();
+    const seen = fakeAcpAgent({
+      asks: [
+        { name: 'mcp_files_files_guide', kind: 'other', args: {} },
+        { name: 'mcp_playwriter_execute', kind: 'other', args: {} },
+      ],
+    });
+    const events = [];
+    await runTurn({
+      prompt: 'x',
+      cwd: root,
+      mcpServers: [FILES],
+      onEvent: (event) => events.push(event),
+    });
+    expect(seen.answers).toEqual(['allow', 'reject']);
+    expect(
+      events.find((event) => event.type === 'permission' && !event.isAllowed)
+        .reason,
+    ).toContain('not one of this agent');
+  });
+
+  test("the agent's own tools are not taken for MCP servers", () => {
+    expect(
+      decidePermission(
+        { name: 'read_file', kind: 'read', args: {} },
+        agentFolder(),
+      ).isAllowed,
+    ).toBe(true);
   });
 });
