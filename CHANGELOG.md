@@ -13,6 +13,10 @@ version with its date.
 
 ### Changed
 
+- The composer's chip menus (connections, skills, model, template) in the design
+  system: a pill search, rows with an icon circle and the service's own mark, a
+  Material checkbox, the state in words, and a foot that stays in view with
+  Connect another app and what asks before it runs (2026-11-25).
 - The bar above a conversation is one height: the agent's settings chip, the
   view switch (Conversation, Trail) and Files match the origin chip's 28 px and
   12.5 px text (2026-11-25).

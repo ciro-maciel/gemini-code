@@ -16,6 +16,7 @@ export function Menu({
   alignLeft = false,
   maxHeight = null,
   className = '',
+  footer = null,
   onClose,
   onQuery = null,
   children,
@@ -85,6 +86,7 @@ export function Menu({
         />
       )}
       {children}
+      {footer && <div className="menu-foot">{footer}</div>}
     </div>,
     document.body,
   );
@@ -128,15 +130,39 @@ export function Opt({
   );
 }
 
-/** An option that marks and unmarks, for lists like connections and skills. */
-export function CheckOpt({ isOn, title, note, onClick, mono = false }) {
+/**
+ * An option that marks and unmarks, for lists like connections and skills:
+ * an optional image (a service's mark), the name and its line, and a Material
+ * checkbox on the right.
+ */
+export function CheckOpt({
+  isOn,
+  title,
+  note,
+  image = null,
+  icon = null,
+  onClick,
+  mono = false,
+}) {
   return (
-    <button className={`opt check${isOn ? ' hl' : ''}`} onClick={onClick}>
-      <b>
-        <i className={`ti ${isOn ? 'ti-square-check' : 'ti-square'}`} />
-        <span className={mono ? 'mono' : undefined}>{title}</span>
-      </b>
-      {note && <small>{note}</small>}
+    <button
+      className={`opt check${isOn ? ' is-on' : ''}`}
+      role="menuitemcheckbox"
+      aria-checked={Boolean(isOn)}
+      onClick={onClick}
+    >
+      {(image || icon) && (
+        <span className={`opt-icon${image ? ' is-image' : ''}`}>
+          {image ? <img alt="" src={image} /> : <i className={`ti ${icon}`} />}
+        </span>
+      )}
+      <span className="opt-text">
+        <span className={`opt-title${mono ? ' mono' : ''}`}>{title}</span>
+        {note && <small>{note}</small>}
+      </span>
+      <span className="gm-check" aria-hidden="true">
+        {isOn && <i className="ti ti-check" />}
+      </span>
     </button>
   );
 }

@@ -2399,3 +2399,190 @@ a.btn {
     display: none;
   }
 }
+
+/* -------------------------------------------------- Chip menus -- */
+
+/* The menus that open from the composer's chips (connections, skills, model,
+   template): a sticky title and pill search, rows with an icon circle, the
+   name and its line, a Material checkbox for what is on, and a foot that
+   stays in view while the list scrolls. */
+.menu.opts {
+  padding: 0 6px;
+  border-radius: var(--radius-xl);
+  background: var(--gm-surface);
+  overflow-y: auto;
+}
+.menu.opts > .h.label:first-child {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  margin: 0 -6px;
+  padding: 14px 18px 8px;
+  background: var(--gm-surface);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--gm-on-surface-variant);
+}
+.menu.opts > .search-in {
+  position: sticky;
+  top: 41px;
+  z-index: 2;
+  width: 100%;
+  height: 38px;
+  margin: 0 0 6px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--gm-surface-1);
+  box-shadow: 0 0 0 6px var(--gm-surface);
+  font: inherit;
+  font-size: 14px;
+  color: var(--gm-on-surface);
+}
+.menu.opts > .search-in:focus {
+  outline: none;
+  box-shadow:
+    inset 0 0 0 2px var(--gm-primary),
+    0 0 0 6px var(--gm-surface);
+}
+.menu.opts .opt {
+  min-height: 48px;
+  padding: 8px 10px;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--gm-on-surface);
+}
+.menu.opts .opt:hover,
+.menu.opts .opt.hl {
+  background: var(--gm-surface-1);
+}
+.menu.opts .opt b {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--gm-on-surface);
+}
+.menu.opts .opt small {
+  font-size: 12.5px;
+  line-height: 17px;
+  color: var(--gm-on-surface-variant);
+}
+.menu.opts .opt.check {
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+.menu.opts .opt.check.is-on {
+  background: transparent;
+}
+.menu.opts .opt.check:hover {
+  background: var(--gm-surface-1);
+}
+.menu.opts .opt.check small {
+  padding-left: 0;
+}
+.opt-icon {
+  width: 32px;
+  height: 32px;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  background: var(--gm-surface-1);
+  color: var(--gm-primary);
+}
+.opt-icon.is-image {
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--gm-outline-variant);
+}
+.opt-icon img {
+  width: 18px;
+  height: 18px;
+}
+.menu.opts .opt-icon .ti {
+  font-size: 17px;
+  color: var(--gm-primary);
+}
+.opt-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.opt-title {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  color: var(--gm-on-surface);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.gm-check {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  box-shadow: inset 0 0 0 2px var(--gm-on-surface-variant);
+  transition:
+    background var(--dur-fast) var(--effects),
+    box-shadow var(--dur-fast) var(--effects);
+}
+.opt.is-on .gm-check {
+  background: var(--gm-primary);
+  box-shadow: none;
+}
+.menu.opts .gm-check .ti {
+  font-size: 14px;
+  color: var(--gm-on-primary);
+}
+.menu-foot {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  margin: 6px -6px 0;
+  padding: 6px 6px 12px;
+  background: var(--gm-surface);
+  border-top: 1px solid var(--gm-outline-variant);
+}
+.menu.opts .menu-foot-action {
+  height: 44px;
+  gap: 12px;
+  padding: 0 10px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--gm-primary);
+}
+.menu.opts .menu-foot-action .ti {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  background: var(--gm-primary-container);
+  color: var(--gm-on-primary-container);
+  font-size: 17px;
+}
+.menu.opts .menu-foot-action:hover {
+  background: var(--gm-surface-1);
+}
+.menu-foot p {
+  margin: 4px 10px 0;
+  font-size: 12px;
+  line-height: 17px;
+  color: var(--gm-on-surface-variant);
+}
+.menu-empty {
+  margin: 4px 10px 8px;
+  font-size: 13px;
+  line-height: 19px;
+  color: var(--gm-on-surface-variant);
+}

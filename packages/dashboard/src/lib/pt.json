@@ -1,5 +1,13 @@
 {
   "texts": {
+    "Attach a file or use a skill": "Anexar um arquivo ou usar uma habilidade",
+    "No skills yet. A skill is a SKILL.md file in the skills/ folder, and any agent can use it.": "Nenhuma habilidade ainda. Uma habilidade é um arquivo SKILL.md na pasta skills/, e qualquer agente pode usar.",
+    "Waiting for sign-in, in Connectors": "Esperando o login, em Conectores",
+    "Waiting for its token, in Connectors": "Esperando o token, em Conectores",
+    "Failed, see Connectors": "Falhou, veja em Conectores",
+    "Not connected yet": "Ainda não conectado",
+    "No connections yet. Connect a service once and every agent can use it.": "Nenhuma conexão ainda. Conecte um serviço uma vez e todo agente pode usar.",
+    "The risk judge reads every action first. Sending, publishing and deleting ask until you allow them; paying and signing in always ask.": "O juiz de risco lê cada ação antes. Enviar, publicar e apagar perguntam até você liberar; pagar e entrar numa conta sempre perguntam.",
     "Describe the agent you need": "Descreva o agente de que você precisa",
     "Write what it should do, in your own words, and send it. The agent is born from that sentence, with its own folder, and starts right away.": "Escreva o que ele deve fazer, com as suas palavras, e envie. O agente nasce dessa frase, com a própria pasta, e começa na hora.",
     "“Review the open pull request on sign-in and list what could break.”": "“Revise o pull request aberto do login e liste o que pode quebrar.”",

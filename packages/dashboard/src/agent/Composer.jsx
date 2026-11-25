@@ -430,8 +430,8 @@ export function Composer({
     <button
       className="icon-btn"
       onClick={menu.open('plus')}
-      title="Attach, skill, or teach"
-      aria-label="Attach, skill, or teach"
+      title="Attach a file or use a skill"
+      aria-label="Attach a file or use a skill"
     >
       <i className="ti ti-plus" />
     </button>

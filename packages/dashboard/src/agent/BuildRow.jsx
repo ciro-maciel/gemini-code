@@ -13,6 +13,7 @@ import {
 import { botsChanged } from '../state/use-bots';
 import { notify } from '../components/zen';
 import { AgentAvatar } from '../shell/AgentAvatar';
+import { brandIconOf } from '../connectors/brand-icon';
 import { CheckOpt, Menu, Opt, useMenu } from '../ui/Menu';
 import { keepIfSame } from '../state/keep-if-same';
 import { refresh, remembered } from '../state/remembered';
@@ -25,11 +26,14 @@ export const EFFORTS = [
 ];
 const effortLabel = (id) =>
   EFFORTS.find(([key]) => key === id)?.[1] || 'Medium';
-const CLASS_SHORT = {
-  read: 'reads',
-  write: 'creates and changes drafts',
-  external: 'publishes, sends, pays, or deletes',
-};
+// A connection's line in the menu: what it opens, or what it waits for.
+const connectionNote = (connection) =>
+  ({
+    connected: `${connection.tools.length} ${connection.tools.length === 1 ? 'tool' : 'tools'}`,
+    pending_auth: 'Waiting for sign-in, in Connectors',
+    needs_secret: 'Waiting for its token, in Connectors',
+    failed: 'Failed, see Connectors',
+  })[connection.status] ?? 'Not connected yet';
 
 // keep: how long the chip keeps its words as the bar narrows ("long" goes last).
 function Chip({
@@ -295,41 +299,48 @@ export function BuildRow({
           anchor={menu.anchor}
           title="This agent's connections"
           search
-          width={340}
+          width={360}
           alignLeft
           onClose={menu.close}
+          footer={
+            <>
+              <button
+                className="menu-foot-action"
+                onClick={() => {
+                  menu.close();
+                  navigate('/connectors');
+                }}
+              >
+                <i className="ti ti-plus" />
+                Connect another app
+              </button>
+              <p>
+                The risk judge reads every action first. Sending, publishing and
+                deleting ask until you allow them; paying and signing in always
+                ask.
+              </p>
+            </>
+          }
         >
           {orderedConnections.map((connection) => (
             <CheckOpt
               key={connection.id}
               isOn={used.includes(connection)}
+              image={brandIconOf(
+                connection.title.toLowerCase().split(/[^a-z0-9]/)[0],
+              )}
+              icon="ti-plug"
               title={connection.title}
-              note={
-                connection.status === 'connected'
-                  ? `${connection.tools.length} tools`
-                  : 'needs connecting'
-              }
+              note={connectionNote(connection)}
               onClick={() => toggleConnection(connection)}
             />
           ))}
           {connections?.length === 0 && (
-            <p className="menu-note">No connections on this account yet.</p>
+            <p className="menu-empty">
+              No connections yet. Connect a service once and every agent can use
+              it.
+            </p>
           )}
-          <hr />
-          <button
-            onClick={() => {
-              menu.close();
-              navigate('/connectors');
-            }}
-          >
-            <i className="ti ti-plug-connected" />
-            Connect another app
-          </button>
-          <p className="menu-note">
-            What it does without asking only changes when someone taps Allow.
-            Paying and signing in always ask. Until:{' '}
-            {Object.values(CLASS_SHORT).join(' · ')}.
-          </p>
         </Menu>
       )}
       {menu.is('skills') && (
@@ -361,15 +372,13 @@ export function BuildRow({
                   note={skill.whenToUse}
                 />
               ))}
-          {bot.id && library === null && <p className="menu-note">Loading…</p>}
+          {bot.id && library === null && <p className="menu-empty">Loading…</p>}
           {(bot.id ? library?.length === 0 : shownSkills.length === 0) && (
-            <p className="menu-note">
-              No skills yet. Teach a task using the plus button.
+            <p className="menu-empty">
+              No skills yet. A skill is a SKILL.md file in the skills/ folder,
+              and any agent can use it.
             </p>
           )}
-          <p className="menu-note">
-            They live in skills/ and work for any agent.
-          </p>
         </Menu>
       )}
       {menu.is('brain') && (
