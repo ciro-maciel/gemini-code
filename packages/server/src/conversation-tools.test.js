@@ -13,13 +13,11 @@ const { db, now } = await import('./db.js');
 const { emitTaskEvent } = await import('./events.js');
 const { previewRewind, rewindTask } = await import('./engine/run.js');
 const { fetchBranch, listBranches } = await import('./branches.js');
-const { addBookmark, listBookmarks, removeBookmark } = await import(
-  './bookmarks.js'
-);
+const { addBookmark, listBookmarks, removeBookmark } =
+  await import('./bookmarks.js');
 const { markBotRead, markBotUnread } = await import('./bots.js');
-const { askSideQuestion, recentWork } = await import(
-  './engine/side-question.js'
-);
+const { askSideQuestion, recentWork } =
+  await import('./engine/side-question.js');
 
 const BOT = 'ct-bot';
 db.query(

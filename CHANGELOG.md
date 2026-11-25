@@ -13,6 +13,11 @@ version with its date.
 
 ### Changed
 
+- Minor and patch updates: @eslint/js 9.39.5, eslint-plugin-react-hooks 7.1.1,
+  Prettier 3.10.1 (with its formatting), @anthropic-ai/sdk 1.12.0,
+  @modelcontextprotocol/sdk 1.32.2, @mantine/notifications 8.3.18, Tabler icons
+  3.52.0, react-router-dom 7.18.6 and Vite 7.3.8 (2026-11-25).
+
 - Groups of agents: a new group exists only once it is named (a pill field,
   Enter keeps it, Escape gives up), an empty group says what to do with it,
   deleting asks in the standard dialog, and the side header lines up with its

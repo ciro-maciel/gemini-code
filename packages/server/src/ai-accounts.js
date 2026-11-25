@@ -187,8 +187,8 @@ export function isModelOf(accountId, aiAccountId, model) {
   const row = aiAccountId ? rowOf(accountId, aiAccountId) : null;
   return Boolean(
     row &&
-      talksInChat(row.provider) &&
-      JSON.parse(row.models || '[]').includes(model),
+    talksInChat(row.provider) &&
+    JSON.parse(row.models || '[]').includes(model),
   );
 }
 

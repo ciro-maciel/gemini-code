@@ -155,8 +155,8 @@ function ConnectionAction({ app, onChange }) {
     });
   const isAddressValid = Boolean(
     app.addressPrefix &&
-      address?.trim().startsWith(app.addressPrefix) &&
-      address.trim().length > app.addressPrefix.length,
+    address?.trim().startsWith(app.addressPrefix) &&
+    address.trim().length > app.addressPrefix.length,
   );
 
   if (connection?.status === 'connected')

@@ -11,9 +11,8 @@ process.env.ENCRYPTION_KEY ||= Buffer.alloc(32).toString('base64');
 
 const { db, now } = await import('./db.js');
 const { encrypt } = await import('./secrets.js');
-const { createTask, fetchTask, resolveApproval } = await import(
-  './engine/run.js'
-);
+const { createTask, fetchTask, resolveApproval } =
+  await import('./engine/run.js');
 
 // The agent of 31/10/2026 talked through OpenRouter: a provider in memory
 // answers each step from a script, as the stream OpenRouter sends, and keeps

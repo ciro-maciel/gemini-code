@@ -20,9 +20,8 @@ config.localWorkspaceDir = workspace;
 
 const { confirmationCode, rootOf, runFileOperation, stopWatching } =
   await import('./agent-files.js');
-const { answerFilesMcp, callFilesTool, filesGuide } = await import(
-  './mcp-files.js'
-);
+const { answerFilesMcp, callFilesTool, filesGuide } =
+  await import('./mcp-files.js');
 const { decide } = await import('./engine/policy.js');
 
 const bot = { id: 'files-bot-1', accountId: 'nobody' };

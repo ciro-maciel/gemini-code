@@ -10,9 +10,8 @@ process.env.SPRITES_TOKEN ||= 'test';
 process.env.ENCRYPTION_KEY ||= Buffer.alloc(32).toString('base64');
 
 const { db, now } = await import('./db.js');
-const { createApiKey, listApiKeys, revokeApiKey } = await import(
-  './api-keys.js'
-);
+const { createApiKey, listApiKeys, revokeApiKey } =
+  await import('./api-keys.js');
 const { authenticate } = await import('./auth.js');
 
 // 10/11/2026: the house engineering read the Assistant by borrowing the token of a Chrome tab.

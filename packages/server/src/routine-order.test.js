@@ -17,9 +17,8 @@ const { db, now } = await import('./db.js');
 const { encrypt } = await import('./secrets.js');
 const { fetchTask } = await import('./engine/run.js');
 const { decide } = await import('./engine/policy.js');
-const { createRoutine, fetchRoutine, updateRoutine } = await import(
-  './routines.js'
-);
+const { createRoutine, fetchRoutine, updateRoutine } =
+  await import('./routines.js');
 const { router, sendRoutineRun } = await import('./server.js');
 const { runBaseTool } = await import('./engine/tools.js');
 const { applyEdit } = await import('./repo.js');

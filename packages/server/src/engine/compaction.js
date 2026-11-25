@@ -39,8 +39,7 @@ const sizeOf = (message) =>
 export const shouldCompact = (tokens, window) =>
   Boolean(
     tokens &&
-      tokens >
-        Math.min(window ? window * COMPACT_AT : Infinity, WORKING_BUDGET),
+    tokens > Math.min(window ? window * COMPACT_AT : Infinity, WORKING_BUDGET),
   );
 
 /**
