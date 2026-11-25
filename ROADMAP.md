@@ -37,9 +37,15 @@ same layout and code style, on Bun and plain JavaScript.
 
 ## 4. Gemini CLI as an agent engine
 
-- [ ] An agent can run on `@google/gemini-cli-sdk` (`GeminiCliAgent`), next to
-      the Gemini API and the Google subscription, with its steps streaming into
-      the conversation.
+- [x] The subscription transport speaks ACP (`agy acp`), so every tool call the
+      agent wants to run asks Gemini Code first.
+- [ ] Blocked by Google for subscriptions: Gemini CLI's Google sign-in now
+      refuses Google AI Pro and Ultra ("no longer supported for Gemini Code
+      Assist for individuals ... migrate to the Antigravity suite"), and
+      `@google/gemini-cli-sdk` is not published on npm. Gemini CLI over ACP with
+      a Gemini API key remains possible.
+- [ ] Permission requests open an approval card when the rules alone cannot
+      decide, as Gemini Code's own tools do.
 
 ## 5. The official subscription API
 

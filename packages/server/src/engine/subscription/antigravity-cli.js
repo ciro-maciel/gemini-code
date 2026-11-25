@@ -1,23 +1,30 @@
 // Transport: Google's Antigravity CLI (`agy`), signed in with the person's own
 // Google AI Pro or Ultra subscription.
 //
-// This is the documented, supported way to use a subscription from a terminal
-// today: `agy -p` runs one prompt non-interactively with the cached sign-in,
-// and `--output-format stream-json` streams every step. Gemini Code starts it
-// as a child process in the agent's own folder and turns its events into the
-// agent's conversation.
+// Gemini Code drives `agy acp`, its Agent Client Protocol server, over stdio:
+// one session per agent task, run in the agent's own folder, with every text
+// piece and tool step streamed into the agent's conversation.
+//
+// The agent asks before acting. Every tool call `agy` wants to run arrives
+// as `session/request_permission` and is answered by permission.js: nothing
+// outside the agent's folder, and deleting waits for the person. This is what
+// the earlier print mode (`agy -p`) could not do: it ran its tools without
+// asking.
 //
 // Limits to know:
-// - `agy` is an agent with its own tools (write_file, run_command, ...). In
-//   print mode it runs them without asking, so Gemini Code's risk judge does
-//   not see them. It is therefore always started with `--sandbox` (terminal
-//   restrictions) and with its working directory set to the agent's folder.
 // - The subscription has a quota that resets in hours ("Individual quota
 //   reached ... Resets in 4h58m"); that is read into the state tree.
 // - Sign-in happens once, in `agy` itself (run `agy` and follow the browser
 //   step). Gemini Code never sees or stores the Google credentials.
+// - Gemini CLI no longer serves Google AI Pro or Ultra to third-party
+//   clients: on 25/11/2026 its sign-in answered "This client is no longer
+//   supported for Gemini Code Assist for individuals ... migrate to the
+//   Antigravity suite". Antigravity is the path Google points to.
 
 import { spawn } from 'node:child_process';
+
+import { createAcpClient } from './acp-client.js';
+import { decidePermission, outcomeFor } from './permission.js';
 
 export const id = 'antigravity-cli';
 
@@ -88,55 +95,6 @@ export function parseModels(text) {
     .map(([modelId, label]) => ({ id: modelId.trim(), label: label.trim() }));
 }
 
-/**
- * One line of `agy --output-format stream-json` -> a normalized event, or null.
- * Events: start, text, tool_start, tool_end, done.
- */
-export function parseEvent(line) {
-  let data;
-  try {
-    data = JSON.parse(line);
-  } catch {
-    return null;
-  }
-  if (data.event === 'init')
-    return {
-      type: 'start',
-      conversationId: data.conversation_id ?? null,
-      model: data.init?.model ?? null,
-    };
-  if (data.event === 'result') {
-    const result = data.result ?? {};
-    return {
-      type: 'done',
-      conversationId: result.conversation_id ?? null,
-      status: result.status ?? null,
-      text: result.response ?? '',
-      usage: result.usage ?? null,
-    };
-  }
-  const step = data.step_update;
-  if (data.event !== 'step_update' || !step) return null;
-  const stepId = `agy-${step.conversation_id ?? 'c'}-${step.step_index ?? 0}`;
-  if (step.step_type === 'agent_response' && step.text_delta)
-    return { type: 'text', text: step.text_delta };
-  if (step.step_type === 'tool' && step.state === 'ACTIVE')
-    return {
-      type: 'tool_start',
-      id: stepId,
-      name: step.tool_name,
-      args: step.tool_info?.parameters ?? {},
-    };
-  if (step.step_type === 'tool' && step.state === 'DONE')
-    return {
-      type: 'tool_end',
-      id: stepId,
-      name: step.tool_name,
-      output: String(step.tool_info?.output ?? ''),
-    };
-  return null;
-}
-
 /** Is `agy` installed and signed in, and which models does the subscription open? Fills the state tree. */
 export async function probe() {
   const version = await runOnce(['--version'], { timeoutMs: 10_000 });
@@ -187,88 +145,179 @@ export async function probe() {
   };
 }
 
+/** What an ACP update means to the conversation: text, a tool starting, or a tool ending. */
+export function eventOfUpdate(update, started) {
+  if (
+    update.sessionUpdate === 'agent_message_chunk' &&
+    update.content?.type === 'text'
+  )
+    return { type: 'text', text: update.content.text ?? '' };
+  if (
+    update.sessionUpdate === 'tool_call' ||
+    update.sessionUpdate === 'tool_call_update'
+  ) {
+    const id = update.toolCallId;
+    const name = update.name ?? update.title ?? update.kind ?? 'tool';
+    const isEnd = update.status === 'completed' || update.status === 'failed';
+    if (!started.has(id)) {
+      started.add(id);
+      if (!isEnd)
+        return {
+          type: 'tool_start',
+          id,
+          name,
+          args: update.args ?? update.rawInput ?? {},
+        };
+    }
+    if (isEnd)
+      return {
+        type: 'tool_end',
+        id,
+        name,
+        output: outputOf(update),
+      };
+  }
+  return null;
+}
+
+const outputOf = (update) => {
+  const parts = (update.content ?? [])
+    .map((item) => item?.content?.text ?? item?.text ?? '')
+    .filter(Boolean);
+  if (parts.length) return parts.join('\n');
+  if (update.rawOutput !== undefined)
+    return typeof update.rawOutput === 'string'
+      ? update.rawOutput
+      : JSON.stringify(update.rawOutput);
+  return update.status === 'failed' ? 'failed' : 'done';
+};
+
 /**
- * Runs one turn of an agent through `agy` in `cwd`. Streams events to
- * `onEvent` and resolves with { conversationId, text, status, usage, error }.
+ * Runs one turn of an agent through `agy acp` in `cwd`. Streams events to
+ * `onEvent` (text, tool_start, tool_end, permission) and resolves with
+ * { conversationId, text, status, usage, error }.
  */
-export function runTurn({
+export async function runTurn({
   prompt,
   model,
   cwd,
   conversationId = null,
   onEvent = () => {},
   signal = null,
+  decide = decidePermission,
 }) {
-  const args = ['-p', prompt, '--output-format', 'stream-json', '--sandbox'];
-  if (model) args.push('--model', model);
-  if (conversationId) args.push('--conversation', conversationId);
-  return new Promise((resolve) => {
-    let child;
-    try {
-      child = spawner(BIN, args, { cwd, env: process.env });
-    } catch (error) {
-      resolve({
-        conversationId,
-        text: '',
-        status: 'ERROR',
-        error: error.message,
-      });
-      return;
-    }
-    const stopChild = () => child.kill('SIGTERM');
-    signal?.addEventListener('abort', stopChild, { once: true });
-    let buffer = '';
-    let err = '';
-    let finished = null;
-    let text = '';
-    let seenConversation = conversationId;
-    child.stdout.on('data', (chunk) => {
-      buffer += chunk;
-      const lines = buffer.split('\n');
-      buffer = lines.pop();
-      for (const line of lines) {
-        const event = parseEvent(line.trim());
-        if (!event) continue;
-        if (event.conversationId) seenConversation = event.conversationId;
-        if (event.type === 'text') text += event.text;
-        if (event.type === 'done') finished = event;
-        onEvent(event);
-      }
-    });
-    child.stderr.on('data', (chunk) => (err += chunk));
-    child.on('error', (error) =>
-      resolve({
-        conversationId: seenConversation,
-        text,
-        status: 'ERROR',
-        error: error.message,
-      }),
-    );
-    child.on('close', (code) => {
-      signal?.removeEventListener('abort', stopChild);
-      if (signal?.aborted)
-        return resolve({
-          conversationId: seenConversation,
-          text,
-          status: 'CANCELLED',
-          error: null,
-        });
-      if (finished && finished.status === 'SUCCESS')
-        return resolve({
-          conversationId: seenConversation,
-          text: finished.text || text,
-          status: 'SUCCESS',
-          usage: finished.usage,
-          error: null,
-        });
-      const said = `${err}\n${finished?.text ?? ''}`.trim();
-      resolve({
-        conversationId: seenConversation,
-        text,
-        status: isQuotaText(said) ? 'QUOTA' : 'ERROR',
-        resetInMs: resetInMs(said),
-        error: said.slice(0, 400) || `agy exited ${code}`,
-      });
-    });
+  let child;
+  try {
+    child = spawner(BIN, ['acp'], { cwd, env: process.env });
+  } catch (error) {
+    return { conversationId, text: '', status: 'ERROR', error: error.message };
+  }
+  let err = '';
+  child.stderr?.on('data', (chunk) => (err += chunk));
+  const client = createAcpClient(child);
+  const started = new Set();
+  let text = '';
+  let sessionId = conversationId;
+
+  client.onNotification('session/update', ({ update } = {}) => {
+    if (!update) return;
+    const event = eventOfUpdate(update, started);
+    if (!event) return;
+    if (event.type === 'text') text += event.text;
+    onEvent(event);
   });
+  client.onRequest(
+    'session/request_permission',
+    ({ toolCall = {}, options = [] } = {}) => {
+      const decision = decide(toolCall, cwd);
+      onEvent({
+        type: 'permission',
+        id: toolCall.toolCallId,
+        name: toolCall.name ?? toolCall.title ?? toolCall.kind ?? 'tool',
+        kind: toolCall.kind ?? 'other',
+        isAllowed: decision.isAllowed,
+        reason: decision.reason,
+      });
+      return outcomeFor(decision, options);
+    },
+  );
+
+  const cancel = () => {
+    if (sessionId) client.notify('session/cancel', { sessionId });
+    setTimeout(() => client.close(), 500);
+  };
+  signal?.addEventListener('abort', cancel, { once: true });
+
+  try {
+    await client.request('initialize', {
+      protocolVersion: 1,
+      clientCapabilities: { fs: { readTextFile: false, writeTextFile: false } },
+    });
+    if (sessionId) {
+      try {
+        await client.request('session/load', {
+          sessionId,
+          cwd,
+          mcpServers: [],
+        });
+      } catch {
+        sessionId = null;
+      }
+    }
+    if (!sessionId) {
+      const created = await client.request('session/new', {
+        cwd,
+        mcpServers: [],
+      });
+      sessionId = created.sessionId;
+    }
+    if (model) {
+      try {
+        await client.request('session/set_model', {
+          sessionId,
+          modelId: model,
+        });
+      } catch {
+        // An agent without model switching keeps its own default.
+      }
+    }
+    const result = await client.request('session/prompt', {
+      sessionId,
+      prompt: [{ type: 'text', text: prompt }],
+    });
+    if (signal?.aborted)
+      return {
+        conversationId: sessionId,
+        text,
+        status: 'CANCELLED',
+        error: null,
+      };
+    return {
+      conversationId: sessionId,
+      text,
+      status: 'SUCCESS',
+      stopReason: result?.stopReason ?? null,
+      usage: result?.usage ?? null,
+      error: null,
+    };
+  } catch (error) {
+    if (signal?.aborted)
+      return {
+        conversationId: sessionId,
+        text,
+        status: 'CANCELLED',
+        error: null,
+      };
+    const said = `${error.message}\n${err}`.trim();
+    return {
+      conversationId: sessionId,
+      text,
+      status: isQuotaText(said) ? 'QUOTA' : 'ERROR',
+      resetInMs: resetInMs(said),
+      error: said.slice(0, 400),
+    };
+  } finally {
+    signal?.removeEventListener('abort', cancel);
+    client.close();
+  }
 }

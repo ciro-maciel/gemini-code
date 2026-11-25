@@ -1250,7 +1250,8 @@
     "to open": "para abrir",
     "to close": "para fechar",
     "running": "rodando",
-    "finished": "terminou"
+    "finished": "terminou",
+    "deleting waits for the person: say what should be deleted and why, and the person deletes it": "apagar espera a pessoa: diga o que deve ser apagado e por quê, e a pessoa apaga"
   },
   "patterns": {
     "The server failed to respond (error {0}). Try again in a moment; if it happens again, reload the page.": "A central falhou ao responder (erro {0}). Tente de novo em um instante; se repetir, recarregue a página.",
@@ -1526,6 +1527,8 @@
     "Change my instructions: {0}": "Mudar as minhas instruções: {0}",
     "Delete {0} from the repository": "Apagar {0} do repositório",
     "I could not assess the risk ({0})": "não consegui avaliar o risco ({0})",
-    "Nothing matches “{0}”.": "Nada com “{0}”."
+    "Nothing matches “{0}”.": "Nada com “{0}”.",
+    "Refused {0}: {1}": "Recusei {0}: {1}",
+    "{0} is outside the agent folder; work only inside it": "{0} fica fora da pasta do agente; trabalhe só dentro dela"
   }
 }
