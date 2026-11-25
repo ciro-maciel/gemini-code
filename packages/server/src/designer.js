@@ -37,7 +37,7 @@ export async function designBot(description) {
     maxTokens: 2500,
   });
   if (!value?.name || !value?.instructions)
-    throw new Error('não consegui desenhar esse bot; descreva de outro jeito');
+    throw new Error('I could not design that bot; describe it another way');
   return {
     design: {
       name: String(value.name).slice(0, 60),

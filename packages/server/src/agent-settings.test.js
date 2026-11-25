@@ -46,7 +46,7 @@ describe('what each agent chooses', () => {
       templateId: 'sdr',
     });
     expect(() => bots.updateBotSettings('s-1', { effort: 'extreme' })).toThrow(
-      'esforço',
+      'effort',
     );
     expect(() =>
       bots.updateBotSettings('s-1', { folder: '../../etc' }),
@@ -88,7 +88,7 @@ describe('what each agent chooses', () => {
     });
     expect(() =>
       bots.updateBotSettings('s-4', { aiAccount: account.id }),
-    ).toThrow('conta de IA');
+    ).toThrow('AI account');
     bots.updateBotSettings('s-3', { aiAccount: account.id });
     expect((await openVault('s-3')).CLAUDE_CODE_OAUTH_TOKEN).toBe(
       'sk-ant-oat-secret-token',
@@ -133,7 +133,7 @@ describe('what each agent chooses', () => {
         { provider: 'openai', token: 'sk-bad' },
         fakeOpenAi,
       ),
-    ).rejects.toThrow('a chave não abriu');
+    ).rejects.toThrow('the key did not open');
     const openai = await ai.createAiAccount(
       'acc-s',
       { provider: 'openai', token: 'sk-good' },
@@ -156,7 +156,7 @@ describe('what each agent chooses', () => {
     ]);
     expect(() =>
       bots.updateBotSettings('s-5', { aiAccount: openai.id, model: 'gpt-6' }),
-    ).toThrow('fora da lista');
+    ).toThrow('not in the list');
     ai.setAccountModels('acc-s', openai.id, ['gpt-6']);
     expect(ai.brainsFor('acc-s').at(-1)).toMatchObject({
       account: { id: openai.id, provider: 'openai' },

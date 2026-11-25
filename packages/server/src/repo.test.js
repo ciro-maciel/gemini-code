@@ -161,14 +161,10 @@ describe('the person repository', () => {
     );
     expect(files()['apagar-nao/c.md']).toBe('c');
     await expect(repo.removePath('acc-r', 'agents')).rejects.toThrow(
-      'pelo painel',
+      'from the dashboard',
     );
-    await expect(repo.removePath('acc-r', 'a/../b')).rejects.toThrow(
-      'inválido',
-    );
-    await expect(repo.removePath('acc-r', 'apagar')).rejects.toThrow(
-      'desconhecida',
-    );
+    await expect(repo.removePath('acc-r', 'a/../b')).rejects.toThrow('invalid');
+    await expect(repo.removePath('acc-r', 'apagar')).rejects.toThrow('unknown');
   });
 
   test('every commit tells the account panels at once, and only that account', async () => {
@@ -202,17 +198,17 @@ describe('the person repository', () => {
       repo.uploadFiles('acc-r', 'agents/x', [
         { name: 'a.md', bytes: Buffer.from('a') },
       ]),
-    ).rejects.toThrow('pasta de trabalho');
+    ).rejects.toThrow('work folder');
     await expect(
       repo.uploadFiles('acc-r', 'videos', [
         { name: '../a.md', bytes: Buffer.from('a') },
       ]),
-    ).rejects.toThrow('inválido');
+    ).rejects.toThrow('invalid');
     await expect(
       repo.renameFolder('acc-r', 'skills', 'habilidades'),
-    ).rejects.toThrow('pelo painel');
+    ).rejects.toThrow('from the dashboard');
     await expect(repo.renameFolder('acc-r', 'nada', 'outra')).rejects.toThrow(
-      'desconhecida',
+      'unknown',
     );
   });
 });

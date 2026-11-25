@@ -1170,7 +1170,7 @@ async function requestApproval(bot, task, call, args, verdict) {
       );
     } catch (error) {
       emitTaskEvent(task.id, 'warning', {
-        message: `não consegui criar o checkpoint: ${error.message}`,
+        message: `I could not create the checkpoint: ${error.message}`,
       });
     }
   }
@@ -1406,7 +1406,7 @@ async function loop(taskId, resolution) {
     }
     if (!chatAccount) {
       const block =
-        'Este agente ainda não tem conta de IA. Ligue a chave de um provedor em Configurações, Contas de IA, escolha os modelos e depois escolha um no chip de modelo deste agente.';
+        "This agent has no AI account yet. Add a provider key in Settings, AI Accounts, choose the models, then pick one in this agent's model chip.";
       emitTaskEvent(taskId, 'warning', { message: block });
       setStatus(taskId, 'waiting_user', {
         waiting_reason: 'limit',
@@ -1675,7 +1675,7 @@ async function loop(taskId, resolution) {
     }
   }
 
-  const question = `Dei ${STEPS_PER_RUN} passos sem terminar e parei para não gastar à toa. Quer que eu continue de onde parei, ou prefere mudar o pedido?`;
+  const question = `I took ${STEPS_PER_RUN} steps without finishing and stopped so as not to spend for nothing. Should I continue where I stopped, or would you rather change the request?`;
   recordFailure({
     botId: bot.id,
     taskId,
@@ -1753,7 +1753,7 @@ async function runTurnOnSubscription(taskId, bot, messages) {
     return;
   }
   if (answer.status === 'SUCCESS') {
-    const text = withoutEmoji(answer.text).trim() || 'Feito.';
+    const text = withoutEmoji(answer.text).trim() || 'Done.';
     appendMessage(taskId, { role: 'assistant', content: text });
     emitTaskEvent(taskId, 'assistant', { text, isFinal: true, turnId });
     setStatus(taskId, 'done', { result: text, finished_at: now() });
@@ -1765,8 +1765,8 @@ async function runTurnOnSubscription(taskId, bot, messages) {
     : null;
   const block =
     answer.status === 'QUOTA'
-      ? `A cota da sua assinatura Google acabou${hours ? ` e volta em cerca de ${hours} h` : ''}. Troque o modelo deste agente para um da chave da API Gemini para continuar agora.`
-      : `A assinatura Google não respondeu: ${answer.error || 'motivo desconhecido'}`;
+      ? `Your Google subscription quota ran out${hours ? ` and comes back in about ${hours} h` : ''}. Switch this agent's model to one on the Gemini API key to continue now.`
+      : `The Google subscription did not answer: ${answer.error || 'unknown reason'}`;
   recordFailure({
     botId: bot.id,
     taskId,
@@ -1824,7 +1824,7 @@ async function reportNewFiles(taskId, botId, sinceSeconds) {
     if (files.length) emitTaskEvent(taskId, 'files', { files });
     for (const conflict of conflicts)
       emitTaskEvent(taskId, 'warning', {
-        message: `${conflict.path} mudou no repositório enquanto eu trabalhava. A minha versão ficou ao lado, em ${conflict.beside}: as duas estão lá pra você escolher.`,
+        message: `${conflict.path} changed in the repository while I was working. My version is next to it, in ${conflict.beside}: both are there for you to choose.`,
       });
   } catch (error) {
     console.error(`files ${taskId}`, error.message);
@@ -1856,7 +1856,7 @@ export async function compactTask(taskId, bot, chatAccount, messages) {
   });
   emitTaskEvent(taskId, 'warning', {
     message:
-      'Resumi o começo da conversa para o agente seguir rápido. Aqui ela continua inteira.',
+      'I summarized the start of the conversation so the agent keeps going fast. Here it stays whole.',
   });
   return true;
 }
@@ -2111,7 +2111,7 @@ export async function resolveApproval(
       "SELECT * FROM approvals WHERE id = ? AND task_id = ? AND status = 'pending'",
     )
     .get(approvalId, taskId);
-  if (!approval) throw new Error('esta aprovação não está mais pendente');
+  if (!approval) throw new Error('this approval is no longer pending');
   // "Ask first" wins: money and accounts never get a standing permission; the approval covers the task at most.
   const reach = reachOf(
     isApproved,
@@ -2242,7 +2242,7 @@ export function answerTask(
 ) {
   const task = fetchTask(taskId);
   if (task.status !== 'waiting_user')
-    throw new Error('a tarefa não está esperando resposta');
+    throw new Error('the task is not waiting for an answer');
   emitTaskEvent(taskId, 'user_message', {
     text: answer,
     messageSeq: nextSeq(taskId),
@@ -2286,8 +2286,7 @@ const shownAttachments = (attachments) =>
 /** A follow-up message on a finished task continues the same conversation. */
 export function continueTask(taskId, text) {
   const task = fetchTask(taskId);
-  if (!STOPPED.has(task.status))
-    throw new Error('a tarefa ainda está em andamento');
+  if (!STOPPED.has(task.status)) throw new Error('the task is still running');
   updateTask(taskId, { finished_at: null, error: null });
   schedule(taskId, { kind: 'note', note: text });
 }
@@ -2462,7 +2461,7 @@ export function sendBotMessage(botId, text, meta = {}) {
 export function retryTask(taskId) {
   const task = fetchTask(taskId);
   if (task.status !== 'failed')
-    throw new Error('só uma tarefa que falhou pode ser repetida');
+    throw new Error('only a failed task can be retried');
   updateTask(taskId, { error: null, finished_at: null });
   schedule(taskId);
 }
@@ -2618,7 +2617,7 @@ const photoAfter = (ids, createdAt) =>
  */
 export function previewRewind(taskId, eventId) {
   const event = findUserMessage(taskId, eventId);
-  if (!event) throw new Error('esta mensagem não está nesta conversa');
+  if (!event) throw new Error('this message is not in this conversation');
   const task = fetchTask(taskId);
   const later = laterTasksOf(task.botId, taskId);
   const counts = db
@@ -2639,7 +2638,7 @@ export function previewRewind(taskId, eventId) {
 
 export async function rewindTask(taskId, eventId) {
   const event = findUserMessage(taskId, eventId);
-  if (!event) throw new Error('esta mensagem não está nesta conversa');
+  if (!event) throw new Error('this message is not in this conversation');
   const data = JSON.parse(event.data);
   const task = fetchTask(taskId);
   const later = laterTasksOf(task.botId, taskId);
@@ -2656,7 +2655,7 @@ export async function rewindTask(taskId, eventId) {
     : seqOfUserText(taskId, data.text);
   if (seq === null)
     throw new Error(
-      'não achei este ponto na memória do bot; volte para uma mensagem mais recente',
+      "I could not find this point in the bot's memory; go back to a more recent message",
     );
 
   // The computer goes back too: the first photo of its disk taken after this
@@ -2709,7 +2708,7 @@ export async function rewindTask(taskId, eventId) {
       isDiskRestored = true;
     } catch (error) {
       emitTaskEvent(taskId, 'warning', {
-        message: `a conversa voltou, mas o computador não: ${error.message}`,
+        message: `the conversation went back, but the computer did not: ${error.message}`,
       });
     }
   }

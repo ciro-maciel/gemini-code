@@ -67,6 +67,6 @@ test('a Chrome that does not answer is not linked', async () => {
   );
   expect(browser.userBrowserOf('acc-c')).toEqual({ isLinked: false });
   await expect(browser.callUserBrowser('acc-c', 'tabs')).rejects.toThrow(
-    'não está ligado',
+    'is not connected',
   );
 });

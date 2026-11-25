@@ -38,7 +38,7 @@ export function setSkillUse(botId, skillId, isUsed) {
       'SELECT skills.id FROM skills JOIN bots ON bots.account_id = skills.account_id WHERE skills.id = ? AND bots.id = ?',
     )
     .get(skillId, botId);
-  if (!skill) throw new Error('habilidade desconhecida nesta conta');
+  if (!skill) throw new Error('unknown skill in this account');
   if (isUsed)
     db.query(
       'INSERT OR IGNORE INTO bot_skills (bot_id, skill_id) VALUES (?, ?)',
@@ -114,7 +114,7 @@ export function createSkill({ botId, name, whenToUse, steps }) {
 const cleanName = (name) =>
   String(name || '')
     .trim()
-    .slice(0, 80) || 'Tarefa ensinada';
+    .slice(0, 80) || 'Taught task';
 
 export function updateSkill(skillId, { name, whenToUse, steps }) {
   const fields = {};
@@ -160,7 +160,9 @@ export async function startTeaching(bot, name) {
     signal: AbortSignal.timeout(60_000),
   });
   if (!response.ok)
-    throw new Error(`o computador não começou a gravar (${response.status})`);
+    throw new Error(
+      `the computer did not start recording (${response.status})`,
+    );
   const session = { name: cleanName(name), startedAt: Date.now() };
   sessions.set(bot.id, session);
   return session;
@@ -174,7 +176,7 @@ async function stopRecording(bot) {
   });
   if (!response.ok)
     throw new Error(
-      `o computador não devolveu a gravação (${response.status})`,
+      `the computer did not return the recording (${response.status})`,
     );
   return response.json();
 }
@@ -213,11 +215,12 @@ function describeSteps(steps) {
 /** Ends the recording and writes the skill from it. Returns { skill, cost }. */
 export async function finishTeaching(bot, { narration = '' } = {}) {
   const session = sessions.get(bot.id);
-  if (!session) throw new Error('não há gravação em andamento neste bot');
+  if (!session)
+    throw new Error('there is no recording in progress on this bot');
   const recording = await stopRecording(bot);
   if (!recording.steps?.length && !narration.trim())
     throw new Error(
-      'a gravação ficou vazia: nenhum passo no navegador e nenhuma narração',
+      'the recording is empty: no browser steps and no narration',
     );
   const content = [
     {

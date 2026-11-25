@@ -254,8 +254,7 @@ export function fetchToolPolicyRow(botId, toolName) {
 }
 
 export function setToolPolicy(botId, toolName, policy, origin = {}) {
-  if (!POLICIES.includes(policy))
-    throw new Error(`política desconhecida: ${policy}`);
+  if (!POLICIES.includes(policy)) throw new Error(`unknown policy: ${policy}`);
   db.query(
     'INSERT INTO tool_policies (bot_id, tool_name, policy, approval_id, granted_by, granted_at, summary) VALUES (?, ?, ?, ?, ?, ?, ?) ON CONFLICT (bot_id, tool_name) DO UPDATE SET policy = excluded.policy, approval_id = excluded.approval_id, granted_by = excluded.granted_by, granted_at = excluded.granted_at, summary = excluded.summary',
   ).run(
@@ -329,13 +328,13 @@ export const CLASS_LABELS = {
   external: 'publicar, enviar, pagar ou apagar',
 };
 export const KIND_LABELS = {
-  send: 'enviar mensagens',
-  pay: 'pagar ou comprar',
-  delete: 'apagar ou sobrescrever',
-  publish: 'publicar ou fazer deploy',
-  form: 'enviar formulários',
-  auth: 'entrar em serviços',
-  other: 'ações deste tipo',
+  send: 'send messages',
+  pay: 'pay or buy',
+  delete: 'delete or overwrite',
+  publish: 'publish or deploy',
+  form: 'send forms',
+  auth: 'sign in to services',
+  other: 'actions of this kind',
 };
 
 export const serviceGrantKey = (connectionId, cls) =>
@@ -412,9 +411,9 @@ export function openBatch(grants, key, reach, grant = {}) {
 /** The sentence the card adds when a cover ran out or a refusal stands. */
 export function askAgainReason(coverage) {
   if (coverage?.exhausted)
-    return `a aprovação "${coverage.exhausted.summary}" já cobriu ${coverage.exhausted.uses} ações nesta tarefa; confirme para seguir`;
+    return `the approval "${coverage.exhausted.summary}" already covered ${coverage.exhausted.uses} actions in this task; confirm to continue`;
   if (coverage?.refused)
-    return `você recusou isto${coverage.refused.granted_at ? ` em ${dayOf(coverage.refused.granted_at)}` : ''}${coverage.refused.summary ? `: ${coverage.refused.summary}` : ''}`;
+    return `you declined this${coverage.refused.granted_at ? ` on ${dayOf(coverage.refused.granted_at)}` : ''}${coverage.refused.summary ? `: ${coverage.refused.summary}` : ''}`;
   return null;
 }
 
@@ -423,10 +422,10 @@ const covered = (coverage, summary) => ({
   summary,
   reason:
     coverage.by === 'task'
-      ? `coberta pela aprovação "${coverage.summary}" nesta tarefa`
+      ? `covered by the approval "${coverage.summary}" in this task`
       : coverage.summary
-        ? `sempre permitida neste bot desde a aprovação "${coverage.summary}"${coverage.grantedAt ? ` em ${dayOf(coverage.grantedAt)}` : ''}`
-        : 'sempre permitida neste bot',
+        ? `always allowed on this bot since the approval "${coverage.summary}"${coverage.grantedAt ? ` on ${dayOf(coverage.grantedAt)}` : ''}`
+        : 'always allowed on this bot',
   cost: 0,
   rule: 'granted',
   approvalId: coverage.approvalId ?? null,
@@ -471,7 +470,7 @@ const orderedLine = (mandate) =>
 const ordered = (summary, mandate, extra) => ({
   decision: 'run',
   summary,
-  reason: `você mandou: "${mandate.replace(/\s+/g, ' ').slice(0, 140)}"`,
+  reason: `you said: "${mandate.replace(/\s+/g, ' ').slice(0, 140)}"`,
   cost: 0,
   rule: 'ordered',
   ...extra,
@@ -510,7 +509,7 @@ export async function decide({
     return {
       decision: 'refuse',
       summary: toolName,
-      reason: 'esta ferramenta é só para humanos neste bot',
+      reason: 'this tool is for people only on this bot',
       cost: 0,
       rule: 'human',
     };
@@ -526,7 +525,7 @@ export async function decide({
     return {
       decision: 'ask',
       summary: `Usar ${toolName}`,
-      reason: 'você pediu para confirmar esta ferramenta',
+      reason: 'you asked to confirm this tool',
       cost: 0,
       rule: 'confirm',
     };
@@ -543,8 +542,8 @@ export async function decide({
   if (toolName === 'files_delete')
     return {
       decision: 'ask',
-      summary: `Apagar ${String(args?.path ?? '').slice(0, 200)} da pasta do agente`,
-      reason: 'apagar não tem volta',
+      summary: `Delete ${String(args?.path ?? '').slice(0, 200)} from the agent folder`,
+      reason: 'deleting cannot be undone',
       cost: 0,
       rule: 'files_delete',
       kind: 'delete',
@@ -556,7 +555,7 @@ export async function decide({
       : `Acrescentar: "${String(args?.replace).slice(0, 800)}"`;
     return {
       decision: 'ask',
-      summary: `Mudar as minhas instruções: ${String(args?.reason ?? '').slice(0, 200)}`,
+      summary: `Change my instructions: ${String(args?.reason ?? '').slice(0, 200)}`,
       reason: change,
       cost: 0,
       rule: 'instructions',
@@ -590,8 +589,8 @@ export async function decide({
         rule: 'read',
       };
     const reason = destructiveHint
-      ? 'o serviço marca esta ação como destrutiva'
-      : 'esta ação altera dados no serviço';
+      ? 'the service marks this action as destructive'
+      : 'this action changes data in the service';
     const service = connectedTool.serviceTitle;
     // Something the service marks destructive is external whatever the
     // judge says; the rest the judge classes, reading the call. The card
@@ -684,9 +683,9 @@ export async function decide({
   if (toolName === 'file_delete')
     return {
       decision: 'ask',
-      summary: `Apagar ${args?.path || 'um arquivo'} do repositório`,
+      summary: `Delete ${args?.path || 'a file'} from the repository`,
       reason:
-        'o arquivo sai do repositório; o histórico do GitHub guarda a versão anterior',
+        'the file leaves the repository; the GitHub history keeps the previous version',
       cost: 0,
       rule: 'delete',
     };
@@ -694,7 +693,7 @@ export async function decide({
     return {
       decision: 'ask',
       summary: `Usar ${toolName}`,
-      reason: 'ferramenta sem política conhecida',
+      reason: 'tool without a known policy',
       cost: 0,
       rule: 'unknown',
     };
@@ -753,7 +752,8 @@ export async function decide({
           grantKey,
         });
       const again = askAgainReason(coverage);
-      const reason = value.reason || 'ação que sai para fora ou não tem volta';
+      const reason =
+        value.reason || 'an action that goes outside or cannot be undone';
       return {
         decision: 'ask',
         summary: value.summary || toolName,
@@ -778,7 +778,7 @@ export async function decide({
     return {
       decision: 'ask',
       summary: `${toolName} ${JSON.stringify(args).slice(0, 120)}`,
-      reason: `não consegui avaliar o risco (${error.message.slice(0, 120)})`,
+      reason: `I could not assess the risk (${error.message.slice(0, 120)})`,
       cost: 0,
       rule: 'judge_unavailable',
     };

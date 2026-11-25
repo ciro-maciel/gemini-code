@@ -61,10 +61,10 @@ function uniqueComputerPath(botId, name) {
 
 export async function saveAttachment(botId, file) {
   if (!file || typeof file.arrayBuffer !== 'function')
-    throw new Error('mande o arquivo no campo "file"');
+    throw new Error('send the file in the "file" field');
   if (file.size > config.attachmentMaxBytes)
     throw new Error(
-      `cada arquivo pode ter até ${config.attachmentMaxBytes / 1024 / 1024} MB`,
+      `each file can be up to ${config.attachmentMaxBytes / 1024 / 1024} MB`,
     );
   const id = newId();
   const name = safeName(file.name);

@@ -77,9 +77,9 @@ export async function createAiAccount(
   { provider = 'claude-code', name, token },
   fetcher = fetch,
 ) {
-  if (!providerOf(provider)) throw new Error('provedor desconhecido');
+  if (!providerOf(provider)) throw new Error('unknown provider');
   const cleanToken = String(token || '').trim();
-  if (!cleanToken) throw new Error('cole a chave da conta');
+  if (!cleanToken) throw new Error('paste the account key');
   const cleanName =
     String(name || '')
       .trim()
@@ -121,8 +121,8 @@ export function setAccountModels(accountId, id, models) {
   const row = rowOf(accountId, id);
   if (!row) return null;
   if (!isChatProvider(row.provider))
-    throw new Error('essa conta não tem modelos de conversa');
-  if (!Array.isArray(models)) throw new Error('models é uma lista');
+    throw new Error('this account has no chat models');
+  if (!Array.isArray(models)) throw new Error('models is a list');
   const clean = [
     ...new Set(
       models

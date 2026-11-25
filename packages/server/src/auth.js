@@ -44,7 +44,7 @@ async function verify(token) {
     ...(config.authIssuer ? { issuer: config.authIssuer } : {}),
   };
   const { payload } = await jwtVerify(token, keySet, options);
-  if (!payload.sub) throw new Error('token sem sub');
+  if (!payload.sub) throw new Error('token without sub');
   const claims = {
     id: String(payload.sub),
     email: payload.email || null,
@@ -116,11 +116,7 @@ export async function authenticate(req, url, { allowPending = false } = {}) {
   if (key) {
     const owner = accountForApiKey(key);
     if (!owner)
-      throw new HttpError(
-        401,
-        'UNAUTHORIZED',
-        'Chave de API desconhecida ou revogada.',
-      );
+      throw new HttpError(401, 'UNAUTHORIZED', 'Unknown or revoked API key.');
     if (owner.status !== 'active')
       throw new HttpError(
         403,

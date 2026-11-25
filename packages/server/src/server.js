@@ -287,21 +287,21 @@ const isGuestRoute = (method, pathname) =>
 function requireBot(id, account, need = 'owner') {
   const bot = fetchBot(id);
   const access = accessOf(bot, account);
-  if (!access) throw notFound('bot desconhecido');
+  if (!access) throw notFound('unknown bot');
   if (!allows(access, need))
     throw new HttpError(
       403,
       'FORBIDDEN',
       need === 'enter'
-        ? 'você só acompanha este agente'
-        : 'só quem criou o agente muda isso',
+        ? 'you only follow this agent'
+        : 'only whoever created the agent can change this',
     );
   return bot;
 }
 
 function requireTask(id, account, need = 'owner') {
   const task = fetchTask(id);
-  if (!task) throw notFound('tarefa desconhecida');
+  if (!task) throw notFound('unknown task');
   requireBot(task.botId, account, need);
   return task;
 }
@@ -309,20 +309,20 @@ function requireTask(id, account, need = 'owner') {
 function requireConnection(id, account) {
   const connection = fetchConnection(id);
   if (!connection || connection.accountId !== account.id)
-    throw notFound('conexão desconhecida');
+    throw notFound('unknown connection');
   return connection;
 }
 
 function requireRoutine(id, account) {
   const routine = fetchRoutine(id);
-  if (!routine) throw notFound('rotina desconhecida');
+  if (!routine) throw notFound('unknown routine');
   requireBot(routine.botId, account);
   return routine;
 }
 
 function requireOwner(account) {
   if (!account.isOwner)
-    throw new HttpError(403, 'FORBIDDEN', 'só o dono vê esta tela');
+    throw new HttpError(403, 'FORBIDDEN', 'only the owner sees this screen');
 }
 
 function withApprovals(task) {
@@ -368,7 +368,7 @@ router.get('/api/overview', ({ account }) => {
 // enforces, the plan's number is the only ceiling; while PLAN_LIMITS is "off" (or Payments is silent) the
 // old one (config.limits.botsPerAccount) still holds, and the plan is still read and shown.
 const plan = createPlan({ product: 'assistant' });
-const AGENT = { one: 'agente', many: 'agentes' };
+const AGENT = { one: 'agent', many: 'agents' };
 
 async function requireRoomForAgent(account) {
   if (account.isOwner) return;
@@ -384,7 +384,7 @@ async function requireRoomForAgent(account) {
     throw new HttpError(
       409,
       'PLAN_LIMIT',
-      `Cada conta tem até ${config.limits.botsPerAccount} bots. Apague um para criar outro.`,
+      `Each account has up to ${config.limits.botsPerAccount} bots. Delete one to create another.`,
     );
 }
 
@@ -454,7 +454,7 @@ router.patch('/api/accounts/:id', async ({ req, params, account }) => {
   try {
     const before = fetchAccount(params.id);
     const updated = setAccountStatus(params.id, status);
-    if (!updated) throw notFound('conta desconhecida');
+    if (!updated) throw notFound('unknown account');
     if (before?.status === 'pending' && updated.status === 'active')
       buildFirstBot(updated);
     return json(updated);
@@ -494,9 +494,9 @@ router.get('/api/push', ({ account }) =>
 
 router.put('/api/push', async ({ req, account }) => {
   if (!isPushReady())
-    throw invalid('os avisos no celular ainda não estão ligados nesta central');
+    throw invalid('phone notifications are not set up on this server yet');
   if (!savePushSubscription(account.id, await readBody(req)))
-    throw invalid('inscrição inválida');
+    throw invalid('invalid subscription');
   return json({ devices: countPushSubscriptions(account.id) });
 });
 
@@ -538,7 +538,7 @@ router.put('/api/bots/:id/members', async ({ req, params, account }) => {
 router.delete('/api/bots/:id/members/:email', ({ params, account }) => {
   requireBot(params.id, account);
   if (!unshareBot(params.id, decodeURIComponent(params.email)))
-    throw notFound('essa pessoa já não está no agente');
+    throw notFound('that person is no longer in the agent');
   publishBot(params.id, 'members', {
     email: decodeURIComponent(params.email).toLowerCase(),
   });
@@ -552,7 +552,7 @@ router.post('/api/bots', async ({ req, account }) => {
   const template = body.templateId
     ? fetchTemplate(account.id, body.templateId)
     : null;
-  if (body.templateId && !template) throw invalid('modelo desconhecido');
+  if (body.templateId && !template) throw invalid('unknown template');
   const bot = createBot({
     accountId: account.id,
     name: body.name || template?.name,
@@ -607,8 +607,7 @@ router.post('/api/templates', async ({ req, account }) => {
 
 // Editing a house template keeps the account's own copy under the same id.
 router.patch('/api/templates/:id', async ({ req, params, account }) => {
-  if (!fetchTemplate(account.id, params.id))
-    throw notFound('modelo desconhecido');
+  if (!fetchTemplate(account.id, params.id)) throw notFound('unknown template');
   try {
     return json(
       saveTemplate(account.id, { ...(await readBody(req)), id: params.id }),
@@ -620,7 +619,7 @@ router.patch('/api/templates/:id', async ({ req, params, account }) => {
 
 router.delete('/api/templates/:id', ({ params, account }) => {
   if (!deleteTemplate(account.id, params.id))
-    throw notFound('modelo da conta desconhecido');
+    throw notFound('unknown account template');
   return json({ id: params.id, isDeleted: true });
 });
 
@@ -629,7 +628,7 @@ router.delete('/api/templates/:id', ({ params, account }) => {
 router.post('/api/bots/design', async ({ req, account }) => {
   const { description } = await readBody(req);
   if (!String(description || '').trim())
-    throw invalid('diga o que o bot deve fazer');
+    throw invalid('say what the bot should do');
   await requireRoomForAgent(account);
   try {
     return json(await buildDesignedBot(account.id, description), 201);
@@ -726,7 +725,7 @@ router.put('/api/bots/:id/documents', async ({ req, params, account }) => {
   const bot = requireBot(params.id, account, 'enter');
   const { path: docPath, content } = await readBody(req);
   if (!docPath || typeof content !== 'string')
-    throw invalid('diga o documento e o conteúdo');
+    throw invalid('say the document and its content');
   try {
     return json(await saveAgentDocument(bot, bot.accountId, docPath, content));
   } catch (error) {
@@ -744,10 +743,10 @@ router.post(
       : [];
     if (!files.length)
       throw invalid(
-        'mande os arquivos como multipart/form-data, no campo "file"',
+        'send the files as multipart/form-data, in the "file" field',
       );
     if (files.some((file) => file.size > MAX_FILE_BYTES))
-      throw invalid('arquivo acima de 50 MB fica fora do repositório');
+      throw invalid('a file over 50 MB stays out of the repository');
     try {
       return json(
         await uploadAgentDocuments(
@@ -813,7 +812,7 @@ router.patch('/api/bots/:id', async ({ req, params, account }) => {
 });
 
 // A section is addressed by its id; the name is only its label. An id the
-// account does not have, its old name included, is "seção desconhecida".
+// account does not have, its old name included, is "unknown section".
 router.get('/api/sections', ({ account }) => {
   const items = listSections(account.id);
   return json(
@@ -836,7 +835,7 @@ router.put('/api/sections', async ({ req, account }) => {
     !Array.isArray(sectionIds) ||
     sectionIds.some((id) => typeof id !== 'string')
   )
-    throw invalid('mande a lista de seções em ordem');
+    throw invalid('send the list of sections in order');
   reorderSections(account.id, sectionIds);
   return json({ sectionIds });
 });
@@ -844,10 +843,10 @@ router.put('/api/sections', async ({ req, account }) => {
 router.put('/api/sections/order', async ({ req, account }) => {
   const { sectionId = null, botIds } = await readBody(req);
   if (!Array.isArray(botIds) || botIds.some((id) => typeof id !== 'string'))
-    throw invalid('mande a lista de bots em ordem');
+    throw invalid('send the list of bots in order');
   for (const id of botIds) requireBot(id, account);
   if (!reorderSection(account.id, sectionId, botIds))
-    throw notFound('seção desconhecida');
+    throw notFound('unknown section');
   return json({ sectionId, botIds });
 });
 
@@ -859,13 +858,13 @@ router.patch('/api/sections/:sectionId', async ({ req, params, account }) => {
   } catch (error) {
     throw invalid(error.message);
   }
-  if (!section) throw notFound('seção desconhecida');
+  if (!section) throw notFound('unknown section');
   return json(section);
 });
 
 router.delete('/api/sections/:sectionId', ({ params, account }) => {
   if (!deleteSection(account.id, params.sectionId))
-    throw notFound('seção desconhecida');
+    throw notFound('unknown section');
   return json({ id: params.sectionId, deleted: true });
 });
 
@@ -904,7 +903,7 @@ router.post('/api/bots/:id/routines', async ({ req, params, account }) => {
     throw new HttpError(
       409,
       'PLAN_LIMIT',
-      `Cada bot tem até ${config.limits.routinesPerBot} rotinas.`,
+      `Each bot has up to ${config.limits.routinesPerBot} routines.`,
     );
   try {
     // The owner's route (panel or API key): the routine is their order at every run.
@@ -950,11 +949,7 @@ router.post('/api/wake', ({ req }) => {
     !config.wakeSecret ||
     req.headers.get('x-wake-secret') !== config.wakeSecret
   )
-    throw new HttpError(
-      401,
-      'UNAUTHORIZED',
-      'só o despertador acorda a central',
-    );
+    throw new HttpError(401, 'UNAUTHORIZED', 'only the alarm wakes the server');
   const ran = runDueRoutines();
   const nextRunAt = nextWakeAt();
   console.log(
@@ -1000,7 +995,7 @@ router.delete('/api/bots/:id', async ({ params, account }) => {
 router.post('/api/bots/:id/provision', ({ params, account }) => {
   const bot = requireBot(params.id, account);
   if (bot.status === 'provisioning')
-    throw conflict('o computador já está sendo preparado');
+    throw conflict('the computer is already being set up');
   if (bot.status === 'ready') return json(bot);
   provision(params.id);
   return json(fetchBot(params.id), 202);
@@ -1160,7 +1155,7 @@ router.post('/api/bots/:id/messages', async ({ req, params, account }) => {
   const ids = Array.isArray(attachmentIds) ? attachmentIds : [];
   const attachments = attachmentsOf(params.id, ids);
   if (!text?.trim() && attachments.length === 0 && !cited.length)
-    throw invalid('escreva a mensagem');
+    throw invalid('write the message');
   // "Fila": while the bot works, the message waits for its task to stop.
   const thread = currentThread(params.id);
   // In a shared bot every message reaches it signed with who sent it.
@@ -1175,7 +1170,7 @@ router.post('/api/bots/:id/messages', async ({ req, params, account }) => {
     )
   ) {
     if (!enqueue(params.id, modelText ?? (text || '').trim(), ids, author))
-      throw invalid('a fila deste agente está cheia');
+      throw invalid("this agent's queue is full");
     return json(currentThread(params.id));
   }
   // "@Nome": a colleague answers this one, here, instead of this agent.
@@ -1210,7 +1205,7 @@ router.post('/api/bots/:id/notes', async ({ req, params, account }) => {
 router.post('/api/bots/:id/notes/:eventId/send', ({ params, account }) => {
   requireBot(params.id, account, 'enter');
   const note = takeNote(params.id, account, params.eventId);
-  if (!note) throw notFound('essa nota já foi mandada ou não é sua');
+  if (!note) throw notFound('that note was already sent or is not yours');
   sendBotMessage(params.id, note.text, {
     author: listMembers(params.id).length ? note.author : null,
     fromNote: note.id,
@@ -1221,7 +1216,7 @@ router.post('/api/bots/:id/notes/:eventId/send', ({ params, account }) => {
 router.delete('/api/bots/:id/queue/:queuedId', ({ params, account }) => {
   requireBot(params.id, account, 'enter');
   if (!removeQueued(params.id, params.queuedId))
-    throw notFound('essa mensagem já saiu da fila');
+    throw notFound('that message already left the queue');
   return json(currentThread(params.id));
 });
 
@@ -1233,7 +1228,7 @@ router.post('/api/bots/:id/attachments', async ({ req, params, account }) => {
   try {
     form = await req.formData();
   } catch {
-    throw invalid('mande o arquivo como multipart/form-data, no campo "file"');
+    throw invalid('send the file as multipart/form-data, in the "file" field');
   }
   try {
     return json(await saveAttachment(params.id, form.get('file')), 201);
@@ -1246,7 +1241,7 @@ router.get('/api/bots/:id/attachments/:attachmentId', ({ params, account }) => {
   requireBot(params.id, account, 'read');
   const attachment = fetchAttachment(params.attachmentId);
   if (!attachment || attachment.botId !== params.id)
-    throw notFound('anexo desconhecido');
+    throw notFound('unknown attachment');
   const { content, mimeType, name } = readAttachment(params.attachmentId);
   return new Response(content, {
     headers: {
@@ -1261,7 +1256,7 @@ router.get('/api/bots/:id/attachments/:attachmentId', ({ params, account }) => {
 router.get('/api/bots/:id/pages/:captureId', ({ params, account }) => {
   requireBot(params.id, account, 'read');
   const capture = readPageCapture(params.id, params.captureId);
-  if (!capture) throw notFound('captura desconhecida');
+  if (!capture) throw notFound('unknown capture');
   return new Response(capture.content, {
     headers: {
       'Content-Type': capture.mimeType,
@@ -1283,7 +1278,7 @@ function countVoiceCall(account) {
     throw new HttpError(
       429,
       'TOO_MANY_REQUESTS',
-      'Muitas falas em pouco tempo. Espere alguns minutos.',
+      'Too much speech in a short time. Wait a few minutes.',
     );
   recent.push(Date.now());
   voiceCalls.set(account.id, recent);
@@ -1292,9 +1287,10 @@ function countVoiceCall(account) {
 router.post('/api/transcribe', async ({ req, url, account }) => {
   countVoiceCall(account);
   const audio = await req.arrayBuffer();
-  if (audio.byteLength === 0) throw invalid('mande o áudio no corpo do pedido');
+  if (audio.byteLength === 0)
+    throw invalid('send the audio in the request body');
   if (audio.byteLength > 20 * 1024 * 1024)
-    throw invalid('o áudio pode ter até 20 MB (uns 10 minutos)');
+    throw invalid('the audio can be up to 20 MB (about 10 minutes)');
   const bot = url.searchParams.get('botId')
     ? requireBot(url.searchParams.get('botId'), account)
     : null;
@@ -1311,7 +1307,7 @@ router.post('/api/transcribe', async ({ req, url, account }) => {
 router.post('/api/speech', async ({ req, account }) => {
   countVoiceCall(account);
   const { text } = await readBody(req);
-  if (!text?.trim()) throw invalid('mande o texto a falar');
+  if (!text?.trim()) throw invalid('send the text to speak');
   const voice = await synthesize(text);
   return new Response(voice.body, {
     headers: { 'Content-Type': 'audio/mpeg', 'Cache-Control': 'no-store' },
@@ -1324,7 +1320,7 @@ router.post('/api/bots/:id/teach/start', async ({ req, params, account }) => {
   requireBot(params.id, account);
   if (isBotBusy(params.id))
     throw conflict(
-      'o bot está trabalhando agora; espere ele terminar ou pare a tarefa antes de ensinar',
+      'the bot is working right now; wait for it to finish or stop the task before teaching',
     );
   const { name } = await readBody(req);
   const bot = await ensureComputer(params.id);
@@ -1340,7 +1336,7 @@ router.post('/api/bots/:id/teach/cancel', async ({ params, account }) => {
 router.post('/api/bots/:id/teach/stop', async ({ req, params, account }) => {
   const bot = requireBot(params.id, account);
   if (!teachingSession(params.id))
-    throw conflict('não há gravação em andamento neste bot');
+    throw conflict('there is no recording in progress on this bot');
   let narration = '';
   const form = await req.formData().catch(() => null);
   const audio = form?.get('narration');
@@ -1380,8 +1376,7 @@ router.get('/api/bots/:id/skills', ({ params, account }) => {
 // A skill is the account's: whoever the account is may change it, whatever agent wrote it.
 function requireSkill(id, account) {
   const skill = fetchSkill(id);
-  if (!skill || skill.accountId !== account.id)
-    throw notFound('habilidade desconhecida');
+  if (!skill || skill.accountId !== account.id) throw notFound('unknown skill');
   return skill;
 }
 
@@ -1433,7 +1428,7 @@ router.get('/api/bots/:id/files/content', async ({ params, url, account }) => {
   const bot = requireBot(params.id, account, 'read');
   const filePath = url.searchParams.get('path') || '';
   if (!isBotFilePath(filePath))
-    throw invalid('só arquivos do workspace e de Downloads');
+    throw invalid('only files in the workspace and in Downloads');
   const content = await readSpriteFile(bot.spriteName, filePath);
   return new Response(content, {
     headers: {
@@ -1473,7 +1468,7 @@ const queryArgs = (url) => {
 };
 
 router.get('/api/bots/:id/fs/:op', ({ params, url, account }) => {
-  if (toolOf(params.op) !== 'read') throw invalid('leitura desconhecida');
+  if (toolOf(params.op) !== 'read') throw invalid('unknown read operation');
   return runFiles(
     requireBot(params.id, account, 'read'),
     params.op,
@@ -1481,7 +1476,7 @@ router.get('/api/bots/:id/fs/:op', ({ params, url, account }) => {
   );
 });
 router.post('/api/bots/:id/fs/:op', async ({ req, params, account }) => {
-  if (toolOf(params.op) !== 'write') throw invalid('escrita desconhecida');
+  if (toolOf(params.op) !== 'write') throw invalid('unknown write operation');
   return runFiles(
     requireBot(params.id, account, 'enter'),
     params.op,
@@ -1541,7 +1536,7 @@ router.get('/api/bots/:id/tools', async ({ params, account }) => {
   const base = BASE_TOOLS.map((tool) => ({
     name: tool.function.name,
     description: tool.function.description,
-    group: 'Computador e catálogo',
+    group: 'Computer and catalog',
   }));
   const connected = listConnectedTools(bot.accountId).map((tool) => ({
     name: tool.exposedName,
@@ -1567,7 +1562,7 @@ router.put('/api/bots/:id/tools/:name', async ({ req, params, account }) => {
     ).run(params.id, params.name);
   } else {
     if (!POLICIES.includes(policy))
-      throw invalid('política inválida', { allowed: POLICIES });
+      throw invalid('invalid policy', { allowed: POLICIES });
     setToolPolicy(params.id, params.name, policy);
   }
   return json({ name: params.name, policy });
@@ -1575,7 +1570,7 @@ router.put('/api/bots/:id/tools/:name', async ({ req, params, account }) => {
 
 router.get('/api/registry', async ({ url }) => {
   const query = url.searchParams.get('query') || '';
-  if (!query.trim()) throw invalid('diga o que procurar');
+  if (!query.trim()) throw invalid('say what to look for');
   const items = await searchRegistry(query, 20);
   return json(collection(items, { limit: 20, offset: 0 }, items.length));
 });
@@ -1612,7 +1607,7 @@ router.get('/api/connections', ({ account }) => {
 
 router.post('/api/connections', async ({ req, account }) => {
   const { botId, serverName, title, url, transport } = await readBody(req);
-  if (!url) throw invalid('falta a URL do servidor');
+  if (!url) throw invalid('the server URL is missing');
   const anyBot = botId
     ? requireBot(botId, account)
     : db
@@ -1620,7 +1615,7 @@ router.post('/api/connections', async ({ req, account }) => {
           'SELECT id FROM bots WHERE account_id = ? ORDER BY created_at LIMIT 1',
         )
         .get(account.id);
-  if (!anyBot) throw conflict('crie um bot antes de conectar aplicativos');
+  if (!anyBot) throw conflict('create a bot before connecting apps');
   const created = await createConnection({
     accountId: account.id,
     botId: anyBot.id,
@@ -1671,7 +1666,7 @@ router.post('/api/bots/:id/context/release', ({ params, account }) => {
       'SELECT id FROM tasks WHERE bot_id = ? ORDER BY created_at DESC LIMIT 1',
     )
     .get(params.id);
-  if (!row) throw notFound('este agente ainda não tem conversa');
+  if (!row) throw notFound('this agent has no conversation yet');
   return json(releaseContext(row.id));
 });
 
@@ -1685,7 +1680,7 @@ router.post('/api/connections/:id/connect', async ({ params, account }) => {
 router.post('/api/connections/:id/secret', async ({ req, params, account }) => {
   requireConnection(params.id, account);
   const { headerName, value } = await readBody(req);
-  if (!value?.trim()) throw invalid('cole o token');
+  if (!value?.trim()) throw invalid('paste the token');
   const connection = await saveSecretHeader(params.id, {
     headerName,
     value: value.trim(),
@@ -1720,7 +1715,7 @@ router.get('/api/bots/:id/memories', ({ params, account }) => {
 router.post('/api/bots/:id/memories', async ({ req, params, account }) => {
   requireBot(params.id, account);
   const { content, kind } = await readBody(req);
-  if (!content?.trim()) throw invalid('escreva o que o agente deve lembrar');
+  if (!content?.trim()) throw invalid('write what the agent should remember');
   const id = saveMemory({
     botId: params.id,
     kind: memoryKind(kind),
@@ -1734,9 +1729,9 @@ router.patch(
   async ({ req, params, account }) => {
     requireBot(params.id, account);
     const { content } = await readBody(req);
-    if (!content?.trim()) throw invalid('escreva o que o agente deve lembrar');
+    if (!content?.trim()) throw invalid('write what the agent should remember');
     if (!updateMemory(params.id, params.memoryId, content.trim()))
-      throw notFound('memória desconhecida');
+      throw notFound('unknown memory');
     return json({ id: params.memoryId, content: content.trim() });
   },
 );
@@ -1765,7 +1760,7 @@ router.post(
       )
       .get(params.id).count;
     if (busy)
-      throw conflict('espere a tarefa em andamento parar antes de desfazer');
+      throw conflict('wait for the running task to stop before undoing');
     await restoreBotCheckpoint(params.id, params.checkpointId);
     // The task whose approval took this photo, when one did.
     const taskId =
@@ -1930,9 +1925,9 @@ router.post('/api/tasks/:id/rewind', async ({ req, params, account }) => {
   // The message is named by its event's UUID; its number (seq) is the same as an unknown one.
   const { eventId } = await readBody(req);
   if (eventId === undefined || eventId === null || eventId === '')
-    throw invalid('diga para qual mensagem voltar');
+    throw invalid('say which message to go back to');
   if (!findUserMessage(params.id, eventId))
-    throw notFound('esta mensagem não está nesta conversa');
+    throw notFound('this message is not in this conversation');
   try {
     const { text, isDiskRestored } = await rewindTask(params.id, eventId);
     return json({
@@ -1950,7 +1945,7 @@ router.get('/api/tasks/:id/rewind-preview', ({ params, url, account }) => {
   requireTask(params.id, account);
   const eventId = url.searchParams.get('eventId');
   if (!eventId || !findUserMessage(params.id, eventId))
-    throw notFound('esta mensagem não está nesta conversa');
+    throw notFound('this message is not in this conversation');
   return json(previewRewind(params.id, eventId));
 });
 
@@ -1965,7 +1960,7 @@ router.get('/api/bots/:id/branches', ({ params, account }) => {
 router.get('/api/bots/:id/branches/:branchId', ({ params, account }) => {
   requireBot(params.id, account, 'read');
   const branch = fetchBranch(params.id, params.branchId);
-  if (!branch) throw notFound('esta versão não existe mais');
+  if (!branch) throw notFound('this version no longer exists');
   return json(branch);
 });
 
@@ -1980,7 +1975,7 @@ router.get('/api/bots/:id/bookmarks', ({ params, account }) => {
 router.put('/api/bots/:id/bookmarks/:eventId', ({ params, account }) => {
   requireBot(params.id, account, 'read');
   const items = addBookmark(account.id, params.id, params.eventId);
-  if (!items) throw notFound('só uma resposta do agente pode ser marcada');
+  if (!items) throw notFound('only an answer from the agent can be marked');
   return json(
     collection(items, { limit: items.length, offset: 0 }, items.length),
   );
@@ -1997,14 +1992,14 @@ router.delete('/api/bots/:id/bookmarks/:eventId', ({ params, account }) => {
 router.post('/api/bots/:id/side-question', async ({ req, params, account }) => {
   const bot = requireBot(params.id, account, 'enter');
   const question = String((await readBody(req)).question || '').trim();
-  if (!question) throw invalid('escreva a pergunta');
+  if (!question) throw invalid('write the question');
   try {
     return json(await askSideQuestion(bot, question.slice(0, 2000)));
   } catch (error) {
     throw new HttpError(
       502,
       'MODEL_FAILED',
-      `a resposta não veio: ${error.message}. Tente de novo em um instante.`,
+      `the answer did not come: ${error.message}. Try again in a moment.`,
     );
   }
 });
@@ -2015,7 +2010,7 @@ router.post(
     requireTask(params.id, account);
     const { isApproved, note, shouldRemember, scope } = await readBody(req);
     if (typeof isApproved !== 'boolean')
-      throw invalid('diga se aprova ou recusa');
+      throw invalid('say whether you approve or decline');
     try {
       await resolveApproval(params.id, params.approvalId, {
         isApproved,
@@ -2054,7 +2049,7 @@ router.post(
 router.post(
   '/api/tasks/:id/messages',
   taskAction((id, body) => {
-    if (!body.text?.trim()) throw new Error('escreva a mensagem');
+    if (!body.text?.trim()) throw new Error('write the message');
     continueTask(id, body.text.trim());
   }),
 );
@@ -2089,7 +2084,7 @@ const CALLBACK_CLOSE_SECONDS = 4;
 function callbackPage(title, text, { isOk = false } = {}) {
   const panel = config.publicUrl;
   return new Response(
-    `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtml(title)} · Assistant</title>
+    `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtml(title)} · Gemini Code</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&display=swap">
 <style>
 :root { --g0:#fff; --g1:#F9FAFB; --g2:#F3F4F6; --g4:#9CA3AF; --g6:#4B5563; --g9:#11181C; --ok:#2F9E44; --bad:#E03131; color-scheme: light }
@@ -2112,10 +2107,10 @@ a.button:hover { transform: translateY(-1px); filter: brightness(1.1) }
         ? '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5l10 -10"/></svg>'
         : '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--bad)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6l-12 12M6 6l12 12"/></svg>'
     }</div>
-<p class="label">Assistant · Conexão</p>
+<p class="label">Gemini Code · Connection</p>
 <h1>${escapeHtml(title)}</h1>
 <p>${escapeHtml(text)}</p>
-<div class="actions"><span class="note" id="note">${isOk ? `Esta aba fecha em <span id="count">${CALLBACK_CLOSE_SECONDS}</span> s.` : 'Volte ao painel para tentar de novo.'}</span><a class="button" href="${panel}">Voltar ao Assistant</a></div>
+<div class="actions"><span class="note" id="note">${isOk ? `This tab closes in <span id="count">${CALLBACK_CLOSE_SECONDS}</span> s.` : 'Go back to the dashboard to try again.'}</span><a class="button" href="${panel}">Voltar ao Assistant</a></div>
 </main>${
       isOk
         ? `<script>
@@ -2127,7 +2122,7 @@ const timer = setInterval(() => {
   clearInterval(timer)
   window.close()
   // Still here: the browser keeps tabs it did not open by script.
-  setTimeout(() => { document.getElementById('note').textContent = 'Pode fechar esta aba.' }, 300)
+  setTimeout(() => { document.getElementById('note').textContent = 'You can close this tab.' }, 300)
 }, 1000)
 </script>`
         : ''
@@ -2156,14 +2151,14 @@ async function handleOAuthCallback(url) {
     )
       await deleteConnection(connection.id);
     return new Response(
-      '<!doctype html><meta charset="utf-8"><title>Assistant</title><script>window.close()</script><p style="font:15px sans-serif;padding:24px">Pode fechar esta janela.</p>',
+      '<!doctype html><meta charset="utf-8"><title>Gemini Code</title><script>window.close()</script><p style="font:15px sans-serif;padding:24px">You can close this window.</p>',
       { headers: { 'Content-Type': 'text/html; charset=utf-8' } },
     );
   }
   if (error)
     return callbackPage(
-      'Login não concluído',
-      `O serviço respondeu: ${url.searchParams.get('error_description') || error}. Tente de novo pelo painel.`,
+      'Sign-in not completed',
+      `The service answered: ${url.searchParams.get('error_description') || error}. Try again from the dashboard.`,
     );
   try {
     const connection = await finishAuthorization({
@@ -2173,20 +2168,20 @@ async function handleOAuthCallback(url) {
     if (connection.status === 'connected') {
       resumeTasksWaitingOn(connection.id);
       return callbackPage(
-        `${connection.title} conectado`,
-        'Os seus bots já podem usar este aplicativo. Se alguma tarefa esperava por ele, ela já continuou.',
+        `${connection.title} connected`,
+        'Your bots can use this app now. If a task was waiting for it, it has already continued.',
         { isOk: true },
       );
     }
     return callbackPage(
-      'Quase lá',
-      `A conexão ficou em "${connection.status}": ${connection.statusDetail || ''}`,
+      'Almost there',
+      `The connection is "${connection.status}": ${connection.statusDetail || ''}`,
     );
   } catch (failure) {
     console.error('oauth callback', failure);
     return callbackPage(
-      'Login não concluído',
-      'Não consegui trocar o código pelo acesso. Tente de novo pelo painel.',
+      'Sign-in not completed',
+      'I could not exchange the code for access. Try again from the dashboard.',
     );
   }
 }
@@ -2236,7 +2231,7 @@ function serveDashboard(pathname) {
       headers: { 'Cache-Control': 'no-cache' },
     });
   return new Response(
-    'painel não compilado: rode bun run build em packages/dashboard/',
+    'dashboard not built: run bun run build in packages/dashboard/',
     { status: 404 },
   );
 }
@@ -2253,7 +2248,7 @@ process.on('uncaughtException', (error) => console.error('[uncaught]', error));
 // --- The vault: a bot's keys for its terminal (vault.js); only names leave --
 
 // A secret is addressed by its id; its name is the variable its commands read.
-// An id the bot does not have, its name included, is "não há essa chave no cofre".
+// An id the bot does not have, its name included, is "there is no such key in the vault".
 router.get('/api/bots/:id/secrets', ({ params, account }) => {
   requireBot(params.id, account);
   const items = listSecrets(params.id);
@@ -2289,7 +2284,7 @@ router.patch(
       if (isVaultError(error)) throw invalid(error.message);
       throw error;
     }
-    if (!secret) throw notFound('não há essa chave no cofre');
+    if (!secret) throw notFound('there is no such key in the vault');
     return json(secret);
   },
 );
@@ -2297,7 +2292,7 @@ router.patch(
 router.delete('/api/bots/:id/secrets/:secretId', ({ params, account }) => {
   requireBot(params.id, account);
   if (!deleteSecret(params.id, params.secretId))
-    throw notFound('não há essa chave no cofre');
+    throw notFound('there is no such key in the vault');
   return json({ id: params.secretId, deleted: true });
 });
 
@@ -2322,7 +2317,7 @@ router.get('/api/files', async ({ account }) => {
 
 router.get('/api/files/content', async ({ url, account }) => {
   const file = await openFile(account.id, url.searchParams.get('path') || '');
-  if (!file) throw notFound('arquivo desconhecido');
+  if (!file) throw notFound('unknown file');
   return json(file);
 });
 
@@ -2349,11 +2344,9 @@ router.post('/api/files/upload', async ({ req, account }) => {
     ? form.getAll('file').filter((file) => typeof file === 'object')
     : [];
   if (!files.length)
-    throw invalid(
-      'mande os arquivos como multipart/form-data, no campo "file"',
-    );
+    throw invalid('send the files as multipart/form-data, in the "file" field');
   if (files.some((file) => file.size > MAX_FILE_BYTES))
-    throw invalid('arquivo acima de 50 MB fica fora do repositório');
+    throw invalid('a file over 50 MB stays out of the repository');
   try {
     return json(
       await uploadFiles(
@@ -2394,7 +2387,7 @@ router.delete('/api/files', async ({ url, account }) => {
 router.put('/api/files', async ({ req, account }) => {
   const { path, content } = await readBody(req);
   if (!path || typeof content !== 'string' || path.includes('..'))
-    throw invalid('diga o arquivo e o conteúdo');
+    throw invalid('say the file and its content');
   try {
     return json(await saveFile(account.id, path, content));
   } catch (error) {
@@ -2406,7 +2399,7 @@ router.put('/api/files', async ({ req, account }) => {
 router.post('/api/github/webhook', async ({ req }) => {
   const raw = await req.text();
   if (!isSignedByGithub(raw, req.headers.get('x-hub-signature-256')))
-    throw new HttpError(401, 'UNAUTHORIZED', 'assinatura do GitHub inválida');
+    throw new HttpError(401, 'UNAUTHORIZED', 'invalid GitHub signature');
   if (req.headers.get('x-github-event') !== 'push') return json({ applied: 0 });
   return json({ applied: await onPush(JSON.parse(raw)) });
 });
@@ -2448,7 +2441,7 @@ router.get(
   async ({ params, account }) => {
     try {
       const items = await availableModels(account.id, params.id);
-      if (!items) throw notFound('conta de IA desconhecida');
+      if (!items) throw notFound('unknown AI account');
       return json(
         collection(
           items,
@@ -2467,7 +2460,7 @@ router.patch('/api/ai-accounts/:id', async ({ req, params, account }) => {
   const { models } = await readBody(req);
   try {
     const item = setAccountModels(account.id, params.id, models);
-    if (!item) throw notFound('conta de IA desconhecida');
+    if (!item) throw notFound('unknown AI account');
     return json(item);
   } catch (error) {
     if (error instanceof HttpError) throw error;
@@ -2485,7 +2478,7 @@ router.get('/api/brains', ({ account }) => {
 
 router.delete('/api/ai-accounts/:id', ({ params, account }) => {
   if (!deleteAiAccount(account.id, params.id))
-    throw notFound('conta de IA desconhecida');
+    throw notFound('unknown AI account');
   return json({ id: params.id, isDeleted: true });
 });
 
@@ -2514,7 +2507,7 @@ router.get(
       params.artifactId,
       params.versionId,
     );
-    if (!artifact) throw notFound('artifact desconhecido');
+    if (!artifact) throw notFound('unknown artifact');
     return json(artifact);
   },
 );
@@ -2602,7 +2595,7 @@ if (import.meta.main) {
         try {
           const bot = requireBot(screen[1], await authenticate(req, url));
           if (bot.status !== 'ready' || !bot.spriteUrl)
-            throw conflict('o computador deste bot ainda não está ligado');
+            throw conflict("this bot's computer is not on yet");
           if (
             server.upgrade(req, {
               data: { kind: 'screen', spriteUrl: bot.spriteUrl, queue: [] },
@@ -2631,7 +2624,7 @@ if (import.meta.main) {
       const appIcon = pathname.match(/^\/api\/app-icons\/([a-z0-9.-]+)$/);
       if (appIcon) {
         const icon = await fetchAppIcon(appIcon[1]).catch(() => null);
-        if (!icon) return fail(notFound('ícone desconhecido'));
+        if (!icon) return fail(notFound('unknown icon'));
         return new Response(icon.body, {
           headers: {
             'Content-Type': icon.type,
@@ -2643,7 +2636,7 @@ if (import.meta.main) {
       const mascot = pathname.match(/^\/api\/mascots\/([^/]+\.svg)$/);
       if (mascot) {
         const svg = readMascotSvg(decodeURIComponent(mascot[1]));
-        if (!svg) return fail(notFound('ilustração desconhecida'));
+        if (!svg) return fail(notFound('unknown illustration'));
         return new Response(svg, {
           headers: {
             'Content-Type': 'image/svg+xml',
@@ -2654,7 +2647,7 @@ if (import.meta.main) {
 
       if (pathname.startsWith('/api/')) {
         const match = router.match(req.method, pathname);
-        if (!match) return fail(notFound('rota desconhecida'));
+        if (!match) return fail(notFound('unknown route'));
         try {
           // Public: what an <img> loads, the model list and the alarm
           // (which carries its own secret). Everything else is someone's.
@@ -2674,7 +2667,7 @@ if (import.meta.main) {
             throw new HttpError(
               403,
               'ACCESS_PENDING',
-              'Seu acesso ainda está sendo liberado.',
+              'Your access is still being granted.',
             );
           const response = await match.handler({
             req,

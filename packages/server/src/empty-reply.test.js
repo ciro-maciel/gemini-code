@@ -101,8 +101,8 @@ describe('a task never ends mute', () => {
       createTask(newBot(), 'escreva a semana 2 e envie as 13 peças').id,
     );
     expect(task.status).toBe('done');
-    expect(task.result).toContain('Parei sem conseguir responder');
-    expect(task.result).toContain('limite de resposta');
+    expect(task.result).toContain('I stopped without an answer');
+    expect(task.result).toContain('answer limit');
     expect(finalEvents(task.id).map((event) => event.text)).toEqual([
       task.result,
     ]);

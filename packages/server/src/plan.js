@@ -20,7 +20,7 @@ const TIERS = [
   { tier: 'pro', name: 'Pro', limit: 9 },
   { tier: 'starter', name: 'Starter', limit: 3 },
 ];
-export const FREE = { tier: 'free', name: 'Grátis', limit: 1 };
+export const FREE = { tier: 'free', name: 'Free', limit: 1 };
 
 const DEFAULT_PAYMENTS_URL = '';
 const TIMEOUT_MS = 3000;
@@ -112,7 +112,7 @@ export function createPlan({ product }) {
       body: {
         error: 'PLAN_LIMIT',
         code: 'PLAN_LIMIT',
-        message: `O plano ${plan.name} inclui até ${plan.limit} ${plan.limit === 1 ? noun.one : noun.many}, e esta conta já tem ${used}. ${next}`,
+        message: `The ${plan.name} plan includes up to ${plan.limit} ${plan.limit === 1 ? noun.one : noun.many}, and this account already has ${used}. ${next}`,
         limit: plan.limit,
         used,
         tier: plan.tier,

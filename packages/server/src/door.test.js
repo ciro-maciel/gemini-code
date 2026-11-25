@@ -406,7 +406,7 @@ describe('sections', () => {
     const vendas = bots.createSection('acc-s', '  Vendas  ');
     expect(vendas.name).toBe('Vendas');
     expect(bots.createSection('acc-s', 'Vendas').id).toBe(vendas.id);
-    expect(() => bots.createSection('acc-s', '   ')).toThrow(/nome/);
+    expect(() => bots.createSection('acc-s', '   ')).toThrow(/name/);
     expect(bots.listSections('acc-s')).toEqual([vendas]);
     const financeiro = bots.createSection('acc-s', 'Financeiro');
     expect(bots.reorderSection('acc-s', financeiro.id, ['s1'])).toBe(true);
@@ -419,7 +419,7 @@ describe('sections', () => {
     expect(bots.fetchBot('s1').sectionId).toBe(marketing.id);
     expect(() =>
       bots.updateBotSettings('s1', { sectionId: 'Marketing' }),
-    ).toThrow(/desconhecida/);
+    ).toThrow(/unknown/);
     expect(bots.reorderSection('acc-s', 'Marketing', ['s1'])).toBe(false);
     expect(bots.listSections('acc-other-s')).toEqual([]);
   });

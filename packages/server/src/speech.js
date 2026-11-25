@@ -118,7 +118,7 @@ export function toSpeakable(text) {
 /** Text to speech: an MP3 stream from Fish, in the house voice. */
 export async function synthesize(text) {
   if (!config.fishApiKey)
-    throw new Error('a voz não está configurada (FISH_API_KEY)');
+    throw new Error('the voice is not set up (FISH_API_KEY)');
   const response = await fetch(`${FISH}/tts`, {
     method: 'POST',
     headers: {
