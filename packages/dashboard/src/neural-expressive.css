@@ -940,3 +940,220 @@ textarea {
 .af-row:has(.af-name:focus-visible) {
   box-shadow: inset 0 0 0 2px var(--gm-primary);
 }
+
+/* ------------------------------------------------- Search palette (⌘K) -- */
+
+.backdrop.pal {
+  background: color-mix(in srgb, var(--gm-canvas) 55%, transparent);
+  backdrop-filter: blur(10px) saturate(1.1);
+}
+.ne-palette {
+  width: min(680px, calc(100vw - 32px));
+  max-height: min(620px, calc(100vh - 120px));
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 0;
+  border-radius: var(--radius-xl);
+  background: var(--gm-surface);
+  box-shadow:
+    0 0 0 1px var(--gm-outline-variant),
+    0 32px 80px -32px rgba(23, 43, 77, 0.45);
+  animation: ne-pop var(--dur-spatial) var(--spring-fast);
+}
+@keyframes ne-pop {
+  from {
+    transform: translateY(8px) scale(0.97);
+    opacity: 0;
+  }
+}
+.ne-palette .pin {
+  height: 64px;
+  padding: 0 20px;
+  gap: 14px;
+  border-bottom: 1px solid var(--gm-outline-variant);
+  background: transparent;
+}
+.ne-palette .pin input {
+  font-size: 17px;
+  font-weight: 450;
+  letter-spacing: -0.005em;
+}
+.ne-palette .pin kbd,
+.ne-palette kbd {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-xs);
+  background: var(--gm-surface-2);
+  color: var(--gm-on-surface-variant);
+  border: 0;
+  box-shadow: inset 0 -1px 0 var(--gm-outline-variant);
+}
+.ne-palette .pres {
+  flex: 1 1 auto;
+  overflow: auto;
+  padding: 8px;
+  max-height: none;
+}
+.ne-palette .pg {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 12px 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gm-on-surface-variant);
+}
+.ne-palette .pg .ti {
+  font-size: 15px;
+  color: var(--gm-primary);
+}
+/* The old rule lit every row (each button is the first child of its own wrapper). */
+.ne-palette .pres button,
+.ne-palette .pres button:first-child,
+.ne-palette .pres button:hover {
+  background: transparent;
+}
+.ne-palette .pr {
+  width: 100%;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: var(--radius-lg);
+  text-align: left;
+  color: var(--gm-on-surface);
+  transition: background var(--dur-fast) var(--effects);
+}
+.ne-palette .pres button.pr.on {
+  background: var(--gm-surface-1);
+}
+.ne-palette .pr-icon {
+  width: 36px;
+  height: 36px;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  background: var(--gm-surface-2);
+  color: var(--gm-primary);
+}
+.ne-palette .pr-icon .ti {
+  font-size: 19px;
+}
+.ne-palette .pr-icon .av {
+  width: 36px;
+  height: 36px;
+}
+.ne-palette .pr-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.ne-palette .pr-title {
+  font-size: 14.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ne-palette .pr-note {
+  font-size: 12.5px;
+  color: var(--gm-on-surface-variant);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ne-palette mark {
+  background: transparent;
+  color: var(--gm-primary);
+  font-weight: 700;
+}
+.ne-palette .pr-meta {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--gm-on-surface-variant);
+}
+.ne-palette .pr-meta .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: var(--gm-outline);
+}
+.ne-palette .pr-meta[data-mark='live'] .dot {
+  background: var(--ne-glow);
+  animation: ne-spin 2s linear infinite;
+}
+.ne-palette .pr-meta[data-mark='wait'] {
+  color: #b06000;
+}
+.ne-palette .pr-meta[data-mark='wait'] .dot {
+  background: var(--ne-yellow);
+}
+.ne-palette .pr-meta[data-mark='done'] .dot {
+  background: var(--ne-green);
+}
+.ne-palette .pr-enter {
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--effects);
+}
+.ne-palette .pr.on .pr-enter {
+  opacity: 1;
+}
+/* "Start a new agent with this": the Gemini sparkle, first in the list. */
+.ne-palette .pr.accent .pr-icon {
+  background: linear-gradient(
+    135deg,
+    var(--ne-blue),
+    var(--ne-violet) 55%,
+    var(--ne-red)
+  );
+  color: #ffffff;
+}
+.ne-palette .pr.accent .pr-title {
+  font-weight: 600;
+}
+.ne-palette .pr-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 36px 12px;
+  margin: 0;
+  color: var(--gm-on-surface-variant);
+  font-size: 14px;
+}
+.ne-palette .pal-foot {
+  display: flex;
+  gap: 18px;
+  padding: 10px 20px;
+  border-top: 1px solid var(--gm-outline-variant);
+  font-size: 12px;
+  color: var(--gm-on-surface-variant);
+  background: var(--gm-surface-1);
+}
+.ne-palette .pal-foot span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+@media (max-width: 560px) {
+  .ne-palette .pr-meta,
+  .ne-palette .pal-foot {
+    display: none;
+  }
+}

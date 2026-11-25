@@ -1242,7 +1242,15 @@
     "Monday": "segunda",
     "Wednesday": "quarta",
     "Thursday": "quinta",
-    "Friday": "sexta"
+    "Friday": "sexta",
+    "Deliverables": "Entregas",
+    "Quick actions": "Ações rápidas",
+    "Start a new agent": "Começar um agente novo com isso",
+    "to move": "para mover",
+    "to open": "para abrir",
+    "to close": "para fechar",
+    "running": "rodando",
+    "finished": "terminou"
   },
   "patterns": {
     "The server failed to respond (error {0}). Try again in a moment; if it happens again, reload the page.": "A central falhou ao responder (erro {0}). Tente de novo em um instante; se repetir, recarregue a página.",
@@ -1517,6 +1525,7 @@
     "Delete {0} from the agent folder": "Apagar {0} da pasta do agente",
     "Change my instructions: {0}": "Mudar as minhas instruções: {0}",
     "Delete {0} from the repository": "Apagar {0} do repositório",
-    "I could not assess the risk ({0})": "não consegui avaliar o risco ({0})"
+    "I could not assess the risk ({0})": "não consegui avaliar o risco ({0})",
+    "Nothing matches “{0}”.": "Nada com “{0}”."
   }
 }

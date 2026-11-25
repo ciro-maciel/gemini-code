@@ -574,6 +574,10 @@ export function Shell() {
             setIsSearch(false);
             navigate('/', { state: { draft: text } });
           }}
+          onNavigate={(path) => {
+            setIsSearch(false);
+            navigate(path);
+          }}
           reload={reload}
         />
       )}
