@@ -59,7 +59,7 @@ export async function callUserBrowser(
   const row = rowOf(accountId);
   if (!row)
     throw new Error(
-      'o Chrome desta conta não está ligado: ligue em Configurações, Meu Chrome',
+      "this account's Chrome is not connected: connect it in Settings, My Chrome",
     );
   return dial(
     await decrypt(row.tunnel),
@@ -73,7 +73,7 @@ export async function linkUserBrowser(accountId, pasted) {
   const tunnel = tunnelOf(pasted);
   if (!tunnel)
     throw new Error(
-      'isso não é um código de conexão do Assistant Navigation: copie o código na janela da extensão (começa com wss:// e termina com /extension)',
+      'this is not an Assistant Navigation connection code: copy the code from the extension window (it starts with wss:// and ends with /extension)',
     );
   await dial(
     tunnel,

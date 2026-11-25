@@ -197,7 +197,7 @@ export function cleanFolder(folder) {
     .map((part) => part.trim())
     .filter(Boolean);
   if (parts.some((part) => part === '..' || part === '.'))
-    throw new Error('a pasta não pode sair do workspace');
+    throw new Error('the folder cannot leave the workspace');
   return parts.join('/').slice(0, 200) || null;
 }
 
@@ -220,13 +220,13 @@ export function updateBotSettings(
   const accountId = fetchBot(botId)?.accountId;
   if (effort !== undefined) {
     if (effort !== null && !EFFORTS.includes(effort))
-      throw new Error(`esforço fora da lista: ${effort}`);
+      throw new Error(`effort not in the list: ${effort}`);
     fields.effort = effort;
   }
   if (folder !== undefined) fields.folder = cleanFolder(folder);
   if (aiAccount !== undefined) {
     if (aiAccount !== null && !hasAiAccount(accountId, aiAccount))
-      throw new Error('conta de IA desconhecida');
+      throw new Error('unknown AI account');
     fields.ai_account = aiAccount;
   }
   if (templateId !== undefined)
@@ -236,7 +236,7 @@ export function updateBotSettings(
         : null;
   if (connectionIds !== undefined) {
     if (connectionIds !== null && !Array.isArray(connectionIds))
-      throw new Error('connectionIds é uma lista');
+      throw new Error('connectionIds is a list');
     const known = new Set(
       db
         .query('SELECT id FROM connections WHERE account_id = ?')
@@ -256,7 +256,7 @@ export function updateBotSettings(
       sectionId !== null &&
       !fetchSection(fetchBot(botId)?.accountId, sectionId)
     )
-      throw new Error('seção desconhecida');
+      throw new Error('unknown section');
     fields.section_id = sectionId;
     // Moved by the menu: it lands at the end of its new section.
     fields.position = null;
@@ -274,13 +274,13 @@ export function updateBotSettings(
         ? aiAccount
         : (fetchBot(botId)?.aiAccount ?? null);
     if (!isModelOf(accountId, on, model))
-      throw new Error(`modelo fora da lista: ${model}`);
+      throw new Error(`model not in the list: ${model}`);
     fields.model = model;
   }
   if (typeof instructions === 'string')
     fields.instructions = instructions.slice(0, 8000);
   if (typeof mascot === 'string') {
-    if (!isMascot(mascot)) throw new Error('ilustração desconhecida');
+    if (!isMascot(mascot)) throw new Error('unknown illustration');
     fields.mascot = mascot;
   }
   if (Object.keys(fields).length) updateBot(botId, fields);
@@ -350,7 +350,7 @@ async function prepareComputer(spriteName, onProgress) {
     { timeoutSeconds: 900, cwd: '/home/sprite' },
   );
   if (exitCode !== 0)
-    throw new Error(`a preparação falhou (${exitCode}): ${output.slice(-800)}`);
+    throw new Error(`setup failed (${exitCode}): ${output.slice(-800)}`);
   return sprite.url;
 }
 
@@ -505,7 +505,7 @@ export function reorderSections(accountId, sectionIds) {
 /** Creates a section; a name the account already has gives back that section. */
 export function createSection(accountId, name) {
   const target = sectionName(name);
-  if (!target) throw new Error('dê um nome à seção');
+  if (!target) throw new Error('give the section a name');
   db.query(
     'INSERT OR IGNORE INTO sections (id, account_id, name, created_at) VALUES (?, ?, ?, ?)',
   ).run(newId(), accountId, target, now());
@@ -539,7 +539,7 @@ export function reorderSection(accountId, sectionId, botIds) {
  */
 export function renameSection(accountId, sectionId, to) {
   const name = sectionName(to);
-  if (!name) throw new Error('dê um nome à seção');
+  if (!name) throw new Error('give the section a name');
   const section = findSection(accountId, sectionId);
   if (!section) return null;
   const other = db
@@ -701,12 +701,12 @@ async function prepareBotComputer(bot, onProgress) {
     }
   }
   const detail = hasComputer
-    ? 'Atualizando o computador'
-    : 'Ligando o computador pela primeira vez';
+    ? 'Updating the computer'
+    : 'Starting the computer for the first time';
   onProgress(
     hasComputer
-      ? 'Atualizando o computador antes de usar (leva alguns segundos).'
-      : 'Ligando o computador pela primeira vez (leva alguns minutos).',
+      ? 'Updating the computer before use (takes a few seconds).'
+      : 'Starting the computer for the first time (takes a few minutes).',
   );
   try {
     updateBot(bot.id, { status: 'provisioning', status_detail: detail });
@@ -737,7 +737,7 @@ async function prepareBotComputer(bot, onProgress) {
       status_detail: error.message.slice(0, 1000),
     });
     throw new Error(
-      'o computador deste bot não ficou pronto; tente de novo em instantes',
+      "this bot's computer did not get ready; try again in a moment",
     );
   }
 }

@@ -111,15 +111,15 @@ export function inboxMessage(body, { contentType = '', source = '' } = {}) {
  */
 export async function receiveAtInbox(req, token, { deliver }) {
   if (req.method !== 'POST')
-    return fail(new HttpError(405, 'METHOD_NOT_ALLOWED', 'mande com POST'));
+    return fail(new HttpError(405, 'METHOD_NOT_ALLOWED', 'send it with POST'));
   const bot = botOfInbox(token);
-  if (!bot) return fail(notFound('endereço desconhecido'));
+  if (!bot) return fail(notFound('unknown address'));
   if (!isInboxOpen(bot))
     return fail(
       new HttpError(
         403,
         'FORBIDDEN',
-        'a conta deste bot ainda não foi liberada',
+        "this bot's account has not been granted access yet",
       ),
     );
   const tooBig = () =>
@@ -127,20 +127,20 @@ export async function receiveAtInbox(req, token, { deliver }) {
       new HttpError(
         413,
         'PAYLOAD_TOO_LARGE',
-        `a mensagem passa de ${MAX_INBOX_BYTES / 1024} KB`,
+        `the message is larger than ${MAX_INBOX_BYTES / 1024} KB`,
       ),
     );
   if (Number(req.headers.get('content-length') || 0) > MAX_INBOX_BYTES)
     return tooBig();
   const body = await req.text();
   if (Buffer.byteLength(body) > MAX_INBOX_BYTES) return tooBig();
-  if (!body.trim()) return fail(invalid('a mensagem está vazia'));
+  if (!body.trim()) return fail(invalid('the message is empty'));
   if (!takeInboxSlot(bot.id))
     return fail(
       new HttpError(
         429,
         'RATE_LIMITED',
-        'muitas mensagens nesta hora; tente mais tarde',
+        'too many messages this hour; try later',
       ),
     );
   const message = inboxMessage(body, {

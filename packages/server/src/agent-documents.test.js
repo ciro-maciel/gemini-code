@@ -171,13 +171,13 @@ describe('agent folder and documents', () => {
         'agents/alpha/docs/secret.md',
         'hijack',
       ),
-    ).rejects.toThrow('não pertence');
+    ).rejects.toThrow('is not in this agent');
     await expect(
       deleteAgentDocument(beta, 'acc-docs', 'agents/alpha/docs/secret.md'),
-    ).rejects.toThrow('não pertence');
+    ).rejects.toThrow('is not in this agent');
     await expect(
       deleteAgentDocument(alpha, 'acc-docs', 'agents/alpha/INSTRUCTIONS.md'),
-    ).rejects.toThrow('ajustes');
+    ).rejects.toThrow('settings');
 
     const saved = await saveAgentDocument(
       alpha,

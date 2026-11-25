@@ -11,7 +11,7 @@ export class HttpError extends Error {
   }
 }
 
-export const notFound = (message = 'não encontrado') =>
+export const notFound = (message = 'not found') =>
   new HttpError(404, 'NOT_FOUND', message);
 export const invalid = (message, details) =>
   new HttpError(400, 'VALIDATION_ERROR', message, details);
@@ -39,7 +39,7 @@ export function fail(error) {
     {
       error: {
         code: 'INTERNAL_ERROR',
-        message: 'erro interno; o detalhe ficou no log',
+        message: 'internal error; the details are in the log',
       },
     },
     { status: 500 },
@@ -66,7 +66,7 @@ export async function readBody(req) {
   try {
     return await req.json();
   } catch {
-    throw invalid('o corpo precisa ser JSON');
+    throw invalid('the body must be JSON');
   }
 }
 

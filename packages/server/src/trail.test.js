@@ -153,7 +153,7 @@ describe('judgments and the audit trail', () => {
       .replace(/^\uFEFF/, '')
       .trim()
       .split('\r\n');
-    expect(lines[0]).toStartWith('data_hora,tarefa,acao');
+    expect(lines[0]).toStartWith('date_time,task,action');
     expect(lines).toHaveLength(1 + trail.auditJson('a1').length);
     expect(csv).toContain(`"'=HYPERLINK(""x"")"`);
   });

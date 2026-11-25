@@ -32,7 +32,7 @@ async function fetchRegistry(query, attempt = 0) {
     return response.json();
   } catch (error) {
     if (attempt === 0) return fetchRegistry(query, 1);
-    throw new Error(`o registro MCP não respondeu (${error.message})`);
+    throw new Error(`the MCP registry did not answer (${error.message})`);
   }
 }
 
@@ -201,7 +201,7 @@ class ConnectionAuthProvider {
   // Each sign-in attempt gets its own state and PKCE verifier, and the
   // recent ones are all kept: a retry (the bot resuming, "Tentar de novo")
   // made a new link, and the person who signed in through the older one
-  // came back to "o retorno do login não corresponde ao pedido" (Stripe,
+  // came back to "the sign-in callback does not match the request" (Stripe,
   // 21/10/2026).
   async state() {
     const nonce = crypto.randomUUID();
@@ -496,14 +496,15 @@ export async function createConnection({
 export async function finishAuthorization({ code, state }) {
   const [connectionId, nonce] = String(state || '').split('.');
   const connection = fetchConnection(connectionId);
-  if (!connection) throw new Error('conexão desconhecida');
+  if (!connection) throw new Error('unknown connection');
   const secrets = await readSecrets(connectionId);
   const attempt = nonce ? secrets.attempts?.[nonce] : null;
   const isKnown =
     nonce &&
     (secrets.state === nonce ||
       (attempt && attempt.at > Date.now() - ATTEMPT_TTL_MS));
-  if (!isKnown) throw new Error('o retorno do login não corresponde ao pedido');
+  if (!isKnown)
+    throw new Error('the sign-in callback does not match the request');
   // The code was issued for that attempt's PKCE challenge: its verifier goes back.
   if (attempt?.codeVerifier)
     await mergeSecrets(connectionId, {
@@ -582,7 +583,7 @@ export async function callConnectionTool(connectionId, toolName, args) {
       // so the person finds an "Entrar" that leads somewhere.
       await reauthorize(connectionId).catch(() => {});
       throw new Error(
-        'o acesso a este serviço expirou; o usuário precisa entrar de novo em Conectar aplicativos',
+        'access to this service expired; the user needs to sign in again in Connect apps',
       );
     }
     client = await openClient(fetchConnection(connectionId));

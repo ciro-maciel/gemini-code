@@ -107,7 +107,7 @@ describe('engineering templates', () => {
   });
 
   test('a new template requires a name and appears first', () => {
-    expect(() => templates.saveTemplate('acc-t', { name: '' })).toThrow('nome');
+    expect(() => templates.saveTemplate('acc-t', { name: '' })).toThrow('name');
     const own = templates.saveTemplate('acc-t', {
       name: 'Data Pipeline',
       owns: 'ETL jobs',
@@ -139,8 +139,6 @@ describe('the skills library', () => {
       'release-check',
     ]);
     expect(skills.listAccountSkills('acc-k')[0].agents).toBe(1);
-    expect(() => skills.setSkillUse('k-2', 'nope', true)).toThrow(
-      'desconhecida',
-    );
+    expect(() => skills.setSkillUse('k-2', 'nope', true)).toThrow('unknown');
   });
 });

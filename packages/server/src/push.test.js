@@ -55,7 +55,7 @@ test('what the phone says, opening on the agent', () => {
     ),
   ).toEqual({
     isOwnerOnly: true,
-    title: 'Métricas precisa de você',
+    title: 'Métricas needs you',
     body: 'Publicar o post',
     url: '/agents/pu-bot',
   });

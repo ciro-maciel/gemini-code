@@ -137,13 +137,13 @@ describe('local document store (zero GitHub config)', () => {
       repo.uploadFiles('acc-local', 'agents/arquiteto', [
         { name: 'a.md', bytes: Buffer.from('x') },
       ]),
-    ).rejects.toThrow('pasta de trabalho');
+    ).rejects.toThrow('work folder');
     await expect(
       repo.saveFile('acc-local', '../escape.txt', 'nope'),
-    ).rejects.toThrow('inválido');
+    ).rejects.toThrow('invalid');
     await expect(
       repo.removePath('acc-local', 'agents/arquiteto/INSTRUCTIONS.md'),
-    ).rejects.toThrow('pelo painel');
+    ).rejects.toThrow('from the dashboard');
 
     const removed = await repo.removePath(
       'acc-local',

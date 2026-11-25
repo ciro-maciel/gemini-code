@@ -114,7 +114,7 @@ export function callFilesTool(
   const tool = String(name).replace(/^files_/, '');
   const op = String(args.op || '');
   if (toolOf(op) !== tool)
-    return { error: `files_${tool} não faz "${op}". Leia files_guide.` };
+    return { error: `files_${tool} does not do "${op}". Read files_guide.` };
   try {
     if (op === 'delete' && isConfirmedByPerson) {
       const first = runFileOperation(bot, 'delete', { path: args.path });

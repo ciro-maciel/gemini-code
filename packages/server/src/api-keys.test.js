@@ -48,10 +48,10 @@ describe('API keys', () => {
     revokeApiKey('acc-key', id);
     await expect(
       call({ 'x-assistant-authorization': `Bearer ${key}` }),
-    ).rejects.toThrow('revogada');
+    ).rejects.toThrow('revoked');
     await expect(
       call({ 'x-assistant-authorization': 'Bearer ak_inventada' }),
-    ).rejects.toThrow('revogada');
+    ).rejects.toThrow('revoked');
   });
 
   test('a key in the address is not accepted', async () => {
@@ -60,6 +60,6 @@ describe('API keys', () => {
   });
 
   test('a nameless key is refused', () => {
-    expect(() => createApiKey('acc-key', ' ')).toThrow('nome');
+    expect(() => createApiKey('acc-key', ' ')).toThrow('name');
   });
 });

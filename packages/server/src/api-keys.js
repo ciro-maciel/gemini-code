@@ -24,7 +24,7 @@ export function createApiKey(accountId, name) {
   const label = String(name ?? '')
     .trim()
     .slice(0, 80);
-  if (!label) throw new Error('dê um nome à chave, como "Engenharia"');
+  if (!label) throw new Error('give the key a name, like "Engineering"');
   const key = `${PREFIX}${randomBytes(32).toString('base64url')}`;
   const id = newId();
   db.query(

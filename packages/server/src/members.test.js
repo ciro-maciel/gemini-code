@@ -36,13 +36,13 @@ describe('a bot shared with other people', () => {
 
   test('sharing by e-mail: checked, case-blind, and updated in place', () => {
     expect(members.shareBot(bot, 'não é e-mail', 'read')).toBe(
-      'e-mail inválido',
+      'invalid e-mail',
     );
     expect(members.shareBot(bot, 'ana@membros.com', 'admin')).toBe(
-      'acesso inválido',
+      'invalid access',
     );
     expect(members.shareBot(bot, 'Bia@Membros.com', 'read')).toBe(
-      'esse e-mail é o seu',
+      'that e-mail is yours',
     );
     expect(members.shareBot(bot, ' ANA@membros.com ', 'read')).toBeNull();
     expect(members.shareBot(bot, 'ana@membros.com', 'enter')).toBeNull();

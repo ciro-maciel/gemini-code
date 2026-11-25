@@ -111,7 +111,7 @@ test('a full conversation keeps every message and gains a summary of its beginni
       "SELECT data FROM task_events WHERE task_id = ? AND type = 'warning'",
     )
     .get('t-compact-1');
-  expect(JSON.parse(event.data).message).toContain('Resumi o começo');
+  expect(JSON.parse(event.data).message).toContain('I summarized the start');
 });
 
 test('a second compaction folds the first summary in and moves the cut forward', async () => {
