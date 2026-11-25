@@ -16,7 +16,8 @@
     "format:check": "prettier --check .",
     "lint": "eslint . --max-warnings 0",
     "lint:fix": "eslint . --fix && prettier --write .",
-    "preflight": "bun run format:check && bun run lint && bun run test"
+    "preflight": "bun run format:check && bun run lint && bun run test",
+    "prepare": "git config core.hooksPath .githooks 2>/dev/null || true"
   },
   "devDependencies": {
     "@eslint/js": "9.39.1",

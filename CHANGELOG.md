@@ -11,6 +11,12 @@ version with its date.
 
 ## [Unreleased]
 
+### Changed
+
+- Trunk-based development: maintainers push small commits straight to `main`; a
+  `pre-push` hook runs the preflight and the changelog rule on the machine, and
+  CI runs no tests (2026-11-25).
+
 ## [0.2.0] - 2026-11-25
 
 ### Added

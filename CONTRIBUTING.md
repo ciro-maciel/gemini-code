@@ -9,7 +9,7 @@ change looks like and how it gets in.
 bun install
 cp .env.example .env      # GEMINI_API_KEY from https://aistudio.google.com/apikey
 bun run dev               # server on :8787, dashboard on :5180
-bun run preflight         # format check, lint and every test: run it before a pull request
+bun run preflight         # format check, lint and every test: the pre-push hook runs it
 ```
 
 Coding agents working here read [GEMINI.md](GEMINI.md) first.
@@ -19,8 +19,8 @@ Use [Bun](https://bun.sh) for everything (`bun install`, `bun add`, `bun test`,
 
 ## A good change
 
-- **One change per pull request**, with the reason in its description: what a
-  person could not do before, and can now.
+- **One change per commit**, with the reason in its message: what a person could
+  not do before, and can now.
 - **Tests that fail when the behavior breaks.** Before you open the pull
   request, break the code your test protects and watch the test turn red. A test
   that stays green when the code is wrong proves nothing.
@@ -40,20 +40,24 @@ Use [Bun](https://bun.sh) for everything (`bun install`, `bun add`, `bun test`,
 
 ## How a change gets in
 
-`main` is protected: nobody pushes to it directly, not even maintainers, and it
-cannot be force-pushed or deleted.
+Gemini Code is developed **trunk-based**: maintainers work on `main` and push
+small commits straight to it, as Gemini CLI does. `main` keeps a linear history
+and cannot be force-pushed or deleted.
 
-1. Branch from `main` (`feat/agent-worktree`, `fix/tree-focus`).
-2. Push the branch and open a pull request. CI runs `bun run preflight`, and a
-   comment on the pull request links to the **demo of your branch**, at
-   `https://ciro-maciel.github.io/gemini-code/preview/<branch>/`. It updates on
-   every push.
-3. The pull request merges once the `test` check is green. Merging squashes it
-   into one commit on `main`, deletes the branch, updates the main demo and
-   removes the preview.
+1. `git pull --rebase` on `main`.
+2. Make one small change, with its test, and a line in `CHANGELOG.md` under
+   `## [Unreleased]`.
+3. `git push`. The `pre-push` hook runs `bun run preflight` and the changelog
+   rule on your machine first; `bun install` turns the hook on. Nothing is
+   tested in CI.
 
-Pull requests from forks run CI but get no preview: GitHub gives their workflows
-no write access.
+Every push to `main` updates the public demo. A change that is not ready to be
+seen hides behind a flag instead of waiting on a branch.
+
+Contributors without write access send a pull request from a fork; a maintainer
+runs the preflight on it before landing it on `main`. A pull request from a
+branch of this repository also gets a demo at
+`https://ciro-maciel.github.io/gemini-code/preview/<branch>/`.
 
 ## Where things are
 

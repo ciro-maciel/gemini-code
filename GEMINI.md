@@ -33,8 +33,8 @@ same layout and code style, on Bun and plain JavaScript.
 
 ## Testing and Quality
 
-- `bun run preflight` before every pull request: Prettier check, ESLint with
-  zero warnings, and every test.
+- `bun run preflight` before every push (the pre-push hook runs it): Prettier
+  check, ESLint with zero warnings, and every test.
 - `bun run test`, or one area:
   `bun --cwd packages/server test src/engine/subscription`.
 - `bun run format` and `bun run lint:fix` fix what can be fixed.
@@ -65,17 +65,17 @@ same layout and code style, on Bun and plain JavaScript.
   shipped.
 - Never commit secrets, machine paths, personal e-mail addresses or `.env`.
 
-## Branches and Pull Requests
+## Trunk-Based Development
 
-- `main` is protected. Never push to it: create a branch from `main`, push it,
-  and open a pull request. It merges (squash) only when the `test` check passes.
-- Every pull request from a branch of this repository gets its own demo at
-  `https://ciro-maciel.github.io/gemini-code/preview/<branch>/`, linked in a
-  comment. Use it to show a UI change before it merges.
-- Run `bun run preflight` before every push.
-- Every pull request adds its line to `CHANGELOG.md` under `## [Unreleased]`
-  (Added, Changed, Fixed or Removed, with the merge date and the pull request
-  number). CI refuses one without it.
+- Work on `main` and push small commits straight to it; no branches for
+  maintainers. `git pull --rebase` first; history stays linear and force pushes
+  are refused.
+- The `pre-push` hook (`.githooks/pre-push`, turned on by `bun install`) runs
+  `bun run preflight` and `scripts/check-changelog.js`. Nothing is tested in CI:
+  checks run on the machine before the push.
+- Every change adds its line to `CHANGELOG.md` under `## [Unreleased]` (Added,
+  Changed, Fixed or Removed, with the date).
+- Unfinished work hides behind a flag instead of a long-lived branch.
 
 ## Testing Conventions
 

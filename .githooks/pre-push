@@ -1,0 +1,9 @@
+#!/bin/sh
+# Trunk-based: work lands on main straight from a machine, so the checks run
+# here, before the push, never in CI. `bun install` turns this hook on
+# (package.json "prepare"). Skip once with: git push --no-verify
+set -e
+echo "pre-push: bun run preflight"
+bun run preflight
+echo "pre-push: changelog"
+bun scripts/check-changelog.js
