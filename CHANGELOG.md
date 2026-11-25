@@ -33,7 +33,14 @@ version with its date.
 - The language picker in the dashboard's own look: tonal cards with the
   language's code, its name in its own language and in the other one, and the
   date and number format it brings; arrows move, Enter chooses (2026-11-25,
-  #28).
+  #29).
+- Gemini Code works only with Gemini: AI accounts offer only a Gemini API key
+  from Google AI Studio. The subscription account is no longer made on its own
+  or shown until Google publishes its official path, and stays as a personal
+  experiment behind `GEMINI_SUBSCRIPTION=1`; the demo shows only Gemini too
+  (2026-11-25, #30).
+- The changelog check also accepts a release that turns Unreleased into a new
+  version (2026-11-25, #30).
 - The README says signing in with a Google AI Pro or Ultra subscription waits
   for Google's official path for third-party tools; the official way today is a
   Gemini API key from Google AI Studio (2026-11-25, #24).
@@ -47,7 +54,7 @@ version with its date.
 ### Fixed
 
 - "API Keys & Models" and "Diagnostics" in the account menu show in Portuguese
-  too (2026-11-25, #28).
+  too (2026-11-25, #29).
 - Notion, Atlassian and the other servers that accept a URL as the client id
   connect on `http://localhost`: the URL is offered only on HTTPS, and the
   sign-in registers otherwise (2026-11-25, #27).

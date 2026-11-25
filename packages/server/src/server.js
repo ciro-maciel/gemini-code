@@ -203,7 +203,7 @@ import {
   listAiAccounts,
   setAccountModels,
 } from './ai-accounts.js';
-import { PROVIDERS } from './providers.js';
+import { isOffered, offeredProviders } from './providers.js';
 import {
   linkUserBrowser,
   unlinkUserBrowser,
@@ -2407,7 +2407,10 @@ router.post('/api/github/webhook', async ({ req }) => {
 // --- AI accounts: one per provider key, plus the Claude Code tokens for long jobs ---
 
 router.get('/api/ai-accounts', ({ account }) => {
-  const items = listAiAccounts(account.id);
+  // The dashboard shows only the accounts of what it offers (Gemini).
+  const items = listAiAccounts(account.id).filter((item) =>
+    isOffered(item.provider),
+  );
   return json(
     collection(items, { limit: items.length || 50, offset: 0 }, items.length),
   );
@@ -2415,6 +2418,10 @@ router.get('/api/ai-accounts', ({ account }) => {
 
 router.post('/api/ai-accounts', async ({ req, account }) => {
   const { provider, name, token } = await readBody(req);
+  if (!isOffered(provider))
+    throw invalid(
+      'Gemini Code works only with Google Gemini: add a Gemini API key',
+    );
   try {
     return json(
       await createAiAccount(account.id, { provider, name, token }),
@@ -2425,15 +2432,12 @@ router.post('/api/ai-accounts', async ({ req, account }) => {
   }
 });
 
-router.get('/api/ai-providers', () =>
-  json(
-    collection(
-      PROVIDERS,
-      { limit: PROVIDERS.length, offset: 0 },
-      PROVIDERS.length,
-    ),
-  ),
-);
+router.get('/api/ai-providers', () => {
+  const items = offeredProviders();
+  return json(
+    collection(items, { limit: items.length, offset: 0 }, items.length),
+  );
+});
 
 // Every chat model the account's key opens, live, to turn on the ones its agents use.
 router.get(
