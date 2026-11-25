@@ -10,6 +10,7 @@ import { fetchSkills, transcribe, uploadAttachment } from '../services/api';
 import { openMicrophone } from '../audio/microphone';
 import { unlockVoiceAudio } from '../components/voice-audio';
 import { notify } from '../components/zen';
+import { locale } from '../lib/language';
 import { Menu, Opt, useMenu } from '../ui/Menu';
 import {
   formatSize,
@@ -49,24 +50,28 @@ export function LevelBars({ level, color = null }) {
  */
 // The parts of a step, from the largest kind to the smallest, darkest first.
 const CONTEXT_PARTS = [
-  ['people', 'What people wrote'],
+  ['people', 'What you wrote'],
   ['answers', 'Agent replies'],
   ['results', 'Tool results'],
-  ['tools', 'Ferramentas'],
-  ['rules', 'Rules, memory, and skills'],
+  ['tools', 'Tool definitions'],
+  ['rules', 'Rules, memory and skills'],
   ['instructions', 'Agent instructions'],
 ];
-// 171.900 tokens read as "171,9k", a million as "1M".
+// 171,900 tokens read as "171.9k", a million as "1M", in the reader's format.
 const short = (value) =>
   value >= 1e6
-    ? `${(value / 1e6).toLocaleString('pt-BR', { maximumFractionDigits: 1 })}M`
+    ? `${(value / 1e6).toLocaleString(locale(), { maximumFractionDigits: 1 })}M`
     : value >= 1000
-      ? `${(value / 1000).toLocaleString('pt-BR', { maximumFractionDigits: 1 })}k`
+      ? `${(value / 1000).toLocaleString(locale(), { maximumFractionDigits: 1 })}k`
       : String(Math.round(value));
 const percent = (value, total) =>
-  `${((value / total) * 100).toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`;
+  `${((value / total) * 100).toLocaleString(locale(), { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`;
 
-/** What the model read at the last step, opened on the ring: the window used, then each part and the space left. */
+/**
+ * What the model read at the last step, opened on the ring: how much of the
+ * window is used, each part with its share, what can be released, and on
+ * which model it was measured.
+ */
 function ContextDetail({ context, share, releasable, onRelease }) {
   const window = context?.window;
   const parts =
@@ -78,24 +83,30 @@ function ContextDetail({ context, share, releasable, onRelease }) {
         })).filter((part) => part.tokens > 0)
       : [];
   const free = window ? Math.max(0, window - context.tokens) : 0;
+  const used = Math.round(share * 100);
   return (
     <span className="ctx-pop" role="tooltip">
-      <span className="ctx-h">Context</span>
-      <span className="ctx-n">
-        <span className="grow">{Math.round(share * 100)}% usado</span>
-        {window && (
-          <span className="ctx-of">
-            {short(context.tokens)} / {short(window)}
-          </span>
-        )}
+      <span className="ctx-head">
+        <span className="ctx-h">Context</span>
+        <span className="ctx-sub">What the model reads at each step</span>
       </span>
-      <span className="ctx-bar">
+      <span className="ctx-n">
+        <b>{`${used < 1 && share > 0 ? '<1' : used}%`}</b>
+        <span className="ctx-of">
+          {window
+            ? `${short(context.tokens)} of ${short(window)} tokens`
+            : 'of the window'}
+        </span>
+      </span>
+      <span className="ctx-bar" aria-hidden="true">
         {parts.length ? (
           parts.map((part) => (
             <i
               key={part.key}
               className={`p-${part.key}`}
-              style={{ width: `${(part.tokens / window) * 100}%` }}
+              style={{
+                width: `${Math.max(0.6, (part.tokens / window) * 100)}%`,
+              }}
             />
           ))
         ) : (
@@ -114,7 +125,7 @@ function ContextDetail({ context, share, releasable, onRelease }) {
           ))}
           <span className="ctx-row free">
             <i />
-            <span className="grow">Free space</span>
+            <span className="grow">Free</span>
             <span className="ctx-t">{short(free)}</span>
             <span className="ctx-p">{percent(free, window)}</span>
           </span>
@@ -122,8 +133,9 @@ function ContextDetail({ context, share, releasable, onRelease }) {
       )}
       {context?.parts?.toolCount > 0 && (
         <span className="ctx-row ctx-count">
-          <span className="grow">Active tools</span>
-          <span className="ctx-p">{context.parts.toolCount}</span>
+          <i className="ti ti-tool" aria-hidden="true" />
+          <span className="grow">Tools the agent can call</span>
+          <span className="ctx-t">{context.parts.toolCount}</span>
         </span>
       )}
       {onRelease &&
@@ -131,16 +143,15 @@ function ContextDetail({ context, share, releasable, onRelease }) {
         (releasable.connected > 0 || releasable.isComputer) && (
           <span className="ctx-release">
             <span className="ctx-note">
-              Not used in this conversation:{' '}
-              {[
+              {`Not used in this conversation: ${[
                 releasable.connected > 0 &&
                   `${releasable.connected} ${releasable.connected === 1 ? 'connection tool' : 'connection tools'}`,
-                releasable.isComputer && 'the computer and the browser',
+                releasable.isComputer && "the computer's tools",
               ]
                 .filter(Boolean)
-                .join(' and ')}
-              . Releasing takes them out of the context; the agent brings them
-              back if it needs them.
+                .join(
+                  ' and ',
+                )}. Releasing takes them out of the context; the agent brings them back if it needs them.`}
             </span>
             <button className="btn outline sm" onClick={onRelease}>
               <i className="ti ti-eraser" />
@@ -150,13 +161,12 @@ function ContextDetail({ context, share, releasable, onRelease }) {
         )}
       {!parts.length && (
         <span className="ctx-note">
-          The breakdown appears starting with the agent’s next step.
+          The breakdown appears from the agent’s next step.
         </span>
       )}
       {context?.model && (
-        <span className="ctx-note">
-          At the last step, on {context.model.split('/').pop()}. Resultados e
-          imagens antigas entram resumidos.
+        <span className="ctx-note ctx-foot">
+          {`Measured at the last step, on ${context.model.split('/').pop()}. Older results and images are kept as summaries.`}
         </span>
       )}
     </span>

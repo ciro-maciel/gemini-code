@@ -2586,3 +2586,156 @@ a.btn {
   line-height: 19px;
   color: var(--gm-on-surface-variant);
 }
+
+/* ------------------------------------------------ Context detail -- */
+
+/* The context ring's detail: a floating surface with the share used, a
+   rounded bar in tones of the primary, one row per part, and what can be
+   released. The parts are told apart by tone, never by Google's four colors. */
+.ctx-pop {
+  width: 340px;
+  padding: 18px;
+  gap: 14px;
+  border: 0;
+  border-radius: var(--radius-xl);
+  background: var(--gm-surface);
+  box-shadow:
+    0 0 0 1px var(--gm-outline-variant),
+    0 24px 64px -24px rgba(23, 43, 77, 0.35);
+  animation: ne-pop var(--dur-spatial) var(--spring-fast);
+}
+.ctx-head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.ctx-pop .ctx-h {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gm-on-surface);
+}
+.ctx-sub {
+  font-size: 12.5px;
+  color: var(--gm-on-surface-variant);
+}
+.ctx-pop .ctx-n {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 13px;
+}
+.ctx-pop .ctx-n b {
+  font-size: 28px;
+  line-height: 32px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--gm-on-surface);
+  font-variant-numeric: tabular-nums;
+}
+.ctx-pop .ctx-of {
+  font-size: 12.5px;
+  color: var(--gm-on-surface-variant);
+  font-variant-numeric: tabular-nums;
+}
+.ctx-pop .ctx-bar {
+  display: flex;
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: var(--gm-surface-2);
+  overflow: hidden;
+}
+.ctx-pop .ctx-bar i {
+  display: block;
+  height: 100%;
+}
+.ctx-pop .ctx-bar i + i {
+  margin-left: 2px;
+}
+.ctx-pop .ctx-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.ctx-pop .ctx-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--gm-on-surface);
+}
+.ctx-pop .ctx-row > i:not(.ti) {
+  width: 10px;
+  height: 10px;
+  flex: none;
+  border-radius: var(--radius-pill);
+}
+.ctx-pop .ctx-row.free {
+  color: var(--gm-on-surface-variant);
+}
+.ctx-pop .ctx-row.free > i {
+  background: var(--gm-surface-2);
+  box-shadow: inset 0 0 0 1px var(--gm-outline);
+}
+.ctx-pop .ctx-row.ctx-count {
+  padding-top: 12px;
+  border-top: 1px solid var(--gm-outline-variant);
+}
+.ctx-pop .ctx-row.ctx-count .ti {
+  font-size: 16px;
+  color: var(--gm-primary);
+}
+.ctx-pop .ctx-t,
+.ctx-pop .ctx-p {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--gm-on-surface-variant);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.ctx-pop .ctx-t {
+  min-width: 44px;
+}
+.ctx-pop .ctx-p {
+  min-width: 46px;
+}
+.ctx-pop .p-people {
+  background: var(--gm-primary);
+}
+.ctx-pop .p-answers {
+  background: color-mix(in srgb, var(--gm-primary) 72%, var(--gm-surface));
+}
+.ctx-pop .p-results {
+  background: color-mix(in srgb, var(--gm-primary) 52%, var(--gm-surface));
+}
+.ctx-pop .p-tools {
+  background: color-mix(in srgb, var(--gm-primary) 36%, var(--gm-surface));
+}
+.ctx-pop .p-rules {
+  background: color-mix(in srgb, var(--gm-primary) 24%, var(--gm-surface));
+}
+.ctx-pop .p-instructions {
+  background: color-mix(in srgb, var(--gm-primary) 14%, var(--gm-surface));
+}
+.ctx-pop .ctx-release {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: var(--radius-lg);
+  background: var(--gm-surface-1);
+}
+.ctx-pop .ctx-release .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.ctx-pop .ctx-note {
+  font-size: 12.5px;
+  line-height: 18px;
+  color: var(--gm-on-surface-variant);
+}
+.ctx-pop .ctx-foot {
+  font-size: 12px;
+  line-height: 17px;
+}

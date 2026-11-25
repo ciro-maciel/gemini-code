@@ -1,5 +1,13 @@
 {
   "texts": {
+    "What the model reads at each step": "O que o modelo lê a cada passo",
+    "What you wrote": "O que você escreveu",
+    "Tool definitions": "Definições de ferramentas",
+    "Rules, memory and skills": "Regras, memória e habilidades",
+    "Tools the agent can call": "Ferramentas que o agente pode chamar",
+    "The breakdown appears from the agent’s next step.": "O detalhamento aparece a partir do próximo passo do agente.",
+    "of the window": "da janela",
+    "the computer's tools": "as ferramentas do computador",
     "Attach a file or use a skill": "Anexar um arquivo ou usar uma habilidade",
     "No skills yet. A skill is a SKILL.md file in the skills/ folder, and any agent can use it.": "Nenhuma habilidade ainda. Uma habilidade é um arquivo SKILL.md na pasta skills/, e qualquer agente pode usar.",
     "Waiting for sign-in, in Connectors": "Esperando o login, em Conectores",
@@ -1452,6 +1460,11 @@
     "choose the folder that holds your repositories": "escolha a pasta que guarda os seus repositórios"
   },
   "patterns": {
+    "{0} of {1} tokens": "{0} de {1} tokens",
+    "Measured at the last step, on {0}. Older results and images are kept as summaries.": "Medido no último passo, em {0}. Resultados e imagens antigos ficam resumidos.",
+    "Not used in this conversation: {0}. Releasing takes them out of the context; the agent brings them back if it needs them.": "Sem uso nesta conversa: {0}. Liberar tira do contexto; o agente traz de volta se precisar.",
+    "{#0} connection tools and the computer's tools": "{#0} ferramentas de conexões e as ferramentas do computador",
+    "{#0} connection tool and the computer's tools": "{#0} ferramenta de conexão e as ferramentas do computador",
     "The last {#0} days.": "Os últimos {#0} dias.",
     "seen {0}": "visto {0}",
     "wants: {0}": "quer: {0}",

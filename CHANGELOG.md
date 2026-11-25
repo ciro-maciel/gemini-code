@@ -13,6 +13,10 @@ version with its date.
 
 ### Changed
 
+- The context detail in the design system: the share used in large type, a
+  rounded bar in tones of the primary, one row per part, the tools the agent can
+  call, and Free up context as its own card; numbers follow the dashboard's
+  language (2026-11-25).
 - The composer's chip menus (connections, skills, model, template) in the design
   system: a pill search, rows with an icon circle and the service's own mark, a
   Material checkbox, the state in words, and a foot that stays in view with
