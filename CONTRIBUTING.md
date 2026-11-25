@@ -38,6 +38,13 @@ Use [Bun](https://bun.sh) for everything (`bun install`, `bun add`, `bun test`,
 - **Commits:** `type(scope): imperative sentence in lower case, no period`.
   Types: `feat` `fix` `refactor` `chore` `docs` `test` `ci` `perf`.
 
+## Who maintains it
+
+Gemini Code has one maintainer today,
+[Ciro Cesar Maciel](https://github.com/ciro-maciel), the only person with write
+access. `.github/CODEOWNERS` names him as the owner of every file, so every pull
+request asks for his review.
+
 ## How a change gets in
 
 Gemini Code is developed **trunk-based**: maintainers work on `main` and push
