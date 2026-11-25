@@ -29,8 +29,6 @@ function resolveEncryptionKey() {
   return generated;
 }
 
-const authUrl = (process.env.AUTH_API_URL || '').replace(/\/$/, '');
-
 export const config = {
   port: Number(process.env.PORT || 8787),
   publicUrl: (
@@ -58,21 +56,11 @@ export const config = {
   defaultModel: process.env.DEFAULT_MODEL || 'gemini-3.5-flash-lite',
   riskModel: process.env.RISK_MODEL || 'gemini-3.5-flash-lite',
   botPrefix: 'gemini-code-bot-',
-  // Auth: 'local' (single-user open-source default, no login required) or 'jwt' (external JWKS server).
   // Google AI Pro and Ultra through Google's own client (engine/subscription/):
   // off until Google publishes the official path for third-party tools; on
   // only as a personal experiment (GEMINI_SUBSCRIPTION=1).
   isSubscriptionOn: process.env.GEMINI_SUBSCRIPTION === '1',
-  authMode: process.env.AUTH_MODE || (authUrl ? 'jwt' : 'local'),
-  authUrl,
-  authIssuer: process.env.AUTH_ISSUER || 'gemini-code-auth',
   ownerEmail: (process.env.OWNER_EMAIL || '').trim().toLowerCase(),
-  accessMode:
-    process.env.ACCESS_MODE === 'invite'
-      ? 'invite'
-      : authUrl
-        ? 'invite'
-        : 'open',
   testEmail: (process.env.TEST_EMAIL || '').trim().toLowerCase(),
   limits: {
     botsPerAccount: Number(process.env.LIMIT_BOTS ?? 50),

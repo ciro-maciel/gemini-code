@@ -1,37 +1,10 @@
-import { TOKEN_STORAGE_KEY } from '../auth/AuthContext';
-
 // The only door from the panel to the control server. In production the API
 // is VITE_API_URL (for example the optional worker in front of a cloud
 // control server); in development it is empty and Vite's proxy forwards /api.
 export const API_URL = (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '');
 
-/**
- * Auth's token, read at request time: the AuthProvider writes and clears it,
- * and reading it once would keep a signed-out session's token alive.
- */
-export function authToken() {
-  try {
-    return localStorage.getItem(TOKEN_STORAGE_KEY);
-  } catch {
-    return null;
-  }
-}
-
-// What a browser loads by itself (an event stream, a socket, a link) cannot
-// carry a header, so the token rides in the address.
-function withToken(path) {
-  const token = authToken();
-  if (!token) return `${API_URL}${path}`;
-  return `${API_URL}${path}${path.includes('?') ? '&' : '?'}token=${encodeURIComponent(token)}`;
-}
-
-const unauthorizedListeners = new Set();
-
-/** The panel signs out when the server stops accepting the session. */
-export function onUnauthorized(listener) {
-  unauthorizedListeners.add(listener);
-  return () => unauthorizedListeners.delete(listener);
-}
+// What a browser loads by itself (an event stream, a link): the address on the server.
+const apiUrl = (path) => `${API_URL}${path}`;
 
 // Every failure says what to do next (04/11/2026): the central's own words when
 // it gave them; otherwise what the status means and the next step. The browser's
@@ -61,10 +34,8 @@ export async function reach(url, init) {
 }
 
 async function request(method, path, body) {
-  const token = authToken();
   const headers = {};
   if (body !== undefined) headers['Content-Type'] = 'application/json';
-  if (token) headers.Authorization = `Bearer ${token}`;
   const response = await reach(`${API_URL}${path}`, {
     method,
     headers,
@@ -72,8 +43,6 @@ async function request(method, path, body) {
   });
   const data = await response.json().catch(() => null);
   if (!response.ok) {
-    if (response.status === 401)
-      for (const listener of unauthorizedListeners) listener();
     const error = new Error(
       data?.error?.message || failureText(response.status),
     );
@@ -86,19 +55,15 @@ async function request(method, path, body) {
 
 // A body that is not JSON: a file, an audio recording.
 async function send(method, path, body, headers = {}) {
-  const token = authToken();
   const response = await reach(`${API_URL}${path}`, {
     method,
     headers: {
       ...headers,
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
     body,
   });
   if (!response.ok) {
     const data = await response.json().catch(() => null);
-    if (response.status === 401)
-      for (const listener of unauthorizedListeners) listener();
     const error = new Error(
       data?.error?.message || failureText(response.status),
     );
@@ -182,7 +147,7 @@ export function streamAccount(onChange) {
   let source = null;
   let isClosed = false;
   const open = () => {
-    source = new EventSource(withToken('/api/stream'));
+    source = new EventSource(apiUrl('/api/stream'));
     source.onmessage = (message) => {
       const event = JSON.parse(message.data);
       // A commit on the account's repository: the files are read again, the agents are not.
@@ -245,7 +210,7 @@ export function uploadRepoFiles(folder, files) {
 export const renameRepoFolder = (from, to) =>
   request('POST', '/api/files/rename', { from, to });
 export const attachmentUrl = (botId, attachmentId) =>
-  withToken(`/api/bots/${botId}/attachments/${attachmentId}`);
+  apiUrl(`/api/bots/${botId}/attachments/${attachmentId}`);
 
 // While the control server restarts (a deploy), the worker answers 502 for a
 // few seconds: voice calls try again instead of losing what was said.
@@ -369,11 +334,9 @@ export const deleteAgentPath = (botId, path, code) =>
   request('DELETE', `/api/bots/${botId}/fs`, { path, confirm: true, code });
 
 export const fileUrl = (botId, path) =>
-  withToken(
-    `/api/bots/${botId}/files/content?path=${encodeURIComponent(path)}`,
-  );
+  apiUrl(`/api/bots/${botId}/files/content?path=${encodeURIComponent(path)}`);
 export const pageCaptureUrl = (botId, captureId) =>
-  withToken(`/api/bots/${botId}/pages/${captureId}`);
+  apiUrl(`/api/bots/${botId}/pages/${captureId}`);
 
 export const fetchTools = (botId) => request('GET', `/api/bots/${botId}/tools`);
 export const setToolPolicy = (botId, name, policy) =>
@@ -541,7 +504,7 @@ export function streamBot(botId, afterSeq, onEvent) {
     source?.close();
     lastHeard = Date.now();
     source = new EventSource(
-      withToken(`/api/bots/${botId}/stream?after=${lastSeq}`),
+      apiUrl(`/api/bots/${botId}/stream?after=${lastSeq}`),
     );
     source.onmessage = (message) => {
       lastHeard = Date.now();
@@ -586,6 +549,6 @@ export function streamBot(botId, afterSeq, onEvent) {
 export function screenSocketUrl(botId) {
   const base =
     API_URL || `${window.location.protocol}//${window.location.host}`;
-  const path = withToken(`/api/bots/${botId}/screen`).slice(API_URL.length);
+  const path = apiUrl(`/api/bots/${botId}/screen`).slice(API_URL.length);
   return `${base.replace(/^http/, 'ws')}${path}`;
 }

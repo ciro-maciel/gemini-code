@@ -26,6 +26,10 @@ version with its date.
 
 ### Removed
 
+- Sign-in and everything for several people: JWT sign-in, the waiting room and
+  letting accounts in, sharing agents, plans, API keys, the sign-in page and the
+  account switcher. Gemini Code runs for the person at this machine; Diagnostics
+  and Security say the server answers only on 127.0.0.1 (2026-11-25).
 - Taking over the screen, left in the engine after the live screen went: the
   takeover state, its route and the conversation's give-back (2026-11-25).
 - The risk judge answers again on Gemini 3 models: a quick step asks for minimal

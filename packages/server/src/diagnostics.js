@@ -157,7 +157,7 @@ export function checksFor(account, deps = {}) {
   );
 
   // --- Agents
-  const agents = bots(account.id, account.email ?? null);
+  const agents = bots(account.id);
   add('Agents', 'agents', 'Agents', () => ({
     status: agents.length ? 'ok' : 'warn',
     detail: agents.length
@@ -235,18 +235,11 @@ export function checksFor(account, deps = {}) {
   });
 
   // --- Permissions
-  add('Permissions', 'sign-in', 'Sign-in', () =>
-    config.authMode === 'local'
-      ? {
-          status: 'warn',
-          detail:
-            'Local mode: no sign-in, whoever reaches this machine’s port acts as you',
-        }
-      : {
-          status: 'ok',
-          detail: `Signed-in accounts only (${config.authMode})`,
-        },
-  );
+  add('Permissions', 'sign-in', 'Who reaches it', () => ({
+    status: 'ok',
+    detail:
+      'Only this machine: the server answers on 127.0.0.1, so nothing else on the network reaches it',
+  }));
   add('Permissions', 'always-ask', 'Payments and sign-ins', () => ({
     status:
       ALWAYS_ASK_KINDS.has('pay') && ALWAYS_ASK_KINDS.has('auth')

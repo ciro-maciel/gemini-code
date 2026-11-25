@@ -1,6 +1,5 @@
 import { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth, useSignOut } from '../auth/AuthContext';
 
 import { GeminiSparkle } from '../components/zen';
 import { LANGUAGES, currentLanguage } from '../lib/language';
@@ -78,19 +77,9 @@ const initialsOf = (name) =>
  */
 function AccountFoot({ account, isDark, onAccount, onTheme }) {
   const menu = useMenu();
-  const { isLocalMode } = useAuth();
-  const signOut = useSignOut();
   const navigate = useNavigate();
   const name = account?.name || account?.email || 'Developer';
   const email = account?.email || '';
-  const leave = async () => {
-    menu.close();
-    try {
-      await signOut();
-    } finally {
-      navigate('/auth/signin');
-    }
-  };
   return (
     <div className="acct-foot">
       <button
@@ -131,12 +120,10 @@ function AccountFoot({ account, isDark, onAccount, onTheme }) {
               <span>{initialsOf(name)}</span>
             </span>
             <b className="acct-hi">{`Hi, ${name}!`}</b>
-            {isLocalMode && (
-              <span className="acct-mode">
-                <i className="ti ti-device-desktop" />
-                Local · no sign-in
-              </span>
-            )}
+            <span className="acct-mode">
+              <i className="ti ti-device-desktop" />
+              On this machine
+            </span>
             <button
               className="acct-manage"
               onClick={() => {
@@ -178,9 +165,6 @@ function AccountFoot({ account, isDark, onAccount, onTheme }) {
                 navigate('/settings/diagnostics');
               }}
             />
-            {!isLocalMode && (
-              <AccountItem icon="ti-logout" title="Sign out" onClick={leave} />
-            )}
           </div>
           <footer className="acct-foot-links">
             <span>Gemini Code {version}</span>

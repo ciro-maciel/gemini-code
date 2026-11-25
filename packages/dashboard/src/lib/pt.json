@@ -1,5 +1,13 @@
 {
   "texts": {
+    "On this machine": "Nesta máquina",
+    "This machine only": "Só esta máquina",
+    "Who reaches this Gemini Code and where its keys are kept.": "Quem alcança este Gemini Code e onde ficam as chaves.",
+    "The dashboard and the server run here for you. The server answers only on 127.0.0.1, so nothing else on the network reaches it, and there is no sign-in to steal.": "O painel e o servidor rodam aqui para você. O servidor só atende em 127.0.0.1, então nada mais na rede o alcança, e não há login para roubar.",
+    "Who reaches it": "Quem alcança",
+    "Only this machine: the server answers on 127.0.0.1, so nothing else on the network reaches it": "Só esta máquina: o servidor atende em 127.0.0.1, então nada mais na rede o alcança",
+    "Couldn't reach Gemini Code": "Não foi possível falar com o Gemini Code",
+    "Try again": "Tentar de novo",
     "Done: soma.js and soma.test.js created, 3 pass.": "Pronto: soma.js e soma.test.js criados, 3 pass.",
     "Agent": "Agente",
     "another agent": "outro agente",
@@ -1479,6 +1487,7 @@
     "GitHub signs in only the apps registered with it. Create a personal access token at github.com/settings/personal-access-tokens (read and write access to the repositories you want), then paste it here.": "O GitHub só faz login de apps registrados nele. Crie um token pessoal em github.com/settings/personal-access-tokens (com leitura e escrita nos repositórios que quiser) e cole aqui."
   },
   "patterns": {
+    "You and {#0} agents": "Você e {#0} agentes",
     "{#0} connection": "{#0} conexão",
     "{#0} connections": "{#0} conexões",
     "{#0} skill": "{#0} habilidade",

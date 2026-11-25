@@ -142,7 +142,6 @@ export function AgentTab({
       notify.error(error.message);
     }
   };
-  const members = bot.members ?? [];
   const others = conversation.seeing.filter(
     (person) => person.accountId !== account?.id,
   );
@@ -158,12 +157,7 @@ export function AgentTab({
         .map((row) => [row.botId, { id: row.botId, name: row.name }]),
     ).values(),
   ];
-  const crew = [
-    bot.sharedBy
-      ? { name: bot.sharedBy }
-      : { name: account?.name || account?.email || 'You' },
-    ...members,
-  ];
+  const crew = [{ name: account?.name || account?.email || 'You' }];
   const origin = originOf(events);
   const cost = thread?.cost ?? 0;
 
@@ -260,29 +254,10 @@ export function AgentTab({
             Files
           </button>
         </div>
-        {members.length > 0 && (
-          <div className="banner">
-            <i className="ti ti-users" />
-            {isOwner ? (
-              <span className="grow">
-                <b>Shared</b> · Each message goes to the agent with the sender’s
-                name. Runs as you, on your plan.
-              </span>
-            ) : (
-              <span className="grow">
-                <b>Shared by {bot.sharedBy}</b> ·{' '}
-                {bot.access === 'read'
-                  ? 'You watch live without sending messages.'
-                  : "Your message goes to the agent under your name. It runs on the creator's plan."}
-              </span>
-            )}
-          </div>
-        )}
-        {(members.length > 0 || called.length > 0) && (
+        {called.length > 0 && (
           <div className="crew">
             <span className="muted" style={{ whiteSpace: 'nowrap' }}>
-              {crew.length} {crew.length === 1 ? 'pessoa' : 'pessoas'},{' '}
-              {called.length + 1} {called.length ? 'agentes' : 'agente'}
+              {`You and ${called.length + 1} agents`}
             </span>
             {crew.map((person) => (
               <span className="who" key={person.email || person.name}>
@@ -386,13 +361,7 @@ export function AgentTab({
             onResolved={conversation.reloadThread}
           />
         )}
-        {bot.access === 'read' ? (
-          <div className="read-only">
-            <i className="ti ti-eye" />
-            You follow this agent. To send messages, ask {bot.sharedBy} o acesso
-            “pode entrar”.
-          </div>
-        ) : isVoice ? (
+        {isVoice ? (
           <div className="composer voice">
             <VoiceMode
               bot={bot}
@@ -418,7 +387,6 @@ export function AgentTab({
             onUnqueue={conversation.unqueue}
             onStop={conversation.stop}
             onVoice={() => setIsVoice(true)}
-            onNote={members.length > 0 ? conversation.note : null}
             suggestions={suggestions}
             workSeconds={thread?.workSeconds ?? 0}
             contextShare={thread?.contextShare ?? null}

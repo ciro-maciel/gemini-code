@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
-import { AccountSwitcher, useAuth, useSignOut } from '../../auth/AuthContext';
 import {
   fetchPush,
   fetchUserBrowser,
@@ -149,72 +147,30 @@ export function MyChrome() {
 }
 
 /**
- * Settings › Security: how this account signs in, the other accounts of this
- * browser, and signing out. In local mode there is no sign-in, and it says so.
+ * Settings › Security: who reaches this Gemini Code and where its keys are.
+ * It runs for the person at this machine, with no sign-in in front of it.
  */
 export function Security() {
-  const { isLocalMode } = useAuth();
-  const signOut = useSignOut();
-  const navigate = useNavigate();
-  if (isLocalMode)
-    return (
-      <>
-        <SettingsHeader
-          title="Security"
-          description="How this Gemini Code is reached and who can act in it."
-        />
-        <SettingsGroup>
-          <SettingsRow
-            icon="ti-device-desktop"
-            title="Local mode, no sign-in"
-            description="The dashboard and the server run on this machine for you alone. Whoever reaches its port acts as you, so keep it on localhost."
-          >
-            <StateTag status="warn">No sign-in</StateTag>
-          </SettingsRow>
-          <SettingsRow
-            icon="ti-lock"
-            title="Keys stay on the server"
-            description="AI keys and each agent's secrets are encrypted on the server and never reach what the model reads."
-          >
-            <StateTag status="ok">Encrypted</StateTag>
-          </SettingsRow>
-        </SettingsGroup>
-      </>
-    );
   return (
     <>
       <SettingsHeader
         title="Security"
-        description="You sign in with a code sent to your e-mail: there is no password to leak. Each agent's keys stay encrypted on the server and never reach its computer's disk."
+        description="Who reaches this Gemini Code and where its keys are kept."
       />
       <SettingsGroup>
         <SettingsRow
-          icon="ti-mail"
-          title="Code by e-mail"
-          description="Each sign-in asks for a new code, valid for 10 minutes."
+          icon="ti-device-desktop"
+          title="This machine only"
+          description="The dashboard and the server run here for you. The server answers only on 127.0.0.1, so nothing else on the network reaches it, and there is no sign-in to steal."
         >
-          <StateTag status="ok">On</StateTag>
+          <StateTag status="ok">Local</StateTag>
         </SettingsRow>
-      </SettingsGroup>
-      <AccountSwitcher
-        hasDivider={false}
-        onSignedOut={() => navigate('/auth/signin')}
-      />
-      <SettingsGroup>
         <SettingsRow
-          icon="ti-logout"
-          title="Sign out of this account"
-          description="This browser stops being signed in; your agents keep working."
+          icon="ti-lock"
+          title="Keys stay on the server"
+          description="AI keys and each agent's secrets are encrypted on the server and never reach what the model reads."
         >
-          <button
-            className="btn outline sm"
-            onClick={async () => {
-              await signOut();
-              navigate('/auth/signin');
-            }}
-          >
-            Sign out
-          </button>
+          <StateTag status="ok">Encrypted</StateTag>
         </SettingsRow>
       </SettingsGroup>
     </>

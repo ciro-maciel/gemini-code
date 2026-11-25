@@ -1,6 +1,5 @@
 import { config } from './config.js';
 import { db, newId, now, toApi } from './db.js';
-import { listMembers } from './members.js';
 import { chooseMascot, isMascot } from './mascots.js';
 import { removeBotAttachments } from './attachments.js';
 import { countPendingChoices } from './artifacts.js';
@@ -99,11 +98,8 @@ export function markBotRead(botId) {
   ).run(botId, botId);
 }
 
-/**
- * The account's bots, and after them the ones shared with it (by its e-mail),
- * each saying how far the account may go in it and who owns it.
- */
-export function listBots(accountId, email = null) {
+/** The account's bots, in the order they were made. */
+export function listBots(accountId) {
   return db
     .query(
       `SELECT bots.*,
@@ -119,12 +115,10 @@ export function listBots(accountId, email = null) {
                 (SELECT CASE WHEN status = 'waiting_approval' THEN 'approval'
                              WHEN status = 'waiting_user' AND waiting_reason IN ('question', 'connection') THEN waiting_reason END
                    FROM tasks WHERE tasks.bot_id = bots.id ORDER BY created_at DESC LIMIT 1) AS needs_you
-                , (SELECT access FROM bot_members WHERE bot_id = bots.id AND email = ?) AS shared_access
-                , (SELECT COALESCE(name, email) FROM accounts WHERE accounts.id = bots.account_id) AS owner_name
-             FROM bots WHERE account_id = ? OR id IN (SELECT bot_id FROM bot_members WHERE email = ?)
-             ORDER BY account_id = ? DESC, created_at`,
+             FROM bots WHERE account_id = ?
+             ORDER BY created_at`,
     )
-    .all(email, accountId, email, accountId)
+    .all(accountId)
     .map((row, _, rows) => {
       const bot = present(row);
       // Where its instructions live in the repository: agents/<its folder>/INSTRUCTIONS.md.
@@ -138,12 +132,7 @@ export function listBots(accountId, email = null) {
       const agentDir = `agents/${agentFolders(siblings).get(row.id)}`;
       bot.agentDir = agentDir;
       bot.instructionsPath = `${agentDir}/INSTRUCTIONS.md`;
-      const isMine = row.account_id === accountId;
-      bot.access = isMine ? 'owner' : row.shared_access;
-      bot.sharedBy = isMine ? null : row.owner_name;
-      bot.members = listMembers(row.id);
-      delete bot.sharedAccess;
-      delete bot.ownerName;
+      bot.access = 'owner';
       bot.lastMessage = row.last_message
         ? toPreview(JSON.parse(row.last_message).text)
         : null;

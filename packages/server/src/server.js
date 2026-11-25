@@ -1,7 +1,6 @@
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { config } from './config.js';
-import { createPlan } from './plan.js';
 import { db, now, toApi } from './db.js';
 import {
   countBots,
@@ -22,14 +21,7 @@ import {
   recoverBots,
   updateBotSettings,
 } from './bots.js';
-import {
-  addUsage,
-  describeAccount,
-  fetchAccount,
-  listAccounts,
-  setAccountStatus,
-  setFirstWish,
-} from './accounts.js';
+import { addUsage, describeAccount } from './accounts.js';
 import { designBot } from './designer.js';
 import { authenticate } from './auth.js';
 import {
@@ -136,7 +128,6 @@ import {
   updateRoutine,
 } from './routines.js';
 import { buildHealthReport, startHealthReports } from './health.js';
-import { createApiKey, listApiKeys, revokeApiKey } from './api-keys.js';
 import {
   approvalRate,
   auditCsv,
@@ -167,15 +158,6 @@ import {
 } from './vault.js';
 import { ensureInbox, receiveAtInbox, rotateInbox } from './inbox.js';
 import { enqueue, listQueue, removeQueued } from './queue.js';
-import {
-  accessOf,
-  allows,
-  knownPeople,
-  listMembers,
-  sharedWith,
-  shareBot,
-  unshareBot,
-} from './members.js';
 import {
   availableModels,
   brainForNewAgent,
@@ -253,39 +235,11 @@ import {
 // Exported for the tests, which call the routes without a port or a token.
 export const router = createRouter();
 
-// A person whose access is still being let in, but who was invited into a
-// bot, reaches only what that bot needs: the lists the panel reads (its own,
-// so empty) and the shared bots themselves (requireBot still checks each
-// one). Running costs the owner.
-const GUEST_LISTS = new Set([
-  '/api/bots',
-  '/api/stream',
-  '/api/templates',
-  '/api/deliveries',
-  '/api/connections',
-  '/api/ai-accounts',
-  '/api/brains',
-]);
-const isGuestRoute = (method, pathname) =>
-  (method === 'GET' && GUEST_LISTS.has(pathname)) ||
-  /^\/api\/(bots|tasks)\/[^/]+\/./.test(pathname) ||
-  (method === 'GET' && /^\/api\/(bots|tasks)\/[^/]+$/.test(pathname));
-
 // Another account's bot answers exactly like one that does not exist: a 403
-// would confirm the id. A member gets 403 only past what their access allows:
-// 'read' follows, 'enter' also writes, and everything else is the owner's.
-function requireBot(id, account, need = 'owner') {
+// would confirm the id.
+function requireBot(id, account) {
   const bot = fetchBot(id);
-  const access = accessOf(bot, account);
-  if (!access) throw notFound('unknown bot');
-  if (!allows(access, need))
-    throw new HttpError(
-      403,
-      'FORBIDDEN',
-      need === 'enter'
-        ? 'you only follow this agent'
-        : 'only whoever created the agent can change this',
-    );
+  if (!bot || bot.accountId !== account.id) throw notFound('unknown bot');
   return bot;
 }
 
@@ -352,108 +306,32 @@ router.get('/api/overview', ({ account }) => {
 
 // --- Bots -----------------------------------------------------------------
 
-// --- The plan: how many agents the account's plan in Payments includes ----------
-//
-// 1, 3, 9 or 99 agents (plan.js), counted on creation only. The owner is never held to it. Once the gate
-// enforces, the plan's number is the only ceiling; while PLAN_LIMITS is "off" (or Payments is silent) the
-// old one (config.limits.botsPerAccount) still holds, and the plan is still read and shown.
-const plan = createPlan({ product: 'assistant' });
-const AGENT = { one: 'agent', many: 'agents' };
-
-async function requireRoomForAgent(account) {
-  if (account.isOwner) return;
-  const used = countBots(account.id);
-  const gate = await plan.canCreate(process.env, account.id, used, AGENT);
-  if (!gate.allowed)
-    throw new HttpError(402, 'PLAN_LIMIT', gate.body.message, {
-      limit: gate.body.limit,
-      used,
-      tier: gate.body.tier,
-    });
-  if (!gate.plan.isEnforced && used >= config.limits.botsPerAccount)
+// One person, up to a sane number of agents.
+function requireRoomForAgent(account) {
+  if (countBots(account.id) >= config.limits.botsPerAccount)
     throw new HttpError(
       409,
-      'PLAN_LIMIT',
-      `Each account has up to ${config.limits.botsPerAccount} bots. Delete one to create another.`,
+      'AGENT_LIMIT',
+      `Up to ${config.limits.botsPerAccount} agents. Delete one to create another.`,
     );
 }
 
-// --- Who is signed in, and the owner's Pessoas screen ----------------------
+// --- Who is using it ---------------------------------------------------------
 
-router.get('/api/me', async ({ account }) => {
-  const current = await plan.planFor(process.env, account.id);
-  return json({
+router.get('/api/me', ({ account }) =>
+  json({
     ...describeAccount(account),
-    runtime: {
-      authMode: config.authMode,
-      workspaceDir: config.localWorkspaceDir,
-    },
-    plan: {
-      tier: current.tier,
-      name: current.name,
-      agents: current.limit,
-      isEnforced: current.isEnforced && !account.isOwner,
-      used: countBots(account.id),
-    },
-  });
-});
+    runtime: { workspaceDir: config.localWorkspaceDir },
+  }),
+);
 
-// While it waits, an account says what its first bot should do.
 // The account's health, the same report its directors get each morning (health.js), for whoever looks after it.
 router.get('/api/health/report', ({ account }) =>
   json({ report: buildHealthReport(account.id) }),
 );
 
-// API keys: what a script or the house engineering uses instead of a browser's login (api-keys.js).
-router.get('/api/keys', ({ account }) => {
-  const items = listApiKeys(account.id);
-  return json(
-    collection(items, { limit: items.length, offset: 0 }, items.length),
-  );
-});
-
-router.post('/api/keys', async ({ req, account }) => {
-  try {
-    return json(createApiKey(account.id, (await readBody(req)).name), 201);
-  } catch (error) {
-    throw invalid(error.message);
-  }
-});
-
-router.delete('/api/keys/:id', ({ params, account }) =>
-  json({ isRevoked: revokeApiKey(account.id, params.id) }),
-);
-
-router.put('/api/me/wish', async ({ req, account }) =>
-  json(describeAccount(setFirstWish(account.id, (await readBody(req)).wish))),
-);
-
-router.get('/api/accounts', ({ account }) => {
-  requireOwner(account);
-  const items = listAccounts();
-  return json(
-    collection(items, { limit: items.length || 50, offset: 0 }, items.length),
-  );
-});
-
-router.patch('/api/accounts/:id', async ({ req, params, account }) => {
-  requireOwner(account);
-  const { status } = await readBody(req);
-  try {
-    const before = fetchAccount(params.id);
-    const updated = setAccountStatus(params.id, status);
-    if (!updated) throw notFound('unknown account');
-    if (before?.status === 'pending' && updated.status === 'active')
-      buildFirstBot(updated);
-    return json(updated);
-  } catch (error) {
-    if (error instanceof HttpError) throw error;
-    throw invalid(error.message);
-  }
-});
-
-// Approvals, takeovers, restores and failures, counted. Kinds only: no
-// account's text reaches this screen.
+// Approvals and failures, counted. Kinds only: no text of a conversation
+// reaches this screen.
 router.get('/api/metrics/outcomes', ({ url, account }) => {
   requireOwner(account);
   const days = Math.min(
@@ -464,7 +342,7 @@ router.get('/api/metrics/outcomes', ({ url, account }) => {
 });
 
 router.get('/api/bots', ({ account }) => {
-  const bots = listBots(account.id, account.email);
+  const bots = listBots(account.id);
   return json(
     collection(bots, { limit: bots.length || 50, offset: 0 }, bots.length),
   );
@@ -493,12 +371,6 @@ router.delete('/api/push', async ({ req, account }) => {
   return json({ devices: countPushSubscriptions(account.id) });
 });
 
-// --- Sharing: who else is in a bot ------------------------------------------
-
-router.get('/api/people', ({ account }) =>
-  json({ items: knownPeople(account.id) }),
-);
-
 // ⌘K: what the account's agents remember, by its words.
 router.get('/api/memories', ({ url, account }) =>
   json({ items: searchMemories(account.id, url.searchParams.get('q')) }),
@@ -509,33 +381,9 @@ router.get('/api/bots/:id/handoffs', ({ params, account }) => {
   return json(handoffsOf(params.id));
 });
 
-router.get('/api/bots/:id/members', ({ params, account }) => {
-  requireBot(params.id, account, 'read');
-  return json({ items: listMembers(params.id) });
-});
-
-router.put('/api/bots/:id/members', async ({ req, params, account }) => {
-  const bot = requireBot(params.id, account);
-  const { email, access } = await readBody(req);
-  const error = shareBot(bot, email, access);
-  if (error) throw invalid(error);
-  publishBot(params.id, 'members', { email: email.trim().toLowerCase() });
-  return json({ items: listMembers(params.id) });
-});
-
-router.delete('/api/bots/:id/members/:email', ({ params, account }) => {
-  requireBot(params.id, account);
-  if (!unshareBot(params.id, decodeURIComponent(params.email)))
-    throw notFound('that person is no longer in the agent');
-  publishBot(params.id, 'members', {
-    email: decodeURIComponent(params.email).toLowerCase(),
-  });
-  return json({ items: listMembers(params.id) });
-});
-
 router.post('/api/bots', async ({ req, account }) => {
   const body = await readBody(req);
-  await requireRoomForAgent(account);
+  requireRoomForAgent(account);
   // From a template, the agent copies it: instructions, model, effort, connections and skills.
   const template = body.templateId
     ? fetchTemplate(account.id, body.templateId)
@@ -617,7 +465,7 @@ router.post('/api/bots/design', async ({ req, account }) => {
   const { description } = await readBody(req);
   if (!String(description || '').trim())
     throw invalid('say what the bot should do');
-  await requireRoomForAgent(account);
+  requireRoomForAgent(account);
   try {
     return json(await buildDesignedBot(account.id, description), 201);
   } catch (error) {
@@ -667,18 +515,6 @@ async function buildDesignedBot(accountId, description) {
       isSetup: true,
     });
   return { bot, routines, summary: design.summary };
-}
-
-/*
- * An account let in with a first wish and no bot gets that bot designed right
- * away, in the background: the owner's "Liberar" does not wait on the model,
- * and the person's screen opens onto a bot that is already setting itself up.
- */
-function buildFirstBot(account) {
-  if (!account?.firstWish || countBots(account.id) > 0) return;
-  buildDesignedBot(account.id, account.firstWish).catch((error) =>
-    console.warn(`[first-bot] ${account.id}: ${error.message}`),
-  );
 }
 
 router.get('/api/bots/:id', ({ params, account }) => {
@@ -770,18 +606,17 @@ router.delete('/api/bots/:id/documents', async ({ url, params, account }) => {
   }
 });
 
-// The owner is looking at this conversation: it has nothing new for them.
-// A member looking leaves the owner's mark where it is.
+// The person is looking at this conversation: it has nothing new for them.
 router.post('/api/bots/:id/read', ({ params, account }) => {
-  if (accessOf(requireBot(params.id, account, 'read'), account) === 'owner')
-    markBotRead(params.id);
+  requireBot(params.id, account);
+  markBotRead(params.id);
   return json({ isRead: true });
 });
 
 // "Marcar como não lida": the latest news comes back, to read later (04/11/2026).
 router.delete('/api/bots/:id/read', ({ params, account }) => {
-  if (accessOf(requireBot(params.id, account, 'read'), account) === 'owner')
-    markBotUnread(params.id);
+  requireBot(params.id, account);
+  markBotUnread(params.id);
   return json({ isRead: false });
 });
 
@@ -1115,7 +950,7 @@ router.get('/api/stream', ({ req, account }) => {
   const sees = (botId) => {
     const known = canSee.get(botId);
     if (known && Date.now() - known.at < 30_000) return known.value;
-    const value = Boolean(accessOf(fetchBot(botId), account));
+    const value = fetchBot(botId)?.accountId === account.id;
     canSee.set(botId, { value, at: Date.now() });
     return value;
   };
@@ -1164,10 +999,7 @@ router.post('/api/bots/:id/messages', async ({ req, params, account }) => {
     throw invalid('write the message');
   // "Fila": while the bot works, the message waits for its task to stop.
   const thread = currentThread(params.id);
-  // In a shared bot every message reaches it signed with who sent it.
-  const author = listMembers(params.id).length
-    ? account.name || account.email
-    : null;
+  const author = null;
   if (
     isQueued &&
     thread &&
@@ -1213,7 +1045,7 @@ router.post('/api/bots/:id/notes/:eventId/send', ({ params, account }) => {
   const note = takeNote(params.id, account, params.eventId);
   if (!note) throw notFound('that note was already sent or is not yours');
   sendBotMessage(params.id, note.text, {
-    author: listMembers(params.id).length ? note.author : null,
+    author: null,
     fromNote: note.id,
   });
   return json(currentThread(params.id));
@@ -2459,15 +2291,13 @@ router.post('/api/subscription/refresh', async () =>
 // Only when run (bun src/server.js): a test imports the routes and nothing starts.
 /** Starts the server: what `bun src/server.js` and the installed `gemini-code` command (cli.js) both run. */
 export function startServer() {
-  // In local mode the subscription, once it answers, becomes an AI account the agents can pick.
-  if (config.authMode === 'local') {
-    subscriptionStore.subscribe((state) => {
-      if (state.status === 'ready')
-        ensureSubscriptionAccount('local-developer', state.models).catch(
-          (error) => console.error(`[subscription] ${error.message}`),
-        );
-    });
-  }
+  // The subscription, once it answers, becomes an AI account the agents can pick.
+  subscriptionStore.subscribe((state) => {
+    if (state.status === 'ready')
+      ensureSubscriptionAccount('local-developer', state.models).catch(
+        (error) => console.error(`[subscription] ${error.message}`),
+      );
+  });
   refreshSubscription().then((state) =>
     console.log(
       `[subscription] ${state.status}${state.models?.length ? ` (${state.models.length} models)` : ''}${state.error ? `: ${state.error}` : ''}`,
@@ -2528,22 +2358,7 @@ export function startServer() {
           // (which carries its own secret). Everything else is someone's.
           const account = PUBLIC_ROUTES.has(pathname)
             ? null
-            : await authenticate(req, url, {
-                allowPending:
-                  pathname === '/api/me' ||
-                  pathname === '/api/me/wish' ||
-                  isGuestRoute(req.method, pathname),
-              });
-          if (
-            account?.status === 'pending' &&
-            !['/api/me', '/api/me/wish'].includes(pathname) &&
-            !sharedWith(account.email).length
-          )
-            throw new HttpError(
-              403,
-              'ACCESS_PENDING',
-              'Your access is still being granted.',
-            );
+            : await authenticate();
           const response = await match.handler({
             req,
             url,
