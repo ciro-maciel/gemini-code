@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 
 import { LANGUAGES, currentLanguage, setLanguage } from '../lib/language';
+import { SettingsHeader } from '../pages/settings/kit';
 
 // What each language changes besides the words: the format of dates and
 // numbers, from the locale the dashboard writes them in.
@@ -45,14 +46,12 @@ export function LanguageSettings() {
 
   return (
     <div className="set-language" data-no-translate>
-      <div>
-        <h2 className="set-h">Language · Idioma</h2>
-        <p className="lead" style={{ marginTop: 6 }}>
-          In this browser · Neste navegador
-        </p>
-      </div>
+      <SettingsHeader
+        title="Language · Idioma"
+        description="The dashboard's language in this browser. · O idioma do painel neste navegador."
+      />
       <div
-        className="box gm-radio-list"
+        className="st-group gm-radio-list"
         role="radiogroup"
         aria-label="Language · Idioma"
       >

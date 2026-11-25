@@ -13,6 +13,20 @@ version with its date.
 
 ### Changed
 
+- Settings is rebuilt from one kit (pages/settings/kit.jsx) and documented as
+  the pattern to follow (docs/settings.md): every section says what it is for,
+  shows states in words, has loading, empty and error states, and sentence case.
+  People lists accounts as rows with numbers that read at a glance; My Chrome
+  links in three steps; Security says plainly that local mode has no sign-in;
+  Team connections shows each service's icon, state and a Sign in button;
+  Dictation shows which voice service answers; Agent safety lists the rules in
+  the code (2026-11-25).
+
+### Removed
+
+- The E-mail section, which promised inbound webhooks the server does not have
+  (2026-11-25).
+
 - Trunk-based development: maintainers push small commits straight to `main`; a
   `pre-push` hook runs the preflight and the changelog rule on the machine, and
   CI runs no tests (2026-11-25).

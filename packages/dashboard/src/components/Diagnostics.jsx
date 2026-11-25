@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { fetchDiagnostics } from '../services/api';
 import { notify } from './zen';
 import { locale } from '../lib/language';
+import { SettingsHeader } from '../pages/settings/kit';
 
 const STATUS = {
   ok: { icon: 'ti-circle-check', label: 'OK' },
@@ -60,32 +61,33 @@ export function Diagnostics() {
 
   return (
     <div className="diag">
-      <div className="diag-head">
-        <div>
-          <h2 className="set-h">Diagnostics</h2>
-          <p className="lead" style={{ marginTop: 6 }}>
-            Every part of Gemini Code checked now: whether it works, is
-            connected and is allowed.
-          </p>
-        </div>
-        <div className="diag-actions">
-          <button
-            className="btn outline sm"
-            onClick={copy}
-            disabled={!result || isRunning}
-          >
-            <i className="ti ti-copy" />
-            Copy report
-          </button>
-          <button className="btn filled sm" onClick={run} disabled={isRunning}>
-            <i className={`ti ti-refresh${isRunning ? ' diag-spin' : ''}`} />
-            {isRunning ? 'Checking…' : 'Run again'}
-          </button>
-        </div>
-      </div>
+      <SettingsHeader
+        title="Diagnostics"
+        description="Every part of Gemini Code checked now: whether it works, is connected and is allowed. Copy the report to send it to whoever helps."
+        actions={
+          <>
+            <button
+              className="btn outline sm"
+              onClick={copy}
+              disabled={!result || isRunning}
+            >
+              <i className="ti ti-copy" />
+              Copy report
+            </button>
+            <button
+              className="btn filled sm"
+              onClick={run}
+              disabled={isRunning}
+            >
+              <i className={`ti ti-refresh${isRunning ? ' diag-spin' : ''}`} />
+              {isRunning ? 'Checking…' : 'Run again'}
+            </button>
+          </>
+        }
+      />
 
       {error && (
-        <div className="box diag-error">
+        <div className="st-notice is-fail diag-error">
           <i className="ti ti-plug-connected-x" />
           <div>
             <b>The server did not answer</b>
@@ -114,7 +116,7 @@ export function Diagnostics() {
             const items = result.items.filter((item) => item.group === group);
             if (!items.length) return null;
             return (
-              <section key={group} className="box diag-group">
+              <section key={group} className="st-group diag-group">
                 <h3>{group}</h3>
                 {items.map((item) => (
                   <div key={item.id} className={`diag-row is-${item.status}`}>
@@ -140,7 +142,7 @@ export function Diagnostics() {
 
 function DiagnosticsSkeleton() {
   return GROUPS.slice(0, 3).map((group) => (
-    <section key={group} className="box diag-group" aria-hidden="true">
+    <section key={group} className="st-group diag-group" aria-hidden="true">
       <h3>{group}</h3>
       {[0, 1, 2].map((row) => (
         <div key={row} className="diag-row sk">

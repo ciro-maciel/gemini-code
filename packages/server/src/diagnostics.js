@@ -99,6 +99,25 @@ export function checksFor(account, deps = {}) {
       : { status: 'fail', detail: `${folder} is not writable` };
   });
 
+  add('System', 'voice', 'Voice', () => {
+    if (config.fishApiKey)
+      return {
+        status: 'ok',
+        detail: 'Fish Audio transcribes dictation and speaks in voice mode',
+      };
+    if (config.openrouterApiKey)
+      return {
+        status: 'warn',
+        detail:
+          'A Gemini model through OpenRouter transcribes dictation; nothing speaks voice mode (FISH_API_KEY is not set)',
+      };
+    return {
+      status: 'off',
+      detail:
+        'No voice service: set FISH_API_KEY on the server for dictation and voice mode',
+    };
+  });
+
   // --- Gemini
   add('Gemini', 'gemini-key', 'Gemini API key', async () => {
     const keys = (await chatAccounts(account.id)).filter(
