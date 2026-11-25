@@ -33,7 +33,7 @@ the real dashboard with example data, nothing to install.</sub>
 
 ## Download
 
-<table>
+<table width="100%">
   <tr>
     <th width="33%">macOS</th>
     <th width="33%">Linux</th>
@@ -41,15 +41,18 @@ the real dashboard with example data, nothing to install.</sub>
   </tr>
   <tr>
     <td align="center">
-      <a href="https://github.com/ciro-maciel/gemini-code/releases/latest/download/gemini-code-darwin-arm64.tar.gz"><img alt="macOS Apple silicon" src="https://img.shields.io/badge/macOS-Apple%20silicon-1B1C1F?style=for-the-badge"></a><br>
-      <a href="https://github.com/ciro-maciel/gemini-code/releases/latest/download/gemini-code-darwin-x64.tar.gz"><img alt="macOS Intel" src="https://img.shields.io/badge/macOS-Intel-45474D?style=for-the-badge"></a>
+      <a href="https://github.com/ciro-maciel/gemini-code/releases/latest/download/gemini-code-darwin-arm64.tar.gz"><img src="docs/images/download/darwin-arm64.svg" width="248" height="60" alt="Download macOS Apple silicon"></a><br>
+      <a href="https://github.com/ciro-maciel/gemini-code/releases/latest/download/gemini-code-darwin-x64.tar.gz"><img src="docs/images/download/darwin-x64.svg" width="248" height="60" alt="Download macOS Intel"></a><br>
+      <sub>Signed and notarized by Apple</sub>
     </td>
     <td align="center">
-      <a href="https://github.com/ciro-maciel/gemini-code/releases/latest/download/gemini-code-linux-x64.tar.gz"><img alt="Linux x64" src="https://img.shields.io/badge/Linux-x64-0B57D0?style=for-the-badge"></a><br>
-      <a href="https://github.com/ciro-maciel/gemini-code/releases/latest/download/gemini-code-linux-arm64.tar.gz"><img alt="Linux ARM64" src="https://img.shields.io/badge/Linux-ARM64-0842A0?style=for-the-badge"></a>
+      <a href="https://github.com/ciro-maciel/gemini-code/releases/latest/download/gemini-code-linux-x64.tar.gz"><img src="docs/images/download/linux-x64.svg" width="248" height="60" alt="Download Linux x64"></a><br>
+      <a href="https://github.com/ciro-maciel/gemini-code/releases/latest/download/gemini-code-linux-arm64.tar.gz"><img src="docs/images/download/linux-arm64.svg" width="248" height="60" alt="Download Linux ARM64"></a><br>
+      <sub>Any distribution with glibc</sub>
     </td>
     <td align="center">
-      <a href="https://github.com/ciro-maciel/gemini-code/releases/latest/download/gemini-code-windows-x64.zip"><img alt="Windows x64" src="https://img.shields.io/badge/Windows-x64-9B72CB?style=for-the-badge"></a>
+      <a href="https://github.com/ciro-maciel/gemini-code/releases/latest/download/gemini-code-windows-x64.zip"><img src="docs/images/download/windows-x64.svg" width="248" height="60" alt="Download Windows x64"></a><br>
+      <sub>Windows 10 and 11, 64-bit</sub>
     </td>
   </tr>
 </table>
