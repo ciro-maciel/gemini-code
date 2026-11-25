@@ -204,6 +204,7 @@ import {
   setAccountModels,
 } from './ai-accounts.js';
 import { isOffered, offeredProviders } from './providers.js';
+import { runDiagnostics } from './diagnostics.js';
 import {
   linkUserBrowser,
   unlinkUserBrowser,
@@ -2564,6 +2565,11 @@ const PUBLIC_ROUTES = new Set([
 ]);
 
 router.get('/api/health', () => json({ isOk: true }));
+
+// Every part checked for real, now: Settings › Diagnostics (diagnostics.js).
+router.get('/api/diagnostics', async ({ account }) =>
+  json(await runDiagnostics(account)),
+);
 
 // The Google subscription's state tree (engine/subscription/state.js), and a fresh look at it.
 router.get('/api/subscription', () => json(subscriptionState()));

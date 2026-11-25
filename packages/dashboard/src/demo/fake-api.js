@@ -527,6 +527,16 @@ export function createFakeApi({
     ['GET', '/api/ai-providers', () => ok(collection(fixtures.PROVIDERS))],
     [
       'GET',
+      '/api/diagnostics',
+      () => {
+        const items = fixtures.diagnostics();
+        const summary = { ok: 0, warn: 0, fail: 0, off: 0 };
+        for (const item of items) summary[item.status] += 1;
+        return ok({ checkedAt: Date.now(), summary, items });
+      },
+    ],
+    [
+      'GET',
       '/api/ai-accounts/:accountId/available-models',
       ({ params }) => {
         const account = aiAccounts.find((item) => item.id === params.accountId);
