@@ -1,15 +1,8 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
-import {
-  fetchConnections,
-  fetchDiagnostics,
-  fetchRepoFiles,
-} from '../../services/api';
+import { fetchDiagnostics, fetchRepoFiles } from '../../services/api';
 import { useAccount } from '../../components/Session';
-import { brandIconOf } from '../../connectors/brand-icon';
 import {
-  Notice,
   SettingsGroup,
   SettingsHeader,
   SettingsRow,
@@ -74,92 +67,6 @@ export function Files() {
               <StateTag status="off">Off</StateTag>
             )}
           </SettingsRow>
-        </SettingsGroup>
-      )}
-    </>
-  );
-}
-
-const STATE = {
-  connected: ['ok', 'Connected'],
-  pending_auth: ['wait', 'Waiting for sign-in'],
-  needs_secret: ['wait', 'Waiting for a token'],
-  failed: ['fail', 'Failed'],
-};
-
-/**
- * Settings › Team connections: the services this account connected, each with
- * its real state. Each agent picks the ones it uses in its Connections chip.
- */
-export function TeamConnections() {
-  const navigate = useNavigate();
-  const [items, setItems] = useState(null);
-  useEffect(() => {
-    fetchConnections()
-      .then((data) => setItems(data.items))
-      .catch(() => setItems([]));
-  }, []);
-  return (
-    <>
-      <SettingsHeader
-        title="Team connections"
-        description="The services this account connected through MCP. Connected once, every agent can use them; each agent picks its own in the Connections chip."
-        actions={
-          <button
-            className="btn filled sm"
-            onClick={() => navigate('/connectors')}
-          >
-            <i className="ti ti-plug-connected" />
-            Open connectors
-          </button>
-        }
-      />
-      {items === null && <SettingsSkeleton rows={3} />}
-      {items?.length === 0 && (
-        <Notice icon="ti-plug" title="No connection yet">
-          Connectors lists GitHub, Linear, Notion and others, each connected
-          with its own sign-in.
-        </Notice>
-      )}
-      {items?.length > 0 && (
-        <SettingsGroup>
-          {items.map((connection) => {
-            const [status, label] = STATE[connection.status] ?? [
-              'off',
-              connection.status,
-            ];
-            const slug = connection.title.toLowerCase().split(/[^a-z0-9]/)[0];
-            return (
-              <SettingsRow
-                key={connection.id}
-                image={brandIconOf(slug)}
-                icon="ti-plug"
-                title={connection.title}
-                description={
-                  connection.status === 'connected'
-                    ? `${connection.tools.length} ${connection.tools.length === 1 ? 'tool' : 'tools'}`
-                    : connection.status === 'pending_auth'
-                      ? 'Sign in to finish connecting.'
-                      : connection.status === 'needs_secret'
-                        ? 'Paste its token in Connectors to finish connecting.'
-                        : connection.statusDetail || label
-                }
-              >
-                <StateTag status={status}>{label}</StateTag>
-                {connection.status === 'pending_auth' &&
-                  /^https:\/\//.test(connection.statusDetail ?? '') && (
-                    <a
-                      className="btn outline sm"
-                      href={connection.statusDetail}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Sign in
-                    </a>
-                  )}
-              </SettingsRow>
-            );
-          })}
         </SettingsGroup>
       )}
     </>

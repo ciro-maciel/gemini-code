@@ -120,8 +120,8 @@ function When({ bot }) {
         <div className="bb">
           <Trigger
             icon="ti-user"
-            title="Pessoa"
-            right={<span className="pill-st dark">sempre</span>}
+            title="A person"
+            right={<span className="pill-st dark">always</span>}
           >
             Anyone with access can write here.
           </Trigger>
@@ -130,10 +130,6 @@ function When({ bot }) {
           </Trigger>
           <Door botId={bot.id} />
           <Handoffs botId={bot.id} />
-          <Trigger icon="ti-mail" title="E-mail">
-            The inbox lives in Messages: anything that arrives there can come to
-            this agent through the entry point.
-          </Trigger>
         </div>
       </div>
       <p className="fine">

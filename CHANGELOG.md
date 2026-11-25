@@ -35,7 +35,14 @@ version with its date.
 
 ### Removed
 
-- The E-mail section, which promised inbound webhooks the server does not have
+- Settings › People: Gemini Code runs on the person's own machine, for them
+  alone, so there is no one else to allow or block; the approvals and failures
+  of the last 30 days moved to Diagnostics (2026-11-25).
+- Settings › E-mail, an empty page beside the inbound address each agent already
+  has in its own settings, and Settings › Team connections, a second list of
+  what Connectors already manages (2026-11-25).
+- The documents screen of the old per-agent docs folder, which nothing showed
+  any more, and the agent trigger that pointed to an inbox outside Gemini Code
   (2026-11-25).
 
 - Trunk-based development: maintainers push small commits straight to `main`; a

@@ -5,35 +5,27 @@ import { Diagnostics } from '../components/Diagnostics';
 import { LanguageSettings } from '../components/LanguageSettings';
 import { AiAccounts } from './settings/AiAccounts';
 import { MyChrome, Notifications, Security } from './settings/AccountSections';
-import {
-  AgentSafety,
-  Dictation,
-  Files,
-  TeamConnections,
-} from './settings/OrgSections';
-import { People } from './settings/People';
+import { AgentSafety, Dictation, Files } from './settings/AgentSections';
 
-// The sections, grouped by whom they concern. Each is built from the kit in
+// The sections, grouped by what they are about: the agents, this app, help. Each is built from the kit in
 // settings/kit.jsx and follows docs/settings.md.
 const NAV = [
   [
-    'Your account',
+    'Agents',
     [
       ['accounts', 'AI accounts', 'ti-sparkles', AiAccounts],
-      ['language', 'Language · Idioma', 'ti-language', LanguageSettings],
-      ['notifications', 'Notifications', 'ti-bell', Notifications],
+      ['files', 'Files and GitHub', 'ti-folder', Files],
       ['chrome', 'My Chrome', 'ti-brand-chrome', MyChrome],
-      ['security', 'Security', 'ti-shield-lock', Security],
+      ['dictation', 'Dictation', 'ti-microphone', Dictation],
+      ['safety', 'Agent safety', 'ti-scale', AgentSafety],
     ],
   ],
   [
-    'Organization',
+    'This app',
     [
-      ['people', 'People', 'ti-users', People, true],
-      ['files', 'Files and GitHub', 'ti-folder', Files],
-      ['connections', 'Team connections', 'ti-plug-connected', TeamConnections],
-      ['dictation', 'Dictation', 'ti-microphone', Dictation],
-      ['safety', 'Agent safety', 'ti-scale', AgentSafety],
+      ['language', 'Language · Idioma', 'ti-language', LanguageSettings],
+      ['notifications', 'Notifications', 'ti-bell', Notifications],
+      ['security', 'Security', 'ti-shield-lock', Security],
     ],
   ],
   ['Help', [['diagnostics', 'Diagnostics', 'ti-stethoscope', Diagnostics]]],
@@ -45,10 +37,7 @@ const SECTIONS = NAV.flatMap(([, items]) => items);
 export function SettingsPage({ section }) {
   const account = useAccount();
   const navigate = useNavigate();
-  const nav = NAV.map(([group, items]) => [
-    group,
-    items.filter(([, , , , isOwnerOnly]) => !isOwnerOnly || account?.isOwner),
-  ]);
+  const nav = NAV;
   const Section =
     SECTIONS.find(([id]) => id === section)?.[3] ?? SECTIONS[0][3];
   return (

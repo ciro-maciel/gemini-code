@@ -1,5 +1,8 @@
 {
   "texts": {
+    "This app": "Este app",
+    "A person": "Uma pessoa",
+    "always": "sempre",
     "Sign in to finish connecting.": "Entre para terminar de conectar.",
     "Paste its token in Connectors to finish connecting.": "Cole o token em Conectores para terminar de conectar.",
     "A notification on this device when an agent needs you or delivers something. Tapping it opens the agent. Nothing for what you are already looking at.": "Uma notificação neste aparelho quando um agente precisa de você ou entrega algo. Tocar abre o agente. Nada sobre o que você já está vendo.",
@@ -1401,6 +1404,7 @@
     "deleting waits for the person: say what should be deleted and why, and the person deletes it": "apagar espera a pessoa: diga o que deve ser apagado e por quê, e a pessoa apaga"
   },
   "patterns": {
+    "The last {#0} days.": "Os últimos {#0} dias.",
     "seen {0}": "visto {0}",
     "wants: {0}": "quer: {0}",
     "{#0} of {#1} turned on. Agents choose among the ones turned on, in their model chip.": "{#0} de {#1} ligados. Os agentes escolhem entre os ligados, no chip de modelo.",

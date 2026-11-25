@@ -1,11 +1,12 @@
 # Settings: the pattern every section follows
 
-Settings is where a person checks and changes how Gemini Code works for them.
-They arrive with one question ("is my key working?", "who can see this?", "why
-did the agent refuse?") and leave when the screen answered it. Every section is
-built the same way, from the same pieces, so the answer is always in the same
-place. Build any new section, and any screen that lists and changes things, the
-way this page describes.
+Settings is where the person running Gemini Code checks and changes how it
+works. Gemini Code runs on their own machine, for them alone, so there are no
+other people to manage here. They arrive with one question ("is my key
+working?", "who can see this?", "why did the agent refuse?") and leave when the
+screen answered it. Every section is built the same way, from the same pieces,
+so the answer is always in the same place. Build any new section, and any screen
+that lists and changes things, the way this page describes.
 
 The pieces live in `packages/dashboard/src/pages/settings/kit.jsx`; their styles
 are the "Settings kit" part of `neural-expressive.css`. The tokens (color, type,
@@ -16,20 +17,20 @@ corners, motion) come from the design system.
 ```
 Settings                  AI accounts                     [Add a Gemini API key]
                           Agents think with Gemini through your own Gemini
-Your account              API key. Each key opens a list of models...
+Agents                    API key. Each key opens a list of models...
   AI accounts   (chosen)
   Language - Idioma       +----------------------------------------------------+
   Notifications           | (o) Google Gemini - Personal    [Choose] [Remove]  |
   ...                     |     US$ 0.01 today - US$ 0.02 in 30 days - 2 agents|
-Organization              |     gemini-3.6-flash x   gemini-3.5-flash x        |
+This app                  |     gemini-3.6-flash x   gemini-3.5-flash x        |
   ...                     +----------------------------------------------------+
 Help
   Diagnostics
 ```
 
-1. **The navigation** on the left: the sections grouped by whom they concern
-   (Your account, Organization, Help), each with its icon. The chosen one sits
-   in the primary container. Sections are set apart by space, never by rules.
+1. **The navigation** on the left: the sections grouped by what they are about
+   (Agents, This app, Help), each with its icon. The chosen one sits in the
+   primary container. Sections are set apart by space, never by rules.
 2. **The header** (`SettingsHeader`): the section's name, then one or two
    sentences on what it is for and why it matters, then its one main action on
    the right.
@@ -105,8 +106,8 @@ time). The layer translates one text node at a time, so:
 
 1. Write it in `pages/settings/`, from the kit only. One component per section,
    with a comment on what it is for.
-2. Add it to `NAV` in `pages/SettingsPage.jsx`: id, label, icon, component, and
-   `true` when only the owner sees it.
+2. Add it to `NAV` in `pages/SettingsPage.jsx`: id, label, icon and component,
+   in the group it is about.
 3. If it reports on the system, add a check to
    `packages/server/src/diagnostics.js` too, so Diagnostics shows it.
 4. Add its texts to `pt.json`.
@@ -115,16 +116,18 @@ time). The layer translates one text node at a time, so:
 
 ## The sections today
 
-| Section           | What it answers                                                       |
-| ----------------- | --------------------------------------------------------------------- |
-| AI accounts       | Which Gemini API keys the agents use, what they cost, which models    |
-| Language · Idioma | The dashboard's language in this browser                              |
-| Notifications     | Whether this device is told when an agent needs you                   |
-| My Chrome         | Whether agents can act in your own Chrome, and how to link it         |
-| Security          | How this Gemini Code is reached and who can act in it                 |
-| People            | Who uses it, who waits for access, what happened to approvals (owner) |
-| Files and GitHub  | Where the agents' files live                                          |
-| Team connections  | Each connected service and its real state                             |
-| Dictation         | Talking instead of typing, and which voice service answers            |
-| Agent safety      | The rules every agent follows, whatever anyone allows                 |
-| Diagnostics       | Whether every part works, is connected and is allowed, right now      |
+| Section           | What it answers                                                                                             |
+| ----------------- | ----------------------------------------------------------------------------------------------------------- |
+| AI accounts       | Which Gemini API keys the agents use, what they cost, which models                                          |
+| Language · Idioma | The dashboard's language in this browser                                                                    |
+| Notifications     | Whether this device is told when an agent needs you                                                         |
+| My Chrome         | Whether agents can act in your own Chrome, and how to link it                                               |
+| Security          | How this Gemini Code is reached and who can act in it                                                       |
+| Files and GitHub  | Where the agents' files live                                                                                |
+| Dictation         | Talking instead of typing, and which voice service answers                                                  |
+| Agent safety      | The rules every agent follows, whatever anyone allows                                                       |
+| Diagnostics       | Whether every part works, is connected and is allowed, right now, and what happened to approvals in 30 days |
+
+Connectors are managed in one place, the Connectors page; Settings never lists
+them again. Each agent's inbound address and routines live in that agent's
+settings. A section never repeats what another screen already manages.

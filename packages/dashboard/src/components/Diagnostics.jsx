@@ -4,6 +4,7 @@ import { fetchDiagnostics } from '../services/api';
 import { notify } from './zen';
 import { locale } from '../lib/language';
 import { SettingsHeader } from '../pages/settings/kit';
+import { Outcomes } from '../pages/settings/Outcomes';
 
 const STATUS = {
   ok: { icon: 'ti-circle-check', label: 'OK' },
@@ -134,6 +135,7 @@ export function Diagnostics() {
               </section>
             );
           })}
+          <Outcomes />
         </>
       )}
     </div>
