@@ -6,6 +6,8 @@ Agentes de programação que leem um repositório, rodam comandos e entregam mud
 
 O Gemini Code é uma resposta aberta a isso, construída em volta do Gemini. Você abre quantos agentes o trabalho pede (um engenheiro, um revisor, um depurador) e acompanha todos trabalhando ao mesmo tempo. Cada agente trabalha na própria pasta: o terminal dele começa ali, a árvore de arquivos fica ao lado da conversa, e ele não lê nem escreve fora dela.
 
+**[Veja a demonstração ao vivo](https://ciro-maciel.github.io/gemini-code/)**: o painel de verdade com dados de exemplo, sem instalar nada.
+
 > Projeto aberto e independente. Sem vínculo, patrocínio ou endosso do Google. "Gemini" é marca do Google LLC.
 
 ---

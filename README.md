@@ -6,6 +6,8 @@ Coding agents that read a repository, run commands and ship changes are already 
 
 Gemini Code is an open answer to that, built around Gemini. You open as many agents as the work needs (an engineer, a reviewer, a debugger) and watch them work in parallel. Each agent works in its own folder: its terminal starts there, its file tree sits next to its conversation, and it cannot read or write outside it.
 
+**[See the live demo](https://ciro-maciel.github.io/gemini-code/)**: the real dashboard with example data, nothing to install.
+
 > Independent open-source project. Not affiliated with, sponsored or endorsed by Google. "Gemini" is a trademark of Google LLC.
 
 ---
