@@ -11,6 +11,8 @@ version with its date.
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-11-25
+
 ### Added
 
 - A CODEOWNERS file and a "Who maintains it" section: Ciro Cesar Maciel is the
@@ -274,7 +276,8 @@ The first public version.
   warnings, `bun run preflight`, `GEMINI.md`, a roadmap and one grouped weekly
   Dependabot update.
 
-[Unreleased]: https://github.com/ciro-maciel/gemini-code/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/ciro-maciel/gemini-code/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/ciro-maciel/gemini-code/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/ciro-maciel/gemini-code/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/ciro-maciel/gemini-code/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/ciro-maciel/gemini-code/compare/v0.1.0...v0.2.0
