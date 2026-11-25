@@ -1,10 +1,10 @@
 # Gemini Code
 
-**Uma mesa aberta onde vários agentes de programação, construídos em volta do Gemini do Google, trabalham no seu software ao mesmo tempo, cada um na sua pasta, e pedem a uma pessoa antes de qualquer coisa arriscada.**
+**Uma mesa aberta onde vários agentes de programação, construídos em volta do Gemini do Google, trabalham no seu software ao mesmo tempo e pedem a uma pessoa antes de qualquer coisa arriscada.**
 
 Agentes de programação que leem um repositório, rodam comandos e entregam mudanças já fazem parte de como desenvolvedores trabalham. Um agente por vez é a parte fácil. A difícil vem depois: rodar vários juntos sem que um apague o trabalho do outro, com uma pessoa no comando do que importa.
 
-O Gemini Code é uma resposta aberta a isso, construída em volta do Gemini. Você abre quantos agentes o trabalho pede (um engenheiro, um revisor, um depurador) e acompanha todos trabalhando ao mesmo tempo. Cada agente tem o próprio terminal e a própria memória, e ganha a própria pasta, para que um não pise no trabalho do outro.
+O Gemini Code é uma resposta aberta a isso, construída em volta do Gemini. Você abre quantos agentes o trabalho pede (um engenheiro, um revisor, um depurador) e acompanha todos trabalhando ao mesmo tempo. Cada agente guarda as próprias instruções e a própria memória. O próximo passo, o primeiro marco abaixo, dá a cada um a sua pasta de trabalho, para que um não pise no trabalho do outro.
 
 > Projeto aberto e independente. Sem vínculo, patrocínio ou endosso do Google. "Gemini" é marca do Google LLC.
 

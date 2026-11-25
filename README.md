@@ -1,10 +1,10 @@
 # Gemini Code
 
-**An open-source desk where several coding agents, built around Google Gemini, work on your software at the same time, each in its own folder, and ask a person before anything risky.**
+**An open-source desk where several coding agents, built around Google Gemini, work on your software at the same time and ask a person before anything risky.**
 
 Coding agents that read a repository, run commands and ship changes are already part of how developers work. One agent at a time is the easy part. The hard part comes next: running several at once without them overwriting each other, and keeping a person in charge of what matters.
 
-Gemini Code is an open answer to that, built around Gemini. You open as many agents as the work needs (an engineer, a reviewer, a debugger) and watch them work in parallel. Each agent has its own terminal and its own memory, and gets its own folder, so one never steps on another's work.
+Gemini Code is an open answer to that, built around Gemini. You open as many agents as the work needs (an engineer, a reviewer, a debugger) and watch them work in parallel. Each agent keeps its own instructions and memory. The next step, the first milestone below, gives each one its own working folder, so one never steps on another's work.
 
 > Independent open-source project. Not affiliated with, sponsored or endorsed by Google. "Gemini" is a trademark of Google LLC.
 
