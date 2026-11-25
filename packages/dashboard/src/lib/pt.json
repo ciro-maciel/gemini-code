@@ -1529,6 +1529,8 @@
     "I could not assess the risk ({0})": "não consegui avaliar o risco ({0})",
     "Nothing matches “{0}”.": "Nada com “{0}”.",
     "Refused {0}: {1}": "Recusei {0}: {1}",
-    "{0} is outside the agent folder; work only inside it": "{0} fica fora da pasta do agente; trabalhe só dentro dela"
+    "{0} is outside the agent folder; work only inside it": "{0} fica fora da pasta do agente; trabalhe só dentro dela",
+    "I did not do it: {0}.": "Não fiz: {0}.",
+    "{0} is not one of this agent's connections in Gemini Code": "{0} não é uma das conexões deste agente no Gemini Code"
   }
 }

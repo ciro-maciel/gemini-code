@@ -1716,6 +1716,7 @@ async function runTurnOnSubscription(taskId, bot, messages) {
   const turnId = newId();
   const controller = new AbortController();
   inFlight.set(taskId, controller);
+  const refusals = [];
   let answer;
   try {
     answer = await runSubscriptionTurn({
@@ -1724,6 +1725,16 @@ async function runTurnOnSubscription(taskId, bot, messages) {
       model: bot.model,
       cwd: folder,
       signal: controller.signal,
+      // The agent's own folder through the files MCP. Connections with secrets
+      // (GitHub, Linear...) stay on the server until a proxy carries them.
+      mcpServers: [
+        {
+          type: 'http',
+          name: 'files',
+          url: `http://127.0.0.1:${config.port}/api/bots/${bot.id}/mcp/files`,
+          headers: [],
+        },
+      ],
       onEvent: (event) => {
         if (event.type === 'text')
           publishLive(taskId, 'assistant_delta', {
@@ -1745,6 +1756,8 @@ async function runTurnOnSubscription(taskId, bot, messages) {
           });
         // The agent asked before acting and was refused: the person sees what and why.
         if (event.type === 'permission' && !event.isAllowed)
+          refusals.push(event);
+        if (event.type === 'permission' && !event.isAllowed)
           emitTaskEvent(taskId, 'warning', {
             message: `Refused ${event.name}: ${event.reason}`,
           });
@@ -1758,7 +1771,13 @@ async function runTurnOnSubscription(taskId, bot, messages) {
     return;
   }
   if (answer.status === 'SUCCESS') {
-    const text = withoutEmoji(answer.text).trim() || 'Done.';
+    // An agent refused before it acted often ends without a word: the person
+    // reads what was refused instead of a "Done." for work that never happened.
+    const text =
+      withoutEmoji(answer.text).trim() ||
+      (refusals.length
+        ? `I did not do it: ${[...new Set(refusals.map((event) => event.reason))].join('; ')}.`
+        : 'Done.');
     appendMessage(taskId, { role: 'assistant', content: text });
     emitTaskEvent(taskId, 'assistant', { text, isFinal: true, turnId });
     setStatus(taskId, 'done', { result: text, finished_at: now() });

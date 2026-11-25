@@ -68,6 +68,7 @@ export async function runSubscriptionTurn({
   cwd,
   onEvent,
   signal,
+  mcpServers = [],
 }) {
   if (!isUsable(store.get())) await refreshSubscription();
   const state = store.get();
@@ -84,6 +85,7 @@ export async function runSubscriptionTurn({
     conversationId: conversations.get(taskId) ?? null,
     onEvent,
     signal,
+    mcpServers,
   });
   if (answer.conversationId) conversations.set(taskId, answer.conversationId);
   if (answer.status === 'QUOTA')

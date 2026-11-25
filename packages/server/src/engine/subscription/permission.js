@@ -52,11 +52,34 @@ const commandPaths = (command) =>
     .filter((value) => value !== '/dev/null');
 
 /**
- * The answer to one permission request: { isAllowed, reason }. `root` is the
- * agent's folder.
+ * The MCP server a tool belongs to, when the agent names it `mcp_<server>_<tool>`,
+ * or null for the agent's own tools.
  */
-export function decidePermission(toolCall, root) {
+const mcpServerOf = (name, servers) => {
+  if (!/^mcp_/.test(name)) return null;
+  return (
+    servers.find((server) => name.startsWith(`mcp_${server}_`)) ?? undefined
+  );
+};
+
+/**
+ * The answer to one permission request: { isAllowed, reason }. `root` is the
+ * agent's folder; `mcpServers` are the names of the MCP servers Gemini Code
+ * gave the session. A server the agent found elsewhere (its own global
+ * settings) is refused: on 25/11/2026 a subscription agent listed the
+ * person's Playwriter, which drives their own browser.
+ */
+export function decidePermission(toolCall, root, { mcpServers = [] } = {}) {
   const kind = toolCall.kind ?? 'other';
+  const name = String(toolCall.name ?? toolCall.title ?? '').replace(
+    /^Run /,
+    '',
+  );
+  if (mcpServerOf(name, mcpServers) === undefined)
+    return {
+      isAllowed: false,
+      reason: `${name} is not one of this agent's connections in Gemini Code`,
+    };
   const command = commandOf(toolCall);
   const touched = [
     ...pathsOf(toolCall),

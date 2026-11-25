@@ -22,6 +22,7 @@
 //   Antigravity suite". Antigravity is the path Google points to.
 
 import { spawn } from 'node:child_process';
+import { realpathSync } from 'node:fs';
 
 import { createAcpClient } from './acp-client.js';
 import { decidePermission, outcomeFor } from './permission.js';
@@ -145,7 +146,39 @@ export async function probe() {
   };
 }
 
-/** What an ACP update means to the conversation: text, a tool starting, or a tool ending. */
+/**
+ * The agent links files by their absolute file:// address, which shows the
+ * machine's folders and opens nothing in the dashboard. Inside the agent's
+ * folder they become the relative path, as code.
+ */
+export function withFolderLinks(text, folder) {
+  const roots = [folder];
+  try {
+    roots.push(realpathSync(folder));
+  } catch {
+    // A folder that is gone keeps only the name it was given.
+  }
+  let out = text;
+  for (const root of new Set(roots)) {
+    const base = `file://${root.replace(/\/$/, '')}/`;
+    const escaped = base.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    out = out
+      .replace(
+        new RegExp(`\\[([^\\]]*)\\]\\(${escaped}([^)\\s]*)\\)`, 'g'),
+        (_, label, rel) => `\`${decodeURI(rel) || label}\``,
+      )
+      .replace(new RegExp(`${escaped}([^\\s)\\]]*)`, 'g'), (_, rel) =>
+        decodeURI(rel),
+      );
+  }
+  return out;
+}
+
+/**
+ * What an ACP update means to the conversation: text, a tool starting, or a
+ * tool ending. `started` holds the calls already started; an ended call is
+ * marked in it too, since the agent can repeat the final status.
+ */
 export function eventOfUpdate(update, started) {
   if (
     update.sessionUpdate === 'agent_message_chunk' &&
@@ -159,6 +192,7 @@ export function eventOfUpdate(update, started) {
     const id = update.toolCallId;
     const name = update.name ?? update.title ?? update.kind ?? 'tool';
     const isEnd = update.status === 'completed' || update.status === 'failed';
+    if (started.has(`end:${id}`)) return null;
     if (!started.has(id)) {
       started.add(id);
       if (!isEnd)
@@ -169,13 +203,15 @@ export function eventOfUpdate(update, started) {
           args: update.args ?? update.rawInput ?? {},
         };
     }
-    if (isEnd)
+    if (isEnd) {
+      started.add(`end:${id}`);
       return {
         type: 'tool_end',
         id,
         name,
         output: outputOf(update),
       };
+    }
   }
   return null;
 }
@@ -204,6 +240,7 @@ export async function runTurn({
   conversationId = null,
   onEvent = () => {},
   signal = null,
+  mcpServers = [],
   decide = decidePermission,
 }) {
   let child;
@@ -218,9 +255,12 @@ export async function runTurn({
   const started = new Set();
   let text = '';
   let sessionId = conversationId;
+  // session/load replays the whole history as updates before it answers; only
+  // what comes after the prompt belongs to this turn.
+  let isPrompting = false;
 
   client.onNotification('session/update', ({ update } = {}) => {
-    if (!update) return;
+    if (!update || !isPrompting) return;
     const event = eventOfUpdate(update, started);
     if (!event) return;
     if (event.type === 'text') text += event.text;
@@ -229,7 +269,9 @@ export async function runTurn({
   client.onRequest(
     'session/request_permission',
     ({ toolCall = {}, options = [] } = {}) => {
-      const decision = decide(toolCall, cwd);
+      const decision = decide(toolCall, cwd, {
+        mcpServers: mcpServers.map((server) => server.name),
+      });
       onEvent({
         type: 'permission',
         id: toolCall.toolCallId,
@@ -258,7 +300,7 @@ export async function runTurn({
         await client.request('session/load', {
           sessionId,
           cwd,
-          mcpServers: [],
+          mcpServers,
         });
       } catch {
         sessionId = null;
@@ -267,7 +309,7 @@ export async function runTurn({
     if (!sessionId) {
       const created = await client.request('session/new', {
         cwd,
-        mcpServers: [],
+        mcpServers,
       });
       sessionId = created.sessionId;
     }
@@ -281,6 +323,7 @@ export async function runTurn({
         // An agent without model switching keeps its own default.
       }
     }
+    isPrompting = true;
     const result = await client.request('session/prompt', {
       sessionId,
       prompt: [{ type: 'text', text: prompt }],
@@ -294,7 +337,7 @@ export async function runTurn({
       };
     return {
       conversationId: sessionId,
-      text,
+      text: withFolderLinks(text, cwd),
       status: 'SUCCESS',
       stopReason: result?.stopReason ?? null,
       usage: result?.usage ?? null,
