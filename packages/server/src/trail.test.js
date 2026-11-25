@@ -11,7 +11,7 @@ process.env.ENCRYPTION_KEY ||= Buffer.alloc(32).toString('base64');
 
 const { db, now } = await import('./db.js');
 const trail = await import('./trail.js');
-const { cancelTask, takeOver } = await import('./engine/run.js');
+const { cancelTask } = await import('./engine/run.js');
 
 function seedBot(id, accountId) {
   db.query(
@@ -181,29 +181,6 @@ describe('outcomes and failures', () => {
     const metrics = trail.outcomeMetrics();
     expect(metrics.outcomes.cancelled).toBe(1);
     expect(metrics.failures.task_cancelled).toBe(1);
-  });
-
-  test('a takeover is an outcome and a failure moment, with the model of the bot', () => {
-    seedTask('t3', 'b1', 'done');
-    takeOver('t3');
-    const failure = db
-      .query("SELECT * FROM failures WHERE kind = 'takeover'")
-      .get();
-    expect(failure).toMatchObject({
-      account_id: 'account-b',
-      bot_id: 'b1',
-      task_id: 't3',
-      model: 'deepseek/deepseek-v4.1-flash',
-    });
-    const accounts = trail.outcomeMetrics().accounts;
-    expect(
-      accounts.find((entry) => entry.accountId === 'account-b').outcomes
-        .takeover,
-    ).toBe(1);
-    expect(
-      accounts.find((entry) => entry.accountId === 'account-a').outcomes
-        .takeover,
-    ).toBeUndefined();
   });
 
   test('a failure context is redacted when written', () => {

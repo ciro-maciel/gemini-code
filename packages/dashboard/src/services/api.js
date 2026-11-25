@@ -297,8 +297,6 @@ export const updateSkill = (id, fields) =>
 export const deleteSkill = (id) => request('DELETE', `/api/skills/${id}`);
 export const resolveApproval = (taskId, approvalId, fields) =>
   request('POST', `/api/tasks/${taskId}/approvals/${approvalId}`, fields);
-export const takeOverTask = (taskId) =>
-  request('POST', `/api/tasks/${taskId}/takeover`, {});
 export const answerTask = (taskId, text) =>
   request('POST', `/api/tasks/${taskId}/answer`, { text });
 export const cancelTask = (taskId) =>

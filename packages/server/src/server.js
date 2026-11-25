@@ -114,7 +114,6 @@ import {
   retryTask,
   sendBotMessage,
   startQueuedTasks,
-  takeOver,
 } from './engine/run.js';
 import { BASE_TOOLS } from './engine/tools.js';
 import { readFile as readSpriteFile } from './sprites.js';
@@ -1961,10 +1960,6 @@ router.post(
     if (!body.text?.trim()) throw new Error('write the message');
     continueTask(id, body.text.trim());
   }),
-);
-router.post(
-  '/api/tasks/:id/takeover',
-  taskAction((id) => takeOver(id)),
 );
 router.post(
   '/api/tasks/:id/cancel',

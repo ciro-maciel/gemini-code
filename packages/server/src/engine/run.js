@@ -87,7 +87,6 @@ const REFLECT_EVERY = 20;
 const RECENT_TOOL_RESULTS = 4;
 const OLD_RESULT_CHARS = 700;
 const STOPPED = new Set(['done', 'failed', 'cancelled']);
-const WAITING = new Set(['waiting_approval', 'waiting_user']);
 
 const running = new Map();
 const flags = new Map();
@@ -1205,15 +1204,6 @@ async function loop(taskId, resolution) {
     const messages = loadMessages(taskId);
     const pending = unresolvedToolCalls(messages);
 
-    if (pending.length === 0 && flag?.takeover) {
-      flags.delete(taskId);
-      setStatus(taskId, 'waiting_user', {
-        waiting_reason: 'takeover',
-        waiting_detail: {},
-      });
-      return;
-    }
-
     if (pending.length > 0) {
       // The person wrote while a call waited on their approval (or came
       // back to a point before deciding): their words answer the call,
@@ -2146,12 +2136,6 @@ export function answerTask(
   const content = modelContentFor(modelText, attachments);
   if (task.waitingReason === 'question' && toolCallId) {
     schedule(taskId, { toolCallId, kind: 'answer', answer: content });
-  } else if (task.waitingReason === 'takeover') {
-    schedule(taskId, {
-      kind: 'note',
-      note: `Assumi o computador e devolvi agora. ${answer ? `O que fiz ou quero: ${answer}. ` : ''}A tela pode ter mudado: tire um browser_snapshot antes de agir.`,
-      isAlreadyShown: true,
-    });
   } else {
     schedule(taskId, {
       kind: 'note',
@@ -2351,30 +2335,6 @@ export function retryTask(taskId) {
     throw new Error('only a failed task can be retried');
   updateTask(taskId, { error: null, finished_at: null });
   schedule(taskId);
-}
-
-export function takeOver(taskId) {
-  const task = fetchTask(taskId);
-  recordOutcome({ botId: task.botId, taskId, kind: 'takeover' });
-  recordFailure({
-    botId: task.botId,
-    taskId,
-    kind: 'takeover',
-    context:
-      task.status === 'waiting_approval'
-        ? `durante a aprovação: ${task.waitingDetail?.summary ?? ''}`
-        : `com a tarefa em ${task.status}`,
-  });
-  if (running.has(taskId)) {
-    flags.set(taskId, { ...flags.get(taskId), takeover: true });
-    emitTaskEvent(taskId, 'takeover_requested', {});
-    return;
-  }
-  if (WAITING.has(task.status) || task.status === 'queued') return;
-  setStatus(taskId, 'waiting_user', {
-    waiting_reason: 'takeover',
-    waiting_detail: {},
-  });
 }
 
 export function cancelTask(taskId) {

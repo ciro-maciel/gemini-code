@@ -12,7 +12,6 @@ import {
   sendBotMessage,
   sendNote,
   streamBot,
-  takeOverTask,
   writeNote,
 } from '../services/api';
 import { isActive } from '../labels';
@@ -198,8 +197,6 @@ export function useAgentConversation(botId, { isVisible = true } = {}) {
     [events, pending],
   );
   const isWorking = isActive(thread?.status) || pending.length > 0;
-  const isTakenOver =
-    thread?.status === 'waiting_user' && thread?.waitingReason === 'takeover';
 
   const send = async (
     message,
@@ -296,29 +293,6 @@ export function useAgentConversation(botId, { isVisible = true } = {}) {
     }
   };
 
-  const takeOver = async () => {
-    try {
-      if (
-        thread &&
-        (isWorking || ['done', 'failed', 'cancelled'].includes(thread.status))
-      )
-        setThread(await takeOverTask(thread.id));
-    } catch (error) {
-      notify.error(error.message);
-    }
-  };
-
-  const giveBack = async (note) => {
-    try {
-      if (isTakenOver)
-        setThread(
-          await sendBotMessage(botId, note || 'Done, you can continue.'),
-        );
-    } catch (error) {
-      notify.error(error.message);
-    }
-  };
-
   const note = async (text) => {
     try {
       await writeNote(botId, text);
@@ -351,7 +325,6 @@ export function useAgentConversation(botId, { isVisible = true } = {}) {
     seeing,
     isSending,
     isWorking,
-    isTakenOver,
     rewindPoint,
     composerRef,
     send,
@@ -359,8 +332,6 @@ export function useAgentConversation(botId, { isVisible = true } = {}) {
     stop,
     startRewind,
     cancelRewind,
-    takeOver,
-    giveBack,
     reloadThread,
   };
 }
