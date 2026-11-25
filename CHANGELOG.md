@@ -11,6 +11,12 @@ version with its date.
 
 ## [Unreleased]
 
+### Fixed
+
+- A flaky test of empty answers: each test now answers from its own script, so a
+  late step of an earlier task can no longer take the next test's answers
+  (2026-11-25).
+
 ### Changed
 
 - The README opens with the mark, badges, a screenshot of the desk at work in

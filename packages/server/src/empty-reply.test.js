@@ -22,7 +22,15 @@ const sent = [];
 // so every test uses a prompt no other test uses and counts its own calls.
 const callsFor = (prompt) =>
   sent.filter((body) => JSON.stringify(body.messages).includes(prompt));
-let script = [];
+// The script of each test, by its prompt: a late step of an earlier test's
+// task answers from its own script and never takes the next test's steps.
+const scripts = new Map();
+const scriptFor = (body) => {
+  const text = JSON.stringify(body.messages);
+  for (const [prompt, steps] of scripts)
+    if (text.includes(prompt)) return steps;
+  return [];
+};
 const sse = (chunks) =>
   new Response(
     chunks.map((chunk) => `data: ${JSON.stringify(chunk)}\n\n`).join('') +
@@ -37,7 +45,7 @@ beforeAll(() => {
     const body = JSON.parse(init.body);
     if (!body.tools) return new Response('fora do teste', { status: 400 });
     sent.push(body);
-    const step = script.shift() ?? { text: 'fim do roteiro' };
+    const step = scriptFor(body).shift() ?? { text: 'fim do roteiro' };
     if (step.empty)
       return sse([
         {
@@ -95,11 +103,9 @@ const finalEvents = (taskId) =>
 
 describe('a task never ends mute', () => {
   test('two empty answers in a row end the task with the reason, said to the person and counted', async () => {
-    script = [{ empty: 'length' }, { empty: 'length' }];
-    sent.length = 0;
-    const task = await settled(
-      createTask(newBot(), 'escreva a semana 2 e envie as 13 peças').id,
-    );
+    const prompt = 'escreva a semana 2 e envie as 13 peças';
+    scripts.set(prompt, [{ empty: 'length' }, { empty: 'length' }]);
+    const task = await settled(createTask(newBot(), prompt).id);
     expect(task.status).toBe('done');
     expect(task.result).toContain('I stopped without an answer');
     expect(task.result).toContain('answer limit');
@@ -107,7 +113,7 @@ describe('a task never ends mute', () => {
       task.result,
     ]);
     // The step ran out of its output limit: it was asked again once, with more room and a note on why.
-    const mine = callsFor('escreva a semana 2 e envie as 13 peças');
+    const mine = callsFor(prompt);
     expect(mine).toHaveLength(2);
     expect(mine[0].max_tokens).toBe(8000);
     expect(mine[1].max_tokens).toBe(16_000);
@@ -123,10 +129,11 @@ describe('a task never ends mute', () => {
   });
 
   test('an empty answer asked again that comes back with words ends the task with those words', async () => {
-    script = [{ empty: 'stop' }, { text: 'Ficaram prontas as 13 peças.' }];
-    sent.length = 0;
-    // A prompt no other test uses: a late step of an earlier test's task can land in `sent`.
     const prompt = 'revise o roteiro do episódio 7';
+    scripts.set(prompt, [
+      { empty: 'stop' },
+      { text: 'Ficaram prontas as 13 peças.' },
+    ]);
     const task = await settled(createTask(newBot(), prompt).id);
     const mine = callsFor(prompt);
     expect(task.status).toBe('done');
@@ -138,9 +145,8 @@ describe('a task never ends mute', () => {
   });
 
   test('an answer with words ends at once, as before', async () => {
-    script = [{ text: 'Pronto.' }];
-    sent.length = 0;
     const prompt = 'diga se o build da manhã passou';
+    scripts.set(prompt, [{ text: 'Pronto.' }]);
     const task = await settled(createTask(newBot(), prompt).id);
     expect(task).toMatchObject({ status: 'done', result: 'Pronto.' });
     expect(callsFor(prompt)).toHaveLength(1);
