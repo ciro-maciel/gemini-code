@@ -1,11 +1,24 @@
+# One weekly pull request per ecosystem with the minor and patch updates.
+# Major versions are a decision, not a chore: they are never opened here.
 version: 2
 updates:
   - package-ecosystem: bun
     directory: /
     schedule:
       interval: weekly
-    open-pull-requests-limit: 5
+    groups:
+      dependencies:
+        update-types: [minor, patch]
+    ignore:
+      - dependency-name: '*'
+        update-types: ['version-update:semver-major']
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+    groups:
+      actions:
+        update-types: [minor, patch]
+    ignore:
+      - dependency-name: '*'
+        update-types: ['version-update:semver-major']
