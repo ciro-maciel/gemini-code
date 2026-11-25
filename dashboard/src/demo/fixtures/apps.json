@@ -1,0 +1,253 @@
+{
+  "items": [
+    {
+      "id": "notion",
+      "title": "Notion",
+      "category": "productivity",
+      "domain": "notion.so",
+      "serverName": "com.notion/mcp",
+      "url": "https://mcp.notion.com/mcp",
+      "description": "Ler e escrever páginas e bancos de dados",
+      "isRecommended": true
+    },
+    {
+      "id": "linear",
+      "title": "Linear",
+      "category": "productivity",
+      "domain": "linear.app",
+      "serverName": "app.linear/linear",
+      "url": "https://mcp.linear.app/mcp",
+      "description": "Issues, projetos e ciclos",
+      "isRecommended": true
+    },
+    {
+      "id": "atlassian",
+      "title": "Atlassian",
+      "category": "productivity",
+      "domain": "atlassian.com",
+      "serverName": "com.atlassian/atlassian-mcp-server",
+      "url": "https://mcp.atlassian.com/v2/mcp",
+      "description": "Jira e Confluence",
+      "isRecommended": true
+    },
+    {
+      "id": "monday",
+      "title": "monday.com",
+      "category": "productivity",
+      "domain": "monday.com",
+      "serverName": "com.monday/monday.com",
+      "url": "https://mcp.monday.com/mcp",
+      "description": "Quadros, itens e atualizações"
+    },
+    {
+      "id": "airtable",
+      "title": "Airtable",
+      "category": "productivity",
+      "domain": "airtable.com",
+      "serverName": "com.airtable/mcp",
+      "url": "https://mcp.airtable.com/mcp",
+      "description": "Bases, tabelas e registros"
+    },
+    {
+      "id": "todoist",
+      "title": "Todoist",
+      "category": "productivity",
+      "domain": "todoist.com",
+      "serverName": "net.todoist/mcp",
+      "url": "https://ai.todoist.net/mcp",
+      "description": "Tarefas e projetos pessoais"
+    },
+    {
+      "id": "zapier",
+      "title": "Zapier",
+      "category": "productivity",
+      "domain": "zapier.com",
+      "serverName": "com.zapier/mcp",
+      "url": "https://mcp.zapier.com/api/v1/connect",
+      "description": "Milhares de apps pelas suas automações"
+    },
+    {
+      "id": "github",
+      "title": "GitHub",
+      "category": "code",
+      "domain": "github.com",
+      "serverName": "io.github.github/github-mcp-server",
+      "url": "https://api.githubcopilot.com/mcp/",
+      "description": "Repositórios, issues e pull requests",
+      "isRecommended": true
+    },
+    {
+      "id": "cloudflare",
+      "title": "Cloudflare",
+      "category": "code",
+      "domain": "cloudflare.com",
+      "serverName": "com.cloudflare.mcp/mcp",
+      "url": "https://bindings.mcp.cloudflare.com/mcp",
+      "description": "Workers, KV, R2 e D1"
+    },
+    {
+      "id": "sentry",
+      "title": "Sentry",
+      "category": "code",
+      "domain": "sentry.io",
+      "serverName": "io.github.getsentry/sentry-mcp",
+      "url": "https://mcp.sentry.dev/mcp",
+      "description": "Erros e desempenho em produção"
+    },
+    {
+      "id": "neon",
+      "title": "Neon",
+      "category": "code",
+      "domain": "neon.tech",
+      "serverName": "com.neon/mcp",
+      "url": "https://mcp.neon.tech/mcp",
+      "description": "Bancos Postgres e branches"
+    },
+    {
+      "id": "postman",
+      "title": "Postman",
+      "category": "code",
+      "domain": "postman.com",
+      "serverName": "com.postman/postman-mcp-server",
+      "url": "https://mcp.postman.com/mcp",
+      "description": "Coleções e testes de API"
+    },
+    {
+      "id": "context7",
+      "title": "Context7",
+      "category": "code",
+      "domain": "context7.com",
+      "serverName": "io.github.upstash/context7",
+      "url": "https://mcp.context7.com/mcp",
+      "description": "Documentação atual de bibliotecas"
+    },
+    {
+      "id": "jam",
+      "title": "Jam",
+      "category": "code",
+      "domain": "jam.dev",
+      "serverName": "dev.jam/jam",
+      "url": "https://mcp.jam.dev/mcp",
+      "description": "Relatos de bug com tela e console"
+    },
+    {
+      "id": "figma",
+      "title": "Figma",
+      "category": "design",
+      "domain": "figma.com",
+      "serverName": "com.figma.mcp/mcp",
+      "url": "https://mcp.figma.com/mcp",
+      "description": "Arquivos, frames e componentes",
+      "isRecommended": true
+    },
+    {
+      "id": "canva",
+      "title": "Canva",
+      "category": "design",
+      "domain": "canva.com",
+      "serverName": "com.canva.mcp/mcp",
+      "url": "https://mcp.canva.com/mcp",
+      "description": "Criar e editar designs"
+    },
+    {
+      "id": "miro",
+      "title": "Miro",
+      "category": "design",
+      "domain": "miro.com",
+      "serverName": "io.github.miroapp/mcp-server",
+      "url": "https://mcp.miro.com/",
+      "description": "Quadros e diagramas"
+    },
+    {
+      "id": "webflow",
+      "title": "Webflow",
+      "category": "design",
+      "domain": "webflow.com",
+      "serverName": "com.webflow/mcp",
+      "url": "https://mcp.webflow.com/mcp",
+      "description": "Sites, páginas e CMS"
+    },
+    {
+      "id": "wix",
+      "title": "Wix",
+      "category": "design",
+      "domain": "wix.com",
+      "serverName": "com.wix/mcp",
+      "url": "https://mcp.wix.com/sse",
+      "transport": "sse",
+      "description": "Sites e lojas"
+    },
+    {
+      "id": "gmail",
+      "title": "Gmail",
+      "category": "communication",
+      "domain": "gmail.com",
+      "serverName": "com.mintmcp/gmail",
+      "url": "https://gmail.mintmcp.com/mcp",
+      "description": "Ler, organizar e rascunhar e-mails",
+      "isRecommended": true
+    },
+    {
+      "id": "huggingface",
+      "title": "Hugging Face",
+      "category": "data",
+      "domain": "huggingface.co",
+      "serverName": "co.huggingface/hf-mcp-server",
+      "url": "https://huggingface.co/mcp?login",
+      "description": "Modelos, datasets e Spaces"
+    },
+    {
+      "id": "exa",
+      "title": "Exa",
+      "category": "data",
+      "domain": "exa.ai",
+      "serverName": "ai.exa/exa",
+      "url": "https://mcp.exa.ai/mcp",
+      "description": "Busca na web feita para agentes"
+    },
+    {
+      "id": "stripe",
+      "title": "Stripe",
+      "category": "payments",
+      "domain": "stripe.com",
+      "serverName": "com.stripe/mcp",
+      "url": "https://mcp.stripe.com",
+      "description": "Clientes, cobranças e assinaturas"
+    },
+    {
+      "id": "paypal",
+      "title": "PayPal",
+      "category": "payments",
+      "domain": "paypal.com",
+      "serverName": "com.paypal.mcp/mcp",
+      "url": "https://mcp.paypal.com/mcp",
+      "description": "Pedidos, faturas e transações"
+    }
+  ],
+  "categories": [
+    {
+      "id": "productivity",
+      "label": "Produtividade"
+    },
+    {
+      "id": "code",
+      "label": "Código"
+    },
+    {
+      "id": "design",
+      "label": "Design"
+    },
+    {
+      "id": "communication",
+      "label": "Comunicação"
+    },
+    {
+      "id": "data",
+      "label": "Pesquisa"
+    },
+    {
+      "id": "payments",
+      "label": "Pagamentos"
+    }
+  ]
+}
