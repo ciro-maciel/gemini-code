@@ -245,7 +245,23 @@ h3,
   padding: 8px 12px 12px 4px;
 }
 .split {
-  gap: 12px;
+  gap: 0;
+}
+/* The drag handle is the space between two panes: 12 px, the same as the edge
+   of the desk. A gap on each side of it made 32 px and looked doubled. */
+.gutter {
+  width: 12px;
+}
+.split.col > .gutter {
+  width: auto;
+  height: 12px;
+}
+.gutter::after {
+  left: 5px;
+}
+.split.col > .gutter::after {
+  left: 50%;
+  top: 5px;
 }
 
 /* --------------------------------------------------------- Navigation -- */
