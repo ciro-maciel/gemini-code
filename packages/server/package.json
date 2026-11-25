@@ -13,7 +13,7 @@
     "@modelcontextprotocol/sdk": "1.32.1",
     "@playwright/mcp": "0.0.83",
     "assistant-navigation": "github:ciro-maciel/assistant-navigation#v1.1.0",
-    "croner": "10.0.1",
+    "croner": "11.0.1",
     "jose": "5.10.0",
     "web-push": "3.6.7"
   }
