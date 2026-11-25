@@ -346,7 +346,7 @@ export function Shell() {
                 isSettings={isSettings}
                 isConnectors={isConnectors}
                 onConnectors={() => navigate('/connectors')}
-                side={nav.side}
+                side="agents"
                 filter={nav.filter}
                 collapsed={nav.collapsed}
                 width={nav.width}

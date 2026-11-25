@@ -163,11 +163,7 @@ function AccountFoot({ account, isDark, onAccount, onTheme }) {
                 onClose={() => setIsSupport(false)}
                 productName="Gemini Code"
                 apiUrl={API_URL}
-                contextRows={[
-                    `Account: ${email || 'local'}`,
-                    `Runtime: ${account?.runtime?.computerMode || 'local'}`,
-                    ...(account?.runtime?.workspaceDir ? [`Workspace: ${account.runtime.workspaceDir}`] : []),
-                ]}
+                contextRows={[`Account: ${email || 'local'}`, `Runtime: ${account?.runtime?.computerMode || 'local'}`, ...(account?.runtime?.workspaceDir ? [`Workspace: ${account.runtime.workspaceDir}`] : [])]}
             />
         </div>
     )
@@ -197,7 +193,34 @@ function MiniRow({ bot, isOn, onOpen }) {
  * person with the theme square at the foot. Collapsed, it is
  * a rail of icons that still lists every agent.
  */
-export function Column({ bots, activeBotId, isHome, isSettings, isConnectors, onConnectors, side, filter, collapsed, width, isDark, account, files, onSide, onFilter, onToggle, onResize, onSearch, onHome, onOpenAgent, onNewAgent, onUpload, onNewFolder, onSettings, onBilling, onTheme }) {
+export function Column({
+    bots,
+    activeBotId,
+    isHome,
+    isSettings,
+    isConnectors,
+    onConnectors,
+    side,
+    filter,
+    collapsed,
+    width,
+    isDark,
+    account,
+    files,
+    onSide,
+    onFilter,
+    onToggle,
+    onResize,
+    onSearch,
+    onHome,
+    onOpenAgent,
+    onNewAgent,
+    onUpload,
+    onNewFolder,
+    onSettings,
+    onBilling,
+    onTheme,
+}) {
     const navRef = useRef(null)
     const list = listAgents(bots ?? [], filter)
 
@@ -217,7 +240,7 @@ export function Column({ bots, activeBotId, isHome, isSettings, isConnectors, on
         addEventListener('pointerup', up)
     }
 
-    const isFiles = side === 'files'
+    // Files live in each agent now (the files MCP's tree beside its conversation): the side lists agents only.
     return (
         <nav
             ref={navRef}
@@ -266,13 +289,6 @@ export function Column({ bots, activeBotId, isHome, isSettings, isConnectors, on
                     >
                         <i className="ti ti-message-plus" />
                     </button>
-                    <button
-                        className="item"
-                        onClick={() => onSide('files', true)}
-                        title="Arquivos"
-                    >
-                        <i className="ti ti-folder" />
-                    </button>
                     <div className="mini-list">
                         {list.map(bot => (
                             <MiniRow
@@ -288,97 +304,50 @@ export function Column({ bots, activeBotId, isHome, isSettings, isConnectors, on
                 <div className="nav-side">
                     <div className="side-head">
                         <div className="side-tabs">
-                            <div
-                                className="segment grow"
-                                role="tablist"
-                            >
-                                <button
-                                    className={isFiles ? '' : 'on'}
-                                    onClick={() => onSide('agents')}
-                                >
-                                    Agentes
-                                </button>
-                                <button
-                                    className={isFiles ? 'on' : ''}
-                                    onClick={() => onSide('files')}
-                                >
-                                    Arquivos
-                                </button>
-                            </div>
-                            {isFiles && onNewFolder && (
+                            <b className="side-title grow">Agentes</b>
+                            <>
                                 <button
                                     className="icon-btn"
-                                    onClick={onNewFolder}
-                                    title="Nova pasta"
-                                    aria-label="Nova pasta"
+                                    onClick={() => window.dispatchEvent(new CustomEvent('assistant:new-group'))}
+                                    title="Novo grupo"
+                                    aria-label="Novo grupo"
                                 >
-                                    <i className="ti ti-folder-plus" />
+                                    <i className="ti ti-category-plus" />
                                 </button>
-                            )}
-                            {isFiles ? (
-                                onUpload && <button
+                                <button
                                     className="icon-btn"
-                                    onClick={onUpload}
-                                    title="Enviar arquivos"
-                                    aria-label="Enviar arquivos"
+                                    onClick={onNewAgent}
+                                    title="Agente novo"
+                                    aria-label="Agente novo"
                                 >
-                                    <i className="ti ti-upload" />
+                                    <i className="ti ti-message-plus" />
                                 </button>
-                            ) : (
-                                <>
-                                    <button
-                                        className="icon-btn"
-                                        onClick={() => window.dispatchEvent(new CustomEvent('assistant:new-group'))}
-                                        title="Novo grupo"
-                                        aria-label="Novo grupo"
-                                    >
-                                        <i className="ti ti-category-plus" />
-                                    </button>
-                                    <button
-                                        className="icon-btn"
-                                        onClick={onNewAgent}
-                                        title="Agente novo"
-                                        aria-label="Agente novo"
-                                    >
-                                        <i className="ti ti-message-plus" />
-                                    </button>
-                                </>
-                            )}
+                            </>
                         </div>
-                        {isFiles && files?.syncLine && (
-                            <div className="sync-row">
-                                <i className="d" />
-                                {files.syncLine}
-                            </div>
-                        )}
                     </div>
                     <div className="side-body">
-                        {isFiles ? (
-                            files?.tree
-                        ) : (
-                            <>
-                                {bots === null ? (
-                                    <AgentsSkeleton />
-                                ) : bots.length ? (
-                                    <AgentGroups
-                                        bots={bots}
-                                        filter={filter}
-                                        activeBotId={activeBotId}
-                                        isHome={isHome}
-                                        onFilter={onFilter}
-                                        onOpenAgent={onOpenAgent}
-                                        onNewAgent={onNewAgent}
-                                    />
-                                ) : (
-                                    <p
-                                        className="muted"
-                                        style={{ padding: '12px 6px' }}
-                                    >
-                                        Nenhum agente ainda.
-                                    </p>
-                                )}
-                            </>
-                        )}
+                        <>
+                            {bots === null ? (
+                                <AgentsSkeleton />
+                            ) : bots.length ? (
+                                <AgentGroups
+                                    bots={bots}
+                                    filter={filter}
+                                    activeBotId={activeBotId}
+                                    isHome={isHome}
+                                    onFilter={onFilter}
+                                    onOpenAgent={onOpenAgent}
+                                    onNewAgent={onNewAgent}
+                                />
+                            ) : (
+                                <p
+                                    className="muted"
+                                    style={{ padding: '12px 6px' }}
+                                >
+                                    Nenhum agente ainda.
+                                </p>
+                            )}
+                        </>
                     </div>
                 </div>
             )}

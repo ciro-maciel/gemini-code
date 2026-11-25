@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { fileUrl } from '../services/api'
+import { fileUrl, readAgentFile } from '../services/api'
 import { RichText } from '../components/RichText'
 import { drawablePage } from '../components/FileGallery'
 import { FileSkeleton } from './FileSkeleton'
@@ -24,11 +24,16 @@ export function ComputerFileTab({ path }) {
     useEffect(() => {
         if (isImage) return
         setText(null)
-        fetch(url)
-            .then(response => (response.ok ? response.text() : Promise.reject(new Error(`${response.status}`))))
-            .then(setText)
-            .catch(() => setText(''))
-    }, [url, isImage])
+        // The agent's own folder first (the files MCP's route); a cloud computer's workspace when it is not there.
+        readAgentFile(botId, relative)
+            .then(data => (data.isBinary ? Promise.reject(new Error('binary')) : setText(data.content)))
+            .catch(() =>
+                fetch(url)
+                    .then(response => (response.ok ? response.text() : Promise.reject(new Error(`${response.status}`))))
+                    .then(setText)
+                    .catch(() => setText(''))
+            )
+    }, [url, isImage, botId, relative])
 
     return (
         <>

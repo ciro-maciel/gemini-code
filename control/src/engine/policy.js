@@ -8,6 +8,10 @@ import { CHROME_TOOLS } from '../chrome-tools.js'
 export const POLICIES = ['free', 'confirm', 'human']
 
 const ALWAYS_FREE = new Set([
+    // The agent's own folder through the files MCP; deleting is not here: it always asks.
+    'files_guide',
+    'files_read',
+    'files_write',
     // The person's own Chrome (Assistant Navigation): what only reads or moves around runs.
     ...CHROME_TOOLS.filter(tool => tool.risk === 'read').map(tool => tool.name),
     'tools_restore',
@@ -357,6 +361,8 @@ export async function decide({ bot, task, toolName, args, connectedTool, pageCon
     if (override === 'confirm') return { decision: 'ask', summary: `Usar ${toolName}`, reason: 'você pediu para confirmar esta ferramenta', cost: 0, rule: 'confirm' }
 
     if (ALWAYS_FREE.has(toolName)) return { decision: 'run', summary: toolName, reason: '', cost: 0, rule: 'always_free' }
+    // Deleting in the agent folder asks every time, with what goes on the card; no grant covers it.
+    if (toolName === 'files_delete') return { decision: 'ask', summary: `Apagar ${String(args?.path ?? '').slice(0, 200)} da pasta do agente`, reason: 'apagar não tem volta', cost: 0, rule: 'files_delete', kind: 'delete' }
     // An agent changing its own instructions asks, with the lesson and the exact change on the card (10/11/2026).
     if (toolName === 'instructions_update') {
         const change = args?.find ? `Trocar "${String(args.find).slice(0, 300)}" por "${String(args.replace).slice(0, 600)}"` : `Acrescentar: "${String(args?.replace).slice(0, 800)}"`

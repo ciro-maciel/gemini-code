@@ -51,6 +51,8 @@ import { fetchBranch, listBranches } from './branches.js'
 import { askSideQuestion } from './engine/side-question.js'
 import { refreshSubscription, store as subscriptionStore, subscriptionState } from './engine/subscription/index.js'
 import { ensureSubscriptionAccount } from './ai-accounts.js'
+import { FilesError, onFilesChanged, runFileOperation, toolOf } from './agent-files.js'
+import { answerFilesMcp } from './mcp-files.js'
 
 // Exported for the tests, which call the routes without a port or a token.
 export const router = createRouter()
@@ -679,6 +681,8 @@ router.get('/api/stream', ({ req, account }) => {
         // Who is in the bot just changed: ask again whether this account sees it.
         if (event.type === 'members') canSee.delete(event.botId)
         if (!event.botId || !sees(event.botId)) return
+        // A file changed in an agent folder: its open tree reads itself again.
+        if (event.type === 'files_changed') return write({ type: 'files_changed', botId: event.botId })
         if (event.isLive && !['seeing', 'members'].includes(event.type)) return
         waiting.add(event.botId)
         timer ??= setTimeout(() => {
@@ -896,6 +900,52 @@ router.get('/api/bots/:id/files/content', async ({ params, url, account }) => {
     if (!isBotFilePath(filePath)) throw invalid('só arquivos do workspace e de Downloads')
     const content = await readSpriteFile(bot.spriteName, filePath)
     return new Response(content, { headers: { 'Content-Type': Bun.file(filePath).type || 'application/octet-stream', 'Content-Disposition': `inline; filename="${path.basename(filePath)}"` } })
+})
+
+// --- The agent folder (agent-files.js): the dashboard tree and the files MCP share these ---
+
+const FILES_STATUS = { NOT_FOUND: 404, EXISTS: 409, AMBIGUOUS: 409, IS_FOLDER: 409, OUTSIDE_ROOT: 403, TOO_LARGE: 413 }
+function runFiles(bot, op, args) {
+    try {
+        return json(runFileOperation(bot, op, args))
+    } catch (error) {
+        if (error instanceof FilesError) throw new HttpError(FILES_STATUS[error.code] ?? 400, error.code, error.message)
+        throw error
+    }
+}
+const queryArgs = url => {
+    const args = Object.fromEntries(url.searchParams)
+    if (args.paths) args.paths = args.paths.split(',')
+    return args
+}
+
+router.get('/api/bots/:id/fs/:op', ({ params, url, account }) => {
+    if (toolOf(params.op) !== 'read') throw invalid('leitura desconhecida')
+    return runFiles(requireBot(params.id, account, 'read'), params.op, queryArgs(url))
+})
+router.post('/api/bots/:id/fs/:op', async ({ req, params, account }) => {
+    if (toolOf(params.op) !== 'write') throw invalid('escrita desconhecida')
+    return runFiles(requireBot(params.id, account, 'enter'), params.op, await readBody(req))
+})
+router.delete('/api/bots/:id/fs', async ({ req, params, account }) => runFiles(requireBot(params.id, account, 'enter'), 'delete', await readBody(req)))
+
+// The files MCP for any client (Antigravity CLI, Gemini CLI, Claude Code): stateless JSON-RPC over HTTP.
+router.post('/api/bots/:id/mcp/files', async ({ req, params, account }) => {
+    const bot = requireBot(params.id, account, 'enter')
+    const body = await readBody(req)
+    const answers = (Array.isArray(body) ? body : [body]).map(message => answerFilesMcp(bot, message)).filter(Boolean)
+    if (!answers.length) return new Response(null, { status: 202 })
+    return json(Array.isArray(body) ? answers : answers[0])
+})
+
+// A change on disk reaches the dashboard and every open stream of the agent, at most every 300 ms per agent.
+const filesPending = new Map()
+onFilesChanged(botId => {
+    if (filesPending.has(botId)) return
+    filesPending.set(botId, setTimeout(() => {
+        filesPending.delete(botId)
+        publishBot(botId, 'files_changed', {})
+    }, 300))
 })
 
 // --- Tools, policies, services --------------------------------------------

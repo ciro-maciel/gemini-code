@@ -15,6 +15,9 @@ import { passToColleague } from '../handoff.js'
 import { deleteWorkFile, listWorkFiles, readWorkFile, writeWorkFile } from '../repo.js'
 import { viewFile, WINDOW_CHARS } from './file-view.js'
 import { updateBotSettings } from '../bots.js'
+import { callFilesTool, FILES_TOOLS, FILES_TOOL_NAMES } from '../mcp-files.js'
+import { rootOf } from '../agent-files.js'
+import { isLocalMode } from '../local-runtime.js'
 
 /**
  * Where a path the agent wrote lands in the repository. Without a leading
@@ -197,6 +200,8 @@ export const BASE_TOOLS = [
         },
         ['serverName', 'reason']
     ),
+    // The agent folder, through the files MCP (mcp-files.js): the same four tools any MCP client mounts.
+    ...FILES_TOOLS,
 ]
 
 function clip(text, limit = 60_000) {
@@ -208,11 +213,16 @@ function clip(text, limit = 60_000) {
  * person, { wait: { reason, detail } }.
  */
 export async function runBaseTool({ bot, task, name, args, setEnabledTools }) {
+    // The files MCP. A delete reaching here was approved by the person, which is its confirmation.
+    if (FILES_TOOL_NAMES.has(name)) {
+        const answer = callFilesTool(bot, name, args, { isConfirmedByPerson: name === 'files_delete' })
+        return { text: answer.error ? `erro: ${answer.error}` : typeof answer.result === 'string' ? answer.result : JSON.stringify(answer.result, null, 2) }
+    }
     switch (name) {
         case 'computer_shell': {
             const timeoutSeconds = Math.min(Math.max(Number(args.timeoutSeconds) || 120, 5), 900)
             const vault = await openVault(bot.id)
-            const { exitCode, output, isTimedOut } = await runCommand(bot.spriteName, args.command, { timeoutSeconds, secrets: vault })
+            const { exitCode, output, isTimedOut } = await runCommand(bot.spriteName, args.command, { timeoutSeconds, secrets: vault, ...(isLocalMode() ? { cwd: rootOf(bot) } : {}) })
             const header = isTimedOut ? `tempo esgotado depois de ${timeoutSeconds}s; para o que demora, use computer_job_start` : `código de saída ${exitCode}`
             return { text: `${header}\n${clip(redact(output, vault)) || '(sem saída)'}` }
         }
@@ -221,7 +231,7 @@ export async function runBaseTool({ bot, task, name, args, setEnabledTools }) {
             if (!String(args.command ?? '').trim()) return { text: 'falta o comando' }
             const id = newJobId()
             const vault = await openVault(bot.id)
-            const { exitCode, output } = await runCommand(bot.spriteName, startScript(id, args.command), { timeoutSeconds: 60, secrets: vault })
+            const { exitCode, output } = await runCommand(bot.spriteName, startScript(id, args.command), { timeoutSeconds: 60, secrets: vault, ...(isLocalMode() ? { cwd: rootOf(bot) } : {}) })
             if (exitCode !== 0 || !output.includes('started')) return { text: `o trabalho não começou (código ${exitCode}): ${clip(redact(output, vault), 2000)}` }
             return { text: `trabalho ${id} começou em segundo plano. Acompanhe com computer_job_wait (id ${id}).` }
         }

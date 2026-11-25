@@ -4,7 +4,7 @@
 
 Coding agents that read a repository, run commands and ship changes are already part of how developers work. One agent at a time is the easy part. The hard part comes next: running several at once without them overwriting each other, and keeping a person in charge of what matters.
 
-Gemini Code is an open answer to that, built around Gemini. You open as many agents as the work needs (an engineer, a reviewer, a debugger) and watch them work in parallel. Each agent keeps its own instructions and memory. The next step, the first milestone below, gives each one its own working folder, so one never steps on another's work.
+Gemini Code is an open answer to that, built around Gemini. You open as many agents as the work needs (an engineer, a reviewer, a debugger) and watch them work in parallel. Each agent works in its own folder: its terminal starts there, its file tree sits next to its conversation, and it cannot read or write outside it.
 
 > Independent open-source project. Not affiliated with, sponsored or endorsed by Google. "Gemini" is a trademark of Google LLC.
 
@@ -18,6 +18,7 @@ Gemini Code is an open answer to that, built around Gemini. You open as many age
 - **Secrets stay out of the model.** A per-agent encrypted vault puts keys only into the command's environment and removes their values from everything the model reads.
 - **Connectors through MCP.** GitHub, Linear, Sentry, Cloudflare, Notion, Figma and others through their official remote MCP servers, plus a browser the agent can drive.
 - **Sign in with your Google subscription.** Agents can run on a Google AI Pro or Ultra subscription through Google's Antigravity CLI, which opens the Gemini 4 family (Neon and others) with no API billing. See [docs/subscription.md](docs/subscription.md).
+- **Each agent's folder, through one MCP.** A files MCP server with four tools (guide, read, write, delete) covers listing, tree, reading, searching, writing, editing, moving, copying and deleting, all locked inside the agent's folder. Deleting always waits for the person. The dashboard's tree uses the same routes, and any MCP client (Antigravity CLI, Gemini CLI, Claude Code) can mount it at `/api/bots/<agent>/mcp/files`. See [docs/files-mcp.md](docs/files-mcp.md).
 - **Local first.** Runs on your machine against a folder, with no account and no login. A cloud mode, one isolated Linux computer per agent on Fly Sprites, is optional.
 
 ## Quickstart
@@ -64,7 +65,7 @@ Where to start reading: `control/src/engine/run.js` (the loop), `control/src/eng
 
 ## Roadmap
 
-**Milestone 1, in progress: each agent with its own file tree.** The shared Files tab goes away. Each agent's tree shows next to its conversation, with what it changed marked. Every agent's terminal starts in its own folder and stays there, and each agent gets its own `git worktree` of the project.
+**Milestone 1, almost done: each agent with its own file tree.** Done: the shared Files tab is gone; each agent's tree shows next to its conversation and updates live, with what it added (A) or modified (M) marked; its terminal starts in its own folder; the files MCP locks every file operation inside it. Still to do: give each agent its own `git worktree` of the project.
 
 Later milestones are discussed in the issues.
 

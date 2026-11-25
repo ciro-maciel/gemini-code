@@ -566,3 +566,229 @@ textarea {
         transition-duration: 0.01ms !important;
     }
 }
+
+/* --------------------------------------------- Focus on side rows -- */
+
+/* The agent rows and side items: a thin ring drawn inside the pill, never a halo with a gap, and none
+   on the row already selected (its fill says it). The offset ring read as an odd gradient. */
+.crow:focus-visible,
+.nav .item:focus-visible,
+.agroup-head:focus-visible {
+    outline: none;
+    box-shadow: inset 0 0 0 2px var(--gm-primary);
+}
+.crow.on:focus-visible,
+.nav .item.on:focus-visible {
+    box-shadow: none;
+}
+
+/* ------------------------------------- The agent folder (files MCP) -- */
+
+.nav .side-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gm-on-surface-variant);
+    padding-left: 6px;
+}
+.agent-shell {
+    height: 100%;
+    display: flex;
+    min-height: 0;
+}
+.agent-shell > .conv {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+.conv-sub .files-toggle {
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 12px;
+    border-radius: var(--radius-pill);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gm-on-surface-variant);
+    transition: background var(--dur) var(--effects), color var(--dur) var(--effects);
+}
+.conv-sub .files-toggle:hover {
+    background: var(--gm-surface-1);
+    color: var(--gm-on-surface);
+}
+.conv-sub .files-toggle.on {
+    background: var(--gm-primary-container);
+    color: var(--gm-on-primary-container);
+}
+.agent-files {
+    flex: 0 0 300px;
+    max-width: 42%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 0;
+    padding: 12px 8px 12px 12px;
+    background: var(--gm-surface-1);
+    border-left: 1px solid var(--gm-outline-variant);
+    position: relative;
+    z-index: 1;
+}
+.af-head {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding-left: 6px;
+}
+.af-head b {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 600;
+}
+.af-head .icon-btn {
+    width: 34px;
+    height: 34px;
+}
+.af-head .icon-btn .ti {
+    font-size: 17px;
+}
+.af-root {
+    align-self: flex-start;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--gm-on-surface-variant);
+    background: var(--gm-surface);
+    border-radius: var(--radius-xs);
+    padding: 3px 8px;
+    margin-left: 6px;
+}
+.af-filter {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 36px;
+    padding: 0 12px;
+    border-radius: var(--radius-pill);
+    background: var(--gm-surface);
+    color: var(--gm-on-surface-variant);
+}
+.af-filter input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    outline: none;
+    background: transparent;
+    font: inherit;
+    font-size: 13px;
+    color: var(--gm-on-surface);
+}
+.af-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+.af-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 32px;
+    padding-right: 4px;
+    border-radius: var(--radius-pill);
+}
+.af-row:hover {
+    background: color-mix(in srgb, var(--gm-on-surface) 6%, transparent);
+}
+.af-name {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 32px;
+    text-align: left;
+    color: var(--gm-on-surface);
+    font-size: 13px;
+}
+.af-name .n {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.af-name .ti {
+    font-size: 16px;
+    color: var(--gm-on-surface-variant);
+}
+.af-name .ti-folder,
+.af-name .ti-folder-open {
+    color: var(--gm-primary);
+}
+.af-chev {
+    width: 14px;
+    flex: none;
+    font-size: 13px !important;
+}
+.af-mark {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 0 6px;
+}
+.af-mark.added {
+    color: var(--ne-green);
+}
+.af-mark.changed {
+    color: #B06000;
+}
+.af-del {
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-pill);
+    color: var(--gm-on-surface-variant);
+    opacity: 0;
+    transition: opacity var(--dur) var(--effects);
+}
+.af-row:hover .af-del,
+.af-del:focus-visible {
+    opacity: 1;
+}
+.af-del:hover {
+    background: color-mix(in srgb, var(--gm-error) 14%, transparent);
+    color: var(--gm-error);
+}
+.af-msg {
+    margin: 8px 6px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--gm-on-surface-variant);
+}
+.af-skel {
+    display: block;
+    height: 24px;
+    margin: 4px 6px;
+    border-radius: var(--radius-pill);
+    background: linear-gradient(90deg, var(--gm-surface-2), var(--gm-surface), var(--gm-surface-2));
+    background-size: 200% 100%;
+    animation: ne-shimmer 1.4s linear infinite;
+}
+@keyframes ne-shimmer {
+    to {
+        background-position: -200% 0;
+    }
+}
+@media (max-width: 760px) {
+    .agent-shell.with-files {
+        flex-direction: column;
+    }
+    .agent-files {
+        flex: 0 0 45%;
+        max-width: none;
+        border-left: 0;
+        border-top: 1px solid var(--gm-outline-variant);
+    }
+}
