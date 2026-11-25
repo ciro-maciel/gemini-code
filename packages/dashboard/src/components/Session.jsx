@@ -44,10 +44,23 @@ function Notice({ title, text, onSignOut }) {
     <Flex h="100dvh" px="md" justify="center" align="center">
       <Stack gap={16} maw={460} align="center">
         <Wordmark name="Gemini Code" />
-        <Text fz={32} fw={900} c="gray.9" lh={1.1} lts="-0.04em" ta="center">
+        <Text
+          fz={32}
+          fw={900}
+          c="var(--gm-on-surface)"
+          lh={1.1}
+          lts="-0.04em"
+          ta="center"
+        >
           {title}
         </Text>
-        <Text fz={15} fw={500} c="gray.6" lh={1.6} ta="center">
+        <Text
+          fz={15}
+          fw={500}
+          c="var(--gm-on-surface-variant)"
+          lh={1.6}
+          ta="center"
+        >
           {text}
         </Text>
         <Button variant="default" onClick={onSignOut}>

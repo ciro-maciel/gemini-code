@@ -716,8 +716,12 @@ export function Thread({
               <i className="ti ti-file-text" />
               <b>{file.name || file.path.split('/').pop()}</b>
               <small>
+                {/* Relative to the workspace: never the machine's own folders. */}
                 {file.path
-                  .replace(/^\/home\/sprite\/workspace\/?/, '')
+                  .replace(
+                    /^(?:\/home\/sprite\/workspace|.*?\/workspace)\/?/,
+                    '',
+                  )
                   .split('/')
                   .slice(0, -1)
                   .join('/') || 'workspace'}

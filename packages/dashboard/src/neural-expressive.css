@@ -2739,3 +2739,227 @@ a.btn {
   font-size: 12px;
   line-height: 17px;
 }
+
+/* ------------------------------------------- The old pieces, retoned -- */
+
+/* 25/11/2026: a sweep of assistant.css found the pieces the Zen system drew
+   in black squares and hard borders that this layer had never reached (the
+   waiting count on an agent row was a black disc with a dark number). Each
+   group below takes them by role into the design system's tokens. */
+
+/* Counts and badges: a small primary pill with its number legible. */
+.count,
+.crow .unread,
+.count-sm,
+.mini-conv .mk {
+  min-width: 18px;
+  height: 18px;
+  padding: 0 6px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--gm-primary);
+  color: var(--gm-on-primary);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 18px;
+  letter-spacing: 0;
+}
+/* Waiting for the person: the primary container, so it reads as a call, not an alarm. */
+.crow .unread.wait,
+.mini-conv .mk.wait {
+  border: 0;
+  background: var(--gm-primary-container);
+  color: var(--gm-on-primary-container);
+}
+/* On the selected row the badge turns over, so it never sinks into the row.
+   The theme colors every child of the selected row with !important
+   (gemini-theme.css), so the badge's own color needs it too. */
+.crow.on .unread,
+.crow.on .unread.wait {
+  border: 0;
+  background: var(--gm-primary);
+  color: var(--gm-on-primary) !important;
+}
+.crow .wait-dot,
+.radio.on .dot::after {
+  border-radius: var(--radius-pill);
+  background: var(--gm-primary);
+}
+
+/* What is chosen: the primary container, never a black fill. */
+.rail .icon-btn.on,
+.node.on,
+.pill.on,
+.chip.on,
+.chip-btn.on,
+.seg-sm button.on,
+.state.dark,
+.pill-st.dark,
+.mini-conv.on {
+  border-color: transparent;
+  background: var(--gm-primary-container);
+  color: var(--gm-on-primary-container);
+}
+
+/* People and agents in letters: a circle on a tonal step. */
+.av,
+.nav .item .letter,
+.big-letter,
+.nav .user-card .avatar,
+.rail .wordmark {
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--gm-surface-2);
+  color: var(--gm-on-surface);
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.av.agent,
+.nav .user-card .avatar {
+  background: var(--gm-primary-container);
+  color: var(--gm-on-primary-container);
+}
+.setup-ic,
+.app-ic {
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--gm-surface-2);
+}
+
+/* Send and stop: round, in the one action color. */
+.send,
+.stop {
+  border-radius: var(--radius-pill);
+  background: var(--gm-primary);
+  color: var(--gm-on-primary);
+}
+
+/* Bars and meters: the primary blue on a rounded track. */
+.bars div.hi,
+.meter.full .tr i,
+.spend.near .tr i,
+.levels i,
+.gutter:hover::after,
+.gutter.on::after {
+  border-radius: var(--radius-pill);
+  background: var(--gm-primary);
+}
+
+/* Boxes: tonal surfaces at the card corner, no hard border. */
+.approval,
+.stat,
+.home-comp,
+.ask,
+.ls-win,
+.tpl-hero,
+.tpl-stats,
+.tpl-flow .col.me,
+.side-answer {
+  border: 0;
+  border-radius: var(--radius-lg);
+  background: var(--gm-surface-1);
+}
+.art-image img,
+.art-video video,
+.ls-frame,
+.ctx-img {
+  border: 0 !important;
+  border-radius: var(--radius-md);
+}
+
+/* Fields: a tonal well with the 2 px primary ring on focus. */
+.field,
+.select,
+.menu .search-in,
+textarea.cfg-instr,
+.menu-pop textarea,
+.agent-top .name-edit,
+.tpl-q {
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--gm-surface-1);
+  color: var(--gm-on-surface);
+  box-shadow: inset 0 0 0 1px var(--gm-outline-variant);
+}
+.field:focus,
+.select:focus-within,
+.menu .search-in:focus,
+textarea.cfg-instr:focus,
+.menu-pop textarea:focus,
+.agent-top .name-edit:focus {
+  box-shadow: inset 0 0 0 2px var(--gm-primary);
+}
+
+/* Chips and small buttons that wore a border: tonal pills. */
+.chip-btn,
+.tpl-chip,
+.crew .who,
+.ctx a,
+.instr-link,
+.ghost,
+.agent-sel,
+.seg-sm {
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--gm-surface-2);
+  color: var(--gm-on-surface);
+}
+.seg-sm {
+  padding: 2px;
+  gap: 2px;
+}
+.seg-sm button {
+  border: 0;
+  border-radius: var(--radius-pill);
+}
+.seg-sm button + button {
+  border-left: 0;
+}
+.side-tabs .icon-btn,
+.nav .top .search-top,
+.nav .theme-sq {
+  border: 0;
+  border-radius: var(--radius-pill);
+}
+
+/* Option rows: the option list of the design system. */
+.radio {
+  border: 0;
+  border-radius: var(--radius-lg);
+  background: var(--gm-surface-1);
+}
+.radio + .radio {
+  margin-top: 8px;
+}
+.radio.on {
+  background: var(--gm-primary-container);
+}
+.radio .dot {
+  border-radius: var(--radius-pill);
+  border-color: var(--gm-outline);
+}
+
+.menu .menu-kbd {
+  font-size: 11px;
+  letter-spacing: 0;
+}
+
+/* The context bar in the composer: the parts in steps of the primary blue. */
+.p-people {
+  background: var(--gm-primary);
+}
+.p-answers {
+  background: color-mix(in srgb, var(--gm-primary) 75%, var(--gm-surface));
+}
+.p-results {
+  background: color-mix(in srgb, var(--gm-primary) 55%, var(--gm-surface));
+}
+.p-tools {
+  background: color-mix(in srgb, var(--gm-primary) 40%, var(--gm-surface));
+}
+.p-rules {
+  background: color-mix(in srgb, var(--gm-primary) 28%, var(--gm-surface));
+}
+.p-instructions {
+  background: color-mix(in srgb, var(--gm-primary) 18%, var(--gm-surface));
+}

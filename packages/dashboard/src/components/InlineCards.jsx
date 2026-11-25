@@ -26,12 +26,12 @@ import { notify } from './zen';
  */
 function Card({ eyebrow, title, children }) {
   return (
-    <Paper p={20} bg="white">
-      <Text fz={10} fw={800} c="gray.4" tt="uppercase" lts="1.5px" mb={8}>
+    <Paper p={20} bg="var(--gm-surface-1)">
+      <Text fz={12.5} fw={600} c="var(--gm-on-surface-variant)" mb={8}>
         {eyebrow}
       </Text>
       {title && (
-        <Text fz={16} fw={800} c="gray.9" lh={1.4} mb={6}>
+        <Text fz={16} fw={600} c="var(--gm-on-surface)" lh={1.4} mb={6}>
           {title}
         </Text>
       )}
@@ -42,7 +42,15 @@ function Card({ eyebrow, title, children }) {
 
 function Description({ children, isError = false }) {
   return (
-    <Text fz={13} fw={500} c={isError ? 'red.6' : 'gray.6'} lh={1.5} mb={14}>
+    <Text
+      fz={13}
+      fw={500}
+      c={
+        isError ? 'var(--mantine-color-red-7)' : 'var(--gm-on-surface-variant)'
+      }
+      lh={1.5}
+      mb={14}
+    >
       {children}
     </Text>
   );
@@ -96,21 +104,21 @@ function OutgoingContent({ args }) {
     <Box
       mb={12}
       p={12}
-      bg="gray.1"
-      style={{ border: '1px solid var(--mantine-color-gray-2)' }}
+      bg="var(--gm-surface)"
+      style={{ borderRadius: 'var(--radius-md)' }}
     >
-      <Text fz={10} fw={800} c="gray.4" tt="uppercase" lts="1.5px" mb={6}>
+      <Text fz={12.5} fw={600} c="var(--gm-on-surface-variant)" mb={6}>
         What will be removed
       </Text>
       {entries.map(([key, value]) => (
         <Box key={key} mb={6}>
-          <Text fz={11} fw={700} c="gray.5">
+          <Text fz={11} fw={700} c="var(--gm-on-surface-variant)">
             {key}
           </Text>
           <Text
             fz={13}
             fw={500}
-            c="gray.9"
+            c="var(--gm-on-surface)"
             lh={1.5}
             component="pre"
             style={{
@@ -171,13 +179,22 @@ export function ApprovalCard({
   return (
     <Card eyebrow="Needs your approval" title={summary}>
       <Description>
-        {reason}
-        {checkpointId
-          ? 'A snapshot of the computer was taken first: changes on it can be undone, but not anything sent outside.'
-          : ''}
-        {isAlwaysAsk
-          ? `Allow permits ${covers} until the task ends. Payments and accounts always ask: there's no "always allow" for this.`
-          : `Allow permits ${covers} until the task ends. Always allow permits ${covers} on this bot for 90 days.`}
+        {[
+          reason,
+          checkpointId &&
+            'A snapshot of the computer was taken first: changes on it can be undone, but not anything sent outside.',
+          isAlwaysAsk
+            ? `Allow permits ${covers} until the task ends. Payments and accounts always ask: there's no "always allow" for this.`
+            : `Allow permits ${covers} until the task ends. Always allow permits ${covers} on this agent for 90 days.`,
+        ]
+          .filter(Boolean)
+          // Each sentence its own text, so the Portuguese layer translates each one.
+          .map((sentence, index) => (
+            <span key={index}>
+              {index > 0 && ' '}
+              {sentence}
+            </span>
+          ))}
       </Description>
       <OutgoingContent args={args} />
       <Textarea
@@ -186,7 +203,6 @@ export function ApprovalCard({
         onChange={(event) => setNote(event.currentTarget.value)}
         autosize
         minRows={1}
-        radius={0}
         mb={8}
       />
       <Group justify="space-between" gap={8}>
@@ -198,7 +214,6 @@ export function ApprovalCard({
         />
         <Group gap={8}>
           <Button
-            radius={0}
             variant="default"
             loading={busy === 'reject'}
             onClick={() => decide(false)}
@@ -207,7 +222,6 @@ export function ApprovalCard({
           </Button>
           {!isAlwaysAsk && (
             <Button
-              radius={0}
               variant="default"
               loading={busy === 'always'}
               onClick={() => decide(true, 'always')}
@@ -216,8 +230,6 @@ export function ApprovalCard({
             </Button>
           )}
           <Button
-            radius={0}
-            color="gray.9"
             loading={busy === 'approve' || busy === 'task'}
             onClick={() => decide(true, 'task')}
             title={
@@ -226,7 +238,7 @@ export function ApprovalCard({
                 : undefined
             }
           >
-            {note.trim() ? 'Allow with change' : 'Permitir'}
+            {note.trim() ? 'Allow with change' : 'Allow'}
           </Button>
         </Group>
       </Group>
@@ -292,7 +304,7 @@ export function ConnectCard({
   return (
     <Card eyebrow="Connect an app" title={connection.title}>
       {reason && (
-        <Text fz={14} fw={500} c="gray.9" lh={1.5} mb={6}>
+        <Text fz={14} fw={500} c="var(--gm-on-surface)" lh={1.5} mb={6}>
           {reason}
         </Text>
       )}
@@ -300,13 +312,9 @@ export function ConnectCard({
         <>
           <Description>
             Sign in to your account and approve access whenever you want. The
-            bot is notified when you connect.
+            agent is notified when you connect.
           </Description>
-          <Button
-            radius={0}
-            color="gray.9"
-            onClick={() => openSignIn(connection.statusDetail)}
-          >
+          <Button onClick={() => openSignIn(connection.statusDetail)}>
             Connect
           </Button>
         </>
@@ -314,8 +322,8 @@ export function ConnectCard({
       {connection.status === 'needs_secret' && (
         <>
           <Description>
-            This service requires an API token. It stays encrypted on the
-            server, outside this conversation and the bot’s computer.
+            {connection.statusDetail ||
+              'This service takes a token you paste here. It stays encrypted on the server, outside this conversation and the agent’s computer.'}
           </Description>
           <Group gap={8} wrap="nowrap">
             <TextInput
@@ -324,11 +332,8 @@ export function ConnectCard({
               placeholder="Paste the token"
               value={secret}
               onChange={(event) => setSecret(event.currentTarget.value)}
-              radius={0}
             />
             <Button
-              radius={0}
-              color="gray.9"
               loading={isBusy}
               disabled={!secret.trim()}
               onClick={() =>
@@ -347,8 +352,8 @@ export function ConnectCard({
         <>
           <Description isError={connection.status === 'failed'}>
             {connection.status === 'failed'
-              ? `Couldn't reach the service: ${connection.statusDetail || 'sem detalhe'}`
-              : 'Conectando…'}
+              ? `Couldn't reach the service: ${connection.statusDetail || 'no detail'}`
+              : 'Connecting…'}
           </Description>
           {connection.status === 'failed' && (
             <Button
@@ -390,7 +395,7 @@ export function FailedCard({ taskId, onDone = () => {} }) {
       >
         Try again
       </Button>
-      <Text fz={12} c="gray.5">
+      <Text fz={12} c="var(--gm-on-surface-variant)">
         or send a message saying how to proceed
       </Text>
     </Group>

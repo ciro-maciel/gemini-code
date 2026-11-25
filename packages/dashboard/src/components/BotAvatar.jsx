@@ -77,8 +77,9 @@ export function BotAvatar({ bot, size = 36, isInverted = false }) {
           bottom={-3}
           w={mark}
           h={mark}
-          bg="gray.9"
-          bd="2px solid var(--mantine-color-white)"
+          bg="var(--gm-primary)"
+          bd="2px solid var(--gm-surface)"
+          style={{ borderRadius: 'var(--radius-pill)' }}
           aria-label="Waiting for you"
         />
       )}

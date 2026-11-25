@@ -43,16 +43,22 @@ function Entry({ entry }) {
   return (
     <Group gap={8} wrap="nowrap" align="flex-start" justify="space-between">
       <Box miw={0}>
-        <Text fz={13} fw={500} c="gray.7" lineClamp={2} title={entry.action}>
+        <Text
+          fz={13}
+          fw={500}
+          c="var(--gm-on-surface)"
+          lineClamp={2}
+          title={entry.action}
+        >
           {entry.action}
         </Text>
-        <Text fz={12} c="gray.5">
+        <Text fz={12} c="var(--gm-on-surface-variant)">
           {[entry.ruleLabel, risk, formatWhen(entry.createdAt)]
             .filter(Boolean)
             .join(' · ')}
         </Text>
         {decidedBy && (
-          <Text fz={12} c="gray.5" truncate>
+          <Text fz={12} c="var(--gm-on-surface-variant)" truncate>
             Decided by {decidedBy}
           </Text>
         )}
@@ -118,8 +124,13 @@ function ApprovalRate({ botId }) {
     { label: 'Last 8 weeks', value: percent(all), note: countNote(all) },
   ];
   return (
-    <Box bg="white" p={16} mb={8} style={{ border: 'var(--rlg-border)' }}>
-      <Text fz={12} c="gray.6" mb={12}>
+    <Box
+      bg="var(--gm-surface)"
+      p={16}
+      mb={8}
+      style={{ border: 'var(--rlg-border)' }}
+    >
+      <Text fz={12} c="var(--gm-on-surface-variant)" mb={12}>
         Of the approval requests you decided, how many you approved. Goes up
         when the agent gets it right before asking.
       </Text>
@@ -169,13 +180,13 @@ export function AuditTrail({ botId }) {
   return (
     <Stack gap={10}>
       <ApprovalRate botId={botId} />
-      <Text fz={12} c="gray.6">
+      <Text fz={12} c="var(--gm-on-surface-variant)">
         Actions that went through one of your rules, a risk assessment, or an
         approval: what it was, how it was decided, who approved it, and the
         restore point.
       </Text>
       {trail.items.length === 0 && (
-        <Text fz={12} c="gray.5">
+        <Text fz={12} c="var(--gm-on-surface-variant)">
           Nothing yet. The first one appears when the bot clicks, types, or uses
           an app that writes.
         </Text>
@@ -184,7 +195,7 @@ export function AuditTrail({ botId }) {
         <Entry key={entry.id} entry={entry} />
       ))}
       {total > trail.items.length && (
-        <Text fz={12} c="gray.5">
+        <Text fz={12} c="var(--gm-on-surface-variant)">
           Showing the {trail.items.length} most recent of {total}. The file has
           them all.
         </Text>
@@ -195,7 +206,6 @@ export function AuditTrail({ botId }) {
             <Button
               key={format}
               size="compact-xs"
-              radius={0}
               variant="default"
               loading={downloading === format}
               leftSection={<IconDownload size={14} stroke={1.5} />}

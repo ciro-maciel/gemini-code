@@ -12,6 +12,7 @@ const { config } = await import('../config.js');
 const {
   ConnectionAuthProvider,
   failureDetail,
+  tokenHint,
   fetchConnection,
   formatServiceNotes,
   refreshAccountTools,
@@ -174,5 +175,14 @@ test('a server that lets in only the clients it approved is said in words, not a
   );
   expect(failureDetail(new Error('fetch failed'), 'Figma')).toBe(
     'fetch failed',
+  );
+});
+
+test('a service that signs in only its registered apps asks for a token, and GitHub says where to make it', () => {
+  expect(
+    tokenHint({ title: 'GitHub', url: 'https://api.githubcopilot.com/mcp/' }),
+  ).toContain('github.com/settings/personal-access-tokens');
+  expect(tokenHint({ title: 'Acme', url: 'https://mcp.acme.dev' })).toBe(
+    'Acme signs in only the apps registered with it. Create a token in its settings and paste it here.',
   );
 });

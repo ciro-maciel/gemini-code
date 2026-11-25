@@ -124,7 +124,9 @@ function AgentRow({
           {state.mark === 'wait' && <span className="wait-dot" />}
           {state.mark === 'live' && <span className="live" />}
           {state.mark === 'done' && <span className="done-dot" />}
-          {state.word ? `${state.word}${bot.lastMessage ? ' · ' : ''}` : ''}
+          {/* Its own text, so the Portuguese layer translates it. */}
+          {state.word && <span>{state.word}</span>}
+          {state.word && bot.lastMessage ? ' · ' : ''}
           {bot.lastMessage || (state.word ? '' : 'Say hi')}
         </div>
       </div>

@@ -202,6 +202,10 @@ function mapFinishReason(reason) {
   return reason ? String(reason).toLowerCase() : null;
 }
 
+/** Gemini 3 and later set thinking by level (minimal, low, high), not by a budget of tokens. */
+export const isLevelThinker = (modelId) =>
+  /^gemini-([3-9]|\d{2,})(\.|-)/.test(String(modelId));
+
 /** One step of an agent on Google Gemini (streaming SSE or JSON). */
 export async function completeGemini({
   apiKey,
@@ -224,7 +228,12 @@ export async function completeGemini({
       generationConfig.responseMimeType = 'application/json';
     if (withThinking && geminiThinks(modelId)) {
       if (isQuick) {
-        generationConfig.thinkingConfig = { thinkingBudget: 0 };
+        // Gemini 3 and later choose depth by level and refuse a zero budget
+        // with a bare "invalid argument" (25/11/2026: every risk judgment
+        // failed on gemini-3.5-flash-lite and every action became a question).
+        generationConfig.thinkingConfig = isLevelThinker(modelId)
+          ? { thinkingLevel: 'minimal' }
+          : { thinkingBudget: 0 };
       } else if (effort && THINKING_BUDGETS[effort]) {
         generationConfig.thinkingConfig = {
           includeThoughts: Boolean(onThinking),
@@ -268,11 +277,11 @@ export async function completeGemini({
 
   if (!response.ok) {
     const text = (await response.text()).slice(0, 600);
-    // Some Gemini preview/experimental models reject thinkingBudget or thinkingConfig: retry once without it.
+    // A model that rejects the thinking settings often says only "invalid
+    // argument": any 400 with them set is retried once without them.
     if (
       response.status === 400 &&
-      initialBody.generationConfig.thinkingConfig &&
-      /thinking/i.test(text)
+      initialBody.generationConfig.thinkingConfig
     ) {
       response = await sendRequest(buildBody(false));
       if (!response.ok) {

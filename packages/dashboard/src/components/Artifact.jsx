@@ -33,11 +33,11 @@ const TAG_TONE = { attention: 'dark', ok: 'up', neutral: 'neutral', bad: 'no' };
 function Heading({ block }) {
   return (
     <Box>
-      <Text fz={20} fw={800} c="gray.9" lh={1.3}>
+      <Text fz={20} fw={800} c="var(--gm-on-surface)" lh={1.3}>
         {block.title}
       </Text>
       {block.text && (
-        <Text fz={14} fw={500} c="gray.6" lh={1.5} mt={4}>
+        <Text fz={14} fw={500} c="var(--gm-on-surface-variant)" lh={1.5} mt={4}>
           {block.text}
         </Text>
       )}
@@ -72,7 +72,7 @@ function Stats({ block }) {
 
 function SectionTitle({ children }) {
   return (
-    <Text fz={10} fw={800} c="gray.5" tt="uppercase" lts="1.5px" mb={8}>
+    <Text fz={12.5} fw={600} c="var(--gm-on-surface-variant)" mb={8}>
       {children}
     </Text>
   );
@@ -123,7 +123,7 @@ function Videos({ block }) {
               preload="metadata"
             />
             {video.caption && (
-              <Text fz={12} fw={500} c="gray.7" mt={8}>
+              <Text fz={12} fw={500} c="var(--gm-on-surface)" mt={8}>
                 {video.caption}
               </Text>
             )}
@@ -154,7 +154,7 @@ function Images({ block }) {
           >
             <img src={image.src} alt={image.caption || ''} loading="lazy" />
             {image.caption && (
-              <Text fz={12} fw={500} c="gray.7" mt={8}>
+              <Text fz={12} fw={500} c="var(--gm-on-surface)" mt={8}>
                 {image.caption}
               </Text>
             )}
@@ -175,7 +175,7 @@ function Chosen({ chosen }) {
         color="var(--mantine-color-gray-5)"
         style={{ flex: 'none', marginTop: 2 }}
       />
-      <Text fz={12} fw={500} c="gray.5">
+      <Text fz={12} fw={500} c="var(--gm-on-surface-variant)">
         You chose: {chosen.label}
         {chosen.note ? ` — “${chosen.note}”` : ''}
       </Text>
@@ -279,11 +279,17 @@ function Items({ block, chosen, isOpen, onChoose }) {
                 </Tag>
               )}
               <Box miw={0} flex={1}>
-                <Text fz={14} fw={700} c="gray.9" lh={1.4}>
+                <Text fz={14} fw={700} c="var(--gm-on-surface)" lh={1.4}>
                   {item.title}
                 </Text>
                 {item.detail && (
-                  <Text fz={13} fw={500} c="gray.6" lh={1.5} mt={2}>
+                  <Text
+                    fz={13}
+                    fw={500}
+                    c="var(--gm-on-surface-variant)"
+                    lh={1.5}
+                    mt={2}
+                  >
                     {item.detail}
                   </Text>
                 )}
@@ -327,7 +333,13 @@ function ArtifactBody({ content, chosen, isOpen, onChoose }) {
             />
           );
         if (block.type === 'text')
-          return <RichText key={index} text={block.text} color="gray.7" />;
+          return (
+            <RichText
+              key={index}
+              text={block.text}
+              color="var(--gm-on-surface)"
+            />
+          );
         return null;
       })}
       <Choices
@@ -382,7 +394,7 @@ export function ArtifactCard({ botId, data }) {
   return (
     <Box style={{ border: 'var(--rlg-border)' }}>
       <Group justify="space-between" wrap="nowrap" gap={12} px={20} pt={16}>
-        <Text fz={10} fw={800} c="gray.4" tt="uppercase" lts="1.5px" truncate>
+        <Text fz={12.5} fw={600} c="var(--gm-on-surface-variant)" truncate>
           {eyebrow}
         </Text>
         <UnstyledButton
@@ -411,7 +423,7 @@ export function ArtifactCard({ botId, data }) {
         size={isPhone ? '100%' : '90%'}
         fullScreen={isPhone}
         title={
-          <Text fz={14} fw={800} c="gray.9" lineClamp={1}>
+          <Text fz={14} fw={800} c="var(--gm-on-surface)" lineClamp={1}>
             {content.title}
           </Text>
         }

@@ -102,23 +102,28 @@ export function SkillCard({ data }) {
 
   if (isDiscarded)
     return (
-      <Text fz={12} c="gray.5">
+      <Text fz={12} c="var(--gm-on-surface-variant)">
         Skill “{skill.name}” discarded.
       </Text>
     );
 
   return (
-    <Paper p={16} bg="white" maw="88%" style={{ border: 'var(--rlg-border)' }}>
+    <Paper
+      p={16}
+      bg="var(--gm-surface)"
+      maw="88%"
+      style={{ border: 'var(--rlg-border)' }}
+    >
       <Stack gap={10}>
         <Box>
-          <Text fz={10} fw={800} c="gray.4" tt="uppercase" lts="1.5px">
+          <Text fz={12.5} fw={600} c="var(--gm-on-surface-variant)">
             Skill learned
             {data.stepCount ? ` · ${data.stepCount} steps recorded` : ''}
           </Text>
-          <Text fz={15} fw={800} c="gray.9" mt={4}>
+          <Text fz={15} fw={800} c="var(--gm-on-surface)" mt={4}>
             {skill.name}
           </Text>
-          <Text fz={13} fw={500} c="gray.6">
+          <Text fz={13} fw={500} c="var(--gm-on-surface-variant)">
             {skill.whenToUse}
           </Text>
         </Box>
@@ -132,14 +137,14 @@ export function SkillCard({ data }) {
             ) : (
               <IconChevronRight size={14} stroke={1.5} />
             )}
-            <Text fz={12} fw={700} c="gray.7">
+            <Text fz={12} fw={700} c="var(--gm-on-surface)">
               {isOpen ? 'Hide steps' : 'View steps'}
             </Text>
           </Group>
         </UnstyledButton>
         <Collapse in={isOpen}>
-          <Box p={12} bg="gray.0">
-            <RichText text={skill.steps} color="gray.7" />
+          <Box p={12} bg="var(--gm-surface-1)">
+            <RichText text={skill.steps} color="var(--gm-on-surface)" />
           </Box>
         </Collapse>
         <Group gap={8}>
@@ -185,7 +190,7 @@ export function SkillList({ botId }) {
   return (
     <Stack gap={8}>
       {skills.length === 0 && (
-        <Text fz={12} c="gray.5">
+        <Text fz={12} c="var(--gm-on-surface-variant)">
           None yet. Use + › Teach a task in the chat: do the task once and it
           learns.
         </Text>
@@ -193,10 +198,10 @@ export function SkillList({ botId }) {
       {skills.map((skill) => (
         <Group key={skill.id} gap={8} wrap="nowrap" align="flex-start">
           <Box flex={1} miw={0}>
-            <Text fz={13} fw={700} c="gray.9">
+            <Text fz={13} fw={700} c="var(--gm-on-surface)">
               {skill.name}
             </Text>
-            <Text fz={12} fw={500} c="gray.6">
+            <Text fz={12} fw={500} c="var(--gm-on-surface-variant)">
               {skill.whenToUse}
             </Text>
           </Box>

@@ -1470,7 +1470,13 @@
     "Choose your projects folder": "Escolher a pasta de projetos",
     "Works in its own folder now": "Agora trabalha na própria pasta",
     "In its own worktree, on its own branch.": "Numa worktree própria, num branch só dele.",
-    "choose the folder that holds your repositories": "escolha a pasta que guarda os seus repositórios"
+    "choose the folder that holds your repositories": "escolha a pasta que guarda os seus repositórios",
+    "Connecting…": "Conectando…",
+    "no detail": "sem detalhe",
+    "The risk check did not answer, so this action waits for you.": "A checagem de risco não respondeu, então esta ação espera você.",
+    "Sign in to your account and approve access whenever you want. The agent is notified when you connect.": "Entre na sua conta e aprove o acesso quando quiser. O agente fica sabendo quando você conectar.",
+    "This service takes a token you paste here. It stays encrypted on the server, outside this conversation and the agent’s computer.": "Este serviço usa um token que você cola aqui. Ele fica cifrado no servidor, fora desta conversa e do computador do agente.",
+    "GitHub signs in only the apps registered with it. Create a personal access token at github.com/settings/personal-access-tokens (read and write access to the repositories you want), then paste it here.": "O GitHub só faz login de apps registrados nele. Crie um token pessoal em github.com/settings/personal-access-tokens (com leitura e escrita nos repositórios que quiser) e cole aqui."
   },
   "patterns": {
     "{#0} connection": "{#0} conexão",
@@ -1810,6 +1816,9 @@
     "Project: {0}": "Projeto: {0}",
     "Works on {0} now": "Agora trabalha em {0}",
     "{0} is not a repository in the projects folder": "{0} não é um repositório da pasta de projetos",
-    "{0} is not a folder on this machine": "{0} não é uma pasta nesta máquina"
+    "{0} is not a folder on this machine": "{0} não é uma pasta nesta máquina",
+    "Allow permits {0} until the task ends. Always allow permits {1} on this agent for 90 days.": "Permitir libera {0} até o fim da tarefa. Sempre permitir libera {1} neste agente por 90 dias.",
+    "Run a command: {0}": "Rodar um comando: {0}",
+    "{0} signs in only the apps registered with it. Create a token in its settings and paste it here.": "{0} só faz login de apps registrados nele. Crie um token nas configurações dele e cole aqui."
   }
 }

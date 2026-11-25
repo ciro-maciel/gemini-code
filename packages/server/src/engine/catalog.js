@@ -350,6 +350,13 @@ export function failureDetail(error, title) {
   return error.message.slice(0, 500);
 }
 
+/** Where to make the token for a service that signs in only the apps it registered. */
+export function tokenHint(connection) {
+  if (/githubcopilot\.com|github\.com/.test(connection.url || ''))
+    return 'GitHub signs in only the apps registered with it. Create a personal access token at github.com/settings/personal-access-tokens (read and write access to the repositories you want), then paste it here.';
+  return `${connection.title} signs in only the apps registered with it. Create a token in its settings and paste it here.`;
+}
+
 export async function connect(connectionId) {
   const connection = fetchConnection(connectionId);
   try {
@@ -376,6 +383,17 @@ export async function connect(connectionId) {
           status: 'needs_secret',
           status_detail: 'the server refused the automatic sign-in',
         });
+    } else if (
+      /does not support dynamic client registration|Incompatible auth server/i.test(
+        error.message,
+      )
+    ) {
+      // The service signs in only apps registered with it (GitHub, 25/11/2026):
+      // a token the person creates there and pastes here does the same job.
+      updateConnection(connectionId, {
+        status: 'needs_secret',
+        status_detail: tokenHint(connection),
+      });
     } else if (
       connection.transport === 'streamable' &&
       /404|405|Unexpected content type/i.test(error.message)

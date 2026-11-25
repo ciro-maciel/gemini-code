@@ -97,7 +97,7 @@ function NewRoutineModal({ opened, onClose, botId, onCreated }) {
       opened={opened}
       onClose={onClose}
       title={
-        <Text fz={16} fw={800} c="gray.9">
+        <Text fz={16} fw={800} c="var(--gm-on-surface)">
           New routine
         </Text>
       }
@@ -126,7 +126,6 @@ function NewRoutineModal({ opened, onClose, botId, onCreated }) {
             </Text>
             <SegmentedControl
               fullWidth
-              radius={0}
               data={REPEAT_OPTIONS}
               value={repeat}
               onChange={setRepeat}
@@ -161,7 +160,7 @@ function NewRoutineModal({ opened, onClose, botId, onCreated }) {
                 onChange={(event) => setTime(event.currentTarget.value)}
               />
             </Group>
-            <Text fz={12} fw={500} c="gray.5" mt={6}>
+            <Text fz={12} fw={500} c="var(--gm-on-surface-variant)" mt={6}>
               Brasília time.
             </Text>
           </Box>
@@ -215,10 +214,10 @@ function RoutineRow({ routine, onChange }) {
         style={{ flex: 'none', marginTop: 2 }}
       />
       <Box flex={1} miw={0}>
-        <Text fz={13} fw={700} c="gray.9" lineClamp={1}>
+        <Text fz={13} fw={700} c="var(--gm-on-surface)" lineClamp={1}>
           {routine.name}
         </Text>
-        <Text fz={12} fw={500} c="gray.5" lineClamp={2}>
+        <Text fz={12} fw={500} c="var(--gm-on-surface-variant)" lineClamp={2}>
           {routine.scheduleLabel}
           {routine.isEnabled && routine.nextRunLabel && routine.cron
             ? `· next ${routine.nextRunLabel}`
@@ -229,7 +228,6 @@ function RoutineRow({ routine, onChange }) {
       {!isOnceAndDone && (
         <Switch
           size="sm"
-          color="gray.9"
           checked={routine.isEnabled}
           onChange={(event) => toggle(event.currentTarget.checked)}
           aria-label={routine.isEnabled ? 'Pause routine' : 'Turn on routine'}
@@ -253,7 +251,14 @@ function RoutineRow({ routine, onChange }) {
         </Menu.Target>
         <Menu.Dropdown>
           <Menu.Label>Does</Menu.Label>
-          <Text fz={12} fw={500} c="gray.6" px={12} pb={8} lineClamp={5}>
+          <Text
+            fz={12}
+            fw={500}
+            c="var(--gm-on-surface-variant)"
+            px={12}
+            pb={8}
+            lineClamp={5}
+          >
             {routine.instruction}
           </Text>
           <Menu.Divider />
@@ -290,7 +295,13 @@ export function Routines({ botId }) {
   return (
     <Stack gap={0}>
       {routines?.length === 0 && (
-        <Text fz={12} fw={500} c="gray.5" lh={1.5} mb={10}>
+        <Text
+          fz={12}
+          fw={500}
+          c="var(--gm-on-surface-variant)"
+          lh={1.5}
+          mb={10}
+        >
           None yet. Ask in the conversation (“tomorrow at 6am, send me a summary
           of my e-mails”) or create one here.
         </Text>

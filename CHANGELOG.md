@@ -26,6 +26,25 @@ version with its date.
 
 - Taking over the screen, left in the engine after the live screen went: the
   takeover state, its route and the conversation's give-back (2026-11-25).
+- The risk judge answers again on Gemini 3 models: a quick step asks for minimal
+  thinking instead of a zero budget, which gemini-3.5-flash-lite refused with a
+  bare "invalid argument" so every action waited for a person; any 400 with
+  thinking settings is retried once without them (2026-11-25).
+- When the judge cannot answer, the approval names the action as a person would
+  ("Run a command: ...") and says it waits for you, instead of the raw tool call
+  and the API error (2026-11-25).
+- GitHub, which signs in only apps registered with it, now asks for a personal
+  access token and says where to make it, instead of "Incompatible auth server"
+  (2026-11-25).
+- Every piece the old Zen system drew in black squares and hard borders is
+  retoned to the design system: the waiting count on an agent row (a black disc
+  with a dark number), counts, selected items, avatars, fields, chips, boxes,
+  option rows, the send and stop buttons, meters and the context bar; in the
+  components, 71 fixed gray text colors, square corners, black buttons and
+  uppercase labels became the tokens (2026-11-25).
+- The approval card's sentences no longer run together, its main button says
+  Allow in the English source, file cards show paths relative to the workspace,
+  and the state on an agent row is translated (2026-11-25).
 
 ## [0.3.0] - 2026-11-25
 

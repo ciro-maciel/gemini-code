@@ -92,7 +92,7 @@ const COMPONENTS = {
       component="pre"
       p={12}
       m={0}
-      bg="white"
+      bg="var(--gm-surface)"
       bd="var(--rlg-border)"
       fz={12}
       style={{
@@ -115,8 +115,8 @@ const COMPONENTS = {
   table: ({ children }) => (
     <Box
       bd="var(--rlg-border)"
-      bg="white"
-      c="gray.7"
+      bg="var(--gm-surface)"
+      c="var(--gm-on-surface)"
       style={{ overflowX: 'auto' }}
     >
       <Box
@@ -130,18 +130,16 @@ const COMPONENTS = {
     </Box>
   ),
   thead: ({ children }) => (
-    <Box component="thead" bg="gray.1">
+    <Box component="thead" bg="var(--gm-surface-1)">
       {children}
     </Box>
   ),
   th: ({ children, style }) => (
     <Box
       component="th"
-      fz={10}
-      fw={800}
-      c="gray.5"
-      tt="uppercase"
-      lts="1px"
+      fz={12.5}
+      fw={600}
+      c="var(--gm-on-surface-variant)"
       style={{
         ...cell,
         textAlign: style?.textAlign || 'left',

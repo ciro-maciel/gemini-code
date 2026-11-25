@@ -65,7 +65,7 @@ export function InboxDoor({ botId }) {
   if (!inbox) return null;
   return (
     <Stack gap={8}>
-      <Text fz={12} c="gray.6">
+      <Text fz={12} c="var(--gm-on-surface-variant)">
         Another system sends to this address (a POST with text or JSON), and
         what arrives becomes a message in this chat. In the bot’s instructions,
         say what to do with incoming messages.
@@ -74,7 +74,6 @@ export function InboxDoor({ botId }) {
         <TextInput
           flex={1}
           size="xs"
-          radius={0}
           readOnly
           value={inbox.url}
           aria-label="Entry point address"
@@ -86,7 +85,6 @@ export function InboxDoor({ botId }) {
         <ActionIcon
           size={30}
           variant="default"
-          radius={0}
           aria-label="Copy the address"
           onClick={copy}
         >
@@ -98,12 +96,11 @@ export function InboxDoor({ botId }) {
         </ActionIcon>
       </Group>
       <Group justify="space-between">
-        <Text fz={12} c="gray.5">
+        <Text fz={12} c="var(--gm-on-surface-variant)">
           Anyone with the address can send. Since {formatWhen(inbox.createdAt)}.
         </Text>
         <Button
           size="xs"
-          radius={0}
           variant="subtle"
           color="gray"
           onClick={() => setIsAsking(true)}
@@ -116,12 +113,12 @@ export function InboxDoor({ botId }) {
         onClose={() => setIsAsking(false)}
         size="sm"
         title={
-          <Text fz={16} fw={800} c="gray.9">
+          <Text fz={16} fw={800} c="var(--gm-on-surface)">
             Change address
           </Text>
         }
       >
-        <Text fz={13} c="gray.7" mb="md">
+        <Text fz={13} c="var(--gm-on-surface)" mb="md">
           The current address stops receiving immediately. Anyone sending to it
           needs the new one.
         </Text>
@@ -183,23 +180,23 @@ export function Vault({ botId }) {
   };
   return (
     <Stack gap={8}>
-      <Text fz={12} c="gray.6">
+      <Text fz={12} c="var(--gm-on-surface-variant)">
         Chaves para o terminal do bot, como GITHUB_TOKEN ou
         CLAUDE_CODE_OAUTH_TOKEN. Ele as usa pelo nome; o valor nunca volta para
         a tela, para a conversa nem para o modelo.
       </Text>
       {secrets.length === 0 && (
-        <Text fz={12} c="gray.5">
+        <Text fz={12} c="var(--gm-on-surface-variant)">
           No keys yet.
         </Text>
       )}
       {secrets.map((secret) => (
         <Group key={secret.id} gap={8} wrap="nowrap">
           <Box flex={1} miw={0}>
-            <Text fz={12} ff="monospace" c="gray.9" truncate>
+            <Text fz={12} ff="monospace" c="var(--gm-on-surface)" truncate>
               {secret.name}
             </Text>
-            <Text fz={10} fw={800} c="gray.4" tt="uppercase" lts="1.5px">
+            <Text fz={12.5} fw={600} c="var(--gm-on-surface-variant)">
               Guardada {formatWhen(secret.updatedAt)}
             </Text>
           </Box>
@@ -207,7 +204,6 @@ export function Vault({ botId }) {
             size="sm"
             variant="subtle"
             color="gray"
-            radius={0}
             aria-label={`Remove ${secret.name} from vault`}
             onClick={() => remove(secret.id)}
           >
@@ -217,7 +213,6 @@ export function Vault({ botId }) {
       ))}
       <TextInput
         size="xs"
-        radius={0}
         placeholder="NOME_DA_CHAVE"
         aria-label="Key name"
         value={name}
@@ -239,7 +234,6 @@ export function Vault({ botId }) {
         <PasswordInput
           flex={1}
           size="xs"
-          radius={0}
           placeholder="Valor"
           aria-label="Key value"
           autoComplete="off"
@@ -248,7 +242,6 @@ export function Vault({ botId }) {
         />
         <Button
           size="xs"
-          radius={0}
           variant="default"
           disabled={!isNameValid || !value.trim()}
           loading={isSaving}

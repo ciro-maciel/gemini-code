@@ -491,6 +491,19 @@ export function isOwnFile(bot, value) {
   return !isRooted || clean.startsWith(`${bot.folder}/`);
 }
 
+/** An action as a person would name it, when no judge wrote its summary. */
+export function plainSummary(toolName, args = {}) {
+  const clip = (value) => String(value ?? '').slice(0, 160);
+  const command = args.command ?? args.cmd ?? args.CommandLine;
+  if (command) return `Run a command: ${clip(command)}`;
+  const target = args.path ?? args.file ?? args.url;
+  const mcp = String(toolName).match(/^mcp__([^_]+(?:_[^_]+)*)__(.+)$/);
+  if (mcp)
+    return `${mcp[2].replace(/_/g, ' ')} in ${mcp[1].replace(/_/g, ' ')}`;
+  const words = String(toolName).replace(/_/g, ' ');
+  return target ? `${words}: ${clip(target)}` : words;
+}
+
 export async function decide({
   bot,
   task,
@@ -773,11 +786,15 @@ export async function decide({
     };
   } catch (error) {
     // When the judge is unavailable the action waits for a person; it never
-    // runs unjudged.
+    // runs unjudged. The person reads what the action does and why it waits;
+    // the error itself goes to the log.
+    console.error(
+      `[policy] risk judge failed for ${toolName}: ${error.message}`,
+    );
     return {
       decision: 'ask',
-      summary: `${toolName} ${JSON.stringify(args).slice(0, 120)}`,
-      reason: `I could not assess the risk (${error.message.slice(0, 120)})`,
+      summary: plainSummary(toolName, args),
+      reason: 'The risk check did not answer, so this action waits for you.',
       cost: 0,
       rule: 'judge_unavailable',
     };

@@ -331,27 +331,30 @@ export function VoiceMode({ bot, thread, events, streaming, onExit }) {
   const shown = status === 'thinking' && !isBotWorking ? 'listening' : status;
 
   return (
-    <Paper p={12} bg="white">
+    <Paper p={12} bg="var(--gm-surface)">
       <Group justify="space-between" wrap="nowrap" gap={16}>
         <Group gap={14} wrap="nowrap" miw={0}>
           <Box
             w={40}
             h={40}
-            bg="gray.9"
-            style={{ display: 'grid', placeItems: 'center', flex: 'none' }}
+            bg="var(--gm-primary)"
+            style={{
+              display: 'grid',
+              placeItems: 'center',
+              flex: 'none',
+              borderRadius: 'var(--radius-pill)',
+            }}
           >
             <LevelBars
               level={shown === 'speaking' ? 0.6 : level}
-              color="var(--mantine-color-white)"
+              color="var(--gm-on-primary)"
             />
           </Box>
           <Box miw={0}>
             <Text
-              fz={10}
-              fw={800}
-              c="gray.4"
-              tt="uppercase"
-              lts="1.5px"
+              fz={12.5}
+              fw={600}
+              c="var(--gm-on-surface-variant)"
               className={
                 shown === 'thinking' || shown === 'transcribing'
                   ? 'assistant-pulse'
@@ -360,7 +363,7 @@ export function VoiceMode({ bot, thread, events, streaming, onExit }) {
             >
               Voice mode · {STATUS_TEXT[shown]}
             </Text>
-            <Text fz={13} fw={500} c="gray.6" truncate>
+            <Text fz={13} fw={500} c="var(--gm-on-surface-variant)" truncate>
               {heard
                 ? `“${heard}”`
                 : `Talk to ${bot.name}. To interrupt, just speak.`}

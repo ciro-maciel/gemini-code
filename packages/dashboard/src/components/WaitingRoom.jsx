@@ -33,7 +33,14 @@ function Step({ state, title, text, isLast }) {
           }
           style={{ flexShrink: 0 }}
         />
-        {!isLast && <Box w={1} bg="gray.2" style={{ flex: 1 }} mt={6} />}
+        {!isLast && (
+          <Box
+            w={1}
+            bg="var(--gm-outline-variant)"
+            style={{ flex: 1 }}
+            mt={6}
+          />
+        )}
       </Stack>
       <Box pb={isLast ? 0 : 20} miw={0}>
         <Text
@@ -43,7 +50,7 @@ function Step({ state, title, text, isLast }) {
         >
           {title}
         </Text>
-        <Text fz={13} fw={500} c="gray.6" lh={1.5}>
+        <Text fz={13} fw={500} c="var(--gm-on-surface-variant)" lh={1.5}>
           {text}
         </Text>
       </Box>
@@ -85,7 +92,7 @@ export function WaitingRoom({ account, onSaved, onSignOut }) {
     <Flex mih="100dvh" px="md" py={64} justify="center" align="center">
       <Stack gap={40} w="100%" maw={520}>
         <Stack gap={10}>
-          <Text fz={10} fw={800} c="gray.4" tt="uppercase" lts="1.5px">
+          <Text fz={12.5} fw={600} c="var(--gm-on-surface-variant)">
             Assistant · Waitlist
           </Text>
           <Text
@@ -93,13 +100,13 @@ export function WaitingRoom({ account, onSaved, onSignOut }) {
             m={0}
             fz="clamp(2rem, 5vw + 1rem, 2.75rem)"
             fw={900}
-            c="gray.9"
+            c="var(--gm-on-surface)"
             lh={1.1}
             lts="-0.04em"
           >
             Your access is on the way
           </Text>
-          <Text fz={16} fw={500} c="gray.6" lh={1.7}>
+          <Text fz={16} fw={500} c="var(--gm-on-surface-variant)" lh={1.7}>
             Each bot gets its own cloud computer. While you wait for access,
             tell us what your first bot will do, and it’ll be ready from the
             start.
@@ -145,7 +152,7 @@ export function WaitingRoom({ account, onSaved, onSignOut }) {
             <Stack gap={6}>
               {AI_EXAMPLES.map((example) => (
                 <UnstyledButton key={example} onClick={() => setWish(example)}>
-                  <Text fz={12} fw={500} c="gray.5">
+                  <Text fz={12} fw={500} c="var(--gm-on-surface-variant)">
                     “{example}”
                   </Text>
                 </UnstyledButton>
@@ -153,7 +160,7 @@ export function WaitingRoom({ account, onSaved, onSignOut }) {
             </Stack>
           )}
           <Group justify="space-between" gap={12}>
-            <Text fz={12} fw={500} c="gray.5">
+            <Text fz={12} fw={500} c="var(--gm-on-surface-variant)">
               {saved && !isDirty
                 ? "Request saved. You can change it until it's sent."
                 : 'You can change your request until access is granted.'}
@@ -170,7 +177,13 @@ export function WaitingRoom({ account, onSaved, onSignOut }) {
           pt={20}
           style={{ borderTop: 'var(--rlg-border)' }}
         >
-          <Text fz={13} fw={500} c="gray.6" truncate miw={0}>
+          <Text
+            fz={13}
+            fw={500}
+            c="var(--gm-on-surface-variant)"
+            truncate
+            miw={0}
+          >
             Signed in as <strong>{account.email}</strong>
           </Text>
           <Button variant="default" size="xs" onClick={onSignOut}>

@@ -209,4 +209,75 @@ describe('native Google Gemini adapter', () => {
     expect(result.usage.cached_tokens).toBe(40);
     expect(result.finishReason).toBe('stop');
   });
+
+  test('a quick step on Gemini 3 asks for minimal thinking, not a zero budget it refuses', async () => {
+    const bodies = [];
+    useGeminiFetch(async (_url, init) => {
+      bodies.push(JSON.parse(init.body));
+      return new Response(
+        JSON.stringify({
+          candidates: [
+            {
+              content: { parts: [{ text: '{"ok":true}' }] },
+              finishReason: 'STOP',
+            },
+          ],
+        }),
+        { status: 200 },
+      );
+    });
+    await completeGemini({
+      apiKey: 'k',
+      model: 'gemini-3.5-flash-lite',
+      messages: [{ role: 'user', content: 'x' }],
+      isQuick: true,
+    });
+    await completeGemini({
+      apiKey: 'k',
+      model: 'gemini-2.5-flash',
+      messages: [{ role: 'user', content: 'x' }],
+      isQuick: true,
+    });
+    expect(bodies[0].generationConfig.thinkingConfig).toEqual({
+      thinkingLevel: 'minimal',
+    });
+    expect(bodies[1].generationConfig.thinkingConfig).toEqual({
+      thinkingBudget: 0,
+    });
+  });
+
+  test('a bare "invalid argument" with thinking settings is tried once more without them', async () => {
+    const bodies = [];
+    useGeminiFetch(async (_url, init) => {
+      const body = JSON.parse(init.body);
+      bodies.push(body);
+      if (body.generationConfig.thinkingConfig)
+        return new Response(
+          JSON.stringify({
+            error: {
+              code: 400,
+              message: 'Request contains an invalid argument.',
+            },
+          }),
+          { status: 400 },
+        );
+      return new Response(
+        JSON.stringify({
+          candidates: [
+            { content: { parts: [{ text: 'ok' }] }, finishReason: 'STOP' },
+          ],
+        }),
+        { status: 200 },
+      );
+    });
+    const result = await completeGemini({
+      apiKey: 'k',
+      model: 'gemini-3.5-flash-lite',
+      messages: [{ role: 'user', content: 'x' }],
+      isQuick: true,
+    });
+    expect(bodies).toHaveLength(2);
+    expect(bodies[1].generationConfig.thinkingConfig).toBeUndefined();
+    expect(result.message.content).toBe('ok');
+  });
 });

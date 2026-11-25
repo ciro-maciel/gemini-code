@@ -121,20 +121,18 @@ function CsvTable({ rows, fz = 13 }) {
     <Box
       component="table"
       fz={fz}
-      c="gray.7"
+      c="var(--gm-on-surface)"
       style={{ borderCollapse: 'collapse' }}
     >
-      <Box component="thead" bg="gray.1">
+      <Box component="thead" bg="var(--gm-surface-1)">
         <tr>
           {head.map((cell, index) => (
             <Box
               key={index}
               component="th"
-              fz={10}
-              fw={800}
-              c="gray.5"
-              tt="uppercase"
-              lts="1px"
+              fz={12.5}
+              fw={600}
+              c="var(--gm-on-surface-variant)"
               style={cellStyle}
             >
               {cell}
@@ -178,7 +176,7 @@ function IconPreview({ icon: Icon, label }) {
       }}
     >
       <Icon size={32} stroke={1.5} color="var(--mantine-color-gray-5)" />
-      <Text fz={10} fw={800} c="gray.4" tt="uppercase" lts="1.5px">
+      <Text fz={12.5} fw={600} c="var(--gm-on-surface-variant)">
         {label}
       </Text>
     </Box>
@@ -199,7 +197,6 @@ function Preview({ botId, file, kind }) {
         src={url}
         alt={file.name}
         loading="lazy"
-        radius={0}
         h="100%"
         w="100%"
         fit="cover"
@@ -217,7 +214,7 @@ function Preview({ botId, file, kind }) {
         label={file.name.split('.').pop() || 'arquivo'}
       />
     );
-  if (text === null) return <Skeleton h="100%" radius={0} />;
+  if (text === null) return <Skeleton h="100%" />;
 
   if (kind === 'html') {
     // The page itself, drawn at a desktop width and scaled into the tile. No
@@ -232,7 +229,7 @@ function Preview({ botId, file, kind }) {
           tabIndex={-1}
           w="100%"
           h="100%"
-          bg="white"
+          bg="var(--gm-surface)"
           style={{ border: 0, pointerEvents: 'none' }}
         />
       </Miniature>
@@ -253,7 +250,7 @@ function Preview({ botId, file, kind }) {
         p={10}
         fz={12}
         fw={500}
-        c="gray.6"
+        c="var(--gm-on-surface-variant)"
         ff={kind === 'text' ? 'monospace' : undefined}
         style={{
           whiteSpace: 'pre-wrap',
@@ -355,7 +352,7 @@ function ZoomControls({ zoom, isFit, isActual, onZoom, onFit, hint }) {
       >
         <IconMinus size={14} stroke={1.5} />
       </Button>
-      <Text fz={12} fw={700} c="gray.7" w={48} ta="center">
+      <Text fz={12} fw={700} c="var(--gm-on-surface)" w={48} ta="center">
         {Math.round(zoom * 100)}%
       </Text>
       <Button
@@ -369,7 +366,6 @@ function ZoomControls({ zoom, isFit, isActual, onZoom, onFit, hint }) {
       <Button
         size="compact-sm"
         variant={isFit ? 'filled' : 'default'}
-        color="gray.9"
         onClick={onFit}
       >
         Adjust
@@ -377,13 +373,17 @@ function ZoomControls({ zoom, isFit, isActual, onZoom, onFit, hint }) {
       <Button
         size="compact-sm"
         variant={isActual ? 'filled' : 'default'}
-        color="gray.9"
         onClick={() => onZoom(1)}
       >
         100%
       </Button>
       {hint && (
-        <Text fz={12} fw={500} c="gray.5" visibleFrom="sm">
+        <Text
+          fz={12}
+          fw={500}
+          c="var(--gm-on-surface-variant)"
+          visibleFrom="sm"
+        >
           {hint}
         </Text>
       )}
@@ -429,7 +429,7 @@ function ZoomablePage({ html, title }) {
       <Box
         ref={boxRef}
         h="74vh"
-        bg="white"
+        bg="var(--gm-surface)"
         bd="var(--rlg-border)"
         style={{ overflow: 'hidden', position: 'relative' }}
       >
@@ -571,7 +571,7 @@ function ZoomableImage({ src, alt }) {
       <Box
         ref={viewportRef}
         h="74vh"
-        bg="gray.1"
+        bg="var(--gm-surface-1)"
         style={{
           overflow: 'auto',
           cursor: isFit ? 'zoom-in' : dragRef.current ? 'grabbing' : 'grab',
@@ -594,7 +594,6 @@ function ZoomableImage({ src, alt }) {
         <Image
           src={src}
           alt={alt}
-          radius={0}
           draggable={false}
           onLoad={(event) =>
             setNatural({
@@ -637,12 +636,12 @@ function Viewer({ botId, file }) {
   }
   if (!isText) {
     return (
-      <Text fz={14} c="gray.6">
+      <Text fz={14} c="var(--gm-on-surface-variant)">
         No preview for this file type. Use the Download button.
       </Text>
     );
   }
-  if (text === null) return <Skeleton h={320} radius={0} />;
+  if (text === null) return <Skeleton h={320} />;
   if (kind === 'html') {
     return <ZoomablePage html={text} title={file.name} />;
   }
@@ -657,7 +656,7 @@ function Viewer({ botId, file }) {
     return (
       <ZoomableContent>
         <Box maw={820}>
-          <RichText text={text} color="gray.7" />
+          <RichText text={text} color="var(--gm-on-surface)" />
         </Box>
       </ZoomableContent>
     );
@@ -668,7 +667,7 @@ function Viewer({ botId, file }) {
         component="pre"
         m={0}
         fz={12}
-        c="gray.7"
+        c="var(--gm-on-surface)"
         style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
       >
         {text}
@@ -719,7 +718,7 @@ export function FileGallery({ botId, files }) {
               onClick={() => setOpen(file)}
               aria-label={`Open ${file.name}`}
               bd="var(--rlg-border)"
-              bg="white"
+              bg="var(--gm-surface)"
               miw={0}
             >
               <Box
@@ -737,10 +736,15 @@ export function FileGallery({ botId, files }) {
                 py={6}
                 title={`${file.name} · ${formatSize(file.size)} · ${folderOf(file.path)}`}
               >
-                <Text fz={12} fw={700} c="gray.9" lineClamp={1}>
+                <Text fz={12} fw={700} c="var(--gm-on-surface)" lineClamp={1}>
                   {file.name}
                 </Text>
-                <Text fz={12} fw={500} c="gray.5" lineClamp={1}>
+                <Text
+                  fz={12}
+                  fw={500}
+                  c="var(--gm-on-surface-variant)"
+                  lineClamp={1}
+                >
                   {formatSize(file.size)}
                 </Text>
               </Box>
@@ -755,10 +759,16 @@ export function FileGallery({ botId, files }) {
         fullScreen={isPhone}
         title={
           <Group gap={12} wrap="nowrap" miw={0}>
-            <Text fz={14} fw={800} c="gray.9" lineClamp={1}>
+            <Text fz={14} fw={800} c="var(--gm-on-surface)" lineClamp={1}>
               {open?.name}
             </Text>
-            <Text fz={12} fw={500} c="gray.5" lineClamp={1} visibleFrom="sm">
+            <Text
+              fz={12}
+              fw={500}
+              c="var(--gm-on-surface-variant)"
+              lineClamp={1}
+              visibleFrom="sm"
+            >
               {open && `${formatSize(open.size)} · ${folderOf(open.path)}`}
             </Text>
             <Button
