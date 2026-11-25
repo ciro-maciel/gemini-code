@@ -4374,6 +4374,13 @@ textarea.cfg-instr {
   img:not([data-keep-colors]) {
   filter: grayscale(1) brightness(0.88);
 }
+/* A brand mark keeps its colors, on white in both themes so a dark mark stays visible. */
+.app-ic.is-brand {
+  background: #fff;
+}
+.page .app-ic img[data-keep-colors] {
+  filter: none;
+}
 .app-ic .ti {
   font-size: 17px;
   color: var(--gray-5);

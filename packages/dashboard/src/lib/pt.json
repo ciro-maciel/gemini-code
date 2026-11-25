@@ -1531,6 +1531,8 @@
     "Refused {0}: {1}": "Recusei {0}: {1}",
     "{0} is outside the agent folder; work only inside it": "{0} fica fora da pasta do agente; trabalhe só dentro dela",
     "I did not do it: {0}.": "Não fiz: {0}.",
+    "the server refused the automatic sign-in": "o servidor recusou o login automático",
+    "{0} accepts only the MCP clients it approved, and Gemini Code is not one of them yet": "{0} aceita só os clientes MCP que aprovou, e o Gemini Code ainda não é um deles",
     "{0} is not one of this agent's connections in Gemini Code": "{0} não é uma das conexões deste agente no Gemini Code"
   }
 }

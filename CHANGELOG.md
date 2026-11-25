@@ -13,6 +13,9 @@ version with its date.
 
 ### Added
 
+- Each connector shows its brand's own icon, in its colors, kept in the
+  repository so the app and the demo show it without fetching images from
+  another host (2026-11-25, #27).
 - A changelog, and a CI check that every pull request adds its line to it
   (2026-11-25, #26).
 - Subscription agents get their own folder through the files MCP (2026-11-25,
@@ -39,6 +42,11 @@ version with its date.
 
 ### Fixed
 
+- Notion, Atlassian and the other servers that accept a URL as the client id
+  connect on `http://localhost`: the URL is offered only on HTTPS, and the
+  sign-in registers otherwise (2026-11-25, #27).
+- A server that lets in only the MCP clients it approved (Figma) says so in
+  words, not as a JSON parse error (2026-11-25, #27).
 - A follow-up on the subscription no longer repeats the previous answer: the
   history `session/load` replays stays out of the new one (2026-11-25, #25).
 - An MCP server a subscription agent finds in its own global settings, such as
