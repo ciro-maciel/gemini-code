@@ -56,7 +56,25 @@ dashboard with example data, nothing to install.
   login. A cloud mode, one isolated Linux computer per agent on Fly Sprites, is
   optional.
 
-## Quickstart
+## Install
+
+One command, no administrator rights; the download is a single executable with
+everything inside. Details in [docs/install.md](docs/install.md).
+
+```bash
+# macOS and Linux
+curl -fsSL https://raw.githubusercontent.com/ciro-maciel/gemini-code/main/install.sh | sh
+```
+
+```powershell
+# Windows
+powershell -c "irm https://raw.githubusercontent.com/ciro-maciel/gemini-code/main/install.ps1 | iex"
+```
+
+Then run `gemini-code`, or `gemini-code ~/code/my-app` to point the agents at a
+project.
+
+## Quickstart (from source)
 
 You need [Bun](https://bun.sh) 1.2+ and a Gemini API key from
 [Google AI Studio](https://aistudio.google.com/apikey). The free tier is enough

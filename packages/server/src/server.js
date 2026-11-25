@@ -2568,7 +2568,8 @@ router.post('/api/subscription/refresh', async () =>
 );
 
 // Only when run (bun src/server.js): a test imports the routes and nothing starts.
-if (import.meta.main) {
+/** Starts the server: what `bun src/server.js` and the installed `gemini-code` command (cli.js) both run. */
+export function startServer() {
   // In local mode the subscription, once it answers, becomes an AI account the agents can pick.
   if (config.authMode === 'local') {
     subscriptionStore.subscribe((state) => {
@@ -2706,5 +2707,8 @@ if (import.meta.main) {
     }),
   );
 
-  console.log(`assistant control on ${server.port} (${config.publicUrl})`);
+  console.log(`Gemini Code server on ${server.port} (${config.publicUrl})`);
+  return server;
 }
+
+if (import.meta.main) startServer();

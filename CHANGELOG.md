@@ -13,6 +13,10 @@ version with its date.
 
 ### Added
 
+- An installer for macOS, Linux and Windows: one command downloads a single
+  executable with the Bun runtime inside, checks its SHA-256 and adds
+  `gemini-code` to the PATH, with no administrator rights; a tag `v*` builds the
+  five archives and publishes the release (2026-11-25).
 - A changelog, and a CI check that every pull request adds its line to it
   (2026-11-25, #26).
 - Subscription agents get their own folder through the files MCP (2026-11-25,

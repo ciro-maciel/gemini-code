@@ -55,7 +55,25 @@ painel de verdade com dados de exemplo, sem instalar nada.
   login. O modo nuvem, um computador Linux isolado por agente na Fly Sprites, é
   opcional.
 
-## Começar
+## Instalar
+
+Um comando, sem administrador; o download é um executável único com tudo dentro.
+Detalhes em [docs/install.md](docs/install.md).
+
+```bash
+# macOS e Linux
+curl -fsSL https://raw.githubusercontent.com/ciro-maciel/gemini-code/main/install.sh | sh
+```
+
+```powershell
+# Windows
+powershell -c "irm https://raw.githubusercontent.com/ciro-maciel/gemini-code/main/install.ps1 | iex"
+```
+
+Depois rode `gemini-code`, ou `gemini-code ~/code/meu-app` para os agentes
+trabalharem no seu projeto.
+
+## Começar (pelo código)
 
 Você precisa do [Bun](https://bun.sh) 1.2+ e de uma chave da API Gemini no
 [Google AI Studio](https://aistudio.google.com/apikey). O nível gratuito basta
