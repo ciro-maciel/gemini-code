@@ -1413,7 +1413,7 @@ function serveDashboard(pathname) {
     }
     const index = path.join(config.dashboardDir, 'index.html')
     if (existsSync(index)) return new Response(Bun.file(index), { headers: { 'Cache-Control': 'no-cache' } })
-    return new Response('painel não compilado: rode bun run build em dashboard/', { status: 404 })
+    return new Response('painel não compilado: rode bun run build em packages/dashboard/', { status: 404 })
 }
 
 // --- Server ---------------------------------------------------------------

@@ -5,19 +5,14 @@
     "": {
       "name": "@ciromaciel/assistant",
     },
-    "control": {
-      "name": "gemini-code-control",
+    "packages/computer": {
+      "name": "gemini-code-computer",
       "dependencies": {
-        "@anthropic-ai/sdk": "1.3.0",
         "@modelcontextprotocol/sdk": "1.32.1",
         "@playwright/mcp": "0.0.83",
-        "assistant-navigation": "github:ciro-maciel/assistant-navigation#v1.1.0",
-        "croner": "10.0.1",
-        "jose": "5.10.0",
-        "web-push": "3.6.7",
       },
     },
-    "dashboard": {
+    "packages/dashboard": {
       "name": "gemini-code-dashboard",
       "version": "0.1.0",
       "dependencies": {
@@ -39,6 +34,18 @@
         "@vitejs/plugin-react": "^5.2.0",
         "happy-dom": "15",
         "vite": "^7.3.6",
+      },
+    },
+    "packages/server": {
+      "name": "gemini-code-server",
+      "dependencies": {
+        "@anthropic-ai/sdk": "1.3.0",
+        "@modelcontextprotocol/sdk": "1.32.1",
+        "@playwright/mcp": "0.0.83",
+        "assistant-navigation": "github:ciro-maciel/assistant-navigation#v1.1.0",
+        "croner": "10.0.1",
+        "jose": "5.10.0",
+        "web-push": "3.6.7",
       },
     },
   },
@@ -405,9 +412,11 @@
 
     "function-bind": ["function-bind@1.1.2", "", {}, "sha512-7XHNxH7qX9xG5mIwxkhumTox/MIRNcOgDrxWsMt2pAr23WHp6MrRlN7FBSFpCpr+oVO0F744iUgR82nJMfG2SA=="],
 
-    "gemini-code-control": ["gemini-code-control@workspace:control"],
+    "gemini-code-computer": ["gemini-code-computer@workspace:packages/computer"],
 
-    "gemini-code-dashboard": ["gemini-code-dashboard@workspace:dashboard"],
+    "gemini-code-dashboard": ["gemini-code-dashboard@workspace:packages/dashboard"],
+
+    "gemini-code-server": ["gemini-code-server@workspace:packages/server"],
 
     "gensync": ["gensync@1.0.0-beta.2", "", {}, "sha512-3hN7NaskYvMDLQY55gnW3NQ+mesEAepTqlg+VEbj7zzqEMBVNhzcGYYeqFo/TlYz6eQiFcp1HcsCZO+nGgS8zg=="],
 

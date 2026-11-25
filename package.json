@@ -6,13 +6,12 @@
     "private": true,
     "type": "module",
     "workspaces": [
-        "control",
-        "dashboard"
+        "packages/*"
     ],
     "scripts": {
         "dev": "bun --filter '*' --parallel dev",
-        "build": "bun --cwd dashboard run build",
-        "test": "bun --cwd control test src && bun --cwd dashboard test src",
-        "format": "bunx prettier --write \"control/src/**/*.js\" \"computer/*.js\" \"scripts/*.js\" \"dashboard/src/**/*.{js,jsx,css}\""
+        "build": "bun --cwd packages/dashboard run build",
+        "test": "bun --cwd packages/server test src && bun --cwd packages/dashboard test src",
+        "format": "bunx prettier --write ."
     }
 }

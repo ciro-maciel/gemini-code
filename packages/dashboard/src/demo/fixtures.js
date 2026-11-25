@@ -1,5 +1,5 @@
 // Example data for the public demo. Shapes copied from what the control
-// server answers (control/src/server.js); nothing here was measured: no usage,
+// server answers (packages/server/src/server.js); nothing here was measured: no usage,
 // prices or customers, only what an empty install would show plus three agents.
 
 import apps from './fixtures/apps.json'

@@ -6,7 +6,7 @@ import { DeleteModal, notify } from '../components/zen'
 
 /**
  * The agent's own folder, next to its conversation. It reads through the same
- * routes as the files MCP (control/src/agent-files.js), shows what the agent
+ * routes as the files MCP (packages/server/src/agent-files.js), shows what the agent
  * added (A) or modified (M), and reads itself again when a file changes.
  */
 export function AgentFiles({ bot, canWrite, onOpenFile, onClose }) {

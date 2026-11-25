@@ -233,7 +233,7 @@ export const updateRoutine = (id, fields) => request('PATCH', `/api/routines/${i
 export const deleteRoutine = id => request('DELETE', `/api/routines/${id}`)
 
 export const fetchFiles = botId => request('GET', `/api/bots/${botId}/files`)
-// The agent folder, through the same routes as the files MCP (control/src/agent-files.js).
+// The agent folder, through the same routes as the files MCP (packages/server/src/agent-files.js).
 export const fetchAgentTree = (botId, depth = 6) => request('GET', `/api/bots/${botId}/fs/tree?depth=${depth}`)
 export const readAgentFile = (botId, path) => request('GET', `/api/bots/${botId}/fs/read?path=${encodeURIComponent(path)}`)
 export const writeAgentFile = (botId, path, content) => request('POST', `/api/bots/${botId}/fs/write`, { path, content, overwrite: true })

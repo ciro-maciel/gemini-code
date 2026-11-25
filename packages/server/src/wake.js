@@ -3,7 +3,7 @@ import { db } from './db.js'
 
 // The control server sleeps with its Sprite when nothing is happening, and a
 // sleeping process keeps no time. The alarm — a Cloudflare Worker on a
-// one-minute cron (worker/worker.js) — keeps the next routine's time and calls
+// one-minute cron (packages/worker/worker.js) — keeps the next routine's time and calls
 // /api/wake when it comes. Here the server tells the alarm what that time is,
 // every time it may have changed. WAKE_URL is the worker's /alarm; without it (on the Mac) this is a no-op.
 

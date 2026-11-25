@@ -24,7 +24,7 @@ Use [Bun](https://bun.sh) for everything (`bun install`, `bun add`, `bun test`, 
 
 ## Where things are
 
-Read the "How it is built" section of the [README](README.md). The agent loop is `control/src/engine/run.js`; anything that decides whether a person must approve an action is `control/src/engine/policy.js`. Signing in with a Google subscription is `control/src/engine/subscription/` ([docs](docs/subscription.md)).
+Read the "How it is built" section of the [README](README.md). The agent loop is `packages/server/src/engine/run.js`; anything that decides whether a person must approve an action is `packages/server/src/engine/policy.js`. Signing in with a Google subscription is `packages/server/src/engine/subscription/` ([docs](docs/subscription.md)).
 
 ## Security
 

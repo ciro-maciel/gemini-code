@@ -47,7 +47,7 @@ Everything about the subscription lives in one serializable object, read with `G
 
 `status` is one of `unknown`, `checking`, `ready`, `not_installed`, `signed_out`, `quota_exhausted`, `error`.
 
-The transport fills the tree, and the rest of Gemini Code reads only the tree. A new transport only has to implement two functions with the same answers as `control/src/engine/subscription/antigravity-cli.js`:
+The transport fills the tree, and the rest of Gemini Code reads only the tree. A new transport only has to implement two functions with the same answers as `packages/server/src/engine/subscription/antigravity-cli.js`:
 
 - `probe()` returns the patch for the tree (status, models, quota)
 - `runTurn({ prompt, model, cwd, conversationId, onEvent, signal })` streams `start`, `text`, `tool_start`, `tool_end` and `done` events and resolves with `{ status, text, conversationId }`
@@ -56,4 +56,4 @@ Pick it with `SUBSCRIPTION_TRANSPORT=<id>`.
 
 ## 02/12/2026
 
-A report, not an announcement, says Google may open Gemini subscriptions to third-party harnesses on **02/12/2026**, starting with Hermes Agent ([TestingCatalog](https://www.testingcatalog.com/gemini-subscriptions-may-reach-hermes-agent-on-december-2/)). `control/src/engine/subscription/official-api.js` holds the place for it: when Google publishes how it works, that file gets the two functions above and becomes the default. Nothing else needs to change.
+A report, not an announcement, says Google may open Gemini subscriptions to third-party harnesses on **02/12/2026**, starting with Hermes Agent ([TestingCatalog](https://www.testingcatalog.com/gemini-subscriptions-may-reach-hermes-agent-on-december-2/)). `packages/server/src/engine/subscription/official-api.js` holds the place for it: when Google publishes how it works, that file gets the two functions above and becomes the default. Nothing else needs to change.

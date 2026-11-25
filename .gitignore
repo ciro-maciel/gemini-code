@@ -8,12 +8,12 @@ node_modules/
 logs/
 .DS_Store
 # The panel's build settings: only public values (the Auth pu_, the API URL).
-!dashboard/.env.production
-!dashboard/.env.development
+!packages/dashboard/.env.production
+!packages/dashboard/.env.development
 # The production build of the panel.
-dashboard/dist/
+packages/dashboard/dist/
 # Local state: the database, the generated encryption key, and agents' own folders.
-control/data/
+packages/server/data/
 workspace/agents/
 # Local agent tooling (worktrees of helper agents).
 .claude/

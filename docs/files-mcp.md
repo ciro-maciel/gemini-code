@@ -1,6 +1,6 @@
 # The files MCP
 
-Every agent works in its own folder, `<WORKSPACE_DIR>/agents/<agent>/`. One MCP server reaches it, with four tools over the same handlers the dashboard's file tree uses (`control/src/agent-files.js`), so what the screen can do the agent can do, and nothing more.
+Every agent works in its own folder, `<WORKSPACE_DIR>/agents/<agent>/`. One MCP server reaches it, with four tools over the same handlers the dashboard's file tree uses (`packages/server/src/agent-files.js`), so what the screen can do the agent can do, and nothing more.
 
 | Tool | Operations |
 |---|---|

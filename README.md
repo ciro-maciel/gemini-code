@@ -57,13 +57,13 @@ In one run on 24/11/2026 (free tier, a prompt that calls one tool), `gemini-3.5-
 
 | Folder | Stack | What it is |
 |---|---|---|
-| `control/` | Bun, SQLite (WAL) | REST API and live streams, the agent loop, the Gemini adapter, risk judge, MCP client, vault, local and cloud runtimes |
-| `dashboard/` | React 19, Vite, Mantine 8 | The desk: panes, command center, agent conversations, approvals, audit trail |
-| `computer/` | Ubuntu, Chrome, Playwright MCP | Optional image for one isolated cloud computer per agent |
-| `worker/` | Cloudflare Worker | Optional public gateway and wake-up alarm for cloud deployments |
+| `packages/server/` | Bun, SQLite (WAL) | REST API and live streams, the agent loop, the Gemini adapter, risk judge, MCP client, vault, local and cloud runtimes |
+| `packages/dashboard/` | React 19, Vite, Mantine 8 | The desk: panes, command center, agent conversations, approvals, audit trail |
+| `packages/computer/` | Ubuntu, Chrome, Playwright MCP | Optional image for one isolated cloud computer per agent |
+| `packages/worker/` | Cloudflare Worker | Optional public gateway and wake-up alarm for cloud deployments |
 | `workspace/` | Files | Where agents and shared skills live by default |
 
-Where to start reading: `control/src/engine/run.js` (the loop), `control/src/engine/gemini.js` (the API), `control/src/engine/policy.js` (what needs a person), `control/src/engine/model-router.js` (failover).
+Where to start reading: `packages/server/src/engine/run.js` (the loop), `packages/server/src/engine/gemini.js` (the API), `packages/server/src/engine/policy.js` (what needs a person), `packages/server/src/engine/model-router.js` (failover).
 
 ## Roadmap
 
@@ -76,7 +76,7 @@ Later milestones are discussed in the issues.
 Issues and pull requests are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) first; agents working on this repository read [AGENTS.md](AGENTS.md).
 
 ```bash
-bun run test     # unit tests in control/ and dashboard/
+bun run test     # unit tests in packages/server and packages/dashboard
 bun run format   # Prettier
 ```
 

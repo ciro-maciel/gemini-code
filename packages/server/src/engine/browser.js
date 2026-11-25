@@ -3,7 +3,7 @@ import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js'
 import { createConnection } from '@playwright/mcp'
 import { fetchSpriteHttp } from '../sprites.js'
 
-// The browser runs in the bot's own computer (computer/browser.js): the
+// The browser runs in the bot's own computer (packages/computer/browser.js): the
 // control server only sends each tool call there. Holding a Playwright session
 // per bot here was the control server's first ceiling.
 

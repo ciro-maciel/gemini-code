@@ -35,9 +35,9 @@ export const config = {
     dashboardDir: process.env.DASHBOARD_DIR || path.resolve(import.meta.dir, '../../dashboard/dist'),
     computerDir: process.env.COMPUTER_DIR || path.resolve(import.meta.dir, '../../computer'),
     // Local workspace directory used when running in local/hybrid mode without Sprites.
-    localWorkspaceDir: path.resolve(process.env.WORKSPACE_DIR || path.resolve(import.meta.dir, '../../workspace')),
+    localWorkspaceDir: path.resolve(process.env.WORKSPACE_DIR || path.resolve(import.meta.dir, '../../../workspace')),
     // Optional custom illustration directory for agent avatars.
-    assetsDir: process.env.ASSETS_DIR || path.resolve(import.meta.dir, '../../assets/illustrations'),
+    assetsDir: process.env.ASSETS_DIR || path.resolve(import.meta.dir, '../../../assets/illustrations'),
     // Hybrid mode: 'local' (default when SPRITES_TOKEN is unset) or 'sprites' (cloud computers).
     computerMode: process.env.COMPUTER_MODE || (spritesToken ? 'sprites' : 'local'),
     spritesToken,

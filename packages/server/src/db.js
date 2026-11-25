@@ -156,7 +156,7 @@ const MIGRATIONS = [
         steps INTEGER NOT NULL DEFAULT 0,
         PRIMARY KEY (account_id, day)
     )`,
-    // The hash of computer/ installed on the bot's Sprite; a different one
+    // The hash of packages/computer/ installed on the bot's Sprite; a different one
     // means the computer is upgraded before it is used.
     `ALTER TABLE bots ADD COLUMN computer_version TEXT`,
     `ALTER TABLE spare_computers ADD COLUMN computer_version TEXT`,

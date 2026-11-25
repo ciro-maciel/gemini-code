@@ -57,10 +57,10 @@ Numa rodada em 24/11/2026 (nível gratuito, um pedido que chama uma ferramenta),
 
 | Pasta | Tecnologia | O que é |
 |---|---|---|
-| `control/` | Bun, SQLite (WAL) | API e transmissão ao vivo, o laço do agente, o adaptador do Gemini, avaliador de risco, cliente MCP, cofre, execução local e na nuvem |
-| `dashboard/` | React 19, Vite, Mantine 8 | A mesa: painéis, centro de comando, conversas dos agentes, aprovações, trilha de auditoria |
-| `computer/` | Ubuntu, Chrome, Playwright MCP | Imagem opcional de um computador isolado na nuvem por agente |
-| `worker/` | Cloudflare Worker | Porta pública e despertador opcionais para a nuvem |
+| `packages/server/` | Bun, SQLite (WAL) | API e transmissão ao vivo, o laço do agente, o adaptador do Gemini, avaliador de risco, cliente MCP, cofre, execução local e na nuvem |
+| `packages/dashboard/` | React 19, Vite, Mantine 8 | A mesa: painéis, centro de comando, conversas dos agentes, aprovações, trilha de auditoria |
+| `packages/computer/` | Ubuntu, Chrome, Playwright MCP | Imagem opcional de um computador isolado na nuvem por agente |
+| `packages/worker/` | Cloudflare Worker | Porta pública e despertador opcionais para a nuvem |
 | `workspace/` | Arquivos | Onde moram os agentes e as habilidades compartilhadas |
 
 ## Próximos passos

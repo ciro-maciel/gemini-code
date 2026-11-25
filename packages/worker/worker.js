@@ -46,7 +46,7 @@ function corsHeaders(request, env) {
     }
 }
 
-// `/in/<address>` is a bot's door (control/src/inbox.js): another system posts
+// `/in/<address>` is a bot's door (packages/server/src/inbox.js): another system posts
 // there, and the address itself is the key, checked by the control server.
 function isForwarded(pathname) {
     return pathname.startsWith('/api/') || pathname === '/oauth/callback' || /^\/in\/[^/]+$/.test(pathname)

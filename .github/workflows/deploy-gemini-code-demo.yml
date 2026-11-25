@@ -1,13 +1,13 @@
 name: Gemini Code — demo
 
-# The public demo of the panel (dashboard/src/demo/): the real UI against an
+# The public demo of the panel (packages/dashboard/src/demo/): the real UI against an
 # in-browser fake API with example data, published on GitHub Pages.
 
 on:
   push:
     branches: [main]
     paths:
-      - 'dashboard/**'
+      - 'packages/dashboard/**'
       - '.github/workflows/deploy-gemini-code-demo.yml'
   workflow_dispatch:
 
@@ -30,11 +30,11 @@ jobs:
           bun-version: 1.4.0
       - run: bun install --frozen-lockfile
       - run: bun run build:demo
-        working-directory: dashboard
+        working-directory: packages/dashboard
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: dashboard/dist/demo
+          path: packages/dashboard/dist/demo
 
   deploy:
     needs: build
