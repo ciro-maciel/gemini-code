@@ -78,6 +78,18 @@ export function placesFor({ home, executable, folder, cwd }) {
   };
 }
 
+/** Whether a Gemini Code already answers on this port of this machine. */
+export async function isRunning(port, fetcher = fetch) {
+  try {
+    const response = await fetcher(`http://127.0.0.1:${port}/api/health`, {
+      signal: AbortSignal.timeout(800),
+    });
+    return response.ok && (await response.json()).isOk === true;
+  } catch {
+    return false;
+  }
+}
+
 function openBrowser(url) {
   const command =
     process.platform === 'darwin'
@@ -114,6 +126,15 @@ async function main() {
   if (existsSync(places.dashboard))
     process.env.DASHBOARD_DIR ??= places.dashboard;
   if (options.port) process.env.PORT = String(options.port);
+
+  // Opened again (the app icon, a second terminal): the running one answers, so only open it.
+  const port = Number(options.port || process.env.PORT || 8787);
+  if (await isRunning(port)) {
+    const url = `http://localhost:${port}`;
+    console.log(`Gemini Code is already running: ${url}`);
+    if (options.shouldOpen) openBrowser(url);
+    return;
+  }
 
   // The configuration is read when the server module loads: only now.
   const { startServer } = await import('./server.js');

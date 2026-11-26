@@ -76,6 +76,75 @@ EOF
 chmod +x "$BIN_DIR/gemini-code"
 
 version=$("$HOME_DIR/app/gemini-code" --version 2>/dev/null || echo "?")
+
+# An app with the icon, so Spotlight, Launchpad or the applications menu find
+# "Gemini Code". Opening it starts Gemini Code in the background and opens the
+# dashboard; opening it again only opens the dashboard (cli.js).
+LOG_DIR="$HOME_DIR/logs"
+mkdir -p "$LOG_DIR"
+if [ "$os" = darwin ]; then
+  APP="$HOME/Applications/Gemini Code.app"
+  rm -rf "$APP"
+  mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
+  if [ -f "$HOME_DIR/app/icons/gemini-code.icns" ]; then
+    cp "$HOME_DIR/app/icons/gemini-code.icns" "$APP/Contents/Resources/AppIcon.icns"
+  fi
+  cat >"$APP/Contents/Info.plist" <<PLIST
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>CFBundleName</key><string>Gemini Code</string>
+  <key>CFBundleDisplayName</key><string>Gemini Code</string>
+  <key>CFBundleIdentifier</key><string>io.github.ciro-maciel.gemini-code</string>
+  <key>CFBundleVersion</key><string>$version</string>
+  <key>CFBundleShortVersionString</key><string>$version</string>
+  <key>CFBundlePackageType</key><string>APPL</string>
+  <key>CFBundleExecutable</key><string>gemini-code</string>
+  <key>CFBundleIconFile</key><string>AppIcon</string>
+  <key>LSUIElement</key><true/>
+  <key>LSMinimumSystemVersion</key><string>12.0</string>
+</dict>
+</plist>
+PLIST
+  cat >"$APP/Contents/MacOS/gemini-code" <<LAUNCH
+#!/bin/sh
+# Starts Gemini Code in the background (or only opens it, if it runs) and opens the dashboard.
+nohup "$HOME_DIR/app/gemini-code" >>"$LOG_DIR/gemini-code.log" 2>&1 </dev/null &
+LAUNCH
+  chmod +x "$APP/Contents/MacOS/gemini-code"
+  touch "$APP"
+  LSREGISTER=/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister
+  if [ -x "$LSREGISTER" ]; then "$LSREGISTER" -f "$APP" >/dev/null 2>&1 || true; fi
+  mdimport "$APP" >/dev/null 2>&1 || true
+  say "Added Gemini Code to $HOME/Applications: find it in Spotlight or Launchpad."
+else
+  ICON_DIR="$HOME/.local/share/icons/hicolor/512x512/apps"
+  DESKTOP_DIR="$HOME/.local/share/applications"
+  mkdir -p "$ICON_DIR" "$DESKTOP_DIR"
+  if [ -f "$HOME_DIR/app/icons/gemini-code.png" ]; then
+    cp "$HOME_DIR/app/icons/gemini-code.png" "$ICON_DIR/gemini-code.png"
+  fi
+  cat >"$HOME_DIR/app/launch.sh" <<LAUNCH
+#!/bin/sh
+nohup "$HOME_DIR/app/gemini-code" >>"$LOG_DIR/gemini-code.log" 2>&1 </dev/null &
+LAUNCH
+  chmod +x "$HOME_DIR/app/launch.sh"
+  cat >"$DESKTOP_DIR/gemini-code.desktop" <<DESKTOP
+[Desktop Entry]
+Type=Application
+Name=Gemini Code
+Comment=A desk of coding agents built around Google Gemini
+Exec=$HOME_DIR/app/launch.sh
+Icon=gemini-code
+Terminal=false
+Categories=Development;IDE;
+StartupNotify=false
+DESKTOP
+  if command -v update-desktop-database >/dev/null; then update-desktop-database "$DESKTOP_DIR" >/dev/null 2>&1 || true; fi
+  if command -v gtk-update-icon-cache >/dev/null; then gtk-update-icon-cache -q "$HOME/.local/share/icons/hicolor" >/dev/null 2>&1 || true; fi
+  say "Added Gemini Code to the applications menu."
+fi
 say "Gemini Code $version installed in $HOME_DIR/app."
 
 case ":$PATH:" in

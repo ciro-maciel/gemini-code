@@ -11,6 +11,13 @@ version with its date.
 
 ## [Unreleased]
 
+### Added
+
+- The install adds an app with the Gemini Code icon: `Gemini Code.app` in
+  `~/Applications` on macOS (Spotlight and Launchpad find it), an applications
+  menu entry on Linux and a Start menu shortcut on Windows. Opening it while
+  Gemini Code runs only opens the dashboard (2026-11-26).
+
 ### Fixed
 
 - The pre-push hook lets a push of tags only through: the tagged commit was

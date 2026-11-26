@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test';
 import path from 'node:path';
 
-import { parseArgs, placesFor, readEnvFile } from './cli.js';
+import { isRunning, parseArgs, placesFor, readEnvFile } from './cli.js';
 
 describe('the gemini-code command line', () => {
   test('reads a folder, the port and the flags in any order', () => {
@@ -55,5 +55,18 @@ describe('the gemini-code command line', () => {
         cwd: '/work',
       }).workspace,
     ).toBe(path.resolve('/work', 'proj'));
+  });
+});
+
+describe('opening Gemini Code again', () => {
+  test('a running one is found by its health answer, anything else is not', async () => {
+    const answering = async () => new Response(JSON.stringify({ isOk: true }));
+    const other = async () => new Response(JSON.stringify({ ok: 1 }));
+    const refused = async () => {
+      throw new Error('connection refused');
+    };
+    expect(await isRunning(8787, answering)).toBe(true);
+    expect(await isRunning(8787, other)).toBe(false);
+    expect(await isRunning(8787, refused)).toBe(false);
   });
 });

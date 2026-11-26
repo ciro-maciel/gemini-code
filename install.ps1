@@ -49,6 +49,21 @@ if (-not ($userPath -split ';' | Where-Object { $_ -eq $appDir })) {
 }
 $env:Path = "$env:Path;$appDir"
 
+# A Start menu entry with the icon: it starts Gemini Code hidden (no console
+# window) and opens the dashboard; opening it again only opens the dashboard.
+$exe = Join-Path $appDir 'gemini-code.exe'
+$icon = Join-Path $appDir 'icons\gemini-code.ico'
+$programs = Join-Path ([Environment]::GetFolderPath('Programs')) 'Gemini Code.lnk'
+$shell = New-Object -ComObject WScript.Shell
+$link = $shell.CreateShortcut($programs)
+$link.TargetPath = (Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe')
+$link.Arguments = "-NoProfile -WindowStyle Hidden -Command `"Start-Process -FilePath '$exe' -WindowStyle Hidden`""
+$link.WorkingDirectory = $appDir
+if (Test-Path $icon) { $link.IconLocation = "$icon,0" }
+$link.Description = 'A desk of coding agents built around Google Gemini'
+$link.Save()
+Write-Host 'Added Gemini Code to the Start menu.'
+
 $version = & (Join-Path $appDir 'gemini-code.exe') --version
 Write-Host "Gemini Code $version installed in $appDir."
 Write-Host ''

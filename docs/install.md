@@ -28,13 +28,20 @@ Settings, or put `GEMINI_API_KEY=...` in `~/.gemini-code/.env`.
 
 ## What goes where
 
-| Path                                                              | What                                                                                |
-| ----------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| `~/.gemini-code/app/` (Windows: `%LOCALAPPDATA%\GeminiCode\app\`) | The executable and the dashboard. Replaced on every install.                        |
-| `~/.gemini-code/data/`                                            | The database and the encryption key. Kept across installs.                          |
-| `~/.gemini-code/.env`                                             | Optional keys, `KEY=value` per line.                                                |
-| `~/.local/bin/gemini-code`                                        | A two-line launcher (macOS, Linux). Windows adds the app folder to the user's PATH. |
-| `~/GeminiCode/`                                                   | Where agents work when no folder is given.                                          |
+| Path                                                              | What                                                                                                                             |
+| ----------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `~/.gemini-code/app/` (Windows: `%LOCALAPPDATA%\GeminiCode\app\`) | The executable and the dashboard. Replaced on every install.                                                                     |
+| `~/.gemini-code/data/`                                            | The database and the encryption key. Kept across installs.                                                                       |
+| `~/.gemini-code/.env`                                             | Optional keys, `KEY=value` per line.                                                                                             |
+| `~/.local/bin/gemini-code`                                        | A two-line launcher (macOS, Linux). Windows adds the app folder to the user's PATH.                                              |
+| `~/GeminiCode/`                                                   | Where agents work when no folder is given.                                                                                       |
+| `~/Applications/Gemini Code.app` (macOS)                          | The app with the icon: Spotlight and Launchpad find it. Opening it starts Gemini Code in the background and opens the dashboard. |
+| `~/.local/share/applications/gemini-code.desktop` (Linux)         | The applications menu entry, with the icon in `~/.local/share/icons`.                                                            |
+| Start menu, `Gemini Code` (Windows)                               | A shortcut with the icon that starts Gemini Code with no console window.                                                         |
+| `~/.gemini-code/logs/`                                            | What Gemini Code prints when the app started it.                                                                                 |
+
+Opening the app, or running `gemini-code`, while Gemini Code already runs only
+opens the dashboard: it never starts a second server.
 
 Both scripts check the download against the release's `SHA256SUMS` before
 unpacking it. `GEMINI_CODE_VERSION=0.1.0` installs a given version.

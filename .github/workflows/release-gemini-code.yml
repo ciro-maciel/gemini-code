@@ -145,8 +145,12 @@ jobs:
         with:
           name: dashboard
           path: out/gemini-code/dashboard
-      - name: Add the license
-        run: cp LICENSE out/gemini-code/
+      # The icons install.sh and install.ps1 give the app (Spotlight, the menu, the Start menu).
+      - name: Add the license and the icons
+        run: |
+          cp LICENSE out/gemini-code/
+          mkdir -p out/gemini-code/icons
+          cp packages/server/icons/gemini-code.icns packages/server/icons/gemini-code.png packages/server/icons/gemini-code.ico out/gemini-code/icons/
       - name: Pack
         run: |
           cd out
