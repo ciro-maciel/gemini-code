@@ -11,6 +11,11 @@ version with its date.
 
 ## [Unreleased]
 
+### Fixed
+
+- The command center greets in Portuguese too, and placeholder text uses the
+  design system's gray instead of the browser's (2026-11-26).
+
 ### Changed
 
 - Every release describes itself: what changed from CHANGELOG.md, every commit

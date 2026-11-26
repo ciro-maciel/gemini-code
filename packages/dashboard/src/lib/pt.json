@@ -6,7 +6,7 @@
     "The dashboard and the server run here for you. The server answers only on 127.0.0.1, so nothing else on the network reaches it, and there is no sign-in to steal.": "O painel e o servidor rodam aqui para você. O servidor só atende em 127.0.0.1, então nada mais na rede o alcança, e não há login para roubar.",
     "Who reaches it": "Quem alcança",
     "Only this machine: the server answers on 127.0.0.1, so nothing else on the network reaches it": "Só esta máquina: o servidor atende em 127.0.0.1, então nada mais na rede o alcança",
-    "Couldn't reach Gemini Code": "Não foi possível falar com o Gemini Code",
+    "Couldn't reach Gemini Code": "Não consegui falar com o Gemini Code",
     "Try again": "Tentar de novo",
     "Done: soma.js and soma.test.js created, 3 pass.": "Pronto: soma.js e soma.test.js criados, 3 pass.",
     "Agent": "Agente",
@@ -816,7 +816,6 @@
     "Live screen": "Tela ao vivo",
     "Live screen With the yearly discount.": "Tela ao vivo Com desconto anual.",
     "We have the perfect plan for you": "Temos o plano perfeito para você",
-    "Try again": "Tentar de novo",
     "Try again in a moment.": "Tente de novo em instantes.",
     "Try again.": "Tente de novo.",
     "Tuesday": "Terça",
@@ -1132,7 +1131,6 @@
     "Gemini Code accounts and people waiting for access.": "Contas do Gemini Code e pessoas esperando liberação.",
     "Gemini Code accounts and people waiting for access are listed here.": "As contas do Gemini Code e as pessoas esperando liberação aparecem aqui.",
     "This account doesn't have access to Gemini Code. If this is a mistake, contact whoever invited you.": "Esta conta não tem acesso ao Gemini Code. Se for um engano, fale com quem te convidou.",
-    "Couldn't reach Gemini Code": "Não consegui falar com o Gemini Code",
     "What applies to everyone on this Gemini Code and the steps that protect the agents' computers.": "O que vale para todos neste Gemini Code e os passos que protegem os computadores dos agentes.",
     "The agent goes back to the top, outside groups.": "O agente volta pro topo, fora dos grupos.",
     "Google subscription (AI Pro and Ultra)": "Assinatura Google (AI Pro e Ultra)",
@@ -1484,7 +1482,11 @@
     "The risk check did not answer, so this action waits for you.": "A checagem de risco não respondeu, então esta ação espera você.",
     "Sign in to your account and approve access whenever you want. The agent is notified when you connect.": "Entre na sua conta e aprove o acesso quando quiser. O agente fica sabendo quando você conectar.",
     "This service takes a token you paste here. It stays encrypted on the server, outside this conversation and the agent’s computer.": "Este serviço usa um token que você cola aqui. Ele fica cifrado no servidor, fora desta conversa e do computador do agente.",
-    "GitHub signs in only the apps registered with it. Create a personal access token at github.com/settings/personal-access-tokens (read and write access to the repositories you want), then paste it here.": "O GitHub só faz login de apps registrados nele. Crie um token pessoal em github.com/settings/personal-access-tokens (com leitura e escrita nos repositórios que quiser) e cole aqui."
+    "GitHub signs in only the apps registered with it. Create a personal access token at github.com/settings/personal-access-tokens (read and write access to the repositories you want), then paste it here.": "O GitHub só faz login de apps registrados nele. Crie um token pessoal em github.com/settings/personal-access-tokens (com leitura e escrita nos repositórios que quiser) e cole aqui.",
+    "Good morning": "Bom dia",
+    "Good afternoon": "Boa tarde",
+    "Good evening": "Boa noite",
+    "Ready to code with Google Gemini.": "Pronto para programar com o Google Gemini."
   },
   "patterns": {
     "You and {#0} agents": "Você e {#0} agentes",
@@ -1828,6 +1830,10 @@
     "{0} is not a folder on this machine": "{0} não é uma pasta nesta máquina",
     "Allow permits {0} until the task ends. Always allow permits {1} on this agent for 90 days.": "Permitir libera {0} até o fim da tarefa. Sempre permitir libera {1} neste agente por 90 dias.",
     "Run a command: {0}": "Rodar um comando: {0}",
-    "{0} signs in only the apps registered with it. Create a token in its settings and paste it here.": "{0} só faz login de apps registrados nele. Crie um token nas configurações dele e cole aqui."
+    "{0} signs in only the apps registered with it. Create a token in its settings and paste it here.": "{0} só faz login de apps registrados nele. Crie um token nas configurações dele e cole aqui.",
+    "{#0} agent waiting for your review.": "{#0} agente esperando a sua revisão.",
+    "{#0} agents waiting for your review.": "{#0} agentes esperando a sua revisão.",
+    "{#0} agent running.": "{#0} agente trabalhando.",
+    "{#0} agents running.": "{#0} agentes trabalhando."
   }
 }

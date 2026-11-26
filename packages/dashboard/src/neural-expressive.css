@@ -2963,3 +2963,10 @@ textarea.cfg-instr:focus,
 .p-instructions {
   background: color-mix(in srgb, var(--gm-primary) 18%, var(--gm-surface));
 }
+
+/* Placeholder text: the system's quiet gray (--gray-4, 4.8:1 on white), never
+   the browser's neutral #757575. */
+::placeholder {
+  color: var(--gray-4);
+  opacity: 1;
+}
