@@ -3,6 +3,22 @@
 # here, before the push, never in CI. `bun install` turns this hook on
 # (package.json "prepare"). Skip once with: git push --no-verify
 set -e
+
+# Git gives one line per ref: <local ref> <local sha> <remote ref> <remote sha>.
+# A push of tags only (a release) carries no new code: the tagged commit passed
+# these checks when it was pushed, and the changelog rule has nothing to compare.
+has_branch=no
+while read -r _local_ref _local_sha remote_ref _remote_sha; do
+  case "$remote_ref" in
+    refs/tags/*) ;;
+    *) has_branch=yes ;;
+  esac
+done
+if [ "$has_branch" = no ]; then
+  echo "pre-push: tags only, nothing to check"
+  exit 0
+fi
+
 echo "pre-push: bun run preflight"
 bun run preflight
 echo "pre-push: changelog"

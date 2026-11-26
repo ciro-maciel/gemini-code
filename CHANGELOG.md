@@ -11,6 +11,11 @@ version with its date.
 
 ## [Unreleased]
 
+### Fixed
+
+- The pre-push hook lets a push of tags only through: the tagged commit was
+  already checked, so a release tag no longer needs --no-verify (2026-11-25).
+
 ## [0.4.0] - 2026-11-25
 
 ### Added
