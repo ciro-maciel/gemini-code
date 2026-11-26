@@ -11,6 +11,8 @@ version with its date.
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-11-26
+
 ### Added
 
 - The install adds an app with the Gemini Code icon: `Gemini Code.app` in
@@ -288,7 +290,8 @@ The first public version.
   warnings, `bun run preflight`, `GEMINI.md`, a roadmap and one grouped weekly
   Dependabot update.
 
-[Unreleased]: https://github.com/ciro-maciel/gemini-code/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/ciro-maciel/gemini-code/compare/v0.4.1...HEAD
+[0.4.1]: https://github.com/ciro-maciel/gemini-code/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/ciro-maciel/gemini-code/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/ciro-maciel/gemini-code/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/ciro-maciel/gemini-code/compare/v0.2.0...v0.2.1
