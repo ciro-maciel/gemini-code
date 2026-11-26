@@ -11,6 +11,12 @@ version with its date.
 
 ## [Unreleased]
 
+### Changed
+
+- Every release describes itself: what changed from CHANGELOG.md, every commit
+  since the previous tag with its link, how to install, and the full comparison
+  (`scripts/release-notes.js`) (2026-11-26).
+
 ## [0.4.2] - 2026-11-26
 
 ### Fixed

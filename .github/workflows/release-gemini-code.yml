@@ -170,7 +170,13 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      # The whole history and every tag: the notes list the commits since the previous tag.
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
       - uses: actions/download-artifact@v4
         with:
           pattern: pack-*
@@ -182,4 +188,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ github.ref_name }}
-        run: gh release create "$TAG" dist/* --title "Gemini Code $TAG" --generate-notes --verify-tag
+        # What changed (CHANGELOG), every commit since the previous tag, how to install.
+        run: |
+          bun scripts/release-notes.js "$TAG" > "$RUNNER_TEMP/notes.md"
+          cat "$RUNNER_TEMP/notes.md"
+          gh release create "$TAG" dist/* --title "Gemini Code $TAG" --notes-file "$RUNNER_TEMP/notes.md" --verify-tag
