@@ -11,6 +11,8 @@ version with its date.
 
 ## [Unreleased]
 
+## [0.4.2] - 2026-11-26
+
 ### Fixed
 
 - Connecting a service (GitHub, Notion, ...) on a fresh install, before the
@@ -296,7 +298,8 @@ The first public version.
   warnings, `bun run preflight`, `GEMINI.md`, a roadmap and one grouped weekly
   Dependabot update.
 
-[Unreleased]: https://github.com/ciro-maciel/gemini-code/compare/v0.4.1...HEAD
+[Unreleased]: https://github.com/ciro-maciel/gemini-code/compare/v0.4.2...HEAD
+[0.4.2]: https://github.com/ciro-maciel/gemini-code/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/ciro-maciel/gemini-code/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/ciro-maciel/gemini-code/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/ciro-maciel/gemini-code/compare/v0.2.1...v0.3.0
