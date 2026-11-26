@@ -1387,17 +1387,12 @@ router.get('/api/connections', ({ account }) => {
 router.post('/api/connections', async ({ req, account }) => {
   const { botId, serverName, title, url, transport } = await readBody(req);
   if (!url) throw invalid('the server URL is missing');
-  const anyBot = botId
-    ? requireBot(botId, account)
-    : db
-        .query(
-          'SELECT id FROM bots WHERE account_id = ? ORDER BY created_at LIMIT 1',
-        )
-        .get(account.id);
-  if (!anyBot) throw conflict('create a bot before connecting apps');
+  // A connection is the account's: every agent can use it, and one can be
+  // made before the first agent exists. bot_id only remembers who made it.
+  const maker = botId ? requireBot(botId, account) : null;
   const created = await createConnection({
     accountId: account.id,
-    botId: anyBot.id,
+    botId: maker?.id ?? null,
     serverName: serverName || url,
     title: title || serverName || new URL(url).hostname,
     url,

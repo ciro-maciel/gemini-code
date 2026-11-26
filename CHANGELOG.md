@@ -11,6 +11,12 @@ version with its date.
 
 ## [Unreleased]
 
+### Fixed
+
+- Connecting a service (GitHub, Notion, ...) on a fresh install, before the
+  first agent exists, answered "create a bot before connecting apps"; a
+  connection is the account's and is made with no agent at all (2026-11-26).
+
 ## [0.4.1] - 2026-11-26
 
 ### Added
