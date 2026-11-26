@@ -59,6 +59,11 @@ export function lineOf(app) {
   if (connection?.status === 'pending_auth') return 'Needs to sign in again';
   if (connection?.status === 'needs_secret')
     return 'Paste the service token to finish';
+  if (connection?.status === 'needs_device')
+    return (
+      connection.statusDetail ||
+      'Sign in on GitHub with the Gemini Code app, then approve it'
+    );
   if (connection?.status === 'connected')
     return `${connection.tools.length} ${connection.tools.length === 1 ? 'tool' : 'tools'} · ${app.description}`;
   return app.description;

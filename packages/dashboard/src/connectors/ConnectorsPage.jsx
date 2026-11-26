@@ -16,6 +16,7 @@ import { Menu, useMenu } from '../ui/Menu';
 import { brandIconOf } from './brand-icon';
 import { fromRegistry, lineOf, sectionsOf, usedBy } from './catalog';
 import { openSignIn, whenClosed } from './sign-in';
+import { DeviceSignIn } from './DeviceSignIn';
 import { keepIfSame } from '../state/keep-if-same';
 
 /**
@@ -178,6 +179,13 @@ function ConnectionAction({ app, onChange }) {
         >
           Sign in
         </button>
+        <ConnectionMenu app={app} onChange={onChange} />
+      </span>
+    );
+  if (connection?.status === 'needs_device')
+    return (
+      <span className="conn-act">
+        <DeviceSignIn connection={connection} onChange={onChange} />
         <ConnectionMenu app={app} onChange={onChange} />
       </span>
     );

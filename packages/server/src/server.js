@@ -79,7 +79,12 @@ import {
   saveSecretHeader,
   searchRegistry,
   startToolRefresh,
+  updateConnection,
 } from './engine/catalog.js';
+import {
+  isGithubConnection,
+  startDeviceSignIn,
+} from './engine/github-device.js';
 import {
   deleteMemory,
   listMemories,
@@ -1461,6 +1466,27 @@ router.post('/api/connections/:id/secret', async ({ req, params, account }) => {
   });
   if (connection.status === 'connected') resumeTasksWaitingOn(params.id);
   return json(connection);
+});
+
+// GitHub: a code from the Gemini Code app that the person types on GitHub.
+// The server waits for the approval and connects by itself; the page sees
+// the connection turn connected on its next read.
+router.post('/api/connections/:id/device', async ({ params, account }) => {
+  const connection = requireConnection(params.id, account);
+  if (!isGithubConnection(connection))
+    throw invalid('this service does not sign in with a code');
+  const signIn = await startDeviceSignIn(params.id, {
+    onToken: async (token) => {
+      const connected = await saveSecretHeader(params.id, { value: token });
+      if (connected.status === 'connected') resumeTasksWaitingOn(params.id);
+    },
+    onFailure: (reason) =>
+      updateConnection(params.id, {
+        status: 'needs_device',
+        status_detail: reason,
+      }),
+  });
+  return json(signIn);
 });
 
 // Sign in again: forget the stored access and start a new OAuth consent —

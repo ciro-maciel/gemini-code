@@ -18,6 +18,7 @@ import {
   saveConnectionSecret,
 } from '../services/api';
 import { openSignIn } from '../connectors/sign-in';
+import { DeviceSignIn } from '../connectors/DeviceSignIn';
 import { notify } from './zen';
 
 /**
@@ -317,6 +318,15 @@ export function ConnectCard({
           <Button onClick={() => openSignIn(connection.statusDetail)}>
             Connect
           </Button>
+        </>
+      )}
+      {connection.status === 'needs_device' && (
+        <>
+          <Description>
+            {connection.statusDetail ||
+              'GitHub gives a short code: type it on GitHub and approve the Gemini Code app. It connects by itself, and the agent is notified.'}
+          </Description>
+          <DeviceSignIn connection={connection} />
         </>
       )}
       {connection.status === 'needs_secret' && (

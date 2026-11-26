@@ -216,14 +216,15 @@ export function checksFor(account, deps = {}) {
         };
       if (
         connection.status === 'pending_auth' ||
+        connection.status === 'needs_device' ||
         connection.status === 'needs_secret'
       )
         return {
           status: 'warn',
           detail:
-            connection.status === 'pending_auth'
-              ? 'Waiting for you to sign in'
-              : 'Waiting for its token',
+            connection.status === 'needs_secret'
+              ? 'Waiting for its token'
+              : 'Waiting for you to sign in',
         };
       return { status: 'fail', detail: connection.statusDetail || 'Failed' };
     });

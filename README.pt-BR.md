@@ -94,7 +94,9 @@ conversa, e ele não lê nem escreve fora dela.
 - **Segredo não chega ao modelo.** Um cofre cifrado por agente põe a chave só no
   ambiente do comando e tira o valor de tudo o que o modelo lê.
 - **Conectores por MCP.** GitHub, Linear, Sentry, Cloudflare, Notion, Figma e
-  outros pelos servidores MCP oficiais, mais um navegador que o agente usa.
+  outros pelos servidores MCP oficiais, mais um navegador que o agente usa. O
+  GitHub entra pelo app Gemini Code registrado no GitHub: um código curto, uma
+  aprovação, nenhum token para criar ou colar.
 - **Entre com a sua assinatura Google.** Os agentes podem rodar numa assinatura
   Google AI Pro ou Ultra pelo Antigravity CLI do Google, que abre a família
   Gemini 4 (Neon e outros) sem cobrança de API. Veja

@@ -1486,7 +1486,17 @@
     "Good morning": "Bom dia",
     "Good afternoon": "Boa tarde",
     "Good evening": "Boa noite",
-    "Ready to code with Google Gemini.": "Pronto para programar com o Google Gemini."
+    "Ready to code with Google Gemini.": "Pronto para programar com o Google Gemini.",
+    "Sign in with GitHub": "Entrar com GitHub",
+    "Asking GitHub…": "Pedindo ao GitHub…",
+    "Copy the code": "Copiar o código",
+    "Code copied": "Código copiado",
+    "Paste it on the GitHub page.": "Cole na página do GitHub.",
+    "Open GitHub": "Abrir o GitHub",
+    "Sign in on GitHub with the Gemini Code app, then approve it": "Entre no GitHub com o app Gemini Code e aprove",
+    "GitHub gives a short code: type it on GitHub and approve the Gemini Code app. It connects by itself, and the agent is notified.": "O GitHub dá um código curto: digite no GitHub e aprove o app Gemini Code. Conecta sozinho, e o agente é avisado.",
+    "You did not approve Gemini Code on GitHub": "Você não aprovou o Gemini Code no GitHub",
+    "The GitHub code expired before it was approved": "O código do GitHub expirou antes da aprovação"
   },
   "patterns": {
     "You and {#0} agents": "Você e {#0} agentes",

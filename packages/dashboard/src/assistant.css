@@ -4424,6 +4424,33 @@ textarea.cfg-instr {
 .conn-act .pill-st .ti {
   font-size: 12px;
 }
+.device-sign-in {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.device-code {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 10px;
+  border: var(--line-3);
+  background: var(--gray-0);
+  color: var(--gray-9);
+  font-family: var(--mono, monospace);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+}
+.device-code:hover {
+  border-color: var(--gray-9);
+}
+.device-code .ti {
+  font-size: 13px;
+  color: var(--gray-6);
+}
 .input.sm {
   height: 28px;
   width: 130px;

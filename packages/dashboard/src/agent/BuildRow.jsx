@@ -32,6 +32,7 @@ const connectionNote = (connection) =>
     connected: `${connection.tools.length} ${connection.tools.length === 1 ? 'tool' : 'tools'}`,
     pending_auth: 'Waiting for sign-in, in Connectors',
     needs_secret: 'Waiting for its token, in Connectors',
+    needs_device: 'Waiting for sign-in, in Connectors',
     failed: 'Failed, see Connectors',
   })[connection.status] ?? 'Not connected yet';
 

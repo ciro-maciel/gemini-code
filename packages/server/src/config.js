@@ -72,9 +72,9 @@ export const config = {
   mcpCatalogUrl: (process.env.MCP_CATALOG_URL || '').trim(),
   // Optional Fish Audio key for voice mode / speech synthesis.
   fishApiKey: process.env.FISH_API_KEY || '',
-  // Optional GitHub OAuth app credentials for GitHub MCP server.
-  githubClientId: process.env.GITHUB_CLIENT_ID || '',
-  githubClientSecret: process.env.GITHUB_CLIENT_SECRET || '',
+  // The Gemini Code app on GitHub: its public client id signs the GitHub
+  // connector in with the device flow, no secret (another app can take over).
+  githubClientId: process.env.GITHUB_CLIENT_ID || 'Ov23liI6Os6Knkf3On75',
   // Optional GitHub App for per-account workspace sync.
   githubOrg: process.env.GITHUB_ORG || '',
   githubApi: (process.env.GITHUB_API_URL || 'https://api.github.com').replace(

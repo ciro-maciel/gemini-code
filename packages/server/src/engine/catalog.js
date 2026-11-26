@@ -6,6 +6,7 @@ import { config } from '../config.js';
 import { db, newId, now, toApi } from '../db.js';
 import { decrypt, encrypt } from '../secrets.js';
 import { fetchAccount } from '../accounts.js';
+import { cancelDeviceSignIn, isGithubConnection } from './github-device.js';
 
 const REGISTRY = 'https://registry.modelcontextprotocol.io/v0/servers';
 const REDIRECT_PATH = '/oauth/callback';
@@ -105,7 +106,7 @@ function publicConnection(connection) {
   return rest;
 }
 
-function updateConnection(connectionId, fields) {
+export function updateConnection(connectionId, fields) {
   const columns = Object.keys(fields);
   db.query(
     `UPDATE connections SET ${columns.map((column) => `${column} = ?`).join(', ')}, updated_at = ? WHERE id = ?`,
@@ -142,34 +143,6 @@ export function exposedName(connection, toolName) {
 }
 
 // --- OAuth provider persisted in the connection row -----------------------
-
-/*
- * Authorization servers that register no client on the fly. GitHub's
- * (github.com/login/oauth) has no registration endpoint, and the SDK stopped at
- * "Incompatible auth server". For those the Assistant brings its own OAuth app.
- */
-function staticClientFor(connectionUrl, redirectUrl) {
-  const host = (() => {
-    try {
-      return new URL(connectionUrl).hostname;
-    } catch {
-      return '';
-    }
-  })();
-  if (
-    host === 'api.githubcopilot.com' &&
-    config.githubClientId &&
-    config.githubClientSecret
-  ) {
-    return {
-      client_id: config.githubClientId,
-      client_secret: config.githubClientSecret,
-      redirect_uris: [redirectUrl],
-      token_endpoint_auth_method: 'client_secret_post',
-    };
-  }
-  return null;
-}
 
 export class ConnectionAuthProvider {
   constructor(connectionId, connectionUrl) {
@@ -223,8 +196,6 @@ export class ConnectionAuthProvider {
   }
 
   async clientInformation() {
-    const fixed = staticClientFor(this.connectionUrl, this.redirectUrl);
-    if (fixed) return fixed;
     const { clientInformation } = await readSecrets(this.connectionId);
     // Registered for another return address (the control server moved):
     // forgetting it makes the SDK register again with this one.
@@ -336,7 +307,8 @@ async function openClient(connection) {
 
 /**
  * Tries to reach the server. Ends in one of three states: connected (tools
- * listed), pending_auth (the person must sign in at status_detail) or
+ * listed), pending_auth (the person must sign in at status_detail),
+ * needs_device (GitHub: the person signs in through the Gemini Code app) or
  * needs_secret (the server takes a token the person pastes).
  */
 /**
@@ -352,8 +324,6 @@ export function failureDetail(error, title) {
 
 /** Where to make the token for a service that signs in only the apps it registered. */
 export function tokenHint(connection) {
-  if (/githubcopilot\.com|github\.com/.test(connection.url || ''))
-    return 'GitHub signs in only the apps registered with it. Create a personal access token at github.com/settings/personal-access-tokens (read and write access to the repositories you want), then paste it here.';
   return `${connection.title} signs in only the apps registered with it. Create a token in its settings and paste it here.`;
 }
 
@@ -380,19 +350,28 @@ export async function connect(connectionId) {
       const current = fetchConnection(connectionId);
       if (current.status !== 'pending_auth')
         updateConnection(connectionId, {
-          status: 'needs_secret',
-          status_detail: 'the server refused the automatic sign-in',
+          status: isGithubConnection(connection)
+            ? 'needs_device'
+            : 'needs_secret',
+          status_detail: isGithubConnection(connection)
+            ? null
+            : 'the server refused the automatic sign-in',
         });
     } else if (
       /does not support dynamic client registration|Incompatible auth server/i.test(
         error.message,
       )
     ) {
-      // The service signs in only apps registered with it (GitHub, 25/11/2026):
-      // a token the person creates there and pastes here does the same job.
+      // The service signs in only apps registered with it. GitHub signs in
+      // through the Gemini Code app (device flow, 26/11/2026); any other
+      // takes a token the person creates there and pastes here.
       updateConnection(connectionId, {
-        status: 'needs_secret',
-        status_detail: tokenHint(connection),
+        status: isGithubConnection(connection)
+          ? 'needs_device'
+          : 'needs_secret',
+        status_detail: isGithubConnection(connection)
+          ? null
+          : tokenHint(connection),
       });
     } else if (
       connection.transport === 'streamable' &&
@@ -573,11 +552,13 @@ export async function reauthorize(connectionId) {
   try {
     await client?.close();
   } catch {}
+  cancelDeviceSignIn(connectionId);
   const secrets = await readSecrets(connectionId);
   if (secrets.headers) {
+    const connection = fetchConnection(connectionId);
     updateConnection(connectionId, {
       secrets: await encrypt({}),
-      status: 'needs_secret',
+      status: isGithubConnection(connection) ? 'needs_device' : 'needs_secret',
       status_detail: null,
     });
     return publicConnection(fetchConnection(connectionId));
@@ -592,6 +573,7 @@ export async function reauthorize(connectionId) {
 }
 
 export async function deleteConnection(connectionId) {
+  cancelDeviceSignIn(connectionId);
   const client = clients.get(connectionId);
   clients.delete(connectionId);
   try {

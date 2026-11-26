@@ -94,7 +94,8 @@ it.
   model reads.
 - **Connectors through MCP.** GitHub, Linear, Sentry, Cloudflare, Notion, Figma
   and others through their official remote MCP servers, plus a browser the agent
-  can drive.
+  can drive. GitHub signs in through the Gemini Code app registered on GitHub: a
+  short code, one approval, no token to create or paste.
 - **One official way to reach Gemini.** Every agent runs on the Gemini API with
   your own key from Google AI Studio. Signing in with a Google AI Pro or Ultra
   subscription waits for Google to publish an official path for third-party

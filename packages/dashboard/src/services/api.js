@@ -294,6 +294,8 @@ export const retryConnection = (id) =>
   request('POST', `/api/connections/${id}/connect`);
 export const saveConnectionSecret = (id, fields) =>
   request('POST', `/api/connections/${id}/secret`, fields);
+export const startGithubSignIn = (id) =>
+  request('POST', `/api/connections/${id}/device`);
 export const reauthorizeConnection = (id) =>
   request('POST', `/api/connections/${id}/reauthorize`);
 export const abandonConnection = (id) =>
