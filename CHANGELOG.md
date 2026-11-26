@@ -13,6 +13,10 @@ version with its date.
 
 ### Fixed
 
+- Menus read like the design system's option lists: 40 px rows with round
+  corners, sections named by a label instead of a rule, and the agent row's menu
+  no longer repeats the agent's name; the "..." on a row is a round button with
+  a focus ring that follows it (2026-11-26).
 - The command center greets in Portuguese too, and placeholder text uses the
   design system's gray instead of the browser's (2026-11-26).
 

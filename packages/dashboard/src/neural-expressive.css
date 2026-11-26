@@ -2970,3 +2970,76 @@ textarea.cfg-instr:focus,
   color: var(--gray-4);
   opacity: 1;
 }
+
+/* --------------------------------------------- Menus and row actions -- */
+
+/* 25/11/2026: the agent row's menu still carried the Zen pieces: a rule
+   above "Move to", 34 px rows with small corners, a square focus box on the
+   "..." button. Menus now read like the design system's option lists. */
+.menu.opts {
+  padding: 6px;
+}
+.menu .h {
+  padding: 10px 12px 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gm-on-surface-variant);
+}
+.menu > button,
+.menu .menu-a {
+  height: 40px;
+  gap: 12px;
+  padding: 0 12px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--gm-on-surface);
+}
+.menu > button .ti,
+.menu .menu-a .ti {
+  font-size: 18px;
+  color: var(--gm-on-surface-variant);
+}
+.menu > button:hover,
+.menu > button.hl,
+.menu .menu-a:hover {
+  background: color-mix(in srgb, var(--gm-on-surface) 6%, transparent);
+}
+/* A section inside a menu is set apart by space and its name, never a rule. */
+.menu .menu-note {
+  margin: 4px 0 0;
+  padding: 10px 12px 4px;
+  border-top: 0;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--gm-on-surface-variant);
+}
+.menu hr {
+  height: 6px;
+  margin: 0;
+  border: 0;
+}
+
+/* The "..." on an agent row or a group: a round 28 px button. */
+.crow-more,
+.agroup-more {
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  color: var(--gm-on-surface-variant);
+  transition: background var(--dur-fast) var(--effects);
+}
+.crow-more:hover,
+.agroup-more:hover {
+  background: color-mix(in srgb, var(--gm-on-surface) 8%, transparent);
+  color: var(--gm-on-surface);
+}
+.crow-more:focus-visible,
+.agroup-more:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--gm-primary);
+}
+.crow.drop-above {
+  box-shadow: inset 0 2px 0 var(--gm-primary);
+}

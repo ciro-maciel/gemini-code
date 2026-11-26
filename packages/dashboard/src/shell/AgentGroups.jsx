@@ -519,12 +519,7 @@ export function AgentGroups({
         </Menu>
       )}
       {agentMenu.is('agent') && menuBot && (
-        <Menu
-          anchor={agentMenu.anchor}
-          title={menuBot.name}
-          width={230}
-          onClose={agentMenu.close}
-        >
+        <Menu anchor={agentMenu.anchor} width={240} onClose={agentMenu.close}>
           {!menuBot.sharedBy && menuBot.lastMessage && (
             <button
               onClick={async () => {
