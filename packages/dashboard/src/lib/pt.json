@@ -1496,7 +1496,10 @@
     "Sign in on GitHub with the Gemini Code app, then approve it": "Entre no GitHub com o app Gemini Code e aprove",
     "GitHub gives a short code: type it on GitHub and approve the Gemini Code app. It connects by itself, and the agent is notified.": "O GitHub dá um código curto: digite no GitHub e aprove o app Gemini Code. Conecta sozinho, e o agente é avisado.",
     "You did not approve Gemini Code on GitHub": "Você não aprovou o Gemini Code no GitHub",
-    "The GitHub code expired before it was approved": "O código do GitHub expirou antes da aprovação"
+    "The GitHub code expired before it was approved": "O código do GitHub expirou antes da aprovação",
+    "The agent stopped": "O agente parou",
+    "This Google Gemini key is on the free plan, and today's quota ran out on the models it includes. Turn on billing for the key in Google AI Studio, or wait for the quota to come back at midnight Pacific time.": "Esta chave do Google Gemini está no plano gratuito, e a cota de hoje acabou nos modelos que ele inclui. Ative o faturamento da chave no Google AI Studio, ou espere a cota voltar à meia-noite do horário do Pacífico.",
+    "The other models are under high demand at Google right now.": "Os outros modelos estão com demanda alta no Google agora."
   },
   "patterns": {
     "You and {#0} agents": "Você e {#0} agentes",
@@ -1844,6 +1847,17 @@
     "{#0} agent waiting for your review.": "{#0} agente esperando a sua revisão.",
     "{#0} agents waiting for your review.": "{#0} agentes esperando a sua revisão.",
     "{#0} agent running.": "{#0} agente trabalhando.",
-    "{#0} agents running.": "{#0} agentes trabalhando."
+    "{#0} agents running.": "{#0} agentes trabalhando.",
+    "{0} is under high demand on every model tried. The agent waited and tried again; send the message again in a minute.": "{0} está com demanda alta em todos os modelos tentados. O agente esperou e tentou de novo; mande a mensagem outra vez em um minuto.",
+    "Models tried ({#0}):": "Modelos tentados ({#0}):",
+    "{0}: high demand right now ({#1})": "{0}: demanda alta agora ({#1})",
+    "{0}: not included in this key's free plan": "{0}: não está no plano gratuito desta chave",
+    "{0}: today's free plan quota is used up": "{0}: a cota de hoje do plano gratuito acabou",
+    "{0}: too many calls this minute": "{0}: chamadas demais neste minuto",
+    "{0}: the key was refused": "{0}: a chave foi recusada",
+    "{0}: does not exist on this key": "{0}: não existe nesta chave",
+    "{0}: took too long to answer": "{0}: demorou demais para responder",
+    "{0}: refused with code {#1}": "{0}: recusou com o código {#1}",
+    "{0}: could not answer": "{0}: não conseguiu responder"
   }
 }

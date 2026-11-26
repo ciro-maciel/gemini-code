@@ -27,6 +27,10 @@ version with its date.
 
 ### Fixed
 
+- A stop after the model failover names every model tried and Google's own
+  reason for each (high demand, the free plan's daily quota, not on the free
+  plan), says what to do, and the engine waits and retries once after a demand
+  spike before stopping (2026-11-26).
 - Menus read like the design system's option lists: 40 px rows with round
   corners, sections named by a label instead of a rule, and the agent row's menu
   no longer repeats the agent's name; the "..." on a row is a round button with

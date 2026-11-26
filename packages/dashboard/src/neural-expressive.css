@@ -3043,3 +3043,25 @@ textarea.cfg-instr:focus,
 .crow.drop-above {
   box-shadow: inset 0 2px 0 var(--gm-primary);
 }
+
+/* A stop explained: each sentence on its line, then the models tried, one per
+   line, in the code face so the model names read as names. */
+.callout > div > span {
+  display: block;
+}
+.callout > div > span + span {
+  margin-top: 4px;
+}
+.callout .callout-list {
+  margin-top: 8px;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 12px;
+  color: var(--gray-5);
+}
+.callout .callout-list > span {
+  display: block;
+}
+.callout .callout-list > span:first-child {
+  font-family: inherit;
+  color: var(--gray-7);
+}

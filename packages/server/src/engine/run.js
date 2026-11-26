@@ -25,7 +25,27 @@ import {
   saveMemory,
 } from './memory.js';
 import { complete, completeJson } from './model.js';
-import { isContextOverflow, modelFailureText } from './failure-text.js';
+import {
+  attemptKind,
+  isContextOverflow,
+  modelFailureText,
+} from './failure-text.js';
+
+// How long the engine waits after Google says a model is under high demand.
+const OVERLOAD_WAIT_MS = 5_000;
+
+const waitAbortable = (ms, signal) =>
+  new Promise((resolve) => {
+    const timer = setTimeout(resolve, ms);
+    signal?.addEventListener(
+      'abort',
+      () => {
+        clearTimeout(timer);
+        resolve();
+      },
+      { once: true },
+    );
+  });
 import {
   cutPoint,
   shouldCompact,
@@ -1379,6 +1399,8 @@ async function loop(taskId, resolution) {
       // Intelligent self-healing failover: if the model failed before streaming (quota/limit:0/429/503/404),
       // seamlessly route to the next healthy model on the user's connected keys instead of crashing.
       let finalError = error;
+      // Every model tried and what it answered, so the screen can say why none did.
+      const attempts = [{ account: activeAccount, model: activeModel, error }];
       if (!hasStreamed && isFailoverEligible(error)) {
         markModelUnavailable(activeAccount.id, activeModel, error);
         const hardBlock = isHardModelBlock(error);
@@ -1425,7 +1447,33 @@ async function loop(taskId, resolution) {
               candidate.model,
               nextError,
             );
+            attempts.push({
+              account: candidate.account,
+              model: candidate.model,
+              error: nextError,
+            });
             finalError = nextError;
+          }
+        }
+        // Demand spikes at Google pass in seconds: when a model said so, wait
+        // and ask the first one again before stopping.
+        const busy = attempts.find(
+          (attempt) => attemptKind(attempt.error) === 'overloaded',
+        );
+        if (finalError && busy && !controller.signal.aborted) {
+          const retry = busy;
+          await waitAbortable(OVERLOAD_WAIT_MS, controller.signal);
+          if (!controller.signal.aborted) {
+            try {
+              console.warn(`[model-router] retry ${busy.model} after demand`);
+              answer = await runCompletion(retry.account, retry.model);
+              activeAccount = retry.account;
+              activeModel = retry.model;
+              finalError = null;
+            } catch (retryError) {
+              retry.error = retryError;
+              finalError = retryError;
+            }
           }
         }
       }
@@ -1434,13 +1482,17 @@ async function loop(taskId, resolution) {
         continue;
       }
       if (finalError) {
-        throw new Error(
+        const failure = new Error(
           modelFailureText(finalError, {
             model: activeModel,
             provider: activeAccount.provider,
+            attempts,
           }),
           { cause: finalError },
         );
+        // The raw answer of every model goes to the failure log, not the screen.
+        failure.attempts = attempts;
+        throw failure;
       }
     } finally {
       inFlight.delete(taskId);
@@ -1761,7 +1813,11 @@ async function runTask(taskId, resolution) {
       botId: task.botId,
       taskId,
       kind: 'task_failed',
-      context: error.cause?.message ?? error.message,
+      context: error.attempts
+        ? error.attempts
+            .map((attempt) => `${attempt.model}: ${attempt.error?.message}`)
+            .join('\n')
+        : (error.cause?.message ?? error.message),
     });
     setStatus(taskId, 'failed', {
       error: error.message.slice(0, 1000),

@@ -774,8 +774,8 @@ export function Thread({
             <div className="callout">
               <i className="ti ti-alert-triangle" />
               <div>
-                <b>Stopped</b>
-                {row.text}
+                <b>The agent stopped</b>
+                <FailureText text={row.text} />
               </div>
             </div>
             {row.taskId && row.taskId === failedTaskId && (
@@ -825,6 +825,31 @@ export function Thread({
             </div>
           )}
         </AgentMessage>
+      )}
+    </>
+  );
+}
+
+// A stop with the models tried comes as lines: what happened and what to do,
+// then "Models tried (n):" and one line per model with Google's reason.
+function FailureText({ text }) {
+  const [lead, ...rest] = String(text ?? '').split('\n');
+  const at = rest.findIndex((line) => /^Models tried/.test(line));
+  const notes = at < 0 ? rest : rest.slice(0, at);
+  const tried = at < 0 ? [] : rest.slice(at + 1);
+  return (
+    <>
+      <span>{lead}</span>
+      {notes.map((line) => (
+        <span key={line}>{line}</span>
+      ))}
+      {tried.length > 0 && (
+        <span className="callout-list">
+          <span>{rest[at]}</span>
+          {tried.map((line) => (
+            <span key={line}>{line}</span>
+          ))}
+        </span>
       )}
     </>
   );
