@@ -16,7 +16,7 @@ db.exec('PRAGMA busy_timeout = 5000');
 db.exec('PRAGMA foreign_keys = ON');
 
 // Only ever append to this list: each entry runs once, in order.
-const MIGRATIONS = [
+export const MIGRATIONS = [
   `CREATE TABLE bots (
         id TEXT PRIMARY KEY,
         name TEXT NOT NULL,
@@ -615,6 +615,10 @@ const MIGRATIONS = [
   // repository each agent works on, in its own worktree.
   `ALTER TABLE accounts ADD COLUMN projects_dir TEXT`,
   `ALTER TABLE bots ADD COLUMN project TEXT`,
+  // GitHub signs in through the Gemini Code app (26/11/2026): a GitHub
+  // connection still waiting for a pasted token offers the app's sign-in.
+  `UPDATE connections SET status = 'needs_device', status_detail = NULL
+     WHERE status = 'needs_secret' AND url LIKE 'https://api.githubcopilot.com/%'`,
 ];
 
 db.exec(

@@ -17,6 +17,8 @@ version with its date.
   logo: Sign in with GitHub shows a short code, the person approves the app on
   github.com/login/device and the connector connects by itself. No token to
   create or paste, and no client secret on the computer (2026-11-26).
+- A GitHub connection made before the app, still waiting for a pasted token,
+  offers Sign in with GitHub too (2026-11-26).
 
 ### Fixed
 
