@@ -60,7 +60,6 @@ import {
   addAccountUsage,
   brainForNewAgent,
   chatAccountFor,
-  ensureAccountModel,
   listChatAccounts,
 } from '../ai-accounts.js';
 import { isSubscriptionProvider } from '../providers.js';
@@ -1423,11 +1422,6 @@ async function loop(taskId, resolution) {
             // Permanently switch the agent when its previous model had a hard block (e.g. limit: 0),
             // so the UI chip updates to the working model and future turns are instant.
             if (hardBlock || activeModel !== bot.model) {
-              ensureAccountModel(
-                bot.accountId,
-                candidate.account.id,
-                candidate.model,
-              );
               db.query(
                 'UPDATE bots SET model = ?, ai_account = ?, updated_at = ? WHERE id = ?',
               ).run(candidate.model, candidate.account.id, now(), bot.id);

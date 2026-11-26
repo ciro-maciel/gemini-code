@@ -115,6 +115,17 @@ export function clearModelHealth() {
  * Builds an ordered list of fallback { account, model, sameAccount } candidates to try
  * automatically when `primaryModel` on `primaryAccount` fails.
  */
+/** An account's turned-on models, the reliable Gemini ones first. */
+function reliableFirst(account) {
+  const models = account.models ?? [];
+  if (account.provider !== 'google') return models;
+  const rank = (model) => {
+    const index = GEMINI_FALLBACK_ORDER.indexOf(model);
+    return index === -1 ? GEMINI_FALLBACK_ORDER.length : index;
+  };
+  return [...models].sort((a, b) => rank(a) - rank(b));
+}
+
 export function buildFailoverCandidates({
   primaryAccount,
   primaryModel,
@@ -151,15 +162,12 @@ export function buildFailoverCandidates({
   const primaryFull =
     accounts.find((acc) => acc.id === primaryAccount?.id) || primaryAccount;
 
-  // 1. Same account fallbacks (unless the key itself failed 401/403).
+  // 1. Same account fallbacks (unless the key itself failed 401/403). Only
+  // the models the person turned on: one they did not choose is never used
+  // nor added to their list (26/11/2026, gemini-4-neon and gemini-3.8-flash
+  // appeared in Settings without being chosen).
   if (primaryFull && !skipSameAccount) {
-    if (primaryFull.provider === 'google') {
-      // Reliable production Gemini models first (even if the user only enabled a preview model).
-      for (const geminiModel of GEMINI_FALLBACK_ORDER) {
-        push(primaryFull, geminiModel, true);
-      }
-    }
-    for (const enabledModel of primaryFull.models ?? []) {
+    for (const enabledModel of reliableFirst(primaryFull)) {
       push(primaryFull, enabledModel, true);
     }
   }
@@ -167,12 +175,7 @@ export function buildFailoverCandidates({
   // 2. Other connected chat accounts of the same user.
   for (const acc of accounts) {
     if (acc.id === primaryAccount?.id) continue;
-    if (acc.provider === 'google') {
-      for (const geminiModel of GEMINI_FALLBACK_ORDER) {
-        push(acc, geminiModel, false);
-      }
-    }
-    for (const enabledModel of acc.models ?? []) {
+    for (const enabledModel of reliableFirst(acc)) {
       push(acc, enabledModel, false);
     }
   }

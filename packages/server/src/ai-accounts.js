@@ -281,18 +281,6 @@ export async function listChatAccounts(accountId) {
   return out;
 }
 
-/** Ensures a working fallback model is enabled on the AI account so the agent's chip stays valid. */
-export function ensureAccountModel(accountId, aiAccountId, modelId) {
-  const row = rowOf(accountId, aiAccountId);
-  if (!row || !isChatProvider(row.provider) || !modelId) return;
-  const current = row.models ? JSON.parse(row.models) : [];
-  if (current.includes(modelId)) return;
-  db.query('UPDATE ai_accounts SET models = ? WHERE id = ?').run(
-    JSON.stringify([modelId, ...current].slice(0, 200)),
-    aiAccountId,
-  );
-}
-
 /** The Gemini API key for Gemini CLI jobs: its own account's key, else the first Gemini account, else env. */
 export async function geminiTokenFor(botId) {
   const own = db

@@ -28,42 +28,43 @@ describe('intelligent model failover router', () => {
     expect(isFailoverEligible(aborted)).toBe(false);
   });
 
-  test('for a Google Gemini account stuck on gemini-4-neon, proposes reliable Gemini models first', () => {
+  test('falls over only to models the person turned on, the reliable ones first', () => {
     const google = {
       id: 'ai-g',
       provider: 'google',
       key: 'AIza-1',
-      models: ['gemini-4-neon'],
-    };
-    const openrouter = {
-      id: 'ai-or',
-      provider: 'openrouter',
-      key: 'sk-or-1',
-      models: ['anthropic/claude-sonnet-4'],
+      models: ['gemini-4-neon', 'gemini-3.8-flash', 'gemini-3.5-flash-lite'],
     };
 
     const list = buildFailoverCandidates({
       primaryAccount: google,
       primaryModel: 'gemini-4-neon',
-      allChatAccounts: [google, openrouter],
+      allChatAccounts: [google],
     });
 
-    expect(list[0]).toMatchObject({
-      account: google,
-      model: 'gemini-3.5-flash-lite',
-      sameAccount: true,
-    });
-    expect(list[1]).toMatchObject({
-      account: google,
-      model: 'gemini-flash-lite-latest',
-      sameAccount: true,
-    });
-    expect(list[2]).toMatchObject({
-      account: google,
-      model: 'gemini-3.6-flash',
-      sameAccount: true,
-    });
-    expect(list.some((c) => c.model === 'gemini-4-neon')).toBe(false);
+    expect(list.map((c) => c.model)).toEqual([
+      'gemini-3.5-flash-lite',
+      'gemini-3.8-flash',
+    ]);
+    // 26/11/2026: models nobody chose appeared in Settings after a failover.
+    const turnedOn = new Set(google.models);
+    expect(list.every((c) => turnedOn.has(c.model))).toBe(true);
+  });
+
+  test('with nothing else turned on there is no model to fall over to', () => {
+    const google = {
+      id: 'ai-solo',
+      provider: 'google',
+      key: 'AIza-1',
+      models: ['gemini-4-neon'],
+    };
+    expect(
+      buildFailoverCandidates({
+        primaryAccount: google,
+        primaryModel: 'gemini-4-neon',
+        allChatAccounts: [google],
+      }),
+    ).toEqual([]);
   });
 
   test('skips cooling-down models and falls over across accounts on auth errors', () => {
@@ -92,7 +93,11 @@ describe('intelligent model failover router', () => {
       primaryModel: 'gemini-4-neon',
       allChatAccounts: [google, openai],
     });
-    expect(sameAccountSkip[0].model).toBe('gemini-3.5-flash-lite');
+    // Its only turned-on Gemini model is cooling down: the healthy one elsewhere goes first.
+    expect(sameAccountSkip[0]).toMatchObject({
+      account: openai,
+      model: 'gpt-5-mini',
+    });
     expect(sameAccountSkip.some((c) => c.model === 'gemini-3.8-flash')).toBe(
       false,
     );

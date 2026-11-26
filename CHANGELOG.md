@@ -11,6 +11,14 @@ version with its date.
 
 ## [Unreleased]
 
+### Fixed
+
+- Only the models the person turned on are used: when a model failed, the server
+  fell over to Gemini models nobody chose and added them to the key's list in
+  Settings (gemini-4-neon, gemini-3.8-flash). It now falls over only among the
+  turned-on ones, the reliable first, and never changes the list. The key's
+  usage line says "nenhum agente ainda" in Portuguese (2026-11-26).
+
 ## [0.5.0] - 2026-11-26
 
 ### Added
