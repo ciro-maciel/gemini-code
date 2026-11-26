@@ -177,7 +177,7 @@ function ConnectionAction({ app, onChange }) {
           className="btn outline sm"
           onClick={() => openSignIn(connection.statusDetail)}
         >
-          Sign in
+          Connect
         </button>
         <ConnectionMenu app={app} onChange={onChange} />
       </span>
@@ -209,6 +209,7 @@ function ConnectionAction({ app, onChange }) {
         >
           Save
         </button>
+        <ConnectionMenu app={app} onChange={onChange} />
       </span>
     );
   if (connection?.status === 'failed')
@@ -248,16 +249,22 @@ function ConnectionAction({ app, onChange }) {
         >
           Connect
         </button>
+        <span className="icon-slot" aria-hidden="true" />
       </span>
     );
+  // Every row keeps the menu's place, so its button lines up with the
+  // rows that already have a connection (and their menu).
   return (
-    <button
-      className="btn outline sm"
-      disabled={isBusy}
-      onClick={() => (app.addressPrefix ? setAddress('') : connect())}
-    >
-      Connect
-    </button>
+    <span className="conn-act">
+      <button
+        className="btn outline sm"
+        disabled={isBusy}
+        onClick={() => (app.addressPrefix ? setAddress('') : connect())}
+      >
+        Connect
+      </button>
+      <span className="icon-slot" aria-hidden="true" />
+    </span>
   );
 }
 

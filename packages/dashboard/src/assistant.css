@@ -4416,6 +4416,11 @@ textarea.cfg-instr {
   align-items: center;
   gap: 6px;
 }
+.conn-act .icon-slot {
+  width: 30px;
+  height: 30px;
+  flex: none;
+}
 .conn-act .pill-st {
   display: inline-flex;
   align-items: center;

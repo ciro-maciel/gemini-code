@@ -21,6 +21,9 @@ version with its date.
   offers Sign in with GitHub too (2026-11-26).
 - Every button in a Connectors row has the same look as Connect: GitHub, Sign
   in, Save and the project address no longer stand out (2026-11-26).
+- Connectors rows line up: a service that needs a new sign-in says Connect like
+  the rest, and every row keeps the place of the more menu, so all buttons share
+  one right edge (2026-11-26).
 
 ### Fixed
 
