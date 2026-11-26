@@ -174,7 +174,7 @@ function ConnectionAction({ app, onChange }) {
     return (
       <span className="conn-act">
         <button
-          className="btn filled sm"
+          className="btn outline sm"
           onClick={() => openSignIn(connection.statusDetail)}
         >
           Sign in
@@ -201,7 +201,7 @@ function ConnectionAction({ app, onChange }) {
           onChange={(event) => setSecret(event.target.value)}
         />
         <button
-          className="btn filled sm"
+          className="btn outline sm"
           disabled={!secret.trim() || isBusy}
           onClick={() =>
             run(() => saveConnectionSecret(connection.id, { value: secret }))
@@ -242,7 +242,7 @@ function ConnectionAction({ app, onChange }) {
           }}
         />
         <button
-          className="btn filled sm"
+          className="btn outline sm"
           disabled={!isAddressValid || isBusy}
           onClick={() => connect(address.trim())}
         >

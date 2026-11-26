@@ -29,9 +29,8 @@ export function DeviceSignIn({ connection, onChange = () => {} }) {
 
   if (!signIn)
     return (
-      <button className="btn filled sm" disabled={isBusy} onClick={start}>
-        <i className="ti ti-brand-github" />
-        {isBusy ? 'Asking GitHub…' : 'Sign in with GitHub'}
+      <button className="btn outline sm" disabled={isBusy} onClick={start}>
+        {isBusy ? 'Asking GitHub…' : 'Connect'}
       </button>
     );
   return (
@@ -48,13 +47,12 @@ export function DeviceSignIn({ connection, onChange = () => {} }) {
         <i className="ti ti-copy" />
       </button>
       <a
-        className="btn filled sm"
+        className="btn outline sm"
         href={signIn.verificationUri}
         target="_blank"
         rel="noreferrer"
       >
         Open GitHub
-        <i className="ti ti-external-link" />
       </a>
     </span>
   );
