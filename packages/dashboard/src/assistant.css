@@ -4417,8 +4417,9 @@ textarea.cfg-instr {
   gap: 6px;
 }
 .conn-act .icon-slot {
-  width: 30px;
-  height: 30px;
+  /* the design system's icon button (neural-expressive.css .icon-btn) */
+  width: 40px;
+  height: 40px;
   flex: none;
 }
 .conn-act .pill-st {

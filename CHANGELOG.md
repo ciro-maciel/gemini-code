@@ -24,6 +24,8 @@ version with its date.
 - Connectors rows line up: a service that needs a new sign-in says Connect like
   the rest, and every row keeps the place of the more menu, so all buttons share
   one right edge (2026-11-26).
+- The reserved place of the more menu is the size of the design system's icon
+  button, 40 px, so the rows without a connection line up exactly (2026-11-26).
 
 ### Fixed
 
